@@ -10,8 +10,13 @@ import { Response } from '../../../../reducers/response/response.model';
 export class ActiveResponseComponent {
   @Input() activeResponse: Response;
   @Output() deactivateClicked = new EventEmitter();
+  @Output() updateClicked = new EventEmitter();
 
   deactivate() {
     this.deactivateClicked.emit();
+  }
+
+  update() {
+    this.updateClicked.emit();
   }
 }

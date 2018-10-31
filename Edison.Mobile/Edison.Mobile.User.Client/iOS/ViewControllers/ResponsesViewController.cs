@@ -14,19 +14,29 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
     public class ResponsesViewController : BaseViewController<ResponsesViewModel>
     {
         readonly nfloat collectionViewVerticalMargin = Constants.Padding;
+        readonly float alertCircleDisabledAlpha = 0.5f;
 
-        UIImageView logoImageView;
+        bool isInitialAppearance = true;
+
         AlertsCircleView alertsCircleView;
         UICollectionView collectionView;
         ResponsesCollectionViewSource responsesCollectionViewSource;
+        UILabel noAlertsLabel;
 
         public event EventHandler OnMenuTapped;
+
+        public event EventHandler OnViewResponseDetails;
+        public event EventHandler OnDismissResponseDetails;
+
+        public bool IsShowingDetails { get; private set; }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            View.BackgroundColor = PlatformConstants.Color.BackgroundGray;
+            View.BackgroundColor = Constants.Color.BackgroundGray;
+
+            Title = "Right Now";
 
             NavigationController.NavigationBar.SetBackgroundImage(new UIImage(), UIBarMetrics.Default);
             NavigationController.NavigationBar.ShadowImage = new UIImage();
@@ -35,28 +45,56 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
 
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Constants.Assets.Menu, UIBarButtonItemStyle.Plain, InternalOnMenuTapped);
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(Constants.Assets.Brightness, UIBarButtonItemStyle.Plain, OnBrightnessTapped);
-            NavigationController.NavigationBar.TintColor = PlatformConstants.Color.DarkGray;
+            NavigationController.NavigationBar.TintColor = Constants.Color.Blue;
 
-            logoImageView = new UIImageView
+            alertsCircleView = new AlertsCircleView
             {
                 TranslatesAutoresizingMaskIntoConstraints = false,
-                Image = Constants.Assets.Logo,
+                InnerCircleBackgroundColor = Constants.Color.Blue,
+                Alpha = alertCircleDisabledAlpha,
             };
-
-            View.AddSubview(logoImageView);
-
-            logoImageView.TopAnchor.ConstraintEqualTo(View.TopAnchor, UIApplication.SharedApplication.StatusBarFrame.Height).Active = true;
-            logoImageView.CenterXAnchor.ConstraintEqualTo(View.CenterXAnchor).Active = true;
-
-            alertsCircleView = new AlertsCircleView { TranslatesAutoresizingMaskIntoConstraints = false };
-            alertsCircleView.InnerCircleBackgroundColor = PlatformConstants.Color.Red;
 
             View.AddSubview(alertsCircleView);
 
             alertsCircleView.CenterXAnchor.ConstraintEqualTo(View.CenterXAnchor).Active = true;
-            alertsCircleView.TopAnchor.ConstraintEqualTo(logoImageView.BottomAnchor, constant: Constants.Padding).Active = true;
-            alertsCircleView.WidthAnchor.ConstraintEqualTo(200).Active = true;
+            alertsCircleView.TopAnchor.ConstraintEqualTo(View.LayoutMarginsGuide.TopAnchor, constant: Constants.Padding).Active = true;
+            alertsCircleView.WidthAnchor.ConstraintEqualTo(View.Bounds.Height * .20f).Active = true;
             alertsCircleView.HeightAnchor.ConstraintEqualTo(alertsCircleView.WidthAnchor).Active = true;
+            alertsCircleView.AlertCount = ViewModel.Responses.Count;
+
+            noAlertsLabel = new UILabel
+            {
+                TranslatesAutoresizingMaskIntoConstraints = false,
+                Text = "Alert details will display here when active",
+                Font = Constants.Fonts.RubikOfSize(Constants.Fonts.Size.Twelve),
+                TextAlignment = UITextAlignment.Center,
+                TextColor = Constants.Color.DarkGray,
+            };
+
+            View.AddSubview(noAlertsLabel);
+            noAlertsLabel.TopAnchor.ConstraintEqualTo(alertsCircleView.BottomAnchor, constant: 40).Active = true;
+            noAlertsLabel.CenterXAnchor.ConstraintEqualTo(View.CenterXAnchor).Active = true;
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+
+            NavigationController.NavigationBar.TintColor = Constants.Color.Blue;
+            NavigationController.NavigationBar.TitleTextAttributes = new UIStringAttributes { ForegroundColor = Constants.Color.Blue };
+
+            if (!isInitialAppearance)
+            {
+                IsShowingDetails = false;
+                OnDismissResponseDetails?.Invoke(this, new EventArgs());
+            }
+        }
+
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+
+            isInitialAppearance = false;
         }
 
         protected override void BindEventHandlers()
@@ -80,6 +118,8 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
             if (collectionView == null)
             {
                 responsesCollectionViewSource = new ResponsesCollectionViewSource(ViewModel.Responses);
+
+                responsesCollectionViewSource.OnResponseSelected += OnResponseSelected;
 
                 var collectionViewFrameTop = alertsCircleView.Frame.Bottom + collectionViewVerticalMargin;
                 var collectionViewFrameBottom = View.Bounds.Bottom - Constants.PulloutBottomMargin - collectionViewVerticalMargin;
@@ -136,6 +176,10 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
 
         void OnResponsesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            var anyResponses = ViewModel.Responses.Count > 0;
+            noAlertsLabel.Alpha = anyResponses ? 0 : 1;
+            alertsCircleView.Alpha = anyResponses ? 1 : alertCircleDisabledAlpha;
+
             alertsCircleView.AlertCount = ViewModel.Responses.Count;
             collectionView.ReloadData();
 
@@ -153,6 +197,17 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
             //    }
 
             //}, null);
+        }
+
+        void OnResponseSelected(object sender, int index)
+        {
+            IsShowingDetails = true;
+
+            OnViewResponseDetails?.Invoke(this, new EventArgs());
+
+            var response = ViewModel.Responses[index];
+            var viewController = new ResponseDetailsViewController(response);
+            NavigationController.PushViewController(viewController, true);
         }
     }
 }

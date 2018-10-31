@@ -13,6 +13,8 @@ namespace Edison.Mobile.User.Client.Core.Ioc
             builder.RegisterType<LoginViewModel>();
             builder.RegisterType<ResponsesViewModel>();
             builder.RegisterType<MenuViewModel>();
+            builder.RegisterType<ResponseDetailsViewModel>();
+            builder.RegisterType<ChatViewModel>();
         }
     }
 }

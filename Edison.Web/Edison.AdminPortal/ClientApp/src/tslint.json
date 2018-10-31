@@ -1,11 +1,12 @@
 {
     "extends": "../tslint.json",
     "rules": {
+        "semicolon": false,
         "directive-selector": [
             true,
             "attribute",
             "app",
-            "camelCase"
+            "camelCase",
         ],
         "component-selector": [
             true,

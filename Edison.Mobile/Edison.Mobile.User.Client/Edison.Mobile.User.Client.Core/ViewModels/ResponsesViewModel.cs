@@ -24,7 +24,10 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
             if (Responses.Count == 0)
             {
                 var responses = await responseRestService.GetResponses();
-                Responses.AddRange(responses.Select(r => new ResponseCollectionItemViewModel(r)));
+                if (responses != null)
+                {
+                    Responses.AddRange(responses.Select(r => new ResponseCollectionItemViewModel(r)));
+                }
             }
         }
     }

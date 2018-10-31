@@ -20,6 +20,8 @@ namespace Edison.Mobile.Android.Common.Geolocation
 
         Location lastLocation;
 
+        public EdisonLocation LastKnownLocation => EdisonLocationFromLocation(lastLocation);
+
         public LocationService()
         {
             locationProvider = LocationServices.GetFusedLocationProviderClient(Application.Context);
@@ -35,16 +37,18 @@ namespace Edison.Mobile.Android.Common.Geolocation
             return availability.IsLocationAvailable;
         }
 
-        public void RequestLocationPrivileges()
+        public async Task<bool> RequestLocationPrivileges()
         {
             var permission = Manifest.Permission.AccessFineLocation;
             if (ContextCompat.CheckSelfPermission(locationProvider.ApplicationContext, permission) == Permission.Granted)
             {
-                return;
+                return true;
             }
 
             ActivityCompat.RequestPermissions(this, new string[] { permission }, 0);
+            return false;
         }
+
 
         public async Task StartLocationUpdates()
         {
@@ -106,5 +110,10 @@ namespace Edison.Mobile.Android.Common.Geolocation
             Speed = location.Speed,
             Time = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(location.Time),
         };
+
+        public Task<bool> HasLocationPrivileges()
+        {
+            return Task.FromResult(ContextCompat.CheckSelfPermission(locationProvider.ApplicationContext, Manifest.Permission.AccessFineLocation) == Permission.Granted);
+        }
     }
 }

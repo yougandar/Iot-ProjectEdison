@@ -4,6 +4,9 @@
         [context]="action"
         [last]="last"
         [ngClass]="{'last': last, 'action-plan-item': true}"
+        [canEdit]="canEdit"
+        [canUpdate]="canUpdate"
+        (onchange)="onItemChange()"
     ></app-action-list-item>
 </div>
 <div class="dotted-line"></div>

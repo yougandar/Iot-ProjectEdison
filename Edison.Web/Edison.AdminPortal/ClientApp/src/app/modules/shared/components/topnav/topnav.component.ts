@@ -1,18 +1,34 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { AuthService } from '../../../../shared/services/auth.service';
+import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core'
+import { AuthService } from '../../../../core/services/auth.service'
+import { Store, select } from '@ngrx/store'
+import { AppState } from '../../../../reducers'
+import { FocusAllPins } from '../../../../reducers/app/app.actions'
+import { Observable } from 'rxjs'
+import { pageTitleSelector } from '../../../../reducers/app/app.selectors'
 
 @Component({
   selector: 'app-topnav',
   templateUrl: './topnav.component.html',
   styleUrls: ['./topnav.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TopnavComponent {
+export class TopnavComponent implements OnInit {
+  pageTitle$: Observable<string>
 
-  constructor(private authService: AuthService) { }
+  constructor(
+    private authService: AuthService,
+    private store: Store<AppState>
+  ) {}
 
-  logout() {
-    this.authService.logout();
+  ngOnInit() {
+    this.pageTitle$ = this.store.pipe(select(pageTitleSelector))
   }
 
+  reload() {
+    this.store.dispatch(new FocusAllPins())
+  }
+
+  logout() {
+    this.authService.logout()
+  }
 }

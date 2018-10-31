@@ -85,7 +85,7 @@ namespace Edison.Api.Helpers
             ActionPlanDAO plan = _mapper.Map<ActionPlanDAO>(actionPlanObj);
 
             plan.Id = await _repoActionPlans.CreateItemAsync(plan);
-            if (plan.Id == Guid.Empty)
+            if (_repoActionPlans.IsDocumentKeyNull(plan))
                 throw new Exception($"An error occured when creating a new action plan");
 
             return _mapper.Map<ActionPlanModel>(plan);

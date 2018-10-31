@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using Edison.Mobile.Common.Logging;
@@ -15,6 +16,7 @@ namespace Edison.Mobile.Common.Auth
         public event EventHandler<AuthChangedEventArgs> OnAuthChanged;
 
         public AuthenticationResult AuthenticationResult { get; set; }
+        public string Email { get; set; }
 
         public AuthService(IPlatformAuthService platformAuthService, IPublicClientApplication publicClientApplication, ILogger logger)
         {
@@ -29,13 +31,9 @@ namespace Edison.Mobile.Common.Auth
             {
                 AuthenticationResult = await platformAuthService.AcquireTokenAsync();
 
-                if (AuthenticationResult != null)
+                if (AuthenticationResult != null && AuthenticationResult.IdToken != null)
                 {
-                    OnAuthChanged?.Invoke(this, new AuthChangedEventArgs
-                    {
-                        IsLoggedIn = AuthenticationResult != null,
-                        WasTokenAcquiredSilently = false,
-                    });
+                    HandleTokenAcquisition(false);
                 }
             }
             catch (Exception ex)
@@ -56,11 +54,7 @@ namespace Edison.Mobile.Common.Auth
 
                 AuthenticationResult = authenticationResult;
 
-                OnAuthChanged?.Invoke(this, new AuthChangedEventArgs
-                {
-                    IsLoggedIn = authenticationResult != null,
-                    WasTokenAcquiredSilently = authenticationResult != null,
-                });
+                HandleTokenAcquisition(authenticationResult != null);
 
                 return authenticationResult != null;
             }
@@ -70,6 +64,33 @@ namespace Edison.Mobile.Common.Auth
             }
 
             return false;
+        }
+
+        public async Task SignOut() 
+        {
+            var accounts = await publicClientApplication.GetAccountsAsync();
+            foreach (var account in accounts) 
+            {
+                await publicClientApplication.RemoveAsync(account);
+            }
+        }
+
+        void HandleTokenAcquisition(bool wasAcquiredSilently) 
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(AuthenticationResult.IdToken);
+            var emailsClaim = token.Claims.First(c => c.Type == "emails");
+            if (emailsClaim != null)
+            {
+                var email = emailsClaim.Value;
+                Email = email;
+            }
+
+            OnAuthChanged?.Invoke(this, new AuthChangedEventArgs
+            {
+                IsLoggedIn = AuthenticationResult != null && Email != null,
+                WasTokenAcquiredSilently = wasAcquiredSilently,
+            });
         }
     }
 }

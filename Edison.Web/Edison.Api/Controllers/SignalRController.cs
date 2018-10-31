@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Edison.Api.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Backend,B2CWeb")]
+    [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb")]
     [Route("api/SignalR")]
     [ApiController]
     public class SignalRController : ControllerBase
@@ -39,6 +39,13 @@ namespace Edison.Api.Controllers
         public async Task<IActionResult> UpdateResponseUI([FromBody]ResponseUIModel responseUIUpdate)
         {
             await _hub.Clients.All.SendAsync("UpdateResponseUI", responseUIUpdate);
+            return Ok();
+        }
+
+        [HttpPut("Response/ActionClose")]
+        public async Task<IActionResult> UpdateActionCloseUI([FromBody]ActionCloseUIModel actionCloseUIUpdate)
+        {
+            await _hub.Clients.All.SendAsync("UpdateActionCloseUI", actionCloseUIUpdate);
             return Ok();
         }
     }

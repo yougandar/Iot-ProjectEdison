@@ -1,11 +1,32 @@
+<div class="status-icon" *ngIf="context.status === 1">
+  <mat-icon>check</mat-icon>
+</div>
 <div class="app-icon notification red round"></div>
 <div class="content-container">
   <div>
     {{context.description}}
   </div>
-  <div class="content-header">NOTIFICATION CONTENT</div>
+  <div class="content-header">
+    <div>NOTIFICATION CONTENT</div>
+    <div class="edit-notification-container" *ngIf="canEdit">
+      <div class="edit-icon app-icon edit small" (click)="!editing && edit()"></div>
+      <span class="edit-done" *ngIf="editing" (click)="editComplete()">Done</span>
+    </div>
+  </div>
   <div class="content-text">
-    {{context.parameters.content}}
+    <ng-container *ngIf="!editing">{{context.parameters.message}}</ng-container>
+    <textarea [(ngModel)]="context.parameters.message" placeholder="Enter text here" rows="8" (keyup)="notificationChanged()"
+      *ngIf="editing">
+    </textarea>
+  </div>
+  <div (click)="addNew()" *ngIf="!adding && canUpdate" class="addNewBtn">
+    <div class="edit-icon app-icon edit small"></div> ADD NEW
+  </div>
+  <div *ngIf="adding" class="edit-container">
+    <div class="subheader">NEW NOTIFICATION CONTENT</div>
+    <textarea [(ngModel)]="context.parameters.newMessage" placeholder="Enter text here" rows="8" (keyup)="notificationChanged()">
+    </textarea>
+    <div class="removeBtn" (click)="remove()">Remove</div>
   </div>
 </div>
 <div class="line-hider" *ngIf="last"></div>

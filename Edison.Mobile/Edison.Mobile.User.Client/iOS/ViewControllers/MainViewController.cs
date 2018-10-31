@@ -3,9 +3,11 @@ using CoreGraphics;
 using Edison.Mobile.iOS.Common.Shared;
 using Edison.Mobile.iOS.Common.Views;
 using Edison.Mobile.User.Client.Core.ViewModels;
+using Edison.Mobile.User.Client.iOS.Navigation;
 using Edison.Mobile.User.Client.iOS.Shared;
 using Edison.Mobile.User.Client.iOS.Views;
 using UIKit;
+using UserNotifications;
 
 namespace Edison.Mobile.User.Client.iOS.ViewControllers
 {
@@ -13,20 +15,24 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
     {
         nfloat pulloutMaxDestY;
         nfloat pulloutNeutralDestY;
+        nfloat pulloutMinDestY;
+
+        bool isPulloutInMinMode = false;
 
         MainPulloutView pulloutView;
         UIViewPropertyAnimator pulloutAnimator;
         UIPanGestureRecognizer pulloutPanGestureRecognizer;
-        UITapGestureRecognizer dismissPulloutTapGestureRecognizer;
         UITapGestureRecognizer dismissMenuTapGestureRecognizer;
 
         UIView pulloutBackgroundView;
         UIView menuBackgroundView;
+        UIView edgeGestureCaptureView;
 
         ResponsesViewController responsesViewController;
         MenuViewController menuViewController;
+        ChatViewController chatViewController;
+
         UIPanGestureRecognizer menuPanGestureRecognizer;
-        UIScreenEdgePanGestureRecognizer menuEdgePanGestureRecognizer;
         UIViewPropertyAnimator menuAnimator;
 
         PulloutState pulloutState;
@@ -36,12 +42,19 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            View.BackgroundColor = PlatformConstants.Color.BackgroundGray;
+            View.BackgroundColor = Constants.Color.BackgroundGray;
 
-            Constants.MenuRightMargin = View.Bounds.Width / 2;
+            Constants.MenuRightMargin = View.Bounds.Width / 2.8f;
+            Constants.PulloutBottomMargin = View.Bounds.Height * 0.25f;
+            Constants.PulloutTopMargin = View.Bounds.Height * (View.Bounds.Height <= 667 ? 0.04f : 0.06f);
+            Constants.PulloutMinBottomMargin = View.Bounds.Height * 0.12f;
+
+            pulloutMaxDestY = Constants.PulloutTopMargin;
+            pulloutNeutralDestY = View.Frame.Height - Constants.PulloutBottomMargin;
+            pulloutMinDestY = View.Frame.Height - Constants.PulloutMinBottomMargin;
 
             responsesViewController = new ResponsesViewController();
-            var responsesNavController = new UINavigationController(responsesViewController);
+            var responsesNavController = new ResponsesNavigationController(responsesViewController);
             AddChildViewController(responsesNavController);
             responsesNavController.View.TranslatesAutoresizingMaskIntoConstraints = false;
             View.AddSubview(responsesNavController.View);
@@ -55,7 +68,7 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
             {
                 TranslatesAutoresizingMaskIntoConstraints = false,
                 Alpha = 0,
-                BackgroundColor = PlatformConstants.Color.Black.ColorWithAlpha(0.5f),
+                BackgroundColor = Constants.Color.Black.ColorWithAlpha(0.5f),
             };
 
             View.AddSubview(pulloutBackgroundView);
@@ -65,15 +78,17 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
             pulloutBackgroundView.TopAnchor.ConstraintEqualTo(View.TopAnchor).Active = true;
             pulloutBackgroundView.BottomAnchor.ConstraintEqualTo(View.BottomAnchor).Active = true;
 
-            pulloutView = new MainPulloutView
+            chatViewController = new ChatViewController();
+            AddChildViewController(chatViewController);
+            pulloutView = new MainPulloutView(chatViewController)
             {
-                BackgroundColor = PlatformConstants.Color.White,
+                BackgroundColor = Constants.Color.White,
                 Frame = new CGRect
                 {
                     Size = new CGSize
                     {
                         Width = View.Bounds.Width,
-                        Height = View.Bounds.Height * 2,
+                        Height = View.Bounds.Height * 1.5f,
                     },
                     Location = new CGPoint
                     {
@@ -84,12 +99,13 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
             };
 
             View.AddSubview(pulloutView);
+            chatViewController.DidMoveToParentViewController(this);
 
             menuBackgroundView = new UIView
             {
                 TranslatesAutoresizingMaskIntoConstraints = false,
                 Alpha = 0,
-                BackgroundColor = PlatformConstants.Color.Black.ColorWithAlpha(0.5f),
+                BackgroundColor = Constants.Color.Black.ColorWithAlpha(0.5f),
             };
 
             View.AddSubview(menuBackgroundView);
@@ -113,25 +129,19 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
             View.AddSubview(menuViewController.View);
             menuViewController.DidMoveToParentViewController(this);
 
+            edgeGestureCaptureView = new UIView { TranslatesAutoresizingMaskIntoConstraints = false };
+            View.AddSubview(edgeGestureCaptureView);
+            edgeGestureCaptureView.LeftAnchor.ConstraintEqualTo(View.LeftAnchor).Active = true;
+            edgeGestureCaptureView.TopAnchor.ConstraintEqualTo(View.TopAnchor).Active = true;
+            edgeGestureCaptureView.BottomAnchor.ConstraintEqualTo(View.BottomAnchor).Active = true;
+            edgeGestureCaptureView.WidthAnchor.ConstraintEqualTo(10).Active = true;
+
             menuPanGestureRecognizer = new UIPanGestureRecognizer(OnMenuPan)
             {
-                ShouldBegin = recognizer => pulloutState != PulloutState.Maximized,
+                ShouldBegin = recognizer => pulloutState != PulloutState.Maximized && !responsesViewController.IsShowingDetails,
             };
-
-            menuEdgePanGestureRecognizer = new UIScreenEdgePanGestureRecognizer(OnMenuPan) // never fires
-            {
-                Edges = UIRectEdge.Left,
-                ShouldRecognizeSimultaneously = (gestureRecognizer, otherGestureRecognizer) =>
-                {
-                    return true;
-                },
-            };
-
-            pulloutMaxDestY = Constants.PulloutTopMargin;
-            pulloutNeutralDestY = View.Frame.Height - Constants.PulloutBottomMargin;
 
             pulloutPanGestureRecognizer = new UIPanGestureRecognizer(HandlePulloutPan);
-            dismissPulloutTapGestureRecognizer = new UITapGestureRecognizer(HandleDimViewTap);
             dismissMenuTapGestureRecognizer = new UITapGestureRecognizer(HandleDimViewTap);
         }
 
@@ -140,13 +150,9 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
             base.ViewWillAppear(animated);
 
             pulloutView.AddGestureRecognizer(pulloutPanGestureRecognizer);
-            pulloutBackgroundView.AddGestureRecognizer(dismissPulloutTapGestureRecognizer);
             menuBackgroundView.AddGestureRecognizer(dismissMenuTapGestureRecognizer);
 
             View.AddGestureRecognizer(menuPanGestureRecognizer);
-            View.AddGestureRecognizer(menuEdgePanGestureRecognizer);
-
-            responsesViewController.OnMenuTapped += OnMenuTapped;
         }
 
         public override void ViewWillDisappear(bool animated)
@@ -154,13 +160,27 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
             base.ViewWillDisappear(animated);
 
             pulloutView.RemoveGestureRecognizer(pulloutPanGestureRecognizer);
-            pulloutBackgroundView.RemoveGestureRecognizer(dismissPulloutTapGestureRecognizer);
             menuBackgroundView.RemoveGestureRecognizer(dismissMenuTapGestureRecognizer);
 
             View.RemoveGestureRecognizer(menuPanGestureRecognizer);
-            View.RemoveGestureRecognizer(menuEdgePanGestureRecognizer);
+        }
+
+        protected override void BindEventHandlers()
+        {
+            base.BindEventHandlers();
+
+            responsesViewController.OnMenuTapped += OnMenuTapped;
+            responsesViewController.OnViewResponseDetails += HandleOnViewResponseDetails;
+            responsesViewController.OnDismissResponseDetails += HandleOnDismissResponseDetails;
+        }
+
+        protected override void UnBindEventHandlers()
+        {
+            base.UnBindEventHandlers();
 
             responsesViewController.OnMenuTapped -= OnMenuTapped;
+            responsesViewController.OnViewResponseDetails -= HandleOnViewResponseDetails;
+            responsesViewController.OnDismissResponseDetails -= HandleOnDismissResponseDetails;
         }
 
         void HandleDimViewTap(UITapGestureRecognizer tapGestureRecognizer)
@@ -183,6 +203,7 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
                 case UIGestureRecognizerState.Began:
                     {
                         pulloutAnimator?.StopAnimation(true);
+                        pulloutView.PulloutBeganDragging(pulloutState);
                     }
                     break;
                 case UIGestureRecognizerState.Changed:
@@ -205,6 +226,15 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
 
                         pulloutView.SetPercentMaximized(percentMaximized);
                         pulloutBackgroundView.Alpha = percentMaximized;
+
+
+                        var minimizedTotalDistance = pulloutMinDestY - pulloutNeutralDestY;
+                        var minimizedDeltaProgress = newY - pulloutNeutralDestY;
+                        minimizedDeltaProgress = minimizedDeltaProgress < 0 ? 0 : minimizedDeltaProgress;
+                        var percentMinimized = minimizedDeltaProgress / minimizedTotalDistance;
+                        percentMinimized = percentMinimized > 1 ? 1 : (percentMinimized < 0 ? 0 : percentMinimized);
+                        pulloutView.SetPercentMinimized(percentMinimized);
+
                         panGestureRecognizer.SetTranslation(CGPoint.Empty, View);
                     }
                     break;
@@ -216,7 +246,7 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
                         var shouldMaximizeByVelocity = -velocityY > Constants.PulloutVelocityThreshold;
                         var shouldMinimizeByVelocity = velocityY > Constants.PulloutVelocityThreshold;
                         var shouldMaximize = !shouldMinimizeByVelocity && (shouldMaximizeByLocation || shouldMaximizeByVelocity);
-                        var newPulloutState = shouldMaximize ? PulloutState.Maximized : PulloutState.Neutral;
+                        var newPulloutState = shouldMaximize ? PulloutState.Maximized : (isPulloutInMinMode ? PulloutState.Minimized : PulloutState.Neutral);
                         var DEST_Y = PulloutDestinationYFromState(newPulloutState);
                         var remainingDistance = Math.Abs(y - DEST_Y);
 
@@ -285,16 +315,19 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
         nfloat GetTranslationFactor(nfloat potentialNewY)
         {
             var marginMultiplier = 3f;
-            if (potentialNewY < Constants.PulloutTopMargin)
+            var topLimitY = Constants.PulloutTopMargin;
+            if (potentialNewY < topLimitY)
             {
-                var excessDistance = Constants.PulloutTopMargin - potentialNewY;
-                return 0.3f - (excessDistance / (Constants.PulloutTopMargin * marginMultiplier));
+                var excessDistance = topLimitY - potentialNewY;
+                return 0.3f - (excessDistance / (topLimitY * marginMultiplier));
             }
 
-            if (potentialNewY > View.Bounds.Height - Constants.PulloutBottomMargin)
+            var bottomMargin = isPulloutInMinMode ? Constants.PulloutMinBottomMargin : Constants.PulloutBottomMargin;
+            var bottomLimitY = View.Bounds.Height - bottomMargin;
+            if (potentialNewY > bottomLimitY)
             {
-                var excessDistance = potentialNewY - (View.Bounds.Height - Constants.PulloutBottomMargin);
-                return 0.3f - (excessDistance / (Constants.PulloutBottomMargin * marginMultiplier));
+                var excessDistance = potentialNewY - bottomLimitY;
+                return 0.3f - (excessDistance / (bottomMargin * marginMultiplier));
             }
 
             return 1;
@@ -319,7 +352,6 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
 
             var springParameters = GetSpringTimingParameters(initialVelocityVector);
             var destinationY = PulloutDestinationYFromState(newPulloutState);
-            var shouldMaximize = destinationY == pulloutMaxDestY;
 
             pulloutAnimator = new UIViewPropertyAnimator(0, springParameters)
             {
@@ -338,11 +370,17 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
                     Size = pulloutView.Frame.Size,
                 };
 
-                pulloutView.SetPercentMaximized(shouldMaximize ? 1 : 0);
-                pulloutBackgroundView.Alpha = shouldMaximize ? 1 : 0;
+                pulloutView.SetPercentMaximized(newPulloutState == PulloutState.Maximized ? 1 : 0);
+                pulloutView.SetPercentMinimized(newPulloutState == PulloutState.Neutral || newPulloutState == PulloutState.Maximized ? 0 : 1);
+
+                pulloutBackgroundView.Alpha = newPulloutState == PulloutState.Maximized ? 1 : 0;
             });
 
-            pulloutAnimator.AddCompletion(pos => pulloutState = shouldMaximize ? PulloutState.Maximized : PulloutState.Neutral);
+            pulloutAnimator.AddCompletion(pos =>
+            {
+                pulloutState = newPulloutState;
+                pulloutView.PulloutDidFinishAnimating(newPulloutState);
+            });
 
             pulloutAnimator.StartAnimation();
         }
@@ -384,10 +422,9 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
             switch (state)
             {
                 case PulloutState.Maximized: return pulloutMaxDestY;
-                case PulloutState.Neutral: return pulloutNeutralDestY;
+                case PulloutState.Minimized: return pulloutMinDestY;
+                default: return pulloutNeutralDestY;
             }
-
-            return pulloutNeutralDestY; // TODO: minimized pullout
         }
 
         nfloat MenuDestinationXFromState(MenuState state)
@@ -397,6 +434,18 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
                 case MenuState.Closed: return -UIScreen.MainScreen.Bounds.Width;
                 default: return -Constants.MenuRightMargin;
             }
+        }
+
+        void HandleOnViewResponseDetails(object sender, EventArgs e)
+        {
+            isPulloutInMinMode = true;
+            AnimatePullout(PulloutState.Minimized);
+        }
+
+        void HandleOnDismissResponseDetails(object sender, EventArgs e)
+        {
+            AnimatePullout(PulloutState.Neutral);
+            isPulloutInMinMode = false;
         }
 
         UISpringTimingParameters GetSpringTimingParameters(CGVector initialVelocity) => new UISpringTimingParameters(4.5f, 900f, 90f, initialVelocity);

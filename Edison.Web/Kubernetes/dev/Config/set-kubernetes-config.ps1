@@ -42,17 +42,17 @@ Copy-Item "config-edisonsignalrservice.json" -Destination "config.json"
 kubectl create configmap config-edisonsignalrservice --from-file=./config.json
 Remove-Item "config.json"
 
-#Copy-Item "config-edisonchatservice.json" -Destination "config.json"
-#kubectl create configmap config-edisonchatservice --from-file=./config.json
-#Remove-Item "config.json"
+Copy-Item "config-edisonchatservice.json" -Destination "config.json"
+kubectl create configmap config-edisonchatservice --from-file=./config.json
+Remove-Item "config.json"
 
 Copy-Item "config-edisonresponseservice.json" -Destination "config.json"
 kubectl create configmap config-edisonresponseservice --from-file=./config.json
 Remove-Item "config.json"
 
-#Copy-Item "config-edisonnotificationhubservice.json" -Destination "config.json"
-#kubectl create configmap config-edisonnotificationhubservice --from-file=./config.json
-#Remove-Item "config.json"
+Copy-Item "config-edisonnotificationhubservice.json" -Destination "config.json"
+kubectl create configmap config-edisonnotificationhubservice --from-file=./config.json
+Remove-Item "config.json"
 
 Copy-Item "config-edisonmessagedispatcherservice.json" -Destination "config.json"
 kubectl create configmap config-edisonmessagedispatcherservice --from-file=./config.json

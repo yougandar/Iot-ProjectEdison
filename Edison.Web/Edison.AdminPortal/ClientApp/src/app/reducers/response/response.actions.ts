@@ -17,6 +17,7 @@ export enum ResponseActionTypes {
   ClearResponses = '[Response] Clear Responses',
   PostNewResponse = '[Response] Post New Response',
   PostNewResponseError = '[Response] Post New Response Error',
+  PostNewResponseSuccess = '[Response] Post New Response Success',
   PutResponse = '[Response] Put Response',
   PutResponseError = '[Response] Put Response Error',
   GetResponses = '[Response] Get Responses',
@@ -95,6 +96,10 @@ export class PutResponse implements Action {
 
 export class PostNewResponseError implements Action {
   readonly type = ResponseActionTypes.PostNewResponseError;
+}
+
+export class PostNewResponseSuccess implements Action {
+  readonly type = ResponseActionTypes.PostNewResponseSuccess;
 }
 
 export class PostNewResponse implements Action {

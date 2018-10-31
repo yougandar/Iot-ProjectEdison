@@ -19,7 +19,6 @@ export enum DeviceActionTypes {
   SignalRNewDevice = '[Device] SignalR New Device',
   SignalRDeleteDevice = '[Device] SignalR Delete Device',
 }
-
 export class SignalRUpdateDevice implements Action {
   readonly type = DeviceActionTypes.SignalRUpdateDevice;
 

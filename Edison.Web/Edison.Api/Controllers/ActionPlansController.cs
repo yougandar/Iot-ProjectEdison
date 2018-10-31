@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Edison.Api.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Backend,B2CWeb")]
+    [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb")]
     [ApiController]
     [Route("api/ActionPlans")]
     public class ActionPlansController : ControllerBase

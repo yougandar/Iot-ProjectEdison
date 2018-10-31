@@ -3,6 +3,7 @@ import { Response, ResponseState } from '../../../../reducers/response/response.
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../../reducers';
 import { PutResponse, CloseResponse } from '../../../../reducers/response/response.actions';
+import { SetSelectingActionPlan } from '../../../../reducers/action-plan/action-plan.actions';
 
 @Component({
   selector: 'app-deactivate-response',
@@ -37,6 +38,7 @@ export class DeactivateResponseComponent implements OnInit, OnChanges {
 
   onReturnToMapClick() {
     this.returnToMapClick.emit();
+    this.store.dispatch(new SetSelectingActionPlan({ isSelecting: false }));
   }
 
   onDeactivateClick() {

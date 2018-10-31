@@ -88,7 +88,7 @@ namespace Edison.Api.Helpers
             };
 
             response.Id = await _repoResponses.CreateItemAsync(response);
-            if (response.Id == Guid.Empty)
+            if (_repoResponses.IsDocumentKeyNull(response))
                 throw new Exception($"An error occured when creating a new response");
 
             ResponseModel output =  _mapper.Map<ResponseModel>(response);
@@ -149,6 +149,45 @@ namespace Edison.Api.Helpers
             return output;
         }
 
+        public async Task<bool> SetSafeStatus(string userId, bool isSafe)
+        {
+            IEnumerable<ResponseDAO> activeResponses = await _repoResponses.GetItemsAsync(p => p.EndDate.Value == null && p.ActionPlan.AcceptSafeStatus);
+
+            foreach(var activeResponse in activeResponses)
+            {
+                if (!await SetSafeStatus(activeResponse, userId, isSafe))
+                    return false;
+            }
+            return true;
+        }
+
+        public async Task<bool> SetSafeStatus(ResponseDAO response, string userId, bool isSafe)
+        {
+            try
+            {
+                if (response.SafeUsers == null)
+                    response.SafeUsers = new List<string>();
+
+                if (isSafe && !response.SafeUsers.Contains(userId))
+                    response.SafeUsers.Add(userId);
+                else if (!isSafe && response.SafeUsers.Contains(userId))
+                    response.SafeUsers.Remove(userId);
+                else
+                    return true; //no reason to update
+
+                await _repoResponses.UpdateItemAsync(response);
+                return true;
+            }
+            catch (DocumentClientException e)
+            {
+                //Update concurrency issue, retrying
+                if (e.StatusCode == HttpStatusCode.PreconditionFailed)
+                    response = await _repoResponses.GetItemAsync(response.Id);
+                    return await SetSafeStatus(response, userId, isSafe);
+                throw e;
+            }
+        }
+
         public async Task<ResponseModel> CloseResponse(ResponseCloseModel responseObj)
         {
             ResponseDAO response = await _repoResponses.GetItemAsync(responseObj.ResponseId);
@@ -198,6 +237,37 @@ namespace Edison.Api.Helpers
             }
 
             return true;
+        }
+
+        public async Task<ResponseModel> AddActionToResponse(ResponseAddActionPlanModel responseAddAction)
+        {
+            ResponseDAO response = await _repoResponses.GetItemAsync(responseAddAction.ResponseId);
+            if (response == null)
+                throw new Exception($"No response found that matches responseid: {responseAddAction.ResponseId}");
+
+            string etag = response.ETag;
+            if (response.EventClusterIds == null)
+                response.EventClusterIds = new List<Guid>();
+            foreach (var action in responseAddAction.Actions)
+            {
+                response.ActionPlan.OpenActions =
+                    response.ActionPlan.OpenActions.Append(_mapper.Map<ActionDAOObject>(action));
+            }
+            response.ETag = etag;
+
+            try
+            {
+                await _repoResponses.UpdateItemAsync(response);
+            }
+            catch (DocumentClientException e)
+            {
+                //Update concurrency issue, retrying
+                if (e.StatusCode == HttpStatusCode.PreconditionFailed)
+                    return await AddActionToResponse(responseAddAction);
+                throw e;
+            }
+
+            return _mapper.Map<ResponseModel>(response);
         }
     }
 }

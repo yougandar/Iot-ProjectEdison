@@ -4,22 +4,27 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Edison.Api.Helpers;
+using Edison.Common.Interfaces;
+using Edison.Common.Messages;
+using Edison.Common.Messages.Interfaces;
 using Edison.Core.Common.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Edison.Api.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Backend,B2CWeb")]
+    [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb")]
     [Route("api/Devices")]
     [ApiController]
     public class DevicesController : ControllerBase
     {
         private readonly DevicesDataManager _devicesDataManager;
+        private readonly IMassTransitServiceBus _serviceBus;
 
-        public DevicesController(DevicesDataManager eventDataManager)
+        public DevicesController(DevicesDataManager eventDataManager, IMassTransitServiceBus serviceBus)
         {
             _devicesDataManager = eventDataManager;
+            _serviceBus = serviceBus;
         }
 
         [HttpGet("{deviceId}")]
@@ -67,7 +72,34 @@ namespace Edison.Api.Controllers
         public async Task<IActionResult> UpdateHeartbeat([FromBody]Guid deviceId)
         {
             var result = await _devicesDataManager.UpdateHeartbeat(deviceId);
-            return Ok(result);
+            if(result)
+                return Ok(HttpStatusCode.OK);
+            else
+                return Ok(HttpStatusCode.InternalServerError);
+        }
+
+        [HttpPut("DeviceLocation")]
+        [Produces(typeof(HttpStatusCode))]
+        public async Task<IActionResult> UpdateGeolocation([FromBody]DeviceGeolocationUpdateModel updateGeolocationObj)
+        {
+            var result = await _devicesDataManager.UpdateGeolocation(updateGeolocationObj);
+
+            if (result != null)
+            {
+                //We need to notify the frontend about the change, but it doesn't fit in the device workflow as phones aren't actual iot devices.
+                await _serviceBus.BusAccess.Publish(new DeviceUIUpdateRequestedEvent()
+                {
+                    CorrelationId = updateGeolocationObj.DeviceId,
+                    DeviceUI = new DeviceUIModel()
+                    {
+                        DeviceId = updateGeolocationObj.DeviceId,
+                        Device = result,
+                        UpdateType = "UpdateDevice"
+                    }
+                });
+                return Ok(HttpStatusCode.OK);
+            }
+            return Ok(HttpStatusCode.InternalServerError);
         }
 
         [HttpDelete]

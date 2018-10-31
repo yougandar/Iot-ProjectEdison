@@ -69,24 +69,6 @@
     <Reference Include="Autofac">
       <HintPath>..\..\Edison.Mobile.Common\packages\Autofac.4.8.1\lib\netstandard1.1\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AppCenter.Android.Bindings">
-      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.AppCenter.1.9.0\lib\MonoAndroid403\Microsoft.AppCenter.Android.Bindings.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter">
-      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.AppCenter.1.9.0\lib\MonoAndroid403\Microsoft.AppCenter.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Analytics.Android.Bindings">
-      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.AppCenter.Analytics.1.9.0\lib\MonoAndroid403\Microsoft.AppCenter.Analytics.Android.Bindings.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Analytics">
-      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.AppCenter.Analytics.1.9.0\lib\MonoAndroid403\Microsoft.AppCenter.Analytics.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Crashes.Android.Bindings">
-      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.AppCenter.Crashes.1.9.0\lib\MonoAndroid403\Microsoft.AppCenter.Crashes.Android.Bindings.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Crashes">
-      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.AppCenter.Crashes.1.9.0\lib\MonoAndroid403\Microsoft.AppCenter.Crashes.dll</HintPath>
-    </Reference>
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
@@ -133,14 +115,44 @@
     <Reference Include="Xamarin.Android.Support.v7.AppCompat">
       <HintPath>..\..\Edison.Mobile.Common\packages\Xamarin.Android.Support.v7.AppCompat.27.0.2.1\lib\MonoAndroid81\Xamarin.Android.Support.v7.AppCompat.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp">
-      <HintPath>..\..\Edison.Mobile.Common\packages\RestSharp.106.4.2\lib\netstandard2.0\RestSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Identity.Client">
-      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.Identity.Client.2.1.0-preview\lib\monoandroid81\Microsoft.Identity.Client.dll</HintPath>
-    </Reference>
     <Reference Include="Xamarin.Android.Support.Dynamic.Animation">
       <HintPath>..\..\Edison.Mobile.Common\packages\Xamarin.Android.Support.Dynamic.Animation.27.0.2.1\lib\MonoAndroid81\Xamarin.Android.Support.Dynamic.Animation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Android.Bindings">
+      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.AppCenter.1.10.0\lib\MonoAndroid403\Microsoft.AppCenter.Android.Bindings.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter">
+      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.AppCenter.1.10.0\lib\MonoAndroid403\Microsoft.AppCenter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Analytics.Android.Bindings">
+      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.AppCenter.Analytics.1.10.0\lib\MonoAndroid403\Microsoft.AppCenter.Analytics.Android.Bindings.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Analytics">
+      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.AppCenter.Analytics.1.10.0\lib\MonoAndroid403\Microsoft.AppCenter.Analytics.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Crashes.Android.Bindings">
+      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.AppCenter.Crashes.1.10.0\lib\MonoAndroid403\Microsoft.AppCenter.Crashes.Android.Bindings.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Crashes">
+      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.AppCenter.Crashes.1.10.0\lib\MonoAndroid403\Microsoft.AppCenter.Crashes.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\..\Edison.Mobile.Common\packages\RestSharp.106.5.4\lib\netstandard2.0\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Identity.Client">
+      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.Identity.Client.2.3.0-preview\lib\monoandroid81\Microsoft.Identity.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Logging">
+      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.IdentityModel.Logging.5.3.0\lib\netstandard2.0\Microsoft.IdentityModel.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Tokens">
+      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.IdentityModel.Tokens.5.3.0\lib\netstandard2.0\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.JsonWebTokens">
+      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.IdentityModel.JsonWebTokens.5.3.0\lib\netstandard2.0\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IdentityModel.Tokens.Jwt">
+      <HintPath>..\..\Edison.Mobile.Common\packages\System.IdentityModel.Tokens.Jwt.5.3.0\lib\netstandard2.0\System.IdentityModel.Tokens.Jwt.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -22,10 +22,6 @@
     "EventProcessingWorkflow": {
       "EventClusterLifespan": 10,
       "EventClusterCooldown": 720
-    },
-    "DeviceSynchronizationWorkflow": {
-      "DeviceSynchronizationQueue": "device-synchronization-messages",
-      "RequestTimeoutSeconds": 30
     }
   },
   "CosmosDb": {

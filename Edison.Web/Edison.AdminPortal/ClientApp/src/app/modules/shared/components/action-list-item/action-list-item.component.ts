@@ -8,15 +8,17 @@ import {
   ComponentFactoryResolver,
   OnDestroy,
   ChangeDetectionStrategy,
-} from '@angular/core';
+  Output,
+  EventEmitter,
+} from '@angular/core'
 import {
   ActionPlanActionTypes,
   ActionPlanType,
-} from '../../../../reducers/action-plan/action-plan.model';
-import { TextTemplateComponent } from './templates/text-template/text-template.component';
-import { NotificationTemplateComponent } from './templates/notification-template/notification-template.component';
-import { RadiusTemplateComponent } from './templates/radius-template/radius-template.component';
-import { fadeMSeconds } from '../../../../shared/animations/fadeInOut';
+} from '../../../../reducers/action-plan/action-plan.model'
+import { TextTemplateComponent } from './templates/text-template/text-template.component'
+import { NotificationTemplateComponent } from './templates/notification-template/notification-template.component'
+import { RadiusTemplateComponent } from './templates/radius-template/radius-template.component'
+import { fadeMSeconds } from '../../../../core/animations/fadeInOut'
 
 @Component({
   selector: 'app-action-list-item',
@@ -25,15 +27,24 @@ import { fadeMSeconds } from '../../../../shared/animations/fadeInOut';
 })
 export class ActionListItemComponent implements OnInit, OnDestroy {
   @ViewChild('container', { read: ViewContainerRef })
-  container: ViewContainerRef;
+  container: ViewContainerRef
 
   @Input()
-  context: ActionPlanActionTypes;
+  context: ActionPlanActionTypes
 
   @Input()
-  last: boolean;
+  last: boolean
 
-  private componentRef: ComponentRef<{}>;
+  @Input()
+  canEdit: boolean
+
+  @Input()
+  canUpdate: boolean
+
+  @Output()
+  onchange = new EventEmitter()
+
+  private componentRef: ComponentRef<{}>
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
@@ -41,42 +52,48 @@ export class ActionListItemComponent implements OnInit, OnDestroy {
     switch (type) {
       case ActionPlanType.RapidSOS:
       case ActionPlanType.Email:
-        return TextTemplateComponent;
+        return TextTemplateComponent
       case ActionPlanType.Notification:
-        return NotificationTemplateComponent;
+        return NotificationTemplateComponent
       case ActionPlanType.LightSensor:
-        return RadiusTemplateComponent;
+        return RadiusTemplateComponent
     }
   }
 
   ngOnInit() {
     if (this.context.actionType) {
-      const componentType = this.getComponentType(this.context.actionType);
+      const componentType = this.getComponentType(this.context.actionType)
 
       // note: componentType must be declared within module.entryComponents
       const factory = this.componentFactoryResolver.resolveComponentFactory(
         componentType
-      );
-      this.componentRef = this.container.createComponent(factory);
+      )
+      this.componentRef = this.container.createComponent(factory)
 
       // set component context
-      const instance = <ActionListItemContext>this.componentRef.instance;
-      instance.context = this.context;
-      instance.last = this.last;
+      const instance = <ActionListItemContext>this.componentRef.instance
+      instance.context = this.context
+      instance.last = this.last
+      instance.canEdit = this.canEdit
+      instance.canUpdate = this.canUpdate
+      instance.onchange = this.onchange
     }
   }
 
   ngOnDestroy() {
     if (this.componentRef) {
       setTimeout(() => {
-        this.componentRef.destroy();
-        this.componentRef = null;
-      }, fadeMSeconds);
+        this.componentRef.destroy()
+        this.componentRef = null
+      }, fadeMSeconds)
     }
   }
 }
 
 export abstract class ActionListItemContext {
-  context: ActionPlanActionTypes;
-  last: boolean;
+  context: ActionPlanActionTypes
+  last: boolean
+  canEdit: boolean
+  canUpdate: boolean
+  onchange: EventEmitter<any>
 }

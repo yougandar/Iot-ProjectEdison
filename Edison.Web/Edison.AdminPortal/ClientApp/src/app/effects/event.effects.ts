@@ -6,33 +6,33 @@ import { mergeMap, catchError, map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import {
-  EventActionTypes,
-  LoadEvents,
-  GetEventsError,
+    EventActionTypes,
+    LoadEvents,
+    GetEventsError,
 } from '../reducers/event/event.actions';
 import { Event } from '../reducers/event/event.model';
 import { mockEvents } from '../mockData/mockEvents';
 
 @Injectable()
 export class EventEffects {
-  @Effect()
-  getEvents$: Observable<Action> = this.actions$.pipe(
-    ofType(EventActionTypes.GetEvents),
-    mergeMap(
-      action =>
-        environment.mockData
-          ? new Observable<Action>((sub: Subscriber<Action>) =>
-              sub.next(new LoadEvents({ events: mockEvents }))
-            )
-          : this.http.get(`${environment.apiUrl}eventclusters`).pipe(
-              map(
-                (events: Event[]) =>
-                  events ? new LoadEvents({ events }) : new GetEventsError()
-              ),
-              catchError(() => of(new GetEventsError()))
-            )
-    )
-  );
+    @Effect()
+    getEvents$: Observable<Action> = this.actions$.pipe(
+        ofType(EventActionTypes.GetEvents),
+        mergeMap(
+            action =>
+                environment.mockData
+                    ? new Observable<Action>((sub: Subscriber<Action>) =>
+                        sub.next(new LoadEvents({ events: mockEvents }))
+                    )
+                    : this.http.get(`${environment.baseUrl}${environment.apiUrl}eventclusters`).pipe(
+                        map(
+                            (events: Event[]) =>
+                                events ? new LoadEvents({ events }) : new GetEventsError()
+                        ),
+                        catchError(() => of(new GetEventsError()))
+                    )
+        )
+    );
 
-  constructor(private actions$: Actions, private http: HttpClient) {}
+    constructor (private actions$: Actions, private http: HttpClient) { }
 }

@@ -12,9 +12,11 @@ namespace Edison.Mobile.Common.Geolocation
     public interface ILocationService
     {
         Task<bool> LocationEnabled();
+        Task<bool> HasLocationPrivileges();
         Task StartLocationUpdates();
         Task StopLocationUpdates();
-        void RequestLocationPrivileges();
+        Task<bool> RequestLocationPrivileges();
         event EventHandler<LocationChangedEventArgs> OnLocationChanged;
+        EdisonLocation LastKnownLocation { get; }
     }
 }

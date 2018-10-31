@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CoreGraphics;
+using CoreLocation;
 using Edison.Mobile.iOS.Common.Shared;
 using Edison.Mobile.iOS.Common.Views;
 using Edison.Mobile.User.Client.Core.CollectionItemViewModels;
-using Edison.Mobile.User.Client.Core.ViewModels;
 using Edison.Mobile.User.Client.iOS.Shared;
-using UIKit;
 
 namespace Edison.Mobile.User.Client.iOS.Views
 {
@@ -22,7 +21,7 @@ namespace Edison.Mobile.User.Client.iOS.Views
         {
             if (!isInitialized)
             {
-                Layer.ShadowColor = PlatformConstants.Color.Black.CGColor;
+                Layer.ShadowColor = Constants.Color.Black.CGColor;
                 Layer.ShadowOffset = CGSize.Empty;
                 Layer.ShadowOpacity = 0.45f;
                 Layer.ShadowRadius = 8;
@@ -55,11 +54,11 @@ namespace Edison.Mobile.User.Client.iOS.Views
                 isInitialized = true;
             }
 
-            mapView.Geolocation = ViewModel?.Geolocation;
+            mapView.EventLocation = ViewModel?.Geolocation != null ? new CLLocation(ViewModel.Geolocation.Latitude, ViewModel.Geolocation.Longitude) : null;
 
             if (ViewModel?.ResponseId != previousResponseId)
             {
-                Task.Run(async () => await ViewModel?.GetPrimaryEventCluster());
+                Task.Run(async () => await ViewModel?.GetResponse());
             }
 
             previousResponseId = ViewModel?.ResponseId;
@@ -69,22 +68,35 @@ namespace Edison.Mobile.User.Client.iOS.Views
         {
             base.BindEventHandlers();
 
-            ViewModel.OnPrimaryEventClusterReceived += OnPrimaryEventClusterReceived;
+            ViewModel.OnResponseReceived += HandleOnResponseReceived;
+            ViewModel.OnLocationChanged += HandleOnLocationChanged;
         }
 
         public override void UnbindEventHandlers()
         {
             base.UnbindEventHandlers();
 
-            ViewModel.OnPrimaryEventClusterReceived -= OnPrimaryEventClusterReceived;
+            ViewModel.OnResponseReceived -= HandleOnResponseReceived;
+            ViewModel.OnLocationChanged -= HandleOnLocationChanged;
         }
 
-        void OnPrimaryEventClusterReceived()
+        void HandleOnResponseReceived()
         {
+            if (ViewModel.Response == null) 
+            {
+                return;
+            }
+
             InvokeOnMainThread(() =>
             {
-                detailsView.EventCluster = ViewModel.PrimaryEventCluster;
+                mapView.EventLocation = new CLLocation(ViewModel.Response.Geolocation.Latitude, ViewModel.Response.Geolocation.Longitude);
+                detailsView.Response = ViewModel.Response;
             });
+        }
+
+        void HandleOnLocationChanged(object sender, Common.Geolocation.LocationChangedEventArgs e)
+        {
+            mapView.UserLocation = new CLLocation(e.CurrentLocation.Latitude, e.CurrentLocation.Longitude);
         }
     }
 }

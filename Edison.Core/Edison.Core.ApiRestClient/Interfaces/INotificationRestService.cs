@@ -1,4 +1,5 @@
 ﻿using Edison.Core.Common.Models;
+using Microsoft.Azure.NotificationHubs;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -8,8 +9,10 @@ namespace Edison.Core.Interfaces
 {
     public interface INotificationRestService
     {
-        Task<bool> RegisterDevice(MobileDeviceNotificationHubInstallationModel deviceInstallation);
-        Task<NotificationModel> SendNotification(NotificationModel notificationReq);
+        Task<DeviceMobileModel> RegisterDevice(DeviceRegistrationModel deviceRegistration);
+        Task<bool> RemoveDevice(string registrationId);
+        Task<NotificationModel> SendNotification(NotificationCreationModel notificationReq);
         Task<IEnumerable<NotificationModel>> GetNotificationsHistory(int pageSize, string continuationToken);
+        Task<CollectionQueryResult<RegistrationDescription>> GetRegisteredDevices(int pageSize, string continuationToken);
     }
 }

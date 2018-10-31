@@ -14,7 +14,7 @@ namespace Edison.Mobile.User.Client.iOS.Views
             {
                 TranslatesAutoresizingMaskIntoConstraints = false,
                 Font = Constants.Fonts.RubikOfSize(Constants.Fonts.Size.TwentyFour),
-                TextColor = PlatformConstants.Color.DarkGray,
+                TextColor = Constants.Color.DarkGray,
                 Text = "Send Message",
             };
 

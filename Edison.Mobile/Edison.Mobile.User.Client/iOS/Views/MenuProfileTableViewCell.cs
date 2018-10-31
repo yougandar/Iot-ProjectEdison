@@ -7,7 +7,7 @@ namespace Edison.Mobile.User.Client.iOS.Views
 {
     public class MenuProfileTableViewCell : BaseMenuTableViewCell
     {
-        readonly float avatarHeight = 60;
+        readonly nfloat avatarHeight = (UIScreen.MainScreen.Bounds.Width - Constants.MenuRightMargin) / 2f;
 
         UIImageView avatarImageView;
 
@@ -21,14 +21,14 @@ namespace Edison.Mobile.User.Client.iOS.Views
                 ContentView.AddSubview(labelContainerView);
 
                 labelContainerView.BottomAnchor.ConstraintEqualTo(ContentView.BottomAnchor).Active = true;
-                labelContainerView.LeftAnchor.ConstraintEqualTo(ContentView.LeftAnchor, (ContentView.Bounds.Width / 2)).Active = true;
+                labelContainerView.LeftAnchor.ConstraintEqualTo(ContentView.LeftAnchor, Constants.MenuRightMargin).Active = true;
                 labelContainerView.RightAnchor.ConstraintEqualTo(ContentView.RightAnchor).Active = true;
                 labelContainerView.HeightAnchor.ConstraintEqualTo(Constants.MenuCellHeight).Active = true;
 
                 titleLabel = new UILabel
                 {
                     TranslatesAutoresizingMaskIntoConstraints = false,
-                    TextColor = PlatformConstants.Color.White,
+                    TextColor = Constants.Color.Black,
                     Font = Constants.Fonts.RubikOfSize(fontSize),
                     TextAlignment = UITextAlignment.Center,
                 };
@@ -39,10 +39,17 @@ namespace Edison.Mobile.User.Client.iOS.Views
                 titleLabel.RightAnchor.ConstraintEqualTo(ContentView.RightAnchor).Active = true;
                 titleLabel.CenterYAnchor.ConstraintEqualTo(labelContainerView.CenterYAnchor).Active = true;
 
+                var avatarLayoutGuide = new UILayoutGuide();
+
+                ContentView.AddLayoutGuide(avatarLayoutGuide);
+
+                avatarLayoutGuide.LeftAnchor.ConstraintEqualTo(ContentView.LeftAnchor, Constants.MenuRightMargin).Active = true;
+                avatarLayoutGuide.RightAnchor.ConstraintEqualTo(ContentView.RightAnchor).Active = true;
+
                 avatarImageView = new UIImageView
                 {
                     TranslatesAutoresizingMaskIntoConstraints = false,
-                    BackgroundColor = PlatformConstants.Color.LightGray,
+                    BackgroundColor = Constants.Color.LightGray,
                 };
 
                 avatarImageView.Layer.CornerRadius = avatarHeight / 2;
@@ -52,7 +59,7 @@ namespace Edison.Mobile.User.Client.iOS.Views
                 avatarImageView.BottomAnchor.ConstraintEqualTo(labelContainerView.TopAnchor).Active = true;
                 avatarImageView.HeightAnchor.ConstraintEqualTo(avatarHeight).Active = true;
                 avatarImageView.WidthAnchor.ConstraintEqualTo(avatarHeight).Active = true;
-                avatarImageView.CenterXAnchor.ConstraintEqualTo(ContentView.CenterXAnchor, ContentView.Bounds.Width / 4).Active = true;
+                avatarImageView.CenterXAnchor.ConstraintEqualTo(avatarLayoutGuide.CenterXAnchor).Active = true;
 
                 isInitialized = true;
             }

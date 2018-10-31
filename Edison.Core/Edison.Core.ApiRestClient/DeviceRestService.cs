@@ -61,6 +61,19 @@ namespace Edison.Core
             return true;
         }
 
+        public async Task<bool> UpdateGeolocation(DeviceGeolocationUpdateModel updateGeolocationObj)
+        {
+            RestRequest request = await PrepareQuery("Devices/DeviceLocation", Method.PUT);
+            request.AddParameter("application/json", JsonConvert.SerializeObject(updateGeolocationObj), ParameterType.RequestBody);
+            var queryResult = await _client.ExecuteTaskAsync(request);
+            if (!queryResult.IsSuccessful)
+            {
+                _logger.LogError($"UpdateGeolocation: Error while updating device geolocation: {queryResult.StatusCode}");
+                return false;
+            }
+            return true;
+        }
+
         public async Task<bool> DeleteDevice(Guid deviceId)
         {
             RestRequest request = await PrepareQuery("Devices", Method.DELETE);

@@ -5,17 +5,20 @@
             <div class="count">{{ eventCount }}</div>
             <div>
                 <div class="app-icon location small"></div>
-                {{ eventCount > 1 ? 'Events' : 'Event' }}
+                {{ eventCount === 1 ? 'Event' : 'Events' }}
             </div>
         </div>
     </app-circle-spinner>
 </div>
 
 <div class="events-container" infiniteScroll (scrolled)="onScroll()" [scrollWindow]="false" [infiniteScrollDistance]="2"
-    [infiniteScrollThrottle]="500">
-    <app-event-card *ngFor="let event of events" [event]="event" [@fadeInOut]></app-event-card>
+    [infiniteScrollThrottle]="500" [@listFadeInOut]>
 
-    <div class="bar-earlier">Earlier Today</div>
+    <ng-container *ngFor="let event of recentEventsLazy; let first = first">
+        <div>
+            <app-event-card [event]="event"></app-event-card>
+        </div>
+        <div *ngIf="first" class="bar-earlier">Earlier Today</div>
+    </ng-container>
 
-    <app-event-card *ngFor="let event of recentEventsLazy" [event]="event"></app-event-card>
 </div>

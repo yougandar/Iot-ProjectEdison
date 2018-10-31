@@ -22,7 +22,7 @@ export const activeResponsesSelector = createSelector(
 
 export const responsesExist = createSelector(
   responsesSelector,
-  state => state.filter(response => response.responseState === ResponseState.Active).length > 0
+  state => state.length > 0
 );
 
 export const activeResponseSelector = createSelector(

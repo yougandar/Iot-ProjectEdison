@@ -1,6 +1,6 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-
-// TODO: Update to use observable instead of setInterval
+import { Component, Output, EventEmitter, Input } from '@angular/core'
+import { interval, Subscription, Observable } from 'rxjs'
+import { startWith, take } from 'rxjs/operators'
 
 @Component({
   selector: 'app-delay-button',
@@ -8,48 +8,63 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
   styleUrls: ['./delay-button.component.scss'],
 })
 export class DelayButtonComponent {
-  @Input() buttonText: string;
-  @Input() subheaderText: string;
-  @Input() disabled = false;
-  @Output() clickCompleted = new EventEmitter();
+  @Input()
+  buttonText: string
+  @Input()
+  subheaderText: string
+  @Input()
+  disabled = false
+  @Input()
+  urgency: string
+  @Output()
+  clickCompleted = new EventEmitter()
 
-  currentProgress = 0;
-  maxProgress = 1000;
-  progressMaxed = false;
-  progressInterval: any;
+  private intervalSub$: Subscription
+
+  currentProgress = 0
+  maxProgress = 100
+  progressMaxed = false
+  progressInterval: any
+  hover = false
+  active = false
+  activated = false
 
   onMouseDown = () => {
-    if (this.disabled) { return; }
+    if (this.disabled) {
+      return
+    }
 
-    clearInterval(this.progressInterval);
-    this.progressInterval = setInterval(() => { this.incrementProgress(); }, 1);
+    this.active = true
+
+    this.intervalSub$ = interval(500)
+      .pipe(
+        startWith(1),
+        take(9)
+      )
+      .subscribe(x => {
+        if (this.currentProgress >= this.maxProgress) {
+          this.intervalSub$.unsubscribe()
+          this.progressMaxed = true
+          this.clickCompleted.emit()
+        } else {
+          this.currentProgress += this.maxProgress / 8
+        }
+      })
   }
 
   onMouseUp = () => {
-    if (this.disabled) { return; }
-
-    clearInterval(this.progressInterval);
-    if (!this.progressMaxed) {
-      this.progressInterval = setInterval(() => { this.decrementProgress(); }, 1);
+    if (this.disabled) {
+      return
     }
+
+    this.intervalSub$ && this.intervalSub$.unsubscribe()
+
+    this.active = false
+    this.currentProgress = 0
   }
 
-  incrementProgress() {
-    if (this.currentProgress < this.maxProgress) {
-      this.currentProgress += 1;
-    } else {
-      clearInterval(this.progressInterval);
-      this.progressMaxed = true;
-      this.clickCompleted.emit();
-    }
+  getCircleClass() {
+    return `${this.active ? 'active' : ''} ${this.urgency &&
+      this.urgency.toLowerCase()}`
   }
-
-  decrementProgress() {
-    if (this.currentProgress > 0) {
-      this.currentProgress -= 1;
-    } else {
-      clearInterval(this.progressInterval);
-    }
-  }
-
 }

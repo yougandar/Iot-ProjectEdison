@@ -1,7 +1,7 @@
 export enum ActionPlanColor {
   Red = 'Red',
   Green = 'Green',
-  Yellow = 'Yellow'
+  Yellow = 'Yellow',
 }
 
 export enum ActionPlanIcon {
@@ -12,7 +12,7 @@ export enum ActionPlanIcon {
   Health = 'Health',
   Protest = 'Protest',
   VIP = 'VIP',
-  Pollution = 'Pollution'
+  Pollution = 'Pollution',
 }
 
 export enum ActionPlanType {
@@ -20,48 +20,55 @@ export enum ActionPlanType {
   Notification = 'notification',
   Email = 'email',
   RapidSOS = 'rapidsos',
-  LightSensor = 'lightsensor'
+  LightSensor = 'lightsensor',
+}
+
+export enum ActionPlanStatus {
+  InComplete,
+  Complete,
 }
 
 export interface ActionPlanAction {
-  actionId: string;
-  actionType: ActionPlanType;
-  isActive: true;
-  description: string;
-  parameters?: any;
+  actionId: string
+  actionType: ActionPlanType
+  isActive: true
+  description: string
+  parameters?: any
+  status: ActionPlanStatus
 }
 
 export interface ActionPlanTextAction extends ActionPlanAction {
   parameters: {
-    content: string;
-  };
+    content: string
+  }
 }
 
 export interface ActionPlanNotificationAction extends ActionPlanAction {
   parameters: {
-    content: string;
-  };
+    message: string
+    newMessage: string
+  }
 }
 
 export interface ActionPlanRadiusAction extends ActionPlanAction {
   parameters: {
-    radius: string;
-    color: string;
-  };
+    radius: string
+    color: string
+  }
 }
 
 export type ActionPlanActionTypes =
-  ActionPlanNotificationAction
+  | ActionPlanNotificationAction
   | ActionPlanRadiusAction
-  | ActionPlanTextAction;
+  | ActionPlanTextAction
 
 export interface ActionPlan {
-  actionPlanId: string;
-  name: string;
-  description: string;
-  isActive: true;
-  color: ActionPlanColor;
-  icon: ActionPlanIcon;
-  openActions?: ActionPlanAction[];
-  closeActions?: ActionPlanAction[];
+  actionPlanId: string
+  name: string
+  description: string
+  isActive: true
+  color: ActionPlanColor
+  icon: ActionPlanIcon
+  openActions?: ActionPlanAction[]
+  closeActions?: ActionPlanAction[]
 }

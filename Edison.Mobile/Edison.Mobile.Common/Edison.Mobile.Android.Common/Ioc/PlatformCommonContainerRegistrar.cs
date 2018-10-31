@@ -2,10 +2,12 @@
 using Edison.Mobile.Android.Common.Auth;
 using Edison.Mobile.Android.Common.Geolocation;
 using Edison.Mobile.Android.Common.Logging;
+using Edison.Mobile.Android.Common.Notifications;
 using Edison.Mobile.Common.Auth;
 using Edison.Mobile.Common.Geolocation;
 using Edison.Mobile.Common.Ioc;
 using Edison.Mobile.Common.Logging;
+using Edison.Mobile.Common.Notifications;
 
 namespace Edison.Mobile.Android.Common.Ioc
 {
@@ -23,6 +25,11 @@ namespace Edison.Mobile.Android.Common.Ioc
 
             builder.RegisterType<PlatformAuthService>()
                    .As<IPlatformAuthService>();
+
+            builder.RegisterType<NotificationService>()
+                   .As<INotificationService>()
+                   .SingleInstance();
+
         }
     }
 }

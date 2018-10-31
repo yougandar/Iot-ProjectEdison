@@ -1,6 +1,7 @@
 ﻿using System;
 using CoreLocation;
 using Edison.Core.Common.Models;
+using Edison.Mobile.iOS.Common.Extensions;
 using MapKit;
 using UIKit;
 
@@ -9,27 +10,31 @@ namespace Edison.Mobile.User.Client.iOS.Views
     public class ResponseMapView : UIView
     {
         readonly MKMapView mapView;
-        readonly int regionSizeMeters = 500;
 
-        Geolocation geolocation;
-        public Geolocation Geolocation 
+        CLLocation eventLocation;
+        CLLocation userLocation;
+
+        public CLLocation EventLocation
         {
-            get => geolocation;
-            set 
+            get => eventLocation;
+            set
             {
-                geolocation = value;
-                if (geolocation != null)
-                {
-                    var location = new CLLocationCoordinate2D(geolocation.Latitude, geolocation.Longitude);
-                    var viewRegion = MKCoordinateRegion.FromDistance(location, regionSizeMeters, regionSizeMeters);
-                    var annotation = new MKPointAnnotation { Coordinate = location };
-                    mapView.SetRegion(viewRegion, false);
-                    mapView.AddAnnotation(annotation);
-                }
+                eventLocation = value;
+                UpdateMap();
             }
         }
 
-        public ResponseMapView(Geolocation geolocation = null)
+        public CLLocation UserLocation
+        {
+            get => userLocation;
+            set
+            {
+                userLocation = value;
+                UpdateMap();
+            }
+        }
+
+        public ResponseMapView(CLLocation location = null)
         {
             mapView = new MKMapView
             {
@@ -44,7 +49,24 @@ namespace Edison.Mobile.User.Client.iOS.Views
             mapView.TopAnchor.ConstraintEqualTo(TopAnchor).Active = true;
             mapView.BottomAnchor.ConstraintEqualTo(BottomAnchor).Active = true;
 
-            Geolocation = geolocation;
+            EventLocation = location;
+        }
+
+        void UpdateMap()
+        {
+            if (eventLocation == null || userLocation == null)
+            {
+                return;
+            }
+
+            var deltaPaddingFactor = 1.1;
+            var latitudeDelta = Math.Abs(userLocation.Coordinate.Latitude - eventLocation.Coordinate.Latitude);
+            var longitudeDelta = Math.Abs(userLocation.Coordinate.Longitude - eventLocation.Coordinate.Longitude);
+            var spanRegion = new MKCoordinateRegion(userLocation.Coordinate.GetMidpointCoordinate(eventLocation.Coordinate), new MKCoordinateSpan(latitudeDelta * deltaPaddingFactor, longitudeDelta * deltaPaddingFactor));
+            var region = mapView.RegionThatFits(spanRegion);
+            mapView.SetRegion(region, false);
+            var annotation = new MKPointAnnotation { Coordinate = eventLocation.Coordinate };
+            mapView.AddAnnotation(annotation);
         }
     }
 }

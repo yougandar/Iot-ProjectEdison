@@ -78,6 +78,12 @@ namespace Edison.Devices.SoundSensor
         {
             _logging.LogMessage("Retrieve desired properties", LoggingLevel.Verbose);
             var desiredProperties = await _azureIoTHubService.GetDeviceTwinAsync();
+            if (string.IsNullOrEmpty(desiredProperties))
+            {
+                _logging.LogMessage("Cannot retrieve desired properties", LoggingLevel.Error);
+                return;
+            }
+
             _config = JsonConvert.DeserializeObject<SoundSensorConfig>(desiredProperties);
 
             if (_config != null)

@@ -1,4 +1,5 @@
-﻿using Edison.Mobile.Common.Auth;
+﻿using System.Threading.Tasks;
+using Edison.Mobile.Common.Auth;
 using Edison.Mobile.Common.Shared;
 
 namespace Edison.Mobile.User.Client.Core.ViewModels
@@ -7,11 +8,16 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
     {
         readonly AuthService authService;
 
-        public string ProfileName => authService.AuthenticationResult?.Account.Username;
+        public string ProfileName => authService.Email;
 
         public MenuViewModel(AuthService authService)
         {
             this.authService = authService;
+        }
+
+        public async Task SignOut()
+        {
+            await authService.SignOut();
         }
     }
 }

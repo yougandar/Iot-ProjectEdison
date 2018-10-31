@@ -1,15 +1,14 @@
-@import 'colors';
+@import 'colorScheme';
 @import 'icons';
-
-mat-icon {
-  color: $primary-color;
-}
+@import 'buttons';
 
 mat-card {
   padding: 0;
   margin: 0 20px 10px 20px;
   border-radius: 5px;
-  border: 1px solid #F9F9FA;
+  font-family: 'Rubik Regular';
+  border: 1px solid #f9f9fa;
+  box-shadow: 0 2px 8px 0px rgba(0, 0, 0, 0.2);
 
   .map-control {
     color: #8886a0;
@@ -18,8 +17,25 @@ mat-card {
     justify-content: flex-end;
     align-items: center;
     padding-top: 3px;
-    border-top: 2.8px solid #E0E0E6;
+    border-top: 2.8px solid #e0e0e6;
     cursor: pointer;
+    transition: background-color 1s ease;
+
+    &.red {
+      border-color: $red;
+    }
+
+    &.blue {
+      border-color: $blue;
+    }
+
+    &.green {
+      border-color: $green;
+    }
+
+    &.yellow {
+      border-color: $yellow;
+    }
 
     .icon {
       margin: 0 15px;
@@ -36,6 +52,26 @@ mat-card {
       bottom: 0;
       cursor: pointer;
       z-index: 2;
+
+      &.red {
+        background-color: $red;
+        opacity: 0.15;
+      }
+
+      &.blue {
+        background-color: $blue;
+        opacity: 0.15;
+      }
+
+      &.green {
+        background-color: $green;
+        opacity: 0.15;
+      }
+
+      &.yellow {
+        background-color: $yellow;
+        opacity: 0.15;
+      }
     }
   }
 
@@ -44,8 +80,9 @@ mat-card {
     display: flex;
     align-items: center;
     text-transform: uppercase;
+    cursor: pointer;
 
-    mat-icon {
+    .app-icon {
       margin-right: 10px;
     }
   }
@@ -58,14 +95,9 @@ mat-card {
     padding: 10px 0;
     margin-top: 5px;
 
-    button {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-      margin: 0 10px;
-      font-size: 16px;
-      color: #3322FF;
-      text-transform: uppercase;
+    .app-icon {
+      margin-right: 20px;
+      margin-left: -20px;
     }
   }
 
@@ -84,18 +116,27 @@ mat-card {
   .card-details {
     padding: 10px;
     padding-bottom: 0;
+    cursor: pointer;
 
     > div {
       display: flex;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       align-items: center;
       margin-bottom: 10px;
+
+      .text {
+        max-width: 85%;
+      }
+
+      &.first {
+        margin-right: 0;
+      }
 
       &.last {
         margin-bottom: 0;
       }
 
-      mat-icon {
+      .app-icon {
         margin-right: 10px;
       }
 
@@ -107,13 +148,13 @@ mat-card {
         flex-grow: 2;
         justify-content: left;
 
+        .comma {
+          margin-right: 5px;
+        }
+
         div {
           display: flex;
           align-items: center;
-        }
-
-        :not(.last) {
-          margin-right: 5px;
         }
       }
     }

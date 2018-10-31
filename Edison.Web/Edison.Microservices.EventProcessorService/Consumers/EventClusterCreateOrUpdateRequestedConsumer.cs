@@ -2,14 +2,11 @@
 using Edison.Common.Messages.Interfaces;
 using Edison.Core.Common.Models;
 using Edison.Core.Interfaces;
-using Edison.EventProcessorService.Models;
 using MassTransit;
-using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace Edison.EventProcessorService.Consumers
@@ -30,9 +27,9 @@ namespace Edison.EventProcessorService.Consumers
         {
             try
             {
-                _logger.LogDebug($"EventClusterCreateRequestedConsumer: Retrieved message from device '{context.Message.DeviceId}'.");
+                _logger.LogDebug($"EventClusterCreateRequestedConsumer: Retrieved message from source '{context.Message.DeviceId}'.");
 
-                if (JsonConvert.DeserializeObject<DeviceTriggerIoTMessage>(context.Message.Data) is DeviceTriggerIoTMessage deviceMessage)
+                if (JsonConvert.DeserializeObject<Dictionary<string,object>>(context.Message.Data) is Dictionary<string,object> deviceMessage)
                 {
                     EventClusterCreationModel newEvent = new EventClusterCreationModel()
                     {
@@ -40,7 +37,7 @@ namespace Edison.EventProcessorService.Consumers
                         Date = context.Message.Date,
                         EventType = context.Message.EventType.ToLower(),
                         DeviceId = context.Message.DeviceId,
-                        Metadata = deviceMessage.Metadata,
+                        Metadata = deviceMessage,
                     };
 
                     var eventCluster = await _eventClusterRestService.CreateOrUpdateEventCluster(newEvent);

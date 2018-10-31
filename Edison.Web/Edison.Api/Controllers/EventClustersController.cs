@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Edison.Api.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Backend,B2CWeb")]
+    [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb")]
     [Route("api/EventClusters")]
     [ApiController]
     public class EventClustersController : ControllerBase
@@ -52,6 +52,7 @@ namespace Edison.Api.Controllers
             var result = await _eventDataManager.CreateOrUpdateEventCluster(eventObj);
             return Ok(result);
         }
+
 
         [HttpPut("Close")]
         [Produces(typeof(EventClusterModel))]

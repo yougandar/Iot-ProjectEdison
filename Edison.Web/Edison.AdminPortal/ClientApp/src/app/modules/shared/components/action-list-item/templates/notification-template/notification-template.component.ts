@@ -1,22 +1,60 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
-import { ActionPlanNotificationAction } from '../../../../../../reducers/action-plan/action-plan.model';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  EventEmitter,
+} from '@angular/core'
+import { ActionPlanNotificationAction } from '../../../../../../reducers/action-plan/action-plan.model'
 
 @Component({
   selector: 'app-notification-template',
   templateUrl: './notification-template.component.html',
   styleUrls: ['./notification-template.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NotificationTemplateComponent implements OnInit {
+export class NotificationTemplateComponent {
   @Input()
-  context: ActionPlanNotificationAction;
+  context: ActionPlanNotificationAction
 
   @Input()
-  last: boolean;
+  last: boolean
 
-  constructor() { }
+  @Input()
+  canEdit: boolean
 
-  ngOnInit() {
+  @Input()
+  canUpdate: boolean
+
+  @Input()
+  onchange: EventEmitter<any>
+
+  notificationText: string
+  editing = false
+  adding = false
+
+  addNew() {
+    this.notificationText = ''
+    this.adding = true
   }
 
+  remove() {
+    this.notificationText = ''
+    this.adding = false
+  }
+
+  edit() {
+    this.editing = true
+  }
+
+  editComplete() {
+    this.editing = false
+    this.onchange.emit()
+  }
+
+  notificationChanged() {
+    if (!this.canUpdate) {
+      return
+    }
+    this.onchange.emit()
+  }
 }

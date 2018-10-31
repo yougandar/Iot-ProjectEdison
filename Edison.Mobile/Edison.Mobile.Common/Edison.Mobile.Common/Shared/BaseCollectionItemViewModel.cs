@@ -4,20 +4,30 @@
     {
         public virtual void ViewAppearing()
         {
-
+            BindEventHandlers();
         }
 
-        public virtual void ViewAppeared() 
+        public virtual void ViewAppeared()
         {
 
         }
 
-        public virtual void ViewDisappearing() 
+        public virtual void ViewDisappearing()
         {
 
         }
 
-        public virtual void ViewDisappeared() 
+        public virtual void ViewDisappeared()
+        {
+            UnBindEventHandlers();
+        }
+
+        public virtual void BindEventHandlers()
+        {
+            UnBindEventHandlers();
+        }
+
+        public virtual void UnBindEventHandlers() 
         {
 
         }

@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Text;
+using System.IO;
+using System.Net;
 using Edison.Mobile.Common.Auth;
 using Edison.Mobile.Common.Logging;
 using Newtonsoft.Json;
 using RestSharp;
+using RestSharp.Deserializers;
+using System.Threading.Tasks;
 
 namespace Edison.Mobile.Common.Network
 {
@@ -18,13 +23,14 @@ namespace Edison.Mobile.Common.Network
             this.authService = authService;
 
             client = new RestClient(baseUrl);
+            client.AddHandler("application/json", new NewtonsoftDeserializer());
         }
 
         protected RestRequest PrepareRequest(string endpoint, Method method, object requestBody = null)
         {
             try
             {
-                var token = authService.AuthenticationResult.AccessToken;
+                var token = authService.AuthenticationResult.IdToken;
                 var request = new RestRequest(endpoint, method) { RequestFormat = DataFormat.Json };
 
                 request.AddHeader("Authorization", $"Bearer {token}");
@@ -41,6 +47,19 @@ namespace Edison.Mobile.Common.Network
                 logger.Log(ex, "Error preparing REST request");
                 return new RestRequest();
             }
+        }
+    }
+
+    public class NewtonsoftDeserializer : IDeserializer
+    {
+        public string RootElement { get; set; }
+        public string Namespace { get; set; }
+        public string DateFormat { get; set; }
+        public string ContentType { get; set; }
+
+        public T Deserialize<T>(IRestResponse response)
+        {
+            return JsonConvert.DeserializeObject<T>(response.Content);
         }
     }
 }

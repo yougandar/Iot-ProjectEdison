@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Edison.Core.Common.Models;
 using Edison.Mobile.User.Client.Core.CollectionItemViewModels;
 using Edison.Mobile.User.Client.Core.ViewModels;
 using Edison.Mobile.User.Client.iOS.Views;
@@ -12,6 +13,8 @@ namespace Edison.Mobile.User.Client.iOS.DataSources
     public class ResponsesCollectionViewSource : UICollectionViewSource, IUICollectionViewDataSourcePrefetching
     {
         readonly ObservableRangeCollection<ResponseCollectionItemViewModel> responses;
+
+        public event EventHandler<int> OnResponseSelected;
 
         public ResponsesCollectionViewSource(ObservableRangeCollection<ResponseCollectionItemViewModel> responses) 
         {
@@ -37,8 +40,13 @@ namespace Edison.Mobile.User.Client.iOS.DataSources
             {
                 var cell = collectionView.DequeueReusableCell(typeof(ResponseCollectionViewCell).Name, indexPath) as ResponseCollectionViewCell;
                 var viewModel = responses[(int)indexPath.Item];
-                Task.Run(async () => await viewModel.GetPrimaryEventCluster());
+                Task.Run(async () => await viewModel.GetResponse());
             }
+        }
+
+        public override void ItemSelected(UICollectionView collectionView, NSIndexPath indexPath)
+        {
+            OnResponseSelected?.Invoke(this, (int)indexPath.Item);
         }
     }
 }

@@ -1,5 +1,5 @@
 import { ActionPlan } from '../action-plan/action-plan.model';
-import { GeoLocation } from '../../shared/models/geoLocation';
+import { GeoLocation } from '../../core/models/geoLocation';
 import { Event } from '../event/event.model';
 import { User } from 'msal';
 
@@ -31,6 +31,7 @@ export class Response {
     this.geolocation = event.device.geolocation;
     this.responseState = ResponseState.Active;
     this.event = event;
+    this.eventClusterIds = [];
 
     if (responseId) {
       this.responseId = responseId;

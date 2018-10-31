@@ -36,23 +36,12 @@ namespace Edison.Mobile.User.Client.iOS.DataSources
                         (cell as MenuProfileTableViewCell).Initialize(ViewModel?.ProfileName);
                     }
                     break;
-                case 1:
-                case 2:
-                    {
-                        cell = tableView.DequeueReusableCell(typeof(MenuItemTableViewCell).Name, indexPath) as MenuItemTableViewCell;
-                        (cell as MenuItemTableViewCell).Initialize(indexPath.Row == 1 ? "My Info" : "Notifications");
-                    }
-                    break;
-                case 3:
-                    {
-                        cell = tableView.DequeueReusableCell(typeof(MenuSeparatorTableViewCell).Name, indexPath) as MenuSeparatorTableViewCell;
-                        (cell as MenuSeparatorTableViewCell).Initialize();
-                    }
-                    break;
                 default:
                     {
                         cell = tableView.DequeueReusableCell(typeof(MenuItemTableViewCell).Name, indexPath) as MenuItemTableViewCell;
-                        (cell as MenuItemTableViewCell).Initialize("Sign Out", 12);
+                        var title = indexPath.Row == 1 ? "My Info" : "Notifications";
+                        var image = indexPath.Row == 1 ? Constants.Assets.PersonWhite : Constants.Assets.NotificationBell;
+                        (cell as MenuItemTableViewCell).Initialize(title, image);
                     }
                     break;
             }
@@ -66,7 +55,7 @@ namespace Edison.Mobile.User.Client.iOS.DataSources
 
         public override nint RowsInSection(UITableView tableview, nint section)
         {
-            return 5;
+            return 3;
         }
 
         public override nint NumberOfSections(UITableView tableView)
@@ -76,9 +65,8 @@ namespace Edison.Mobile.User.Client.iOS.DataSources
 
         public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
         {
-            if (indexPath.Row == 0) return 112;
-            if (indexPath.Row == 3) return Constants.MenuCellHeight / 2;
-            return indexPath.Row == 0 ? 112 : Constants.MenuCellHeight;
+            if (indexPath.Row == 0) return ((UIScreen.MainScreen.Bounds.Width - Constants.MenuRightMargin) / 2f) + Constants.MenuCellHeight;
+            return Constants.MenuCellHeight;
         }
 
         public override void RowHighlighted(UITableView tableView, NSIndexPath rowIndexPath)
