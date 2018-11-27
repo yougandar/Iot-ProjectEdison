@@ -8,7 +8,11 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
     {
         readonly AuthService authService;
 
-        public string ProfileName => authService.Email;
+        public string ProfileName => !(string.IsNullOrEmpty(authService.GivenName) || string.IsNullOrEmpty(authService.FamilyName))
+            ? $"{authService.GivenName} {authService.FamilyName}"
+            : authService.Email;
+
+        public string Initials => authService.Initials;
 
         public MenuViewModel(AuthService authService)
         {
@@ -17,6 +21,7 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
 
         public async Task SignOut()
         {
+
             await authService.SignOut();
         }
     }

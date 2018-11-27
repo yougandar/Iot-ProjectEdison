@@ -16,7 +16,12 @@ namespace Edison.Mobile.Common.Auth
         public event EventHandler<AuthChangedEventArgs> OnAuthChanged;
 
         public AuthenticationResult AuthenticationResult { get; set; }
+
         public string Email { get; set; }
+        public string GivenName { get; set; }
+        public string FamilyName { get; set; }
+
+        public string Initials => $"{GivenName?.Substring(0, 1) ?? ""}{FamilyName?.Substring(0, 1) ?? ""}";
 
         public AuthService(IPlatformAuthService platformAuthService, IPublicClientApplication publicClientApplication, ILogger logger)
         {
@@ -66,24 +71,33 @@ namespace Edison.Mobile.Common.Auth
             return false;
         }
 
-        public async Task SignOut() 
+        public async Task SignOut()
         {
             var accounts = await publicClientApplication.GetAccountsAsync();
-            foreach (var account in accounts) 
+            foreach (var account in accounts)
             {
                 await publicClientApplication.RemoveAsync(account);
             }
         }
 
-        void HandleTokenAcquisition(bool wasAcquiredSilently) 
+        void HandleTokenAcquisition(bool wasAcquiredSilently)
         {
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(AuthenticationResult.IdToken);
-            var emailsClaim = token.Claims.First(c => c.Type == "emails");
-            if (emailsClaim != null)
+            foreach (var claim in token.Claims)
             {
-                var email = emailsClaim.Value;
-                Email = email;
+                switch (claim.Type)
+                {
+                    case "given_name":
+                        GivenName = claim.Value;
+                        break;
+                    case "family_name":
+                        FamilyName = claim.Value;
+                        break;
+                    case "emails":
+                        Email = claim.Value;
+                        break;
+                }
             }
 
             OnAuthChanged?.Invoke(this, new AuthChangedEventArgs

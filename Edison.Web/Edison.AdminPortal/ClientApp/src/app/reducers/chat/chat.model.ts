@@ -6,4 +6,6 @@ export interface Chat extends MessageModel {
 export interface Message {
     name: string;
     text: string;
+    role: string;
+    self: boolean;
 }

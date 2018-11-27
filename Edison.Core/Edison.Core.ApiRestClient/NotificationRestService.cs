@@ -60,9 +60,20 @@ namespace Edison.Core
                 _logger.LogError($"SendNotification: Error: {queryResult.StatusCode}");
             return null;
         }
+        public async Task<IEnumerable<NotificationModel>> GetNotificationsHistory(Guid responseId)
+        {
+            RestRequest request = await PrepareQuery("Notifications/Responses/{responseId}", Method.GET);
+            request.AddUrlSegment("responseId", responseId);
+            var queryResult = await _client.ExecuteTaskAsync<IEnumerable<NotificationModel>>(request);
+            if (!queryResult.IsSuccessful)
+                return queryResult.Data;
+            else
+                _logger.LogError($"GetNotificationsHistory: {queryResult.StatusCode}");
+            return null;
+        }
         public async Task<IEnumerable<NotificationModel>> GetNotificationsHistory(int pageSize, string continuationToken)
         {
-            RestRequest request = await PrepareQuery("Notifications?continuationToken={continuationToken}&pageSize={pageSize}", Method.GET);
+            RestRequest request = await PrepareQuery("Notifications/Responses?continuationToken={continuationToken}&pageSize={pageSize}", Method.GET);
             request.AddUrlSegment("pageSize", pageSize);
             request.AddUrlSegment("continuationToken", continuationToken);
             var queryResult = await _client.ExecuteTaskAsync<IEnumerable<NotificationModel>>(request);

@@ -1,6 +1,12 @@
 <div class="bar-header">
-    <app-circle-spinner [animate]="animate" (click)="showEvents()" size="172" depth="10" [circleColor]="circleColor"
-        fillColor="#fafafa" [spinnerColor]="spinnerColor" animate="true">
+    <app-circle-spinner [animate]="animate"
+                        (click)="showEvents()"
+                        size="172"
+                        depth="10"
+                        [circleColor]="circleColor"
+                        fillColor="#fafafa"
+                        [spinnerColor]="spinnerColor"
+                        animate="true">
         <div class="events-circle">
             <div class="count">{{ eventCount }}</div>
             <div>
@@ -11,14 +17,16 @@
     </app-circle-spinner>
 </div>
 
-<div class="events-container" infiniteScroll (scrolled)="onScroll()" [scrollWindow]="false" [infiniteScrollDistance]="2"
-    [infiniteScrollThrottle]="500" [@listFadeInOut]>
+<perfect-scrollbar class="events-container"
+                   (psYReachEnd)="onScroll()"
+                   [@listFadeInOut]>
 
-    <ng-container *ngFor="let event of recentEventsLazy; let first = first">
-        <div>
+    <ng-container *ngFor="let event of recentEventsLazy; let first = first;">
+        <div [ngClass]="getCardClass(event, first)">
             <app-event-card [event]="event"></app-event-card>
         </div>
-        <div *ngIf="first" class="bar-earlier">Earlier Today</div>
+        <div *ngIf="first"
+             class="bar-earlier">Earlier Today</div>
     </ng-container>
 
-</div>
+</perfect-scrollbar>

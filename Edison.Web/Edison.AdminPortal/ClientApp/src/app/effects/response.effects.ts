@@ -21,9 +21,19 @@ import {
     CloseResponseError,
     PostNewResponseSuccess,
     AddResponse,
+    ShowSelectingLocation,
+    AddLocationToActiveResponse,
+    AddLocationToActiveResponseError,
+    SelectActiveResponse,
+    AddLocationToActiveResponseSuccess,
+    UpdateResponseActions,
+    UpdateResponseActionsError,
+    UpdateResponseActionsSuccess,
+    ShowActivateResponse,
 } from '../reducers/response/response.actions'
 import { AppState } from '../reducers'
 import { Response } from '../reducers/response/response.model'
+import { SelectActiveEvent } from '../reducers/event/event.actions';
 
 @Injectable()
 export class ResponseEffects {
@@ -75,23 +85,14 @@ export class ResponseEffects {
             const {
                 payload: { event, actionPlan },
             } = action as PostNewResponse
-            return new Response(event, actionPlan, user, UUIDv1())
+            return new Response(event, actionPlan, user, environment.mockData ? UUIDv1() : null)
         }),
-        mergeMap((newResponse: Response) => {
-            const response = {
-                responderUserId: newResponse.responderUserId,
-                actionPlan: newResponse.actionPlan,
-                primaryEventClusterId: newResponse.primaryEventClusterId,
-                geolocation: newResponse.geolocation,
-                name: newResponse.actionPlan.name,
-                icon: newResponse.actionPlan.icon,
-                color: newResponse.actionPlan.color,
-            }
+        mergeMap((response: Response) => {
 
             return environment.mockData
                 ? new Observable<Action>((sub: Subscriber<Action>) =>
                     sub.next(
-                        new AddResponse({ response: { ...newResponse, ...response, eventClusterIds: [] } })
+                        new AddResponse({ response: { ...response, eventClusterIds: [] } })
                     )
                 )
                 : this.http.post(`${environment.baseUrl}${environment.apiUrl}responses`, response).pipe(
@@ -104,6 +105,23 @@ export class ResponseEffects {
                     catchError(() => of(new PostNewResponseError()))
                 )
         })
+    )
+
+    @Effect()
+    showSelectingLocation$: Observable<Action> = this.actions$.pipe(
+        ofType(ResponseActionTypes.AddResponse, ResponseActionTypes.SignalRNewResponse),
+        map((action: AddResponse) =>
+            new ShowSelectingLocation({
+                showSelectingLocation: action.payload.response.primaryEventClusterId ? false : true,
+                response: action.payload.response
+            }))
+    )
+
+    @Effect()
+    setActiveResponseOnShow$: Observable<Action> = this.actions$.pipe(
+        ofType(ResponseActionTypes.ShowSelectingLocation),
+        map(({ payload: { response } }: ShowSelectingLocation) =>
+            new SelectActiveResponse({ response }))
     )
 
     @Effect()
@@ -142,6 +160,36 @@ export class ResponseEffects {
     )
 
     @Effect()
+    updateResponseActions$: Observable<Action> = this.actions$.pipe(
+        ofType(ResponseActionTypes.UpdateResponseActions),
+        mergeMap(({ payload: { response, actions } }: UpdateResponseActions) => this.http
+            .put(`${environment.baseUrl}${environment.apiUrl}responses/changeaction`, {
+                ...response,
+                actions
+            })
+            .pipe(
+                map(
+                    (response: Response) =>
+                        response
+                            ? new UpdateResponseActionsSuccess({ response })
+                            : new UpdateResponseActionsError()
+                ),
+                catchError(() => of(new UpdateResponseActionsError()))
+            ))
+    )
+
+    @Effect()
+    responseActionsUpdated$: Observable<Action> = this.actions$.pipe(
+        ofType(ResponseActionTypes.UpdateResponseActionsSuccess),
+        map(({ payload: { response } }: UpdateResponseActionsSuccess) => new UpdateResponse({
+            response: {
+                id: response.responseId,
+                changes: response,
+            }
+        }))
+    )
+
+    @Effect()
     closeResponse$: Observable<Action> = this.actions$.pipe(
         ofType(ResponseActionTypes.CloseResponse),
         mergeMap(({ payload }: CloseResponse) => {
@@ -170,6 +218,32 @@ export class ResponseEffects {
                     catchError(() => of(new CloseResponseError()))
                 )
         })
+    )
+
+    @Effect()
+    updateActiveResponseLocation$: Observable<Action> = this.actions$.pipe(
+        ofType(ResponseActionTypes.AddLocationToActiveResponse),
+        mergeMap(({ payload: { location, responseId } }: AddLocationToActiveResponse) => {
+            return environment.mockData
+                ? new Observable<Action>((sub: Subscriber<Action>) =>
+                    sub.next(new AddLocationToActiveResponseSuccess())
+                )
+                : this.http
+                    .post(`${environment.baseUrl}${environment.apiUrl}responses/locate`, {
+                        responseId: responseId,
+                        geolocation: location
+                    })
+                    .pipe(
+                        map(() => new AddLocationToActiveResponseSuccess()),
+                        catchError(() => of(new AddLocationToActiveResponseError()))
+                    )
+        })
+    )
+
+    @Effect()
+    showActivateResponse$: Observable<Action> = this.actions$.pipe(
+        ofType(ResponseActionTypes.ShowActivateResponse),
+        map(({ payload: { event } }: ShowActivateResponse) => new SelectActiveEvent({ event }))
     )
 
     constructor (

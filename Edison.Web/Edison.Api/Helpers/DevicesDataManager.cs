@@ -14,11 +14,10 @@ namespace Edison.Api.Helpers
 {
     public class DevicesDataManager
     {
-        private ICosmosDBRepository<DeviceDAO> _repoDevices;
-        private IMapper _mapper;
+        private readonly ICosmosDBRepository<DeviceDAO> _repoDevices;
+        private readonly IMapper _mapper;
 
-        public DevicesDataManager(IMapper mapper,
-            ICosmosDBRepository<DeviceDAO> repoDevices)
+        public DevicesDataManager(IMapper mapper, ICosmosDBRepository<DeviceDAO> repoDevices)
         {
             _mapper = mapper;
             _repoDevices = repoDevices;
@@ -27,6 +26,16 @@ namespace Edison.Api.Helpers
         public async Task<DeviceModel> GetDevice(Guid deviceId)
         {
             DeviceDAO deviceEntity = await _repoDevices.GetItemAsync(deviceId);
+            return _mapper.Map<DeviceModel>(deviceEntity);
+        }
+
+        public async Task<DeviceModel> GetMobileDeviceFromUserId(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new Exception($"UserId not found");
+
+            DeviceDAO deviceEntity = await _repoDevices.GetItemAsync(p => p.DeviceType == "Mobile" && p.Custom != null &&
+            p.Custom["Email"] != null && (string)p.Custom["Email"] == userId);
             return _mapper.Map<DeviceModel>(deviceEntity);
         }
 
@@ -48,14 +57,15 @@ namespace Edison.Api.Helpers
 
         public async Task<IEnumerable<DeviceModel>> GetDevices()
         {
-            IEnumerable<DeviceDAO> devices = await _repoDevices.GetItemsAsync(p => p.Enabled && p.Sensor);
+            IEnumerable<DeviceDAO> devices = await _repoDevices.GetItemsAsync(p => p.Enabled && p.IoTDevice);
             return _mapper.Map<IEnumerable<DeviceModel>>(devices);
         }
 
         public async Task<IEnumerable<Guid>> GetDevicesInRadius(DeviceGeolocationModel deviceGeolocationObj)
         {
             IEnumerable<DeviceDAO> devices = await _repoDevices.GetItemsAsync(
-               p => p.Enabled && ((deviceGeolocationObj.FetchSensors && p.Sensor) || (!deviceGeolocationObj.FetchSensors && !p.Sensor)),
+               p => p.Enabled && ((!string.IsNullOrEmpty(deviceGeolocationObj.DeviceType) && p.DeviceType.ToLower() == deviceGeolocationObj.DeviceType.ToLower()) ||
+               (string.IsNullOrEmpty(deviceGeolocationObj.DeviceType))),
                p => new DeviceDAO()
                {
                    Id = p.Id,
@@ -65,10 +75,20 @@ namespace Edison.Api.Helpers
 
             List<Guid> output = new List<Guid>();
             GeolocationDAOObject daoGeocodeCenterPoint = _mapper.Map<GeolocationDAOObject>(deviceGeolocationObj.ResponseEpicenterLocation);
-            foreach (DeviceDAO deviceObj in devices)
-                if (RadiusHelper.IsWithinRadius(deviceObj.Geolocation, daoGeocodeCenterPoint, deviceGeolocationObj.Radius))
-                    output.Add(new Guid(deviceObj.Id));
+            if (devices != null)
+            {
+                foreach (DeviceDAO deviceObj in devices)
+                    if(deviceObj.Geolocation != null)
+                        if (RadiusHelper.IsWithinRadius(deviceObj.Geolocation, daoGeocodeCenterPoint, deviceGeolocationObj.Radius))
+                            output.Add(new Guid(deviceObj.Id));
+            }
             return output;
+        }
+
+        public async Task<bool> IsInBoundaries(DeviceBoundaryGeolocationModel deviceBoundaryGeolocationObj, Geolocation epicenter, double radius)
+        {
+            DeviceDAO device = await _repoDevices.GetItemAsync(deviceBoundaryGeolocationObj.DeviceId);
+            return RadiusHelper.IsWithinRadius(device.Geolocation, epicenter, radius);
         }
 
         public async Task<DeviceModel> CreateOrUpdateDevice(DeviceTwinModel deviceTwinObj)
@@ -83,7 +103,8 @@ namespace Edison.Api.Helpers
                 return await CreateDevice(deviceTwinObj);
 
             //Update
-            if(deviceTwinObj.Properties?.Desired != null)
+            deviceDAO.IoTDevice = true;
+            if (deviceTwinObj.Properties?.Desired != null)
                 deviceDAO.Desired = deviceTwinObj.Properties.Desired;
             if (deviceTwinObj.Properties?.Reported != null)
                 deviceDAO.Reported = deviceTwinObj.Properties.Reported;
@@ -177,7 +198,7 @@ namespace Edison.Api.Helpers
             return deviceEntity;
         }
 
-        public async Task<bool> UpdateHeartbeat(Guid deviceId)
+        public async Task<DeviceHeartbeatUpdatedModel> UpdateHeartbeat(Guid deviceId)
         {
             if (deviceId == Guid.Empty)
                 throw new Exception($"No device found that matches DeviceId: {deviceId}");
@@ -189,7 +210,12 @@ namespace Edison.Api.Helpers
 
             try
             {
-                return await _repoDevices.UpdateItemAsync(deviceDAO);
+                await _repoDevices.UpdateItemAsync(deviceDAO);
+                return new DeviceHeartbeatUpdatedModel()
+                {
+                    Device = _mapper.Map<DeviceModel>(deviceDAO),
+                    NeedsUpdate = deviceDAO.Enabled
+                };
             }
             catch (DocumentClientException e)
             {
@@ -200,32 +226,48 @@ namespace Edison.Api.Helpers
             }
         }
 
-        public async Task<DeviceModel> UpdateGeolocation(DeviceGeolocationUpdateModel updateGeolocationObj)
+        public async Task<DeviceGeolocationUpdateResultModel> UpdateMobileGeolocation(Geolocation geolocation, string userId)
         {
-            if (updateGeolocationObj.DeviceId == Guid.Empty)
-                throw new Exception($"No device found that matches DeviceId: {updateGeolocationObj.DeviceId}");
+            if (geolocation == null)
+                throw new Exception($"No Geolocation found: {geolocation}");
+            if (string.IsNullOrEmpty(userId))
+                throw new Exception($"UserId not found");
 
-            DeviceDAO deviceDAO = await _repoDevices.GetItemAsync(updateGeolocationObj.DeviceId);
+            DeviceDAO deviceDAO = await _repoDevices.GetItemAsync(p => p.DeviceType == "Mobile" && p.Custom != null && 
+            p.Custom["Email"] != null && (string)p.Custom["Email"] == userId);
 
-            string etag = deviceDAO.ETag;
-            deviceDAO.LastAccessTime = DateTime.UtcNow;
-            deviceDAO.Geolocation = _mapper.Map<GeolocationDAOObject>(updateGeolocationObj.Geolocation);
-
-            try
+            if (deviceDAO != null)
             {
-                var result = await _repoDevices.UpdateItemAsync(deviceDAO);
-                if (result)
-                    return _mapper.Map<DeviceModel>(deviceDAO);
-                throw new Exception($"Error while updating device geolocation: {updateGeolocationObj.DeviceId}.");
+                if (geolocation.Latitude == deviceDAO.Geolocation.Latitude &&
+                    geolocation.Longitude == deviceDAO.Geolocation.Longitude)
+                    return new DeviceGeolocationUpdateResultModel() { Success = false };
 
+                string etag = deviceDAO.ETag;
+                deviceDAO.LastAccessTime = DateTime.UtcNow;
+                deviceDAO.Geolocation = _mapper.Map<GeolocationDAOObject>(geolocation);
+
+                try
+                {
+                    var result = await _repoDevices.UpdateItemAsync(deviceDAO);
+                    if (result)
+                    {
+                        return new DeviceGeolocationUpdateResultModel() {
+                            Success = true,
+                            Device = deviceDAO.Enabled ? _mapper.Map<DeviceModel>(deviceDAO) : null
+                        };
+                    }
+                    throw new Exception($"Error while updating device geolocation: {userId}.");
+
+                }
+                catch (DocumentClientException e)
+                {
+                    //Update concurrency issue, retrying
+                    if (e.StatusCode == HttpStatusCode.PreconditionFailed)
+                        return await UpdateMobileGeolocation(geolocation, userId);
+                    throw e;
+                }
             }
-            catch (DocumentClientException e)
-            {
-                //Update concurrency issue, retrying
-                if (e.StatusCode == HttpStatusCode.PreconditionFailed)
-                    return await UpdateGeolocation(updateGeolocationObj);
-                throw e;
-            }
+            return new DeviceGeolocationUpdateResultModel() { Success = false };
         }
 
         public async Task<bool> DeleteDevice(Guid deviceId)

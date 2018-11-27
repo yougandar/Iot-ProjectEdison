@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
@@ -11,6 +12,8 @@ using Microsoft.Devices.Tpm;
 using Newtonsoft.Json;
 using Windows.Foundation;
 using Windows.Foundation.Diagnostics;
+using Windows.Security.Cryptography.Certificates;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Edison.Devices.Common
 {
@@ -60,6 +63,24 @@ namespace Edison.Devices.Common
             });
         }
 
+        private X509Certificate2 GetDeviceCertificate(string deviceId)
+        {
+            X509Store storeMy = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+            storeMy.Open(OpenFlags.ReadWrite);
+            X509Certificate2 deviceCertificate = null;
+            foreach (X509Certificate2 certificate in storeMy.Certificates)
+            {
+                if (certificate.Subject == $"CN={deviceId}")
+                {
+                    deviceCertificate = certificate;
+                    break;
+                }
+            }
+            storeMy.Close();
+            storeMy.Dispose();
+            return deviceCertificate;
+        }
+
         /// <summary>
         /// Initialize the connection to IoTHub using the device connection string
         /// </summary>
@@ -70,17 +91,26 @@ namespace Edison.Devices.Common
                 return true;
 
             TpmDevice tpmDevice = new TpmDevice(0);
-            string connectionString = tpmDevice.GetConnectionString();
+            string deviceId = tpmDevice.GetDeviceId();
+            string hostname = tpmDevice.GetHostName();
 
             _logging.LogMessage("Initializing IoT Hub Connection", LoggingLevel.Verbose);
-            if (string.IsNullOrEmpty(connectionString))
+            if (string.IsNullOrEmpty(deviceId) || string.IsNullOrEmpty(hostname))
             {
-                _logging.LogMessage("Not DeviceConnectionString found.", LoggingLevel.Error);
+                _logging.LogMessage("Not DeviceId or Hostname found.", LoggingLevel.Error);
                 return false;
             }
             try
             {
-                _deviceClient = DeviceClient.CreateFromConnectionString(connectionString, TransportType.Mqtt);
+                X509Certificate2 deviceCertificate = GetDeviceCertificate(deviceId);
+                if (deviceCertificate == null)
+                {
+                    _logging.LogMessage($"The certificate for device {deviceId} was not found.", LoggingLevel.Error);
+                    return false;
+                }
+
+                IAuthenticationMethod authentication = new DeviceAuthenticationWithX509Certificate(deviceId, deviceCertificate);
+                _deviceClient = DeviceClient.Create(hostname, authentication, TransportType.Mqtt);
                 _deviceClient.SetRetryPolicy(new NoRetry());
                 _deviceClient.SetConnectionStatusChangesHandler(HandleConnectionStatusChange);
                 _deviceClient.OperationTimeoutInMilliseconds = DEVICE_OPERATION_TEST_TIMEOUT;

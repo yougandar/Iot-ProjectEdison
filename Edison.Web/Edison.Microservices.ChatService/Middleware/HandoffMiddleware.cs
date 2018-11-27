@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using Edison.Common.Messages.Interfaces;
 using Newtonsoft.Json;
 using Edison.Common.Messages;
+using Edison.Core.Interfaces;
 
 namespace Edison.ChatService.Middleware
 {
@@ -22,13 +23,18 @@ namespace Edison.ChatService.Middleware
     {
         private readonly BotOptions _config;
         private readonly IMassTransitServiceBus _serviceBus;
+        private readonly IDeviceRestService _deviceRestService;
         private readonly BotRoutingDataManager _routingDataManager;
+        private readonly ChatReportDataManager _reportDataManager;
         private readonly ILogger<CommandMiddleware> _logger;
 
-        public HandoffMiddleware(IOptions<BotOptions> config, BotRoutingDataManager routingDataManager, IMassTransitServiceBus serviceBus,
+        public HandoffMiddleware(IOptions<BotOptions> config, IDeviceRestService deviceRestService,
+            BotRoutingDataManager routingDataManager, ChatReportDataManager reportDataManager, IMassTransitServiceBus serviceBus,
         ILogger<CommandMiddleware> logger) : base(logger)
         {
             _config = config.Value;
+            _deviceRestService = deviceRestService;
+            _reportDataManager = reportDataManager;
             _serviceBus = serviceBus;
             _routingDataManager = routingDataManager;
             _logger = logger;
@@ -45,7 +51,7 @@ namespace Edison.ChatService.Middleware
                 ConversationReference selfConversation = activity.GetConversationReference();
 
                 //Broadcast to many users
-                IEnumerable<ConversationReference> conversations = await GetHandoffConversation(activity, properties, selfConversation);
+                IEnumerable<ConversationReference> conversations = await GetHandoffConversation(turnContext, activity, properties, selfConversation);
 
                 //Send messages
                 if (conversations != null)
@@ -56,8 +62,8 @@ namespace Edison.ChatService.Middleware
             }
         }
 
-        private async Task<IEnumerable<ConversationReference>> GetHandoffConversation(Activity activity, 
-            CommandSendMessageProperties properties, ConversationReference selfConversation)
+        private async Task<IEnumerable<ConversationReference>> GetHandoffConversation(ITurnContext turnContext, 
+            Activity activity, CommandSendMessageProperties properties, ConversationReference selfConversation)
         {
             //Broadcast to many users
             IEnumerable<ConversationReference> conversations = null;
@@ -65,11 +71,8 @@ namespace Edison.ChatService.Middleware
             {
                 conversations = await _routingDataManager.GetAdminConversations();
                 //Send event to event processor... if possible
-                if (activity.Properties.ContainsKey("deviceId") && 
-                    Guid.TryParse(activity.Properties["deviceId"].ToString(), out Guid deviceId))
-                {
-                    await PushMessageToEventProcessorSaga(deviceId, activity.Text, properties);
-                }
+                if (turnContext.TurnState.TryGetValue(typeof(ChatReportModel).FullName, out object result))
+                    await PushMessageToEventProcessorSaga(activity.Text, activity.ChannelId, properties, (ChatReportModel)result);
             }
             //To one user only - Admin only
             else if (properties.From.Role == ChatUserRole.Admin)
@@ -95,7 +98,7 @@ namespace Edison.ChatService.Middleware
             return conversations;
         }
 
-        private async Task<bool> PushMessageToEventProcessorSaga(Guid deviceId, string message, CommandSendMessageProperties consumerMessageProperties)
+        private async Task<bool> PushMessageToEventProcessorSaga(string message, string channelId, CommandSendMessageProperties consumerMessageProperties, ChatReportModel chatReport)
         {
             try
             {
@@ -103,21 +106,35 @@ namespace Edison.ChatService.Middleware
                 {
                     _logger.LogDebug($"EdisonBot: Pushing message from user '{consumerMessageProperties.From.Id}'.");
 
-                    IEventSagaReceived newMessage = new EventSagaReceivedEvent()
+                    //Get deviceId
+                    string userId = GetDatabaseUserId(channelId, consumerMessageProperties.UserId);
+                    DeviceModel device = await _deviceRestService.GetMobileDeviceFromUserId(userId);
+
+                    //Get last reportType
+                    Guid? reportType = consumerMessageProperties.ReportType;
+                    if(consumerMessageProperties.ReportType == null || consumerMessageProperties.ReportType == Guid.Empty)
+                        reportType = await GetLastReportTypeFromUser(consumerMessageProperties.UserId);
+
+                    if (device != null)
                     {
-                        DeviceId = deviceId,
-                        EventType = "message",
-                        Date = DateTime.UtcNow,
-                        Data = JsonConvert.SerializeObject(new MessageEventMetadata()
+                        IEventSagaReceived newMessage = new EventSagaReceivedEvent()
                         {
-                             UserId = consumerMessageProperties.UserId,
-                             Username = consumerMessageProperties.From.Name,
-                             ReportType = consumerMessageProperties.ReportType,
-                             Message = message
-                        })
-                    };
-                    await _serviceBus.BusAccess.Publish(newMessage);
-                    return true;
+                            DeviceId = device.DeviceId,
+                            EventType = "message",
+                            Date = DateTime.UtcNow,
+                            CheckBoundary = consumerMessageProperties.ReportType == _config.EmergencyActionPlanId,
+                            Data = JsonConvert.SerializeObject(new MessageEventMetadata()
+                            {
+                                UserId = consumerMessageProperties.UserId,
+                                Username = consumerMessageProperties.From.Name,
+                                ReportType = reportType,
+                                Message = message,
+                                ChatReportId = chatReport.ReportId
+                            })
+                        };
+                        await _serviceBus.BusAccess.Publish(newMessage);
+                        return true;
+                    }
                 }
                 return false;
             }
@@ -126,6 +143,26 @@ namespace Edison.ChatService.Middleware
                 _logger.LogError($"EdisonBot: {e.Message}");
                 return false;
             }
+        }
+
+        private async Task<Guid?> GetLastReportTypeFromUser(string userId)
+        {
+            Guid? reportType = null;
+
+            ChatReportModel activeReport = await _reportDataManager.GetActiveChatReportFromUser(userId);
+            if (activeReport != null)
+            {
+                for (int i = activeReport.ReportLogs.Count - 1; 0 <= i; i--)
+                {
+                    Guid? reportLog = activeReport.ReportLogs[i].ReportType;
+                    if (reportLog != null && reportLog != Guid.Empty)
+                    {
+                        reportType = reportLog;
+                        break;
+                    }
+                }
+            }
+            return reportType;
         }
     }
 }

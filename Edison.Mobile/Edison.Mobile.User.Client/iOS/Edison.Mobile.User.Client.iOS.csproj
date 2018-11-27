@@ -96,7 +96,8 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'iOS User|iPhone' ">
     <Optimize>false</Optimize>
     <OutputPath>bin\iPhone\iOS User</OutputPath>
-    <DefineConstants></DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <WarningLevel>4</WarningLevel>
     <CodesignKey>iPhone Developer: Alexander Katz (469N9XNS2W)</CodesignKey>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
@@ -105,17 +106,20 @@
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchArch>ARM64</MtouchArch>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
-    <MtouchVerbosity></MtouchVerbosity>
+    <MtouchVerbosity>
+    </MtouchVerbosity>
     <CodesignProvision>VS: WildCard Development</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Android User|AnyCPU' ">
     <Optimize>false</Optimize>
     <OutputPath>bin\Android User</OutputPath>
-    <DefineConstants></DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <WarningLevel>4</WarningLevel>
     <CodesignKey>iPhone Developer: Alexander Katz (469N9XNS2W)</CodesignKey>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
-    <MtouchVerbosity></MtouchVerbosity>
+    <MtouchVerbosity>
+    </MtouchVerbosity>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
     <CodesignProvision>VS: WildCard Development</CodesignProvision>
@@ -137,9 +141,6 @@
     </Reference>
     <Reference Include="Xamarin.Azure.NotificationHubs.iOS">
       <HintPath>..\..\Edison.Mobile.Common\packages\Xamarin.Azure.NotificationHubs.iOS.1.2.5.2\lib\Xamarin.iOS10\Xamarin.Azure.NotificationHubs.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Identity.Client">
-      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.Identity.Client.2.3.0-preview\lib\xamarinios10\Microsoft.Identity.Client.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AppCenter">
       <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.AppCenter.1.10.0\lib\Xamarin.iOS10\Microsoft.AppCenter.dll</HintPath>
@@ -173,6 +174,34 @@
     </Reference>
     <Reference Include="System.IdentityModel.Tokens.Jwt">
       <HintPath>..\..\Edison.Mobile.Common\packages\System.IdentityModel.Tokens.Jwt.5.3.0\lib\netstandard2.0\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="Microsoft.Bot.Connector.DirectLine">
+      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.Bot.Connector.DirectLine.3.0.2\lib\netstandard1.3\Microsoft.Bot.Connector.DirectLine.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections" />
+    <Reference Include="System.Diagnostics.Debug" />
+    <Reference Include="System.Diagnostics.Tools" />
+    <Reference Include="System.Globalization" />
+    <Reference Include="System.IO" />
+    <Reference Include="System.Linq" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Primitives" />
+    <Reference Include="System.ObjectModel" />
+    <Reference Include="System.Reflection" />
+    <Reference Include="System.Reflection.Extensions" />
+    <Reference Include="System.Resources.ResourceManager" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Runtime.Extensions" />
+    <Reference Include="System.Text.Encoding" />
+    <Reference Include="System.Threading" />
+    <Reference Include="System.Threading.Tasks" />
+    <Reference Include="System.Xml.ReaderWriter" />
+    <Reference Include="Microsoft.Identity.Client">
+      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.Identity.Client.2.3.1-preview\lib\xamarinios10\Microsoft.Identity.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Rest.ClientRuntime">
+      <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.Rest.ClientRuntime.2.3.17\lib\netstandard1.4\Microsoft.Rest.ClientRuntime.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -270,6 +299,45 @@
     <ImageAsset Include="Assets.xcassets\LocationSent.imageset\LocationSent.png" />
     <ImageAsset Include="Assets.xcassets\LocationSent.imageset\LocationSent%402x.png" />
     <ImageAsset Include="Assets.xcassets\LocationSent.imageset\LocationSent%403x.png" />
+    <ImageAsset Include="Assets.xcassets\ProtestWhite.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\ProtestWhite.imageset\protestHand.png" />
+    <ImageAsset Include="Assets.xcassets\ProtestWhite.imageset\protestHand%402x.png" />
+    <ImageAsset Include="Assets.xcassets\ProtestWhite.imageset\protestHand%403x.png" />
+    <ImageAsset Include="Assets.xcassets\ProtestWhite.imageset\protestHandWhite.png" />
+    <ImageAsset Include="Assets.xcassets\ProtestWhite.imageset\protestHandWhite%402x.png" />
+    <ImageAsset Include="Assets.xcassets\ProtestWhite.imageset\protestHandWhite%403x.png" />
+    <ImageAsset Include="Assets.xcassets\ProtestBlue.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\ProtestBlue.imageset\protestHandBlue.png" />
+    <ImageAsset Include="Assets.xcassets\ProtestBlue.imageset\protestHandBlue%402x.png" />
+    <ImageAsset Include="Assets.xcassets\ProtestBlue.imageset\protestHandBlue%403x.png" />
+    <ImageAsset Include="Assets.xcassets\BrightnessMoon.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\BrightnessMoon.imageset\moonBrightness.png" />
+    <ImageAsset Include="Assets.xcassets\BrightnessMoon.imageset\moonBrightness%402x.png" />
+    <ImageAsset Include="Assets.xcassets\BrightnessMoon.imageset\moonBrightness%403x.png" />
+    <ImageAsset Include="Assets.xcassets\TornadoYellow.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\TornadoYellow.imageset\TornadoYellow.png" />
+    <ImageAsset Include="Assets.xcassets\TornadoYellow.imageset\TornadoYellow%402x.png" />
+    <ImageAsset Include="Assets.xcassets\TornadoYellow.imageset\TornadoYellow%403x.png" />
+    <ImageAsset Include="Assets.xcassets\TornadoWhite.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\TornadoWhite.imageset\TornadoWhite.png" />
+    <ImageAsset Include="Assets.xcassets\TornadoWhite.imageset\TornadoWhite%402x.png" />
+    <ImageAsset Include="Assets.xcassets\TornadoWhite.imageset\TornadoWhite%403x.png" />
+    <ImageAsset Include="Assets.xcassets\PackageWhite.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\PackageWhite.imageset\PackageWhite.png" />
+    <ImageAsset Include="Assets.xcassets\PackageWhite.imageset\PackageWhite%402x.png" />
+    <ImageAsset Include="Assets.xcassets\PackageWhite.imageset\PackageWhite%403x.png" />
+    <ImageAsset Include="Assets.xcassets\PackageRed.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\PackageRed.imageset\PackageRed%403x.png" />
+    <ImageAsset Include="Assets.xcassets\PackageRed.imageset\PackageRed%402x.png" />
+    <ImageAsset Include="Assets.xcassets\PackageRed.imageset\PackageRed.png" />
+    <ImageAsset Include="Assets.xcassets\VIPBlue.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\VIPBlue.imageset\VIPBlue.png" />
+    <ImageAsset Include="Assets.xcassets\VIPBlue.imageset\VIPBlue%402x.png" />
+    <ImageAsset Include="Assets.xcassets\VIPBlue.imageset\VIPBlue%403x.png" />
+    <ImageAsset Include="Assets.xcassets\VIPWhite.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\VIPWhite.imageset\VIPWhite.png" />
+    <ImageAsset Include="Assets.xcassets\VIPWhite.imageset\VIPWhite%402x.png" />
+    <ImageAsset Include="Assets.xcassets\VIPWhite.imageset\VIPWhite%403x.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -303,8 +371,16 @@
     <Folder Include="Assets.xcassets\SafetyCheckBlue.imageset\" />
     <Folder Include="Assets.xcassets\HealthBlue.imageset\" />
     <Folder Include="Assets.xcassets\HealthWhite.imageset\" />
-    <Folder Include="Layout\" />
     <Folder Include="Assets.xcassets\LocationSent.imageset\" />
+    <Folder Include="Assets.xcassets\ProtestWhite.imageset\" />
+    <Folder Include="Assets.xcassets\ProtestBlue.imageset\" />
+    <Folder Include="Assets.xcassets\BrightnessMoon.imageset\" />
+    <Folder Include="Assets.xcassets\TornadoYellow.imageset\" />
+    <Folder Include="Assets.xcassets\TornadoWhite.imageset\" />
+    <Folder Include="Assets.xcassets\PackageWhite.imageset\" />
+    <Folder Include="Assets.xcassets\PackageRed.imageset\" />
+    <Folder Include="Assets.xcassets\VIPBlue.imageset\" />
+    <Folder Include="Assets.xcassets\VIPWhite.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="LaunchScreen.storyboard" />
@@ -351,10 +427,13 @@
     <Compile Include="Views\ResponseDetailsContainerView.cs" />
     <Compile Include="DataSources\ChatMessageTypeCollectionViewSource.cs" />
     <Compile Include="Views\ChatMessageTypeCollectionViewCell.cs" />
-    <Compile Include="Layout\ChatCollectionViewLayout.cs" />
     <Compile Include="DataSources\ChatCollectionViewSource.cs" />
     <Compile Include="Views\ChatMessageCollectionViewCell.cs" />
     <Compile Include="Shared\ChatMessageType.cs" />
+    <Compile Include="Shared\ChatCollectionViewLayout.cs" />
+    <Compile Include="Views\CircleAvatarView.cs" />
+    <Compile Include="Views\TriangleChatView.cs" />
+    <Compile Include="Shared\ChatPromptEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Edison.Mobile.Common\Edison.Mobile.Common\Edison.Mobile.Common.csproj">

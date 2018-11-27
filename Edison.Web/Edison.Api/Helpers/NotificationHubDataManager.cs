@@ -15,16 +15,13 @@ namespace Edison.Api.Helpers
     public class NotificationHubDataManager
     {
         private readonly IMapper _mapper;
-        private readonly WebApiConfiguration _config;
         private readonly ICosmosDBRepository<NotificationDAO> _repoNotifications;
 
         public NotificationHubDataManager(
-            IOptions<WebApiConfiguration> config,
             IMapper mapper,
             ICosmosDBRepository<NotificationDAO> repoNotifications)
         {
             _mapper = mapper;
-            _config = config.Value;
             _repoNotifications = repoNotifications;
         }
 
@@ -37,6 +34,7 @@ namespace Edison.Api.Helpers
                 NotificationText = notification.NotificationText,
                 CreationDate = date,
                 UpdateDate = date,
+                ResponseId = notification.ResponseId.ToString(),
                 Status = notification.Status,
                 Tags = notification.Tags,
                 Title = notification.Title,
@@ -55,6 +53,26 @@ namespace Edison.Api.Helpers
         {
             var notifications = await _repoNotifications.GetItemsPagingAsync(pageSize, continuationToken);
             IEnumerable<NotificationModel> output = _mapper.Map<IEnumerable<NotificationModel>>(notifications.List);
+            return output;
+        }
+
+        public async Task<IEnumerable<NotificationModel>> GetNotifications(Guid responseId)
+        {
+            var notifications = await _repoNotifications.GetItemsAsync(p => p.ResponseId == responseId.ToString(),
+                p => new NotificationDAO()
+                {
+                    Id = p.Id,
+                    CreationDate = p.CreationDate,
+                    NotificationText = p.NotificationText,
+                    ResponseId = p.ResponseId,
+                    Status = p.Status,
+                    Tags = p.Tags,
+                    Title = p.Title,
+                    UpdateDate = p.UpdateDate,
+                    User = p.User
+                }
+                );
+            IEnumerable<NotificationModel> output = _mapper.Map<IEnumerable<NotificationModel>>(notifications);
             return output;
         }
     }

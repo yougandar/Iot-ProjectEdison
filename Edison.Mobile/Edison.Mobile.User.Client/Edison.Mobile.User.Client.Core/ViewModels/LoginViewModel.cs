@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Edison.Mobile.Common.Auth;
-using Edison.Mobile.Common.Geolocation;
+using Edison.Mobile.Common.Geo;
 using Edison.Mobile.Common.Notifications;
 using Edison.Mobile.Common.Shared;
 
@@ -90,7 +90,7 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
             var notificationSuccess = hasNotificationPrivileges;
 
             if (!hasLocationPrivileges) locationSuccess = await locationService.RequestLocationPrivileges();
-            await notificationService.RequestNotificationPrivileges();
+            notificationSuccess = await notificationService.RequestNotificationPrivileges();
 
             if (locationSuccess) await locationService.StartLocationUpdates();
 

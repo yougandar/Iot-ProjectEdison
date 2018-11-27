@@ -9,5 +9,6 @@ kubectl delete configmap config-edisonchatservice
 kubectl delete configmap config-edisonresponseservice
 kubectl delete configmap config-edisonnotificationhubservice
 kubectl delete configmap config-edisonmessagedispatcherservice
+kubectl delete configmap config-edisondeviceprovisioning
 kubectl delete secret secrets-common
 kubectl delete secret rabbitmq-credentials

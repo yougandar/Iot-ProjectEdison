@@ -13,6 +13,8 @@ namespace Edison.Mobile.iOS.Common.Notifications
     {
         readonly NotificationRestService notificationRestService;
 
+        public Guid DeviceId { get; set; }
+
         public NotificationService(NotificationRestService notificationRestService)
         {
             this.notificationRestService = notificationRestService;
@@ -40,9 +42,13 @@ namespace Edison.Mobile.iOS.Common.Notifications
             return taskSource.Task;
         }
 
-        public Task<bool> RegisterForNotifications(DeviceRegistrationModel deviceRegistrationModel)
+        public async Task<DeviceMobileModel> RegisterForNotifications(DeviceRegistrationModel deviceRegistrationModel)
         {
-            return notificationRestService.Register(deviceRegistrationModel);
+            var deviceMobileModel = await notificationRestService.Register(deviceRegistrationModel);
+
+            DeviceId = deviceMobileModel.DeviceId;
+
+            return deviceMobileModel;
         }
     }
 }

@@ -5,7 +5,7 @@ import { Action } from '@ngrx/store';
 import { mergeMap, catchError, map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { ChatActionTypes, GetChatAuthTokenSuccess, GetChatAuthTokenError, SendNewMessage, EndConversation } from '../reducers/chat/chat.actions';
+import { ChatActionTypes, GetChatAuthTokenSuccess, GetChatAuthTokenError, SendNewMessage, EndConversation, ToggleAllUsersChatWindow, SelectActiveUser, ToggleUserChatWindow } from '../reducers/chat/chat.actions';
 import { DirectlineService } from '../core/services/directline/directline.service';
 
 @Injectable()
@@ -39,6 +39,12 @@ export class ChatEffects {
             this.directlineService.sendMessage(message, userId);
             return null;
         })
+    )
+
+    @Effect()
+    openChatWindow$: Observable<Action> = this.actions$.pipe(
+        ofType(ChatActionTypes.ToggleAllUsersChatWindow, ChatActionTypes.ToggleUserChatWindow),
+        map(({ payload }: ToggleUserChatWindow) => new SelectActiveUser(payload))
     )
 
     constructor (private actions$: Actions,

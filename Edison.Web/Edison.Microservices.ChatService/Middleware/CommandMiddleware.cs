@@ -15,6 +15,7 @@ using Edison.Core.Common.Models;
 using Newtonsoft.Json;
 using Edison.Common.Messages.Interfaces;
 using Edison.Common.Messages;
+using Edison.Core.Interfaces;
 
 namespace Edison.ChatService.Middleware
 {
@@ -22,15 +23,17 @@ namespace Edison.ChatService.Middleware
     {
         private readonly BotOptions _config;
         private readonly IMassTransitServiceBus _serviceBus;
+        private readonly IDeviceRestService _deviceRestService;
         private readonly BotRoutingDataManager _routingDataManager;
-        private readonly ReportDataManager _reportDataManager;
+        private readonly ChatReportDataManager _reportDataManager;
         private readonly ILogger<CommandMiddleware> _logger;
 
         public CommandMiddleware(IOptions<BotOptions> config, BotRoutingDataManager routingDataManager, IMassTransitServiceBus serviceBus,
-            ReportDataManager reportDataManager, ILogger<CommandMiddleware> logger) : base(logger)
+             IDeviceRestService deviceRestService, ChatReportDataManager reportDataManager, ILogger<CommandMiddleware> logger) : base(logger)
         {
             _config = config.Value;
             _serviceBus = serviceBus;
+            _deviceRestService = deviceRestService;
             _routingDataManager = routingDataManager;
             _reportDataManager = reportDataManager;
             _logger = logger;
@@ -50,14 +53,14 @@ namespace Edison.ChatService.Middleware
                     case Commands.GetTranscript:
                         if (userContext.Role == ChatUserRole.Admin)
                         {
-                            var conversations = await _reportDataManager.GetActiveReports();
+                            var conversations = await _reportDataManager.GetActiveChatReports();
                             var readUsersStatus = await _routingDataManager.GetUsersReadStatusPerUser(userContext.Id);
                             await messageRouter.SendTranscriptAsync(activity.Conversation.Id, conversations, readUsersStatus);
                         }
                         else
                         {
-                            var conversation = await _reportDataManager.GetActiveReportFromUser(activity.From.Id);
-                            await messageRouter.SendTranscriptAsync(activity.Conversation.Id, new List<ReportModel>() { conversation });
+                            var conversation = await _reportDataManager.GetActiveChatReportFromUser(activity.From.Id);
+                            await messageRouter.SendTranscriptAsync(activity.Conversation.Id, new List<ChatReportModel>() { conversation });
                         }
                         break;
 
@@ -84,8 +87,8 @@ namespace Edison.ChatService.Middleware
                         {
                             if (JsonConvert.DeserializeObject<CommandEndConversation>(command.Data.ToString()) is CommandEndConversation properties)
                             {
-                                ReportModel userReport = await _reportDataManager.GetActiveReportFromUser(properties.UserId);
-                                var result = await _reportDataManager.CloseReport(new ReportLogCloseModel() { EndDate = DateTime.UtcNow, UserId = properties.UserId });
+                                ChatReportModel userReport = await _reportDataManager.GetActiveChatReportFromUser(properties.UserId);
+                                var result = await _reportDataManager.CloseReport(new ChatReportLogCloseModel() { EndDate = DateTime.UtcNow, UserId = properties.UserId });
                                 if (result)
                                 {
                                     var userConversationReference = await _routingDataManager.GetConversationsFromUser(properties.UserId);
@@ -112,10 +115,13 @@ namespace Edison.ChatService.Middleware
                                         }
 
                                         //Send event to event processor... if possible
-                                        if (userReport != null && userReport.DeviceIds != null)
+                                        if (userReport != null)
                                         {
-                                            foreach(Guid deviceId in userReport.DeviceIds)
-                                                await PushClosureMessageToEventProcessorSaga(deviceId);
+                                            //Sanitize user
+                                            string userId = GetDatabaseUserId(userReport.ChannelId, userReport.User.Id);
+                                            DeviceModel device = await _deviceRestService.GetMobileDeviceFromUserId(userId);
+                                            //Send close message
+                                            await PushClosureMessageToEventProcessorSaga(device.DeviceId);
                                         }
                                     }
                                 }
@@ -152,9 +158,9 @@ namespace Edison.ChatService.Middleware
             else if(userContext.Role == ChatUserRole.Consumer && !string.IsNullOrWhiteSpace(activity.Text))
             {
                 //Retrieve report type, if provided. Force "Report" if none is provided.
-                string reportType = string.Empty;
-                if (activity.Properties.ContainsKey("reportType"))
-                    reportType = activity.Properties["reportType"].ToString();
+                Guid? reportType = null;
+                if (activity.Properties.ContainsKey("reportType") && Guid.TryParse(activity.Properties["reportType"].ToString(), out Guid parsedReportType))
+                    reportType = parsedReportType;
 
                 CommandSendMessageProperties properties = new CommandSendMessageProperties()
                 {

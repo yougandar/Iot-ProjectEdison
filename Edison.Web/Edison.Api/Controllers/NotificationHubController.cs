@@ -17,7 +17,6 @@ using Newtonsoft.Json;
 
 namespace Edison.Api.Controllers
 {
-    [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb")]
     [ApiController]
     [Route("api/Notifications")]
     public class NotificationHubController : Controller
@@ -38,6 +37,7 @@ namespace Edison.Api.Controllers
                                 .CreateClientFromConnectionString(notificationOptions.Value.ConnectionString, notificationOptions.Value.PathName, true);
         }
 
+        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "Consumer")]
         [Route("Register")]
         [Produces(typeof(DeviceMobileModel))]
         [HttpPost]
@@ -115,6 +115,7 @@ namespace Edison.Api.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "Consumer")]
         [Route("Register")]
         [HttpDelete]
         [Produces(typeof(bool))]
@@ -132,6 +133,7 @@ namespace Edison.Api.Controllers
             return Ok(deleteDevice);
         }
 
+        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "SuperAdmin")]
         [HttpPost]
         [Produces(typeof(List<NotificationOutcome>))]
         public async Task<IActionResult> SendNotification([FromBody] NotificationCreationModel notificationReq)
@@ -170,6 +172,8 @@ namespace Edison.Api.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "Consumer")]
+        [Route("Responses")]
         [HttpGet]
         [Produces(typeof(IEnumerable<NotificationModel>))]
         public async Task<IActionResult> GetNotificationsHistory([FromQuery]int pageSize, string continuationToken)
@@ -188,6 +192,27 @@ namespace Edison.Api.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "Consumer")]
+        [Route("Responses/{responseId}")]
+        [HttpGet]
+        [Produces(typeof(IEnumerable<NotificationModel>))]
+        public async Task<IActionResult> GetNotificationsHistory(Guid responseId)
+        {
+            try
+            {
+                //logger.LogInformation("Get Notifications history list ");
+
+                var notifications = await _notificationDataManager.GetNotifications(responseId);
+                return Ok(notifications);
+            }
+            catch (Exception e)
+            {
+                //logger.LogError(e, "Get Notifications history- {message}", e.Message);
+                return StatusCode(StatusCodes.Status502BadGateway, e.Message);
+            }
+        }
+
+        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "Admin")]
         [Route("Register")]
         [HttpGet]
         [Produces(typeof(CollectionQueryResult<RegistrationDescription>))]

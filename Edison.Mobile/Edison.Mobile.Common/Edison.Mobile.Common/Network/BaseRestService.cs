@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Text;
-using System.IO;
-using System.Net;
 using Edison.Mobile.Common.Auth;
 using Edison.Mobile.Common.Logging;
 using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Deserializers;
-using System.Threading.Tasks;
 
 namespace Edison.Mobile.Common.Network
 {
@@ -35,7 +31,7 @@ namespace Edison.Mobile.Common.Network
 
                 request.AddHeader("Authorization", $"Bearer {token}");
 
-                if (method == Method.POST && requestBody != null)
+                if ((method == Method.POST || method == Method.PUT) && requestBody != null)
                 {
                     request.AddParameter("application/json", JsonConvert.SerializeObject(requestBody), ParameterType.RequestBody);
                 }

@@ -41,10 +41,11 @@ namespace Edison.ChatService.Middleware
                 //Add User Context in the turn context
                 ConversationReference selfConversation = activity.GetConversationReference();
                 ChatUserContext userContext = ChatUserContext.FromConversation(selfConversation);
-                if (activity.ChannelId.ToLower() != _config.AdminChannel)
+                if (activity.ChannelId.ToLower() != _config.AdminChannel || 
+                    !UserRoleCache.UserRoles.ContainsKey(userContext.Id))
                     userContext.Role = ChatUserRole.Consumer;
                 else
-                    userContext.SetUserRoleAgainstAdminList(_config.Admins);
+                    userContext.Role = UserRoleCache.UserRoles[userContext.Id];
                 selfConversation.User.Role = userContext.Role.ToString();
                 turnContext.TurnState.Add(typeof(ChatUserContext).FullName, userContext);
 

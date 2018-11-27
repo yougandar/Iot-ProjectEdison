@@ -15,6 +15,7 @@ using Edison.Core.Config;
 using Edison.Core.Interfaces;
 using Edison.Core;
 using Edison.Common.DAO;
+using Microsoft.Extensions.Options;
 
 namespace Edison.ChatService
 {
@@ -37,21 +38,26 @@ namespace Edison.ChatService
             services.AddMvc().AddControllersAsServices();
 
             services.AddOptions();
-            services.EnableKubernetes();
+            services.AddApplicationInsightsKubernetesEnricher();
             services.AddApplicationInsightsTelemetry(Configuration);
             services.Configure<ServiceBusRabbitMQOptions>(Configuration.GetSection("ServiceBusRabbitMQ"));
-            services.Configure<RestServiceOptions>(Configuration.GetSection("Bot:RestService"));
+            services.Configure<RestServiceOptions>(Configuration.GetSection("RestService"));
             services.Configure<BotOptions>(Configuration.GetSection("Bot"));
             services.Configure<AzureAdB2CWebOptions>(Configuration.GetSection("AzureAdB2CWeb"));
             services.Configure<CosmosDBOptions>(Configuration.GetSection("CosmosDb"));
-
             services.AddSingletonCosmosDBRepository<ChatUserSessionDAO>(Configuration["CosmosDb:Collections:Bot"]);
-            services.AddSingletonCosmosDBRepository<ReportDAO>(Configuration["CosmosDb:Collections:Conversations"]);
-            services.AddSingleton<IDirectLineRestService, DirectLineRestService>();
+            services.AddSingletonCosmosDBRepository<ChatReportDAO>(Configuration["CosmosDb:Collections:ChatReports"]);
+            services.AddSingleton<IDirectLineRestService>(sp =>
+            {
+                var options = sp.GetRequiredService<IOptions<BotOptions>>().Value;
+                var logger = sp.GetRequiredService<ILogger<RestServiceBase>>();
+                return new DirectLineRestService(options.RestService.RestServiceUrl, options.RestService.SecretToken, logger);
+            });
+            services.AddSingleton<IDeviceRestService, DeviceRestService>();
             services.AddSingleton<IMassTransitServiceBus, ServiceBusRabbitMQ>();
             services.AddSingleton<IRoutingDataStore, BotRoutingDataStore>();
             services.AddSingleton<BotRoutingDataManager>();
-            services.AddSingleton<ReportDataManager>();
+            services.AddSingleton<ChatReportDataManager>();
             AddBot(services);
 
             //Automapper Can't use DI because all services are singletons

@@ -13,6 +13,7 @@ namespace Edison.Core.Interfaces
         Task<bool> RemoveDevice(string registrationId);
         Task<NotificationModel> SendNotification(NotificationCreationModel notificationReq);
         Task<IEnumerable<NotificationModel>> GetNotificationsHistory(int pageSize, string continuationToken);
+        Task<IEnumerable<NotificationModel>> GetNotificationsHistory(Guid responseId);
         Task<CollectionQueryResult<RegistrationDescription>> GetRegisteredDevices(int pageSize, string continuationToken);
     }
 }

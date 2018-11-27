@@ -53,13 +53,14 @@ namespace Edison.Devices.SmartBulb
             BackgroundTaskDeferral deferral = taskInstance.GetDeferral();
 
             var app = new AppIoTBackgroundDeviceTask("Lightbulb", new Guid("26fcf049-de51-4fe4-9015-8a0245fa8aa8"));
-            app.SetInitApplication(InitApplication);
-            app.SetStartApplication(StartApplication);
-            app.SetRunApplicationLoop(RunApplication);
-            app.SetEndApplication(EndApplication);
-            app.SetGeneralError(GeneralError);
-            app.SetChangeConfiguration(ReceiveDesiredConfiguration);
-            app.SetDisconnectedApplication(DisconnectedApplication);
+            app.InitApplication += InitApplication;
+            app.StartApplication += StartApplication;
+            app.RunApplication += RunApplication;
+            app.EndApplication += EndApplication;
+            app.GeneralError += GeneralError;
+            app.ChangeConfiguration += ReceiveDesiredConfiguration;
+            app.DisconnectedApplication += DisconnectedApplication;
+            app.TestMethod += TestMethod;
 
             await app.Run();
             deferral.Complete();
@@ -268,6 +269,13 @@ namespace Edison.Devices.SmartBulb
                 _gpioService.PinSetLow(_config.GpioConfig.GpioColorBlue);
             else
                 _gpioService.PinSetHigh(_config.GpioConfig.GpioColorBlue);
+        }
+
+
+        private async Task TestMethod()
+        {
+            await BlinkLED(Color.White, 20, 500);
+            SetLED(_previousColor);
         }
     }
 }

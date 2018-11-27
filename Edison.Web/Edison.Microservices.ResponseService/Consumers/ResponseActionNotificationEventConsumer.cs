@@ -39,6 +39,7 @@ namespace Edison.ResponseService.Consumers
                     await context.Publish(new NotificationSendEvent() {
                         Notification = new NotificationCreationModel()
                         {
+                            ResponseId = action.ResponseId,
                             NotificationText = action.Message,
                             Status = 1,
                             Title = "Alert Notification",

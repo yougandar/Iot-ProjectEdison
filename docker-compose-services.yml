@@ -58,3 +58,8 @@ services:
     build:
       context: .
       dockerfile: Edison.Web/Edison.Microservices.ResponseService/Dockerfile
+  edisondeviceprovisioning:
+    image: edisondeviceprovisioning
+    build:
+      context: .
+      dockerfile: Edison.Web/Edison.Microservices.DeviceProvisioning/Dockerfile

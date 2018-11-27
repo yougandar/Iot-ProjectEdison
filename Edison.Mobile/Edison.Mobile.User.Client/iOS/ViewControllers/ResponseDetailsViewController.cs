@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using CoreGraphics;
 using CoreLocation;
 using Edison.Core.Common.Models;
@@ -20,10 +21,15 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
     {
         readonly float iconSize = 64;
         readonly float mapViewHeightFactor = 0.4f;
-        float headerHeight = 44;
+        readonly float headerHeight = 44;
+
+        nfloat mapOverflowConstant;
+
         bool isInitialRender = true;
+        bool isUserControllingMapRegion;
 
         UIView navBarBackgroundView;
+        UIView tableViewBackgroundView;
         MKMapView mapView;
         UIView iconBackgroundView;
         UIImageView iconImageView;
@@ -35,7 +41,10 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
         ResponseUpdateTableViewHeaderView tableHeaderView;
 
         NSLayoutConstraint mapViewTopConstraint;
+        NSLayoutConstraint tableViewBackgroundViewTopConstraint;
 
+        UIPanGestureRecognizer mapPanGestureRecognizer;
+        UITapGestureRecognizer iconTapGestureRecognizer;
 
         public override UIView View
         {
@@ -51,9 +60,12 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
+            mapOverflowConstant = View.Bounds.Height / 2;
+
             Title = ViewModel.Response?.ActionPlan?.Name;
 
             View.BackgroundColor = Constants.Color.BackgroundDarkGray;
+            View.ClipsToBounds = true;
 
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Constants.Assets.CloseX, UIBarButtonItemStyle.Plain, (sender, e) =>
             {
@@ -86,15 +98,14 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
                 ShowsUserLocation = true,
                 Delegate = this,
                 Alpha = 0,
-                UserInteractionEnabled = false,
             };
 
             View.AddSubview(mapView);
-            mapViewTopConstraint = mapView.TopAnchor.ConstraintEqualTo(navBarBackgroundView.BottomAnchor);
+            mapViewTopConstraint = mapView.TopAnchor.ConstraintEqualTo(navBarBackgroundView.BottomAnchor, constant: -mapOverflowConstant);
             mapViewTopConstraint.Active = true;
             mapView.LeftAnchor.ConstraintEqualTo(View.LeftAnchor).Active = true;
             mapView.RightAnchor.ConstraintEqualTo(View.RightAnchor).Active = true;
-            mapView.HeightAnchor.ConstraintEqualTo(View.HeightAnchor, multiplier: mapViewHeightFactor).Active = true;
+            mapView.HeightAnchor.ConstraintEqualTo(View.HeightAnchor, multiplier: mapViewHeightFactor, constant: mapOverflowConstant * 2).Active = true;
 
             iconBackgroundView = new UIView
             {
@@ -103,13 +114,15 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
                 {
                     Location = CGPoint.Empty,
                     Size = new CGSize(iconSize, iconSize),
-                }
+                },
+                Alpha = 0,
             };
 
             iconBackgroundView.Layer.CornerRadius = iconSize / 2;
             iconBackgroundView.Layer.ShadowColor = Constants.Color.Black.CGColor;
             iconBackgroundView.Layer.ShadowRadius = 4;
             iconBackgroundView.Layer.ShadowOpacity = 0.2f;
+            iconBackgroundView.Tag = 1;
 
             View.AddSubview(iconBackgroundView);
 
@@ -144,6 +157,10 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
                 UserInteractionEnabled = false,
             };
 
+            tableHeaderView.Layer.ShadowColor = Constants.Color.Black.CGColor;
+            tableHeaderView.Layer.ShadowRadius = 4;
+            tableHeaderView.Layer.ShadowOpacity = 0.2f;
+
             tableView.RegisterClassForCellReuse(typeof(ResponseUpdateTableViewCell), typeof(ResponseUpdateTableViewCell).Name);
 
             View.InsertSubviewBelow(tableView, iconBackgroundView);
@@ -156,7 +173,28 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
             View.InsertSubviewBelow(tableHeaderView, iconBackgroundView);
 
             View.BringSubviewToFront(navBarBackgroundView);
-            //View.BringSubviewToFront(iconBackgroundView);
+
+            tableViewBackgroundView = new UIView { TranslatesAutoresizingMaskIntoConstraints = false, BackgroundColor = Constants.Color.BackgroundDarkGray };
+            View.InsertSubviewBelow(tableViewBackgroundView, tableView);
+            tableViewBackgroundViewTopConstraint = tableViewBackgroundView.TopAnchor.ConstraintEqualTo(tableView.TopAnchor);
+            tableViewBackgroundViewTopConstraint.Active = true;
+            tableViewBackgroundView.LeftAnchor.ConstraintEqualTo(tableView.LeftAnchor).Active = true;
+            tableViewBackgroundView.RightAnchor.ConstraintEqualTo(tableView.RightAnchor).Active = true;
+            tableViewBackgroundView.HeightAnchor.ConstraintEqualTo(View.HeightAnchor).Active = true;
+
+            var lineView = new UIView { TranslatesAutoresizingMaskIntoConstraints = false, BackgroundColor = Constants.Color.DarkGray };
+            tableViewBackgroundView.AddSubview(lineView);
+            lineView.LeftAnchor.ConstraintEqualTo(tableViewBackgroundView.LeftAnchor, constant: ResponseUpdateTableViewCell.CellPadding + (ResponseUpdateTableViewCell.DotSize / 2)).Active = true;
+            lineView.TopAnchor.ConstraintEqualTo(tableViewBackgroundView.TopAnchor).Active = true;
+            lineView.BottomAnchor.ConstraintEqualTo(tableViewBackgroundView.BottomAnchor).Active = true;
+            lineView.WidthAnchor.ConstraintEqualTo(ResponseUpdateTableViewCell.LineWidth).Active = true;
+
+            mapPanGestureRecognizer = new UIPanGestureRecognizer(HandleMapPan)
+            {
+                ShouldRecognizeSimultaneously = (g1, g2) => true,
+            };
+
+            iconTapGestureRecognizer = new UITapGestureRecognizer(HandleIconAction);
         }
 
         protected override void BindEventHandlers()
@@ -165,6 +203,9 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
 
             ViewModel.OnLocationChanged += HandleOnLocationChanged;
             responseUpdatesTableViewSource.OnTableViewScrolled += HandleOnTableViewScrolled;
+            mapView.AddGestureRecognizer(mapPanGestureRecognizer);
+            iconBackgroundView.AddGestureRecognizer(iconTapGestureRecognizer);
+            ViewModel.Notifications.CollectionChanged += HandleNotificationsCollectionChanged;
         }
 
         protected override void UnBindEventHandlers()
@@ -173,6 +214,9 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
 
             ViewModel.OnLocationChanged -= HandleOnLocationChanged;
             responseUpdatesTableViewSource.OnTableViewScrolled -= HandleOnTableViewScrolled;
+            mapView.RemoveGestureRecognizer(mapPanGestureRecognizer);
+            iconBackgroundView.RemoveGestureRecognizer(iconTapGestureRecognizer);
+            responseUpdatesTableViewSource.Notifications = null;
         }
 
         public override void ViewDidAppear(bool animated)
@@ -180,47 +224,83 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
             base.ViewDidAppear(animated);
 
             UpdateMapView();
-            UIView.Animate(PlatformConstants.AnimationDuration, () => mapView.Alpha = 1);
+            SetIconBackgroundViewFrame(tableView.ContentOffset.Y);
+            UIView.Animate(PlatformConstants.AnimationDuration, () => 
+            {
+                mapView.Alpha = 1;
+                iconBackgroundView.Alpha = 1;
+            });
         }
 
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-
+            View.LayoutIfNeeded();
             tableView.ContentInset = new UIEdgeInsets((View.Bounds.Height * mapViewHeightFactor) + headerHeight, 0, Constants.PulloutMinBottomMargin + Constants.Padding, 0);
-            tableView.SetContentOffset(new CGPoint(0, -(View.Bounds.Height * mapViewHeightFactor) + -headerHeight), false);
-            tableHeaderView.Frame = new CGRect(0, tableView.Frame.Top + tableView.ContentInset.Top - headerHeight, View.Bounds.Width, headerHeight);
             iconBackgroundView.Frame = new CGRect
             {
                 Location = new CGPoint(View.Bounds.Width - Constants.Padding - iconSize, tableHeaderView.Frame.Top + (iconSize / 2)),
                 Size = iconBackgroundView.Frame.Size,
             };
+            tableView.SetContentOffset(new CGPoint(0, -(View.Bounds.Height * mapViewHeightFactor) + -headerHeight), false);
+            tableHeaderView.Frame = new CGRect(0, tableView.Frame.Top + tableView.ContentInset.Top - headerHeight, View.Bounds.Width, headerHeight);
         }
 
-        void HandleOnLocationChanged(object sender, Common.Geolocation.LocationChangedEventArgs e)
+        void HandleOnLocationChanged(object sender, Common.Geo.LocationChangedEventArgs e)
         {
-            eventCoordinate = new CLLocationCoordinate2D(ViewModel.Response.Geolocation.Latitude, ViewModel.Response.Geolocation.Longitude);
+            if (ViewModel?.Response?.Geolocation != null)
+            {
+                eventCoordinate = new CLLocationCoordinate2D(ViewModel.Response.Geolocation.Latitude, ViewModel.Response.Geolocation.Longitude);
+            }
+
             lastUserCoordinate = new CLLocationCoordinate2D(e.CurrentLocation.Latitude, e.CurrentLocation.Longitude);
             UpdateMapView(true);
         }
 
         void UpdateMapView(bool animated = false)
         {
-
-
-            if (isInitialRender)
+            if (CoordinateIsEmpty(eventCoordinate) && !isUserControllingMapRegion)
             {
-                var deltaPaddingFactor = 1.1;
-                var latitudeDelta = Math.Abs(lastUserCoordinate.Latitude - eventCoordinate.Latitude);
-                var longitudeDelta = Math.Abs(lastUserCoordinate.Longitude - eventCoordinate.Longitude);
-                var spanRegion = new MKCoordinateRegion(lastUserCoordinate.GetMidpointCoordinate(eventCoordinate), new MKCoordinateSpan(latitudeDelta * deltaPaddingFactor, longitudeDelta * deltaPaddingFactor));
-                var region = mapView.RegionThatFits(spanRegion);
-                mapView.SetRegion(region, animated);
+                mapView.SetCenterCoordinate(lastUserCoordinate, false);
+            }
+            else if (!isUserControllingMapRegion)
+            {
+                SetMapRegion(animated);
+            }
 
+            if (isInitialRender && !CoordinateIsEmpty(eventCoordinate))
+            {
                 var annotation = new MKPointAnnotation { Coordinate = eventCoordinate };
                 mapView.AddAnnotation(annotation);
                 isInitialRender = false;
             }
+        }
+
+        void SetMapRegion(bool animated = false) 
+        {
+            var deltaPaddingFactor = 1.1;
+            var latitudeDelta = Math.Abs(lastUserCoordinate.Latitude - eventCoordinate.Latitude);
+            var longitudeDelta = Math.Abs(lastUserCoordinate.Longitude - eventCoordinate.Longitude);
+            var spanRegion = new MKCoordinateRegion(lastUserCoordinate.GetMidpointCoordinate(eventCoordinate), new MKCoordinateSpan(latitudeDelta * deltaPaddingFactor, longitudeDelta * deltaPaddingFactor));
+            var region = mapView.RegionThatFits(spanRegion);
+            mapView.SetRegion(region, false);
+        }
+
+        void HandleMapPan()
+        {
+            isUserControllingMapRegion = true;
+        }
+
+        void HandleIconAction()
+        {
+            isUserControllingMapRegion = false;
+            SetMapRegion(true);
+        }
+
+        void HandleNotificationsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            responseUpdatesTableViewSource.Notifications = new List<NotificationModel>(ViewModel.Notifications);
+            tableView.ReloadData();
         }
 
         void HandleOnTableViewScrolled(object sender, TableViewScrolledEventArgs e)
@@ -233,18 +313,26 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
                 Location = new CGPoint
                 {
                     X = 0,
-                    //Y = yOffset + headerHeight > 0 ? tableView.Frame.Top : tableView.Frame.Top - yOffset - headerHeight,
                     Y = tableView.Frame.Top - yOffset - headerHeight,
                 },
             };
 
-            //var totalInset = tableView.ContentInset.Top;
-            //var percentMaximized = 1 - (-yOffset / totalInset);
-            //percentMaximized = percentMaximized < 0 ? 0 : (percentMaximized > 1 ? 1 : percentMaximized);
+            SetIconBackgroundViewFrame(yOffset);
 
+            tableViewBackgroundViewTopConstraint.Constant =  - yOffset - headerHeight;
+
+            if (yOffset < 0)
+            {
+                var constant = (-yOffset - tableView.ContentInset.Top) * 0.5f;
+                mapViewTopConstraint.Constant = constant - mapOverflowConstant;
+            }
+
+            View.LayoutIfNeeded();
+        }
+
+        void SetIconBackgroundViewFrame(nfloat yOffset) // TODO: this, and call it from viewdidappear or something
+        {
             var iconY = -yOffset + tableView.Frame.Top - headerHeight - (iconBackgroundView.Frame.Height / 2);
-            var maximizedY = tableView.Frame.Top - (iconBackgroundView.Frame.Height / 2);
-            //iconY = iconY < maximizedY ? maximizedY : iconY;
 
             iconBackgroundView.Frame = new CGRect
             {
@@ -255,13 +343,8 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
                     Y = iconY,
                 },
             };
-
-            if (yOffset < 0)
-            {
-                var constant = (-yOffset - tableView.ContentInset.Top) * 0.5f;
-                mapViewTopConstraint.Constant = constant;
-                View.LayoutIfNeeded();
-            }
         }
+
+        bool CoordinateIsEmpty(CLLocationCoordinate2D coordinate) => Math.Abs(coordinate.Latitude) < double.Epsilon && Math.Abs(coordinate.Longitude) < double.Epsilon;
     }
 }

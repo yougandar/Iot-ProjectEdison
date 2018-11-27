@@ -19,7 +19,7 @@ namespace Edison.Common.DAO
         [JsonConverter(typeof(EpochDateTimeConverter))]
         public DateTime UpdateDate { get; set; }
         public ActionPlanDAOObject ActionPlan { get; set; }
-        public Guid PrimaryEventClusterId { get; set; }
+        public Guid? PrimaryEventClusterId { get; set; }
         public GeolocationDAOObject Geolocation { get; set; }
         public IEnumerable<Guid> EventClusterIds { get; set; }
         public List<string> SafeUsers { get; set; }

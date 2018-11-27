@@ -1,11 +1,11 @@
 #Azure Container Registry Configuration
 $azureSubscriptionId = '00000000-0000-0000-0000-000000000000'
-$acrResourceGroup = 'edisondev'
-$acrSPName = 'SPEdisonDevContainerRegistry'
+$acrResourceGroup = 'edison'
+$acrSPName = 'SPEdisonContainerRegistry'
 $acrSPClientId = '00000000-0000-0000-0000-000000000000'
 $acrSPPassword = '00000000-0000-0000-0000-000000000000'
-$acrContainerRegistryName = 'edisondevcontainerregistry'
-$acrContainerRegistryUrl = 'edisondevcontainerregistry.azurecr.io'
+$acrContainerRegistryName = 'edisoncontainerregistry'
+$acrContainerRegistryUrl = 'edisoncontainerregistry.azurecr.io'
 $acrAccountEmail = 'email@company.com'
 
 #Registering Azure Container Registry Credentials
@@ -42,23 +42,27 @@ Copy-Item "config-edisonsignalrservice.json" -Destination "config.json"
 kubectl create configmap config-edisonsignalrservice --from-file=./config.json
 Remove-Item "config.json"
 
-#Copy-Item "config-edisonchatservice.json" -Destination "config.json"
-#kubectl create configmap config-edisonchatservice --from-file=./config.json
-#Remove-Item "config.json"
+Copy-Item "config-edisonchatservice.json" -Destination "config.json"
+kubectl create configmap config-edisonchatservice --from-file=./config.json
+Remove-Item "config.json"
 
 Copy-Item "config-edisonresponseservice.json" -Destination "config.json"
 kubectl create configmap config-edisonresponseservice --from-file=./config.json
 Remove-Item "config.json"
 
-#Copy-Item "config-edisonnotificationhubservice.json" -Destination "config.json"
-#kubectl create configmap config-edisonnotificationhubservice --from-file=./config.json
-#Remove-Item "config.json"
+Copy-Item "config-edisonnotificationhubservice.json" -Destination "config.json"
+kubectl create configmap config-edisonnotificationhubservice --from-file=./config.json
+Remove-Item "config.json"
 
 Copy-Item "config-edisonmessagedispatcherservice.json" -Destination "config.json"
 kubectl create configmap config-edisonmessagedispatcherservice --from-file=./config.json
 Remove-Item "config.json"
 
-Copy-Item "Secrets/common.json" -Destination "secrets.json"
+Copy-Item "config-edisondeviceprovisioning.json" -Destination "config.json"
+kubectl create configmap config-edisondeviceprovisioning --from-file=./config.json
+Remove-Item "config.json"
+
+Copy-Item "Secrets/common.secrets" -Destination "secrets.json"
 kubectl create secret generic secrets-common --from-file=./secrets.json
 Remove-Item "secrets.json"
 

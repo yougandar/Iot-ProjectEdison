@@ -15,17 +15,14 @@ namespace Edison.Api.Helpers
 {
     public class EventClustersDataManager
     {
-        private readonly WebApiConfiguration _config;
         private ICosmosDBRepository<EventClusterDAO> _repoEventClusters;
         private ICosmosDBRepository<DeviceDAO> _repoDevices;
         private IMapper _mapper;
 
-        public EventClustersDataManager(IOptions<WebApiConfiguration> config,
-            IMapper mapper,
+        public EventClustersDataManager(IMapper mapper,
             ICosmosDBRepository<EventClusterDAO> repoEventClusters,
             ICosmosDBRepository<DeviceDAO> repoDevices)
         {
-            _config = config.Value;
             _mapper = mapper;
             _repoEventClusters = repoEventClusters;
             _repoDevices = repoDevices;
@@ -74,6 +71,9 @@ namespace Edison.Api.Helpers
 
         public async Task<IEnumerable<Guid>> GetClustersInRadius(EventClusterGeolocationModel eventClusterGeolocationObj)
         {
+            if (eventClusterGeolocationObj == null || eventClusterGeolocationObj.ResponseEpicenterLocation == null)
+                return new List<Guid>();
+
             IEnumerable<EventClusterDAO> eventClusters = await _repoEventClusters.GetItemsAsync(
                p => p.ClosureDate.Value == null,
                p => new EventClusterDAO()
@@ -141,6 +141,49 @@ namespace Edison.Api.Helpers
                 throw new Exception($"An error occured when creating a new cluster id for DeviceId: {eventObj.DeviceId}");
 
             return _mapper.Map<EventClusterModel>(eventCluster);
+        }
+
+        public async Task<EventClusterGeolocationUpdateResultModel> UpdateGeolocation(Geolocation geolocation, Guid deviceId)
+        {
+            if (geolocation == null)
+                throw new Exception($"No Geolocation found: {geolocation}");
+            if (deviceId == Guid.Empty || deviceId == null)
+                throw new Exception($"DeviceId not found");
+
+            EventClusterDAO eventClusterDAO = await _repoEventClusters.GetItemAsync(p => p.Device.DeviceId == deviceId && p.ClosureDate.Value == null);
+
+            if (eventClusterDAO != null)
+            {
+                if (geolocation.Latitude == eventClusterDAO.Device.Geolocation.Latitude &&
+                    geolocation.Longitude == eventClusterDAO.Device.Geolocation.Longitude)
+                    return new EventClusterGeolocationUpdateResultModel() { Success = false };
+
+                string etag = eventClusterDAO.ETag;
+                eventClusterDAO.Device.Geolocation = _mapper.Map<GeolocationDAOObject>(geolocation);
+
+                try
+                {
+                    var result = await _repoEventClusters.UpdateItemAsync(eventClusterDAO);
+                    if (result)
+                    {
+                        return new EventClusterGeolocationUpdateResultModel()
+                        {
+                            Success = true,
+                            EventCluster = _mapper.Map<EventClusterModel>(eventClusterDAO)
+                        };
+                    }
+                    throw new Exception($"Error while updating device geolocation: {deviceId}.");
+
+                }
+                catch (DocumentClientException e)
+                {
+                    //Update concurrency issue, retrying
+                    if (e.StatusCode == HttpStatusCode.PreconditionFailed)
+                        return await UpdateGeolocation(geolocation, deviceId);
+                    throw e;
+                }
+            }
+            return new EventClusterGeolocationUpdateResultModel() { Success = false };
         }
 
         public async Task<EventClusterModel> CloseEventCluster(EventClusterCloseModel eventObj)

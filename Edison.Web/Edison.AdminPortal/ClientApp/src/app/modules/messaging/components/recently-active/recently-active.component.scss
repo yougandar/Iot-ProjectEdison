@@ -1,9 +1,9 @@
 @import 'sizes';
 
 :host {
-  max-width: 350px;
+  max-width: 330px;
   z-index: 2;
-  min-width: $eventbar-width;
+  min-width: 330px;
   -webkit-box-shadow: 2px 0px 5px 0px rgba(0, 0, 0, 0.3);
   -moz-box-shadow: 2px 0px 5px 0px rgba(0, 0, 0, 0.3);
   box-shadow: 2px 0px 5px 0px rgba(0, 0, 0, 0.3);

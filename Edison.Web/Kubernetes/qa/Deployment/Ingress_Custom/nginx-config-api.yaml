@@ -25,3 +25,7 @@ spec:
         backend:
           serviceName: edisonchatservice
           servicePort: 80
+      - path: /deviceprovisioning
+        backend:
+          serviceName: edisondeviceprovisioning
+          servicePort: 80

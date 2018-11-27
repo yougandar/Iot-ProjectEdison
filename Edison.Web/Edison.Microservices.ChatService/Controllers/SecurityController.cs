@@ -35,12 +35,15 @@ namespace Edison.ChatService.Controllers
         {
             try
             {
-                ChatUserContext userContext = ChatUserContext.FromClaims(User.Claims);
-                userContext.SetUserRoleAgainstAdminList(_config.Admins);
+                ChatUserContext userContext = ChatUserContext.FromClaims(User.Claims, _config);
                 TokenConversationResult conversation = await _directLineRestClient.GenerateToken(new TokenConversationParameters()
                 {  
                     User = userContext
                 });
+                if(conversation == null)
+                {
+                    return StatusCode((int)HttpStatusCode.InternalServerError);
+                }
                 return Ok(new ChatUserTokenContext()
                 {
                     ConversationId = conversation.ConversationId,

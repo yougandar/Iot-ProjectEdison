@@ -16,6 +16,7 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
         UITableView tableView;
         UIButton logoutButton;
         UIVisualEffectView blurView;
+        MenuTableViewSource menuTableViewSource;
 
         public override void ViewDidLoad()
         {
@@ -54,11 +55,12 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
             logoutButton.LeftAnchor.ConstraintEqualTo(View.LeftAnchor, Constants.MenuRightMargin).Active = true;
             logoutButton.HeightAnchor.ConstraintEqualTo(Constants.MenuCellHeight * 2).Active = true;
 
+            menuTableViewSource = new MenuTableViewSource();
             tableView = new UITableView
             {
                 TranslatesAutoresizingMaskIntoConstraints = false,
                 AlwaysBounceVertical = true,
-                Source = new MenuTableViewSource { ViewModel = ViewModel },
+                Source = menuTableViewSource,
                 SeparatorStyle = UITableViewCellSeparatorStyle.None,
                 TableFooterView = new UIView(),
                 BackgroundColor = UIColor.Clear,
@@ -82,6 +84,7 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
             base.BindEventHandlers();
 
             logoutButton.TouchUpInside += HandleLogoutButtonTouchUpInside;
+            menuTableViewSource.ViewModel = ViewModel;
         }
 
         protected override void UnBindEventHandlers()
@@ -89,6 +92,7 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
             base.UnBindEventHandlers();
 
             logoutButton.TouchUpInside -= HandleLogoutButtonTouchUpInside;
+            menuTableViewSource.ViewModel = null;
         }
 
         public void SetPercentMaximized(float percent)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using CoreGraphics;
 using Edison.Mobile.iOS.Common.Views;
 using Edison.Mobile.User.Client.Core.ViewModels;
@@ -9,21 +10,24 @@ using UIKit;
 
 namespace Edison.Mobile.User.Client.iOS.Views
 {
-    public class ChatViewController : BaseViewController<ChatViewModel>
+    public class ChatViewController : BaseViewController<ChatViewModel>, IUITextViewDelegate
     {
         readonly float inputHeight = 52;
 
         UILabel sendMessageLabel;
         UITextView inputTextView;
         UIView borderView;
+        ChatMessageTypeCollectionViewSource chatMessageTypeCollectionViewSource;
         UICollectionView messageTypeCollectionView;
         UICollectionView chatCollectionView;
         ChatCollectionViewSource chatCollectionViewSource;
+        UIButton sendButton;
 
         NSLayoutConstraint bottomInputTextViewConstraint;
 
         NSObject keyboardWillShowNotificationToken;
         NSObject keyboardWillHideNotificationToken;
+        NSObject keyboardDidShowNotificationToken;
 
         public override void ViewDidLoad()
         {
@@ -43,19 +47,47 @@ namespace Edison.Mobile.User.Client.iOS.Views
             sendMessageLabel.LeftAnchor.ConstraintEqualTo(View.LeftAnchor, Constants.Padding).Active = true;
             sendMessageLabel.RightAnchor.ConstraintEqualTo(View.RightAnchor, -Constants.Padding).Active = true;
 
+            sendButton = new UIButton { TranslatesAutoresizingMaskIntoConstraints = false, Enabled = false };
+
+            sendButton.SetAttributedTitle(new NSAttributedString("Send", new UIStringAttributes
+            {
+                Font = Constants.Fonts.RubikMediumOfSize(Constants.Fonts.Size.Fourteen),
+                ForegroundColor = Constants.Color.Blue,
+            }), UIControlState.Normal);
+
+            sendButton.SetAttributedTitle(new NSAttributedString("Send", new UIStringAttributes
+            {
+                Font = Constants.Fonts.RubikMediumOfSize(Constants.Fonts.Size.Fourteen),
+                ForegroundColor = Constants.Color.Blue.ColorWithAlpha(0.7f),
+            }), UIControlState.Highlighted);
+
+            sendButton.SetAttributedTitle(new NSAttributedString("Send", new UIStringAttributes
+            {
+                Font = Constants.Fonts.RubikMediumOfSize(Constants.Fonts.Size.Fourteen),
+                ForegroundColor = Constants.Color.MidGray.ColorWithAlpha(0.7f),
+            }), UIControlState.Disabled);
+
+            View.AddSubview(sendButton);
+            sendButton.HeightAnchor.ConstraintEqualTo(inputHeight).Active = true;
+            sendButton.RightAnchor.ConstraintEqualTo(View.RightAnchor).Active = true;
+            sendButton.WidthAnchor.ConstraintEqualTo(inputHeight).Active = true;
+
             inputTextView = new UITextView
             {
                 TranslatesAutoresizingMaskIntoConstraints = false,
                 Font = Constants.Fonts.RubikOfSize(Constants.Fonts.Size.Fourteen),
                 TextColor = Constants.Color.DarkGray,
+                Delegate = this,
             };
 
             View.AddSubview(inputTextView);
             inputTextView.LeftAnchor.ConstraintEqualTo(View.LeftAnchor).Active = true;
-            inputTextView.RightAnchor.ConstraintEqualTo(View.RightAnchor).Active = true;
+            inputTextView.RightAnchor.ConstraintEqualTo(sendButton.LeftAnchor).Active = true;
             bottomInputTextViewConstraint = inputTextView.BottomAnchor.ConstraintEqualTo(View.BottomAnchor);
             bottomInputTextViewConstraint.Active = true;
             inputTextView.HeightAnchor.ConstraintEqualTo(inputHeight).Active = true;
+
+            sendButton.BottomAnchor.ConstraintEqualTo(inputTextView.BottomAnchor).Active = true;
 
             borderView = new UIView
             {
@@ -77,13 +109,17 @@ namespace Edison.Mobile.User.Client.iOS.Views
                 ScrollDirection = UICollectionViewScrollDirection.Horizontal,
             };
 
+            chatMessageTypeCollectionViewSource = new ChatMessageTypeCollectionViewSource();
+
             messageTypeCollectionView = new UICollectionView(CGRect.Empty, messageTypeCollectionViewFlowLayout)
             {
                 TranslatesAutoresizingMaskIntoConstraints = false,
                 BackgroundColor = UIColor.Clear,
-                Source = new ChatMessageTypeCollectionViewSource(),
+                Source = chatMessageTypeCollectionViewSource,
                 AlwaysBounceHorizontal = true,
             };
+
+            chatMessageTypeCollectionViewSource.CollectionView = new WeakReference<UICollectionView>(messageTypeCollectionView);
 
             messageTypeCollectionView.RegisterClassForCell(typeof(ChatMessageTypeCollectionViewCell), typeof(ChatMessageTypeCollectionViewCell).Name);
 
@@ -93,17 +129,9 @@ namespace Edison.Mobile.User.Client.iOS.Views
             messageTypeCollectionView.BottomAnchor.ConstraintEqualTo(borderView.TopAnchor).Active = true;
             messageTypeCollectionView.HeightAnchor.ConstraintEqualTo(Constants.ChatMessageTypeHeight).Active = true;
 
-            var chatCollectionViewFlowLayout = new UICollectionViewFlowLayout
-            {
-                MinimumLineSpacing = 0,
-                MinimumInteritemSpacing = 0,
-                EstimatedItemSize = new CGSize(UIScreen.MainScreen.Bounds.Width, 200),
-                ScrollDirection = UICollectionViewScrollDirection.Vertical,
-            };
-
             chatCollectionViewSource = new ChatCollectionViewSource();
 
-            chatCollectionView = new UICollectionView(CGRect.Empty, chatCollectionViewFlowLayout)
+            chatCollectionView = new UICollectionView(CGRect.Empty, new ChatCollectionViewLayout())
             {
                 TranslatesAutoresizingMaskIntoConstraints = false,
                 Source = chatCollectionViewSource,
@@ -126,8 +154,15 @@ namespace Edison.Mobile.User.Client.iOS.Views
             base.BindEventHandlers();
             keyboardWillShowNotificationToken = UIKeyboard.Notifications.ObserveWillShow(HandleKeyboardWillShow);
             keyboardWillHideNotificationToken = UIKeyboard.Notifications.ObserveWillHide(HandleKeyboardWillHide);
+            keyboardDidShowNotificationToken = UIKeyboard.Notifications.ObserveDidShow(HandleKeyboardDidShow);
             chatCollectionViewSource.Messages = ViewModel.ChatMessages;
+            chatCollectionViewSource.Initials = ViewModel.Initials;
+            chatMessageTypeCollectionViewSource.ActionPlans = ViewModel.ActionPlans;
+            chatMessageTypeCollectionViewSource.OnActionPlanSelected += HandleChatMessageTypeCollectionViewSourceOnActionPlanSelected;
             ViewModel.ChatMessages.CollectionChanged += HandleChatMessagesCollectionChanged;
+            ViewModel.ActionPlans.CollectionChanged += HandleActionPlansCollectionChanged;
+            ViewModel.OnCurrentActionPlanChanged += HandleOnCurrentActionPlanChanged;
+            sendButton.TouchUpInside += HandleSendButtonTouchUpInside;
         }
 
         protected override void UnBindEventHandlers()
@@ -136,16 +171,18 @@ namespace Edison.Mobile.User.Client.iOS.Views
 
             if (keyboardWillShowNotificationToken != null) NSNotificationCenter.DefaultCenter.RemoveObserver(keyboardWillShowNotificationToken);
             if (keyboardWillHideNotificationToken != null) NSNotificationCenter.DefaultCenter.RemoveObserver(keyboardWillHideNotificationToken);
+            if (keyboardDidShowNotificationToken != null) NSNotificationCenter.DefaultCenter.RemoveObserver(keyboardDidShowNotificationToken);
             chatCollectionViewSource.Messages = null;
+            chatMessageTypeCollectionViewSource.OnActionPlanSelected -= HandleChatMessageTypeCollectionViewSourceOnActionPlanSelected;
             ViewModel.ChatMessages.CollectionChanged -= HandleChatMessagesCollectionChanged;
+            chatMessageTypeCollectionViewSource.ActionPlans = null;
+            sendButton.TouchUpInside -= HandleSendButtonTouchUpInside;
         }
 
         public void ChatSummoned()
         {
             inputTextView.BecomeFirstResponder();
-            Console.WriteLine(View.LayoutMarginsGuide.BottomAnchor);
-            Console.WriteLine(View.SafeAreaInsets.Bottom);
-            Console.WriteLine(View.LayoutMargins.Bottom);
+            ViewModel.ChatSummoned();
         }
 
         public void ChatDismissing()
@@ -155,7 +192,45 @@ namespace Edison.Mobile.User.Client.iOS.Views
 
         public void ChatDismissed()
         {
+            ViewModel.ChatDismissed();
+        }
 
+        [Export("textView:shouldChangeTextInRange:replacementText:")]
+        public bool ShouldChangeText(UITextView textView, NSRange range, string text)
+        {
+            return true;
+        }
+
+        [Export("textViewDidChange:")]
+        public void Changed(UITextView textView)
+        {
+            sendButton.Enabled = textView.HasText;
+        }
+
+        void HandleChatMessageTypeCollectionViewSourceOnActionPlanSelected(object sender, ActionPlanSelectedEventArgs e)
+        {
+            ViewModel.BeginConversationWithActionPlan(e.SelectedActionPlan);
+        }
+
+        void HandleOnCurrentActionPlanChanged(object sender, EventArgs e)
+        {
+            chatMessageTypeCollectionViewSource.SelectedActionPlan = ViewModel.CurrentActionPlan;
+        }
+
+        async void HandleSendButtonTouchUpInside(object sender, EventArgs e)
+        {
+            if (!inputTextView.HasText) return;
+
+            var text = inputTextView.Text;
+
+            inputTextView.Text = "";
+
+            var success = await ViewModel.SendMessage(text);
+
+            if (!success)
+            {
+                inputTextView.Text = text;
+            }
         }
 
         void HandleKeyboardWillShow(object sender, UIKeyboardEventArgs e)
@@ -166,9 +241,8 @@ namespace Edison.Mobile.User.Client.iOS.Views
             UIView.SetAnimationDuration(e.AnimationDuration);
             UIView.SetAnimationCurve(e.AnimationCurve);
             UIView.SetAnimationBeginsFromCurrentState(true);
-
             View.LayoutIfNeeded();
-
+            ScrollChatToBottom(false);
             UIView.CommitAnimations();
         }
 
@@ -180,19 +254,54 @@ namespace Edison.Mobile.User.Client.iOS.Views
             UIView.SetAnimationDuration(e.AnimationDuration);
             UIView.SetAnimationCurve(e.AnimationCurve);
             UIView.SetAnimationBeginsFromCurrentState(true);
-
             View.LayoutIfNeeded();
-
             UIView.CommitAnimations();
+        }
+
+        void HandleKeyboardDidShow(object sender, UIKeyboardEventArgs e)
+        {
+
+        }
+
+        void HandleActionPlansCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            messageTypeCollectionView.ReloadData();
         }
 
         void HandleChatMessagesCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             InvokeOnMainThread(() =>
             {
-                // TODO: insert cells rather than reload collection
-                chatCollectionView.ReloadData();
+                var indexPaths = new List<NSIndexPath>();
+                if (e.NewItems != null)
+                {
+                    for (var i = 0; i < e.NewItems.Count; i++)
+                    {
+                        indexPaths.Add(NSIndexPath.FromItemSection(e.NewStartingIndex + i, 0));
+                    }
+
+                    chatCollectionView.PerformBatchUpdates(
+                        () => chatCollectionView.InsertItems(indexPaths.ToArray()),
+                        finished => ScrollChatToBottom()
+                    );
+                }
+                else
+                {
+                    chatCollectionView.ReloadSections(NSIndexSet.FromIndex(0));
+                }
             });
+        }
+
+        void ScrollChatToBottom(bool animated = true)
+        {
+            try
+            {
+                chatCollectionView.ScrollToItem(NSIndexPath.FromItemSection(ViewModel.ChatMessages.Count - 1, 0), UICollectionViewScrollPosition.Bottom, animated);
+            }
+            catch (Exception e) 
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 }

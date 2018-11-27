@@ -39,6 +39,7 @@ namespace Edison.NotificationHubService.Consumers
                     _logger.LogDebug($"NotificationSendEventConsumer: Title: '{notification.Title}'.");
                     _logger.LogDebug($"NotificationSendEventConsumer: User: '{notification.User}'.");
                     DateTime date = DateTime.UtcNow;
+                    notification.ResponseId = context.Message.ResponseId;
                     NotificationModel result = await _notificationRestService.SendNotification(notification);
                     if(result != null)
                     {

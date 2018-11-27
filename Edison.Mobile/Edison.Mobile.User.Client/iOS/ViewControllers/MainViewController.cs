@@ -340,7 +340,7 @@ namespace Edison.Mobile.User.Client.iOS.ViewControllers
             if (potentialNewX > limitX)
             {
                 var excessDistance = potentialNewX - limitX;
-                return 0.3f - (excessDistance / (limitX * marginMultiplier));
+                return 0.3f - (nfloat)Math.Abs(excessDistance / (limitX * marginMultiplier));
             }
 
             return 1;

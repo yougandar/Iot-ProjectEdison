@@ -9,7 +9,9 @@ import { Observable, Subscription } from 'rxjs'
 import { Store, select } from '@ngrx/store'
 import { AppState } from '../../reducers'
 import { authTokenSelector } from '../../reducers/auth/auth.selectors'
-import { AuthService } from './auth.service'
+import { MsalService } from './msal.service'
+import { environment } from '../../../environments/environment';
+import { AdalService } from './adal.service';
 
 @Injectable({
     providedIn: 'root',
@@ -20,7 +22,7 @@ export class TokenInterceptorService implements HttpInterceptor, OnDestroy {
 
     constructor (
         private store: Store<AppState>,
-        private authService: AuthService
+        private authService: AdalService
     ) {
         this.authTokenSub$ = store
             .pipe(select(authTokenSelector))
@@ -35,14 +37,18 @@ export class TokenInterceptorService implements HttpInterceptor, OnDestroy {
         request: HttpRequest<any>,
         next: HttpHandler
     ): Observable<HttpEvent<any>> {
-        const req = request.clone({
-            setHeaders: {
-                Authorization: `Bearer ${this.token}`,
-            },
-        })
+        if (environment.authorize) {
+            // this.authService.refreshToken()
 
-        this.authService.refreshToken()
+            const req = request.clone({
+                setHeaders: {
+                    Authorization: `Bearer ${this.token}`,
+                },
+            })
 
-        return next.handle(req)
+            return next.handle(req)
+        }
+
+        return next.handle(request)
     }
 }

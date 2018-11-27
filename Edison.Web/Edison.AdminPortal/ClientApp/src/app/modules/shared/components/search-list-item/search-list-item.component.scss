@@ -1,6 +1,9 @@
 @import 'icons';
 @import 'colorScheme';
 
+:host {
+    display: flex;
+}
 .container {
   display: flex;
   align-items: center;
@@ -8,6 +11,8 @@
   position: relative;
   padding-left: 20px;
   min-height: 44px;
+  max-height: 44px;
+  width: 100%;
 
   &.active {
     .text {

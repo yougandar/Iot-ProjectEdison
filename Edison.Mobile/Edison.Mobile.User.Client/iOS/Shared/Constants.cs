@@ -1,5 +1,6 @@
 ﻿using System;
 using UIKit;
+using Edison.Mobile.User.Client.Core.Shared;
 
 namespace Edison.Mobile.User.Client.iOS.Shared
 {
@@ -42,11 +43,15 @@ namespace Edison.Mobile.User.Client.iOS.Shared
             public static UIColor Green = new UIColor(40 / 255f, 203 / 255f, 78 / 255f, 1);
             public static UIColor YellowWarning = new UIColor(255 / 255f, 159 / 255f, 34 / 255f, 1);
 
-            public static UIColor MapFromActionPlanColor(string color) 
+            public static UIColor MapFromActionPlanColor(string colorName) 
             {
-                if (color == "red") return Red;
-
-                return null;
+                switch (colorName) 
+                {
+                    case Core.Shared.Constants.ColorName.Red: return Red;
+                    case Core.Shared.Constants.ColorName.Yellow: return YellowWarning;
+                    case Core.Shared.Constants.ColorName.Blue: return Blue;
+                    default: return null;
+                }
             }
         }
 
@@ -75,12 +80,31 @@ namespace Edison.Mobile.User.Client.iOS.Shared
             public static UIImage HealthWhite => UIImage.FromBundle("HealthWhite");
             public static UIImage HealthBlue => UIImage.FromBundle("HealthBlue");
             public static UIImage LocationSent => UIImage.FromBundle("LocationSent");
+            public static UIImage ProtestWhite => UIImage.FromBundle("ProtestWhite");
+            public static UIImage ProtestBlue => UIImage.FromBundle("ProtestBlue");
+            public static UIImage BrightnessMoon => UIImage.FromBundle("BrightnessMoon");
+            public static UIImage TornadoWhite => UIImage.FromBundle("TornadoWhite");
+            public static UIImage TornadoYellow => UIImage.FromBundle("TornadoYellow");
+            public static UIImage PackageWhite => UIImage.FromBundle("PackageWhite");
+            public static UIImage PackageRed => UIImage.FromBundle("PackageRed");
+            public static UIImage VipBlue => UIImage.FromBundle("VIPBlue");
+            public static UIImage VipWhite => UIImage.FromBundle("VIPWhite");
 
-            public static UIImage MapFromActionPlanIcon(string str) 
+            public static UIImage MapFromActionPlanIcon(string str, bool colored = false) 
             {
-                if (str == "fire") return FireWhite;
-
-                return null;
+                switch (str) 
+                {
+                    case Core.Shared.Constants.IconName.Fire: return colored ? FireRed : FireWhite;
+                    case Core.Shared.Constants.IconName.Gun: return colored ? GunRed : GunWhite;
+                    case Core.Shared.Constants.IconName.Protest: return colored ? ProtestBlue : ProtestWhite;
+                    case Core.Shared.Constants.IconName.Pollution: return colored ? HealthBlue : HealthWhite;
+                    case Core.Shared.Constants.IconName.Health: return colored ? HealthBlue : HealthWhite;
+                    case Core.Shared.Constants.IconName.Tornado: return colored ? TornadoYellow : TornadoWhite;
+                    case Core.Shared.Constants.IconName.Package: return colored ? PackageRed : PackageWhite;
+                    case Core.Shared.Constants.IconName.Vip: return colored ? VipBlue : VipWhite;
+                    case Core.Shared.Constants.IconName.Emergency: return colored ? EmergencyRed : EmergencyWhite;
+                    default: return null;
+                }
             }
         }
 

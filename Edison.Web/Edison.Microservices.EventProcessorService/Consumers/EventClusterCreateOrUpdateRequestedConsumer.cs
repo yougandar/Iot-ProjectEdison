@@ -14,13 +14,16 @@ namespace Edison.EventProcessorService.Consumers
     public class EventClusterCreateOrUpdateRequestedConsumer : IConsumer<IEventClusterCreateOrUpdateRequested>
     {
         private readonly IEventClusterRestService _eventClusterRestService;
+        private readonly IDeviceRestService _deviceRestService;
         private readonly ILogger<EventClusterCreateOrUpdateRequestedConsumer> _logger;
 
         public EventClusterCreateOrUpdateRequestedConsumer(IEventClusterRestService eventClusterRestService,
+            IDeviceRestService deviceRestService,
             ILogger<EventClusterCreateOrUpdateRequestedConsumer> logger)
         {
             _logger = logger;
             _eventClusterRestService = eventClusterRestService;
+            _deviceRestService = deviceRestService;
         }
 
         public async Task Consume(ConsumeContext<IEventClusterCreateOrUpdateRequested> context)
@@ -28,6 +31,20 @@ namespace Edison.EventProcessorService.Consumers
             try
             {
                 _logger.LogDebug($"EventClusterCreateRequestedConsumer: Retrieved message from source '{context.Message.DeviceId}'.");
+
+                if (context.Message.CheckBoundary)
+                {
+                    _logger.LogDebug($"EventClusterCreateRequestedConsumer: '{context.Message.DeviceId}' event must be checked for boundaries.");
+                    if (!await _deviceRestService.IsInBoundaries(new DeviceBoundaryGeolocationModel()
+                    {
+                        DeviceId = context.Message.DeviceId
+                    }))
+                    {
+                        _logger.LogError("EventClusterCreateRequestedConsumer: The event was not triggered within the geolocation boundaries.");
+                        return;
+                    }
+                }
+
 
                 if (JsonConvert.DeserializeObject<Dictionary<string,object>>(context.Message.Data) is Dictionary<string,object> deviceMessage)
                 {

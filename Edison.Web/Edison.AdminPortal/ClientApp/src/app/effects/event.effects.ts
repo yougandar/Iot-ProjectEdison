@@ -9,6 +9,8 @@ import {
     EventActionTypes,
     LoadEvents,
     GetEventsError,
+    ShowEventInEventBar,
+    SelectActiveEvent,
 } from '../reducers/event/event.actions';
 import { Event } from '../reducers/event/event.model';
 import { mockEvents } from '../mockData/mockEvents';
@@ -33,6 +35,12 @@ export class EventEffects {
                     )
         )
     );
+
+    @Effect()
+    showEventInEventBar$: Observable<Action> = this.actions$.pipe(
+        ofType(EventActionTypes.ShowEventInEventBar),
+        map(({ payload: { event } }: ShowEventInEventBar) => new SelectActiveEvent({ event }))
+    )
 
     constructor (private actions$: Actions, private http: HttpClient) { }
 }

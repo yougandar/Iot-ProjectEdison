@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +14,11 @@ namespace Microsoft.AspNetCore.Authentication
             builder.AddJwtBearer("AzureAd", options =>
             {
                 options.Audience = configuration["AzureAd:ClientId"];
-                options.Authority = $"{configuration["AzureAd:Instance"]}{configuration["AzureAd:TenantId"]}/v2.0";
+                options.TokenValidationParameters.ValidIssuers = new List<string>()
+                {
+                    $"{configuration["AzureAd:Instance"]}{configuration["AzureAd:TenantId"]}/v2.0" //For Issuer validation for MSAL v2
+                };
+                options.Authority = $"{configuration["AzureAd:Instance"]}{configuration["AzureAd:TenantId"]}";
             })
             .AddJwtBearer("B2CWeb", options =>
             {

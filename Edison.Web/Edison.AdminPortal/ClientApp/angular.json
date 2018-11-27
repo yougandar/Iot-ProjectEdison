@@ -162,41 +162,6 @@
                     }
                 }
             }
-        },
-        "three-psa-ui-lib": {
-            "root": "projects/3PSA_UI/projects/three-psa-ui-lib",
-            "sourceRoot": "projects/three-psa-ui-lib/src",
-            "projectType": "library",
-            "prefix": "smart",
-            "architect": {
-                "build": {
-                    "builder": "@angular-devkit/build-ng-packagr:build",
-                    "options": {
-                        "tsConfig": "projects/three-psa-ui-lib/tsconfig.lib.json",
-                        "project": "projects/three-psa-ui-lib/ng-package.json"
-                    }
-                },
-                "test": {
-                    "builder": "@angular-devkit/build-angular:karma",
-                    "options": {
-                        "main": "projects/three-psa-ui-lib/src/test.ts",
-                        "tsConfig": "projects/three-psa-ui-lib/tsconfig.spec.json",
-                        "karmaConfig": "projects/three-psa-ui-lib/karma.conf.js"
-                    }
-                },
-                "lint": {
-                    "builder": "@angular-devkit/build-angular:tslint",
-                    "options": {
-                        "tsConfig": [
-                            "projects/three-psa-ui-lib/tsconfig.lib.json",
-                            "projects/three-psa-ui-lib/tsconfig.spec.json"
-                        ],
-                        "exclude": [
-                            "**/node_modules/**"
-                        ]
-                    }
-                }
-            }
         }
     },
     "defaultProject": "ClientApp",

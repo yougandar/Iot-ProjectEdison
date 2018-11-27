@@ -58,7 +58,11 @@ Copy-Item "config-edisonmessagedispatcherservice.json" -Destination "config.json
 kubectl create configmap config-edisonmessagedispatcherservice --from-file=./config.json
 Remove-Item "config.json"
 
-Copy-Item "Secrets/common.json" -Destination "secrets.json"
+Copy-Item "config-edisondeviceprovisioning.json" -Destination "config.json"
+kubectl create configmap config-edisondeviceprovisioning --from-file=./config.json
+Remove-Item "config.json"
+
+Copy-Item "Secrets/common.secrets" -Destination "secrets.json"
 kubectl create secret generic secrets-common --from-file=./secrets.json
 Remove-Item "secrets.json"
 

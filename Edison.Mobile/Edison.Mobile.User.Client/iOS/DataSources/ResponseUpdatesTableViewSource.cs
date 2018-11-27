@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using CoreGraphics;
+using Edison.Core.Common.Models;
 using Edison.Mobile.User.Client.iOS.Views;
 using Foundation;
 using UIKit;
@@ -15,10 +17,16 @@ namespace Edison.Mobile.User.Client.iOS.DataSources
     {
         public event EventHandler<TableViewScrolledEventArgs> OnTableViewScrolled;
 
+        public List<NotificationModel> Notifications { get; set; }
+
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
             var cell = tableView.DequeueReusableCell(typeof(ResponseUpdateTableViewCell).Name, indexPath) as ResponseUpdateTableViewCell;
-            cell.Initialize("testing stuff ou tand stuf f testing stuff ou tand stuf ftesting stuff ou tand stuf ftesting stuff ou tand stuf ftesting stuff ou tand stuf ftesting stuff ou tand stuf ftesting stuff ou tand stuf f,", indexPath.Row != 0);
+            var notification = Notifications[indexPath.Row];
+            var isFirstCell = indexPath.Row == 0;
+
+            cell.Initialize(notification, !isFirstCell, isFirstCell);
+
             return cell;
         }
 
@@ -29,7 +37,7 @@ namespace Edison.Mobile.User.Client.iOS.DataSources
 
         public override nint RowsInSection(UITableView tableview, nint section)
         {
-            return 20;
+            return Notifications?.Count ?? 0;
         }
 
         public override void Scrolled(UIScrollView scrollView)
@@ -39,12 +47,5 @@ namespace Edison.Mobile.User.Client.iOS.DataSources
                 ContentOffset = scrollView.ContentOffset,
             });
         }
-
-        //public override UIView GetViewForHeader(UITableView tableView, nint section)
-        //{
-        //    var headerCell = tableView.DequeueReusableHeaderFooterView(typeof(ResponseUpdateTableViewHeaderCell).Name) as ResponseUpdateTableViewHeaderCell;
-        //    headerCell.Initialize();
-        //    return headerCell;
-        //}
     }
 }

@@ -14,6 +14,7 @@ namespace Edison.Common.DAO
         [JsonConverter(typeof(EpochDateTimeConverter))]
         public DateTime LastAccessTime { get; set; }
         public bool Sensor { get; set; }
+        public bool IoTDevice { get; set; }
         public bool Enabled { get; set; }
         public string Name { get; set; }
         public string Location1 { get; set; }

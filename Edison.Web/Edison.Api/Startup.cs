@@ -12,6 +12,7 @@ using Edison.Common.Interfaces;
 using Edison.Common.Config;
 using Edison.Common.DAO;
 using Edison.Common;
+using System.Security.Claims;
 
 namespace Edison.Api
 {
@@ -31,12 +32,26 @@ namespace Edison.Api
             services
                 .AddAuthentication()
                 .AddAzureAdAndB2CBearer(Configuration);
+            //Authorization
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Admin", policy => policy.RequireAssertion(context => context.User.HasClaim(c =>
+                    (c.Type == ClaimTypes.Role && c.Value == "Admin") ||
+                    (c.Type == "appidacr" && c.Value == "1") ||
+                    (c.Type == "azpacr" && c.Value == "1"))));
+
+                options.AddPolicy("SuperAdmin", policy => policy.RequireAssertion(context => context.User.HasClaim(c => 
+                    (c.Type == "appidacr" && c.Value == "1") || 
+                    (c.Type == "azpacr" && c.Value == "1"))));
+
+                options.AddPolicy("Consumer", policy => policy.RequireAuthenticatedUser());
+            });
 
             //Options
             services.AddOptions();
-            services.EnableKubernetes();
+            services.AddApplicationInsightsKubernetesEnricher();
             services.AddApplicationInsightsTelemetry(Configuration);
-            services.Configure<WebApiConfiguration>(Configuration.GetSection("WebApiConfiguration"));
+            services.Configure<WebApiOptions>(Configuration.GetSection("WebApiConfiguration"));
             services.Configure<NotificationsOptions>(Configuration.GetSection("NotificationHub"));
             services.Configure<CosmosDBOptions>(typeof(EventClusterDAO).FullName, Configuration.GetSection("CosmosDb"));
             services.Configure<CosmosDBOptions>(typeof(EventClusterDAO).FullName, opt => opt.Collection = opt.Collections.EventClusters);
@@ -48,6 +63,8 @@ namespace Edison.Api
             services.Configure<CosmosDBOptions>(typeof(ResponseDAO).FullName, opt => opt.Collection = opt.Collections.Responses);
             services.Configure<CosmosDBOptions>(typeof(NotificationDAO).FullName, Configuration.GetSection("CosmosDb"));
             services.Configure<CosmosDBOptions>(typeof(NotificationDAO).FullName, opt => opt.Collection = opt.Collections.Notifications);
+            services.Configure<CosmosDBOptions>(typeof(ChatReportDAO).FullName, Configuration.GetSection("CosmosDb"));
+            services.Configure<CosmosDBOptions>(typeof(ChatReportDAO).FullName, opt => opt.Collection = opt.Collections.ChatReports);
 
             //Service Bus
             services.Configure<ServiceBusRabbitMQOptions>(Configuration.GetSection("ServiceBusRabbitMQ"));
@@ -63,6 +80,7 @@ namespace Edison.Api
             services.AddScoped<ActionPlanDataManager>();
             services.AddScoped<IoTHubControllerDataManager>();
             services.AddScoped<NotificationHubDataManager>();
+            services.AddScoped<ReportDataManager>();
             services.AddSignalR().AddRedis(Configuration.GetValue<string>("SignalR:ConnectionString"));
 
             //Cors

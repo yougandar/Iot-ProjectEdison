@@ -1,4 +1,5 @@
-﻿using Edison.Core.Common;
+﻿using Edison.ChatService.Config;
+using Edison.Core.Common;
 using Edison.Core.Common.Models;
 using Microsoft.Bot.Schema;
 using Newtonsoft.Json;
@@ -6,25 +7,35 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Text.RegularExpressions;
+using Edison.ChatService.Helpers;
 
 namespace Edison.ChatService.Models
 {
     public class ChatUserContext : ChatUserModel
     {
-        public static ChatUserContext FromClaims(IEnumerable<Claim> claims)
+        public static ChatUserContext FromClaims(IEnumerable<Claim> claims, BotOptions config)
         {
             List<Claim> claimsList = claims.ToList();
 
-            string id = claimsList.Find(p => p.Type == "emails")?.Value;
-            if(string.IsNullOrEmpty(id))
-                id = claimsList.Find(p => p.Type == "preferred_username")?.Value;
+            //Get id
+            string id = UserHelper.GetBestClaimValue("id", claimsList, config.ClaimsId, true);
+
+            //Get name
+            string firstName = UserHelper.GetBestClaimValue("firstName", claimsList, config.ClaimsFirstName, true);
+            string lastName = UserHelper.GetBestClaimValue(claimsList, config.ClaimsLastName);
+
+            //Get role
+            string role = UserHelper.GetBestClaimValue(claimsList, config.ClaimsRole);
+            ChatUserRole roleEnum = ChatUserRole.Consumer;
+            if (!string.IsNullOrEmpty(role) && config.ClaimsRoleAdminValues.Contains(role))
+                roleEnum = ChatUserRole.Admin;
+            UserRoleCache.UserRoles[$"dl_{id}"] = roleEnum;
 
             var userContext = new ChatUserContext()
             {
                 Id = $"dl_{id}",
-                Name = claimsList.Find(p => p.Type == "name")?.Value,
-                Role = GetUserRoleFromString("Admin")
+                Name = $"{firstName} {lastName}",
+                Role = roleEnum
             };
 
             return userContext;
@@ -38,31 +49,6 @@ namespace Edison.ChatService.Models
                 Name = conversation.User?.Name,
                 Role = GetUserRoleFromString(conversation.User?.Role)
             };
-        }
-
-        public void SetUserRoleAgainstAdminList(List<string> admins)
-        {
-            string userId = Id.ToLower();
-            if (userId.StartsWith("dl_"))
-                userId = userId.Substring(3);
-            foreach (string admin in admins)
-            {
-                var adminToTest = admin.ToLower();
-                if (adminToTest.StartsWith("*"))
-                {
-                    if (Regex.IsMatch(userId, CoreHelper.GetWildCardExpression(adminToTest)))
-                    {
-                        Role = ChatUserRole.Admin;
-                        return;
-                    }
-                }
-                else if (adminToTest == userId)
-                {
-                    Role = ChatUserRole.Admin;
-                    return;
-                }
-            }
-            Role = ChatUserRole.Consumer;
         }
 
         private static ChatUserRole GetUserRoleFromString(string roleStr)

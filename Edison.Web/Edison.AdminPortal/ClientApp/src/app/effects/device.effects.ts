@@ -8,6 +8,9 @@ import {
     LoadDevices,
     GetDevicesError,
     DeviceActionTypes,
+    TestDeviceSuccess,
+    TestDeviceError,
+    TestDevice,
 } from '../reducers/device/device.actions';
 import { Device } from '../reducers/device/device.model';
 import { environment } from '../../environments/environment';
@@ -24,7 +27,7 @@ export class DeviceEffects {
                     ? new Observable<Action>((sub: Subscriber<Action>) =>
                         sub.next(new LoadDevices({ devices: mockDevices }))
                     )
-                    : this.http.get(`${environment.baseUrl}${environment.apiUrl}devices/map`).pipe(
+                    : this.http.get(`${environment.baseUrl}${environment.apiUrl}devices`).pipe(
                         map(
                             (devices: Device[]) =>
                                 devices ? new LoadDevices({ devices }) : new GetDevicesError()
@@ -33,6 +36,16 @@ export class DeviceEffects {
                     )
         )
     );
+
+    @Effect()
+    testDevice$: Observable<Action> = this.actions$.pipe(
+        ofType(DeviceActionTypes.TestDevice),
+        mergeMap((action: TestDevice) => this.http.put(`${environment.baseUrl}${environment.apiUrl}IoTHub/DirectMethods`, {
+            deviceIds: [ action.payload.deviceId ],
+            methodName: 'test',
+            payload: null,
+        }).pipe(map(() => new TestDeviceSuccess()), catchError(() => of(new TestDeviceError()))))
+    )
 
     constructor (private actions$: Actions, private http: HttpClient) { }
 }

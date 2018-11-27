@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { InfiniteScrollModule } from 'ngx-infinite-scroll'
 import { FormsModule } from '@angular/forms'
-import { RoundProgressModule } from 'angular-svg-round-progressbar'
 
 import { DashboardRoutingModule } from './dashboard-routing.module'
 import { DashboardComponent } from './pages/dashboard/dashboard.component'
@@ -17,30 +15,33 @@ import { ActiveResponseIconComponent } from './components/active-response-icon/a
 import { DeactivateResponseComponent } from './components/deactivate-response/deactivate-response.component'
 import { ActiveResponseComponent } from './components/active-response/active-response.component'
 import { UpdateResponseComponent } from './components/update-response/update-response.component'
-import { MessagingModule } from '../messaging/messaging.module'
+import { MessagingModule } from '../messaging/messaging.module';
+import { DevicesModule } from '../devices/devices.module';
+
+// import { SmartMapModule } from 'three-psa-ui-lib';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    DashboardRoutingModule,
-    SharedModule,
-    MaterialModule,
-    MapModule,
-    InfiniteScrollModule,
-    FormsModule,
-    RoundProgressModule,
-    MessagingModule,
-  ],
-  declarations: [
-    DashboardComponent,
-    EventBarComponent,
-    EventCardComponent,
-    ActivateResponseComponent,
-    ActiveResponsesComponent,
-    ActiveResponseIconComponent,
-    DeactivateResponseComponent,
-    ActiveResponseComponent,
-    UpdateResponseComponent,
-  ],
+    imports: [
+        CommonModule,
+        DashboardRoutingModule,
+        SharedModule,
+        MaterialModule,
+        MapModule,
+        FormsModule,
+        MessagingModule,
+        DevicesModule
+        // SmartMapModule
+    ],
+    declarations: [
+        DashboardComponent,
+        EventBarComponent,
+        EventCardComponent,
+        ActivateResponseComponent,
+        ActiveResponsesComponent,
+        ActiveResponseIconComponent,
+        DeactivateResponseComponent,
+        ActiveResponseComponent,
+        UpdateResponseComponent,
+    ],
 })
-export class DashboardModule {}
+export class DashboardModule { }

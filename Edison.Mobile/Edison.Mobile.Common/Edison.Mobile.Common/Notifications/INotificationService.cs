@@ -8,6 +8,6 @@ namespace Edison.Mobile.Common.Notifications
     {
         Task<bool> HasNotificationPrivileges();
         Task<bool> RequestNotificationPrivileges();
-        Task<bool> RegisterForNotifications(DeviceRegistrationModel deviceRegistrationModel);
+        Task<DeviceMobileModel> RegisterForNotifications(DeviceRegistrationModel deviceRegistrationModel);
     }
 }

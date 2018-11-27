@@ -25,13 +25,14 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.1.1" />
     <PackageReference Include="Microsoft.Bot.Connector.DirectLine" Version="3.0.2" />
-    <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.15" />
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.5" />
+    <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.18" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.6" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Edison.Core\Edison.Core.ApiRestClient\Edison.Core.ApiRestClient.csproj" />
     <ProjectReference Include="..\..\..\..\..\Edison.Core\Edison.Core.Common\Edison.Core.Common.csproj" />
+    <ProjectReference Include="..\..\..\..\Edison.Microservices.ChatService\Edison.ChatService.csproj" />
   </ItemGroup>
 
 </Project>

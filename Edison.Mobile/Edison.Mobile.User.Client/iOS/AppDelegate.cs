@@ -3,14 +3,11 @@ using Autofac;
 using Edison.Core.Common.Models;
 using Edison.Mobile.Common.Auth;
 using Edison.Mobile.Common.Ioc;
-using Edison.Mobile.Common.Logging;
-using Edison.Mobile.Common.Network;
 using Edison.Mobile.Common.Notifications;
 using Edison.Mobile.Common.Shared;
 using Edison.Mobile.iOS.Common.Ioc;
 using Edison.Mobile.User.Client.Core.Ioc;
 using Edison.Mobile.User.Client.iOS.Ioc;
-using Edison.Mobile.User.Client.iOS.Shared;
 using Edison.Mobile.User.Client.iOS.ViewControllers;
 using Foundation;
 using Microsoft.AppCenter;
@@ -57,7 +54,7 @@ namespace Edison.Mobile.User.Client.iOS
 
         public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
         {
-            Hub = new SBNotificationHub(Constants.ListenConnectionString, Constants.NotificationHubName);
+            Hub = new SBNotificationHub(Shared.Constants.ListenConnectionString, Shared.Constants.NotificationHubName);
 
             Hub.UnregisterAllAsync(deviceToken, async (error) =>
             {

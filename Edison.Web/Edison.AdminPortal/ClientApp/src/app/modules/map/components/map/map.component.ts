@@ -5,8 +5,8 @@ import {
     Input,
     AfterViewInit,
     ViewChild,
-    ChangeDetectionStrategy,
     ChangeDetectorRef,
+    OnDestroy,
 } from '@angular/core'
 import { MapDefaults } from '../../models/mapDefaults'
 import { MapPin } from '../../models/mapPin'
@@ -16,20 +16,27 @@ import { environment } from '../../../../../environments/environment'
 import { spinnerColors } from '../../../../core/spinnerColors'
 import { Event, EventType } from '../../../../reducers/event/event.model'
 import { getRankingColor } from '../../../../core/colorRank'
-import { Observable } from 'rxjs'
+import { Observable, Subscription } from 'rxjs'
 import { AppState } from '../../../../reducers'
 import { Store, select } from '@ngrx/store'
 import { selectingActionPlanSelector } from '../../../../reducers/action-plan/action-plan.selectors'
 import { fadeInOutHalfOpacity } from '../../../../core/animations/fadeInOutHalfOpacity'
+import { showSelectingLocationSelector, activeResponseSelector } from '../../../../reducers/response/response.selectors';
+import { ShowSelectingLocation, AddLocationToActiveResponse, UpdateResponse } from '../../../../reducers/response/response.actions';
+import { MapClick } from '../../models/mapClick';
+import { MapPosition } from '../../models/mapPosition';
+import { Response } from '../../../../reducers/response/response.model';
+import { filter } from 'rxjs/operators';
+import { GeoLocation } from '../../../../core/models/geoLocation';
+import { ShowEventInEventBar } from '../../../../reducers/event/event.actions';
 
 @Component({
     selector: 'app-map',
     templateUrl: './map.component.html',
     styleUrls: [ './map.component.scss' ],
-    animations: [ fadeInOut, fadeInOutHalfOpacity ],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    animations: [ fadeInOut, fadeInOutHalfOpacity ]
 })
-export class MapComponent implements OnInit, OnChanges, AfterViewInit {
+export class MapComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
     private map: Microsoft.Maps.Map
     private htmlLayer: HtmlPushpinLayer
     private htmlClusterLayer: HtmlPushpinLayer
@@ -40,7 +47,13 @@ export class MapComponent implements OnInit, OnChanges, AfterViewInit {
     spinnerColors = spinnerColors
     mapLoaded = false
     pinsFocused = false
+    selectedLocation: MapPosition;
+    activeResponse: Response;
+
+    selectingLocation = false;
     showOverlay$: Observable<boolean>
+    showSelectingLocation$: Observable<boolean>;
+    activeResponseSub$: Subscription;
 
     @Input()
     defaultOptions: MapDefaults
@@ -71,6 +84,15 @@ export class MapComponent implements OnInit, OnChanges, AfterViewInit {
     ngOnInit() {
         this.updateMap()
         this.showOverlay$ = this.store.pipe(select(selectingActionPlanSelector))
+        this.showSelectingLocation$ = this.store.pipe(select(showSelectingLocationSelector));
+        this.activeResponseSub$ = this.store.pipe(
+            select(activeResponseSelector),
+            filter(({ activeResponse }) => activeResponse !== null))
+            .subscribe(({ activeResponse }) => this.activeResponse = activeResponse);
+    }
+
+    ngOnDestroy() {
+        this.activeResponseSub$.unsubscribe();
     }
 
     ngAfterViewInit() {
@@ -89,16 +111,16 @@ export class MapComponent implements OnInit, OnChanges, AfterViewInit {
 
         )
 
-        this.focusPins(pinsToFocus)
+        this.focusPins(pinsToFocus, this.defaultOptions.zoom)
     }
 
-    focusPins = (pins: MapPin[]) => {
+    focusPins = (pins: MapPin[], zoom?: number) => {
         const locations = pins.map(pin => this.getPinLocation(pin))
 
         if (locations.length > 0) {
             const bounds = Microsoft.Maps.LocationRect.fromLocations(locations)
 
-            this.setMapBounds(bounds)
+            this.setMapBounds(bounds, zoom)
             this.pinsFocused = true
         }
     }
@@ -115,6 +137,47 @@ export class MapComponent implements OnInit, OnChanges, AfterViewInit {
     onZoomOut() {
         const zoom = this.map.getZoom() - 1
         this.map.setView({ zoom })
+    }
+
+    setLocation() {
+        this.selectedLocation = null;
+        this.selectingLocation = true;
+    }
+
+    restartSetLocation() {
+        this.selectedLocation = null;
+        this.selectingLocation = false;
+        this.updateResponseLocation();
+    }
+
+    hideSelectLocation() {
+        this.hideShowSelectingLocation();
+        this.selectedLocation = null;
+        this.selectingLocation = false;
+    }
+
+    confirmLocation() {
+        this.store.dispatch(new AddLocationToActiveResponse({ location: this.selectedLocation, responseId: this.activeResponse.responseId }));
+        this.hideShowSelectingLocation();
+        this.selectedLocation = null;
+        this.selectingLocation = false;
+    }
+
+    private hideShowSelectingLocation() {
+        this.store.dispatch(new ShowSelectingLocation({ showSelectingLocation: false }))
+    }
+
+    private updateResponseLocation(geolocation: GeoLocation = null) {
+        if (this.activeResponse) {
+            this.store.dispatch(new UpdateResponse({
+                response: {
+                    id: this.activeResponse.responseId,
+                    changes: {
+                        geolocation,
+                    }
+                }
+            }));
+        }
     }
 
     private initMapAfterLoad = () => {
@@ -141,6 +204,7 @@ export class MapComponent implements OnInit, OnChanges, AfterViewInit {
                     currentPin.metadata = pin
                     currentPin.setOptions({
                         htmlContent: this.getHtmlElement(occurences, 1, pin.color, tooltip),
+                        location: this.getPinLocation(pin),
                     })
                 })
 
@@ -195,6 +259,7 @@ export class MapComponent implements OnInit, OnChanges, AfterViewInit {
                 credentials: environment.bingMapsKey,
                 center:
                     this.pins.length === 1 ? this.getPinLocation(this.pins[ 0 ]) : null,
+                customMapStyle: environment.mapDefaults.style,
             }
         )
 
@@ -233,9 +298,23 @@ export class MapComponent implements OnInit, OnChanges, AfterViewInit {
 
                 this.mapLoaded = true
                 this.updateMap()
+                this.initMapEvents();
                 this.cdr.markForCheck()
             }
         )
+    }
+
+    private initMapEvents = () => {
+        Microsoft.Maps.Events.addHandler(this.map, 'click', this.onMapClick);
+    }
+
+    private onMapClick = (event: MapClick) => {
+        if (this.selectingLocation) {
+            this.selectedLocation = event.location;
+            this.selectingLocation = false;
+            this.updateResponseLocation(event.location);
+            this.cdr.markForCheck(); // all events output from bing maps do not fire angular checks
+        }
     }
 
     private createHtmlClusterLayer = () => {
@@ -345,12 +424,14 @@ export class MapComponent implements OnInit, OnChanges, AfterViewInit {
         this.htmlClusterLayer.add(htmlClusterPin)
     }
 
-    private setMapBounds = (bounds: Microsoft.Maps.LocationRect) => {
+    private setMapBounds = (bounds: Microsoft.Maps.LocationRect, zoom?: number) => {
         this.map.setView({
             bounds: bounds,
             padding: this.defaultOptions.padding || 100,
         })
-        this.map.setView({ zoom: this.defaultOptions.zoom || 14 })
+        if (zoom) {
+            this.map.setView({ zoom: zoom || this.defaultOptions.zoom })
+        }
     }
 
     private getPinLocation = (pin: MapPin) => {
@@ -363,14 +444,20 @@ export class MapComponent implements OnInit, OnChanges, AfterViewInit {
     private createHtmlPin(pin: MapPin) {
         const tooltip = pin.event ? pin.event.eventType === EventType.Message ? pin.event.events[ 0 ].metadata.username : null : null;
         const occurences = pin.event ? pin.event.eventCount : 0;
-        const html = this.getHtmlElement(occurences, 1, pin.color, tooltip)
+        const html = this.getHtmlElement(occurences, 1, pin.color, tooltip, pin.event !== null && pin.event !== undefined)
 
         const anchor = new Microsoft.Maps.Point(30, 30)
 
         const htmlPin = new HtmlPushpin(this.getPinLocation(pin), html, { anchor })
+        Microsoft.Maps.Events.addHandler(htmlPin, 'click', () => { this.handlePinClick(pin.event); })
         htmlPin.metadata = pin
 
         return htmlPin
+    }
+
+    private handlePinClick(event: Event) {
+        if (!event) { return; }
+        this.store.dispatch(new ShowEventInEventBar({ event }))
     }
 
     private createClusterPin(pin: MapPin) {
@@ -405,26 +492,29 @@ export class MapComponent implements OnInit, OnChanges, AfterViewInit {
         return pin
     }
 
-    private getHtmlElement(occurences: number, devices: number, color?: string, specialTooltip?: string) {
+    private getHtmlElement(occurences: number, devices: number, color?: string, specialTooltip?: string, clickable?: boolean) {
         if (occurences > 0) {
             const occurencesString = `${occurences}x`;
             const tooltip = specialTooltip ? specialTooltip : devices > 1 ? `${devices} Devices` : '';
             if (color) {
                 switch (color.toLowerCase()) {
                     case 'red':
-                        return this.redPinSpinner.getSpinnerElement(occurencesString, tooltip)
+                        return this.redPinSpinner.getSpinnerElement(occurencesString, tooltip, clickable)
                     case 'yellow':
-                        return this.yellowPinSpinner.getSpinnerElement(occurencesString, tooltip)
+                        return this.yellowPinSpinner.getSpinnerElement(occurencesString, tooltip, clickable)
                     case 'blue':
-                        return this.bluePinSpinner.getSpinnerElement(occurencesString, tooltip)
+                        return this.bluePinSpinner.getSpinnerElement(occurencesString, tooltip, clickable)
                     case 'green':
-                        return this.greenPinSpinner.getSpinnerElement(occurencesString, tooltip)
+                        return this.greenPinSpinner.getSpinnerElement(occurencesString, tooltip, clickable)
                     case 'grey':
-                        return this.greyPinSpinner.getSpinnerElement(occurencesString, tooltip)
+                        return this.greyPinSpinner.getSpinnerElement(occurencesString, tooltip, clickable)
                 }
             }
             return this.bluePinSpinner.getSpinnerElement(occurencesString, tooltip)
         } else {
+            if (clickable) {
+                return '<img src="assets/icons/pin.svg" style="cursor: pointer" />'
+            }
             return '<img src="assets/icons/pin.svg" />'
         }
     }

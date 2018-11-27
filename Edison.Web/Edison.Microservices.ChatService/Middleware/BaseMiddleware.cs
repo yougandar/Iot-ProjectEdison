@@ -30,6 +30,13 @@ namespace Edison.ChatService.Middleware
             }
         }
 
+        protected string GetDatabaseUserId(string channelId, string userId)
+        {
+            if (channelId == "directline" && userId.StartsWith("dl_"))
+                return userId.Substring(3);
+            return userId;
+        }
+
         protected abstract Task HandleTurnAsync(ITurnContext turnContext, ChatUserContext userContext, MessageRouter messageRouter, NextDelegate next, CancellationToken cancellationToken = default(CancellationToken));
     }
 }

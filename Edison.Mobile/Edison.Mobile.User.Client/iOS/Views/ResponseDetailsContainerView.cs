@@ -9,16 +9,19 @@ namespace Edison.Mobile.User.Client.iOS.Views
         MKMapView mapView;
         UITableView tableView;
         ResponseUpdateTableViewHeaderView headerView;
+        UIView iconBackgroundView;
 
         public override UIView HitTest(CGPoint point, UIEvent uievent)
         {
             var yOffset = tableView.ContentOffset.Y;
-            if (yOffset >= 0)
+            var baseHitTestResult = base.HitTest(point, uievent);
+            if (yOffset >= 0 || baseHitTestResult == iconBackgroundView)
             {
-                return base.HitTest(point, uievent);
+                return baseHitTestResult;
             }
 
             var mapY = -yOffset + tableView.Frame.Top - headerView.Frame.Height;
+
             if (point.Y <= mapY)
             {
                 return mapView.HitTest(mapView.ConvertPointFromView(point, this), uievent);
@@ -36,6 +39,7 @@ namespace Edison.Mobile.User.Client.iOS.Views
                     if (subview is MKMapView mView) mapView = mView;
                     if (subview is UITableView tView) tableView = tView;
                     if (subview is ResponseUpdateTableViewHeaderView hView) headerView = hView;
+                    if (subview.Tag == 1) iconBackgroundView = subview;
                 }
             }
 

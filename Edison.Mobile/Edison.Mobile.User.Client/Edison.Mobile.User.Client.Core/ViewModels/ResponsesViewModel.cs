@@ -1,8 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using Autofac;
+using System.Threading.Tasks;
 using Edison.Mobile.Common.Network;
 using Edison.Mobile.Common.Shared;
 using Edison.Mobile.User.Client.Core.CollectionItemViewModels;
+using Edison.Mobile.User.Client.Core.Network;
+using Edison.Mobile.Common.Ioc;
 
 namespace Edison.Mobile.User.Client.Core.ViewModels
 {
@@ -23,10 +27,22 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
 
             if (Responses.Count == 0)
             {
-                var responses = await responseRestService.GetResponses();
-                if (responses != null)
+                await GetResponses();
+            }
+        }
+
+        public async Task GetResponses() 
+        {
+            var responses = await responseRestService.GetResponses();
+            if (responses != null)
+            {
+                Responses.AddRange(responses.Select(r => new ResponseCollectionItemViewModel(r)));
+
+                var isSafetyCheckRequired = responses.Any(r => r.AcceptSafeStatus);
+                if (isSafetyCheckRequired) 
                 {
-                    Responses.AddRange(responses.Select(r => new ResponseCollectionItemViewModel(r)));
+                    var chatViewModel = Container.Instance.Resolve<ChatViewModel>();
+                    chatViewModel.ChatPromptTypes.Add(Shared.ChatPromptType.SafetyCheck);
                 }
             }
         }

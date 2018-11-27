@@ -7,6 +7,7 @@ namespace Edison.Core.Common.Models
     {
         public Guid DeviceId { get; set; }
         public string DeviceType { get; set; }
+        public DateTime LastAccessTime { get; set; }
         public bool Online { get; set; }
         public bool Sensor { get; set; } 
         public string Name { get; set; }

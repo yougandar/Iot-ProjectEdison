@@ -19,7 +19,21 @@ export enum ChatActionTypes {
     SelectActiveUser = '[Chat] Select Active User',
     SelectActiveConversation = '[Chat] Select Active Conversation',
     SendNewMessage = '[Chat] Send New Message',
-    EndConversation = '[Chat] End Conversation'
+    EndConversation = '[Chat] End Conversation',
+    ToggleAllUsersChatWindow = '[Chat] Toggle All Users Chat Window',
+    ToggleUserChatWindow = '[Chat] Toggle User Chat Window'
+}
+
+export class ToggleAllUsersChatWindow implements Action {
+    readonly type = ChatActionTypes.ToggleAllUsersChatWindow;
+
+    constructor (public payload: { open: boolean, userId?: string, userName?: string }) { }
+}
+
+export class ToggleUserChatWindow implements Action {
+    readonly type = ChatActionTypes.ToggleUserChatWindow;
+
+    constructor (public payload: { open: boolean, userId?: string, userName?: string }) { }
 }
 
 export class EndConversation implements Action {
@@ -134,4 +148,6 @@ export type ChatActions =
     | GetChatAuthTokenError
     | SelectActiveUser
     | SelectActiveConversation
-    | EndConversation;
+    | EndConversation
+    | ToggleAllUsersChatWindow
+    | ToggleUserChatWindow;

@@ -15,8 +15,6 @@ namespace Edison.Api.Helpers
 {
     public class ResponseDataManager
     {
-        private readonly WebApiConfiguration _config;
-        private readonly ActionPlanDataManager _actionPlansDataManager;
         private readonly ICosmosDBRepository<ResponseDAO> _repoResponses;
         private readonly IMapper _mapper;
 
@@ -24,15 +22,10 @@ namespace Edison.Api.Helpers
         private const int RESPONSE_STATE_ACTIVE = 1;
         private const int RESPONSE_STATE_INACTIVE = 0;
 
-        public ResponseDataManager(IOptions<WebApiConfiguration> config,
-            IMapper mapper,
-            ActionPlanDataManager actionPlansDataManager,
-            ICosmosDBRepository<ResponseDAO> repoResponses)
+        public ResponseDataManager(IMapper mapper, ICosmosDBRepository<ResponseDAO> repoResponses)
         {
-            _config = config.Value;
             _mapper = mapper;
             _repoResponses = repoResponses;
-            _actionPlansDataManager = actionPlansDataManager;
         }
 
         public async Task<ResponseModel> GetResponse(Guid responseId)
@@ -64,6 +57,9 @@ namespace Edison.Api.Helpers
 
         public async Task<IEnumerable<ResponseModel>> GetResponsesFromPointRadius(ResponseGeolocationModel responseGeolocationObj)
         {
+            if (responseGeolocationObj == null || responseGeolocationObj.EventClusterEpicenterLocation == null)
+                return new List<ResponseModel>();
+
             IEnumerable<ResponseDAO> responseObjs = await _repoResponses.GetItemsAsync(p => p.EndDate.Value == null);
             if (responseObjs == null)
                 return null;
@@ -123,14 +119,14 @@ namespace Edison.Api.Helpers
             return _mapper.Map<ResponseModel>(response);
         }
 
-        public async Task<ResponseModel> UpdateResponse(ResponseUpdateModel responseObj)
+        public async Task<ResponseModel> LocateResponse(ResponseUpdateModel responseObj)
         {
             ResponseDAO response = await _repoResponses.GetItemAsync(responseObj.ResponseId);
             if (response == null)
                 throw new Exception($"No response found that matches responseid: {responseObj.ResponseId}");
 
             string etag = response.ETag;
-            response.ResponseState = responseObj.State;
+            response.Geolocation = _mapper.Map<GeolocationDAOObject>(responseObj.Geolocation);
             response.ETag = etag;
 
             try
@@ -141,7 +137,7 @@ namespace Edison.Api.Helpers
             {
                 //Update concurrency issue, retrying
                 if (e.StatusCode == HttpStatusCode.PreconditionFailed)
-                    return await UpdateResponse(responseObj);
+                    return await LocateResponse(responseObj);
                 throw e;
             }
 
@@ -239,20 +235,18 @@ namespace Edison.Api.Helpers
             return true;
         }
 
-        public async Task<ResponseModel> AddActionToResponse(ResponseAddActionPlanModel responseAddAction)
+        public async Task<ResponseModel> ChangeActionOnResponse(ResponseChangeActionPlanModel responseChangeAction)
         {
-            ResponseDAO response = await _repoResponses.GetItemAsync(responseAddAction.ResponseId);
+            ResponseDAO response = await _repoResponses.GetItemAsync(responseChangeAction.ResponseId);
             if (response == null)
-                throw new Exception($"No response found that matches responseid: {responseAddAction.ResponseId}");
+                throw new Exception($"No response found that matches responseid: {responseChangeAction.ResponseId}");
 
             string etag = response.ETag;
             if (response.EventClusterIds == null)
                 response.EventClusterIds = new List<Guid>();
-            foreach (var action in responseAddAction.Actions)
-            {
-                response.ActionPlan.OpenActions =
-                    response.ActionPlan.OpenActions.Append(_mapper.Map<ActionDAOObject>(action));
-            }
+
+            response = UpdateActionsOnResponseModel(response, responseChangeAction);
+
             response.ETag = etag;
 
             try
@@ -263,11 +257,57 @@ namespace Edison.Api.Helpers
             {
                 //Update concurrency issue, retrying
                 if (e.StatusCode == HttpStatusCode.PreconditionFailed)
-                    return await AddActionToResponse(responseAddAction);
+                    return await ChangeActionOnResponse(responseChangeAction);
                 throw e;
             }
 
             return _mapper.Map<ResponseModel>(response);
+        }
+
+        private ResponseDAO UpdateActionsOnResponseModel(ResponseDAO response, ResponseChangeActionPlanModel responseChangeAction)
+        {
+            var openAddActions = responseChangeAction.Actions.Where(x => !x.IsCloseAction && x.ActionChangedString == "add");
+            var openEditActions = responseChangeAction.Actions.Where(x => !x.IsCloseAction && x.ActionChangedString == "edit");
+            var openDeleteActions = responseChangeAction.Actions.Where(x => !x.IsCloseAction && x.ActionChangedString == "delete");
+            var closeAddActions = responseChangeAction.Actions.Where(x => x.IsCloseAction && x.ActionChangedString == "add");
+            var closeEditActions = responseChangeAction.Actions.Where(x => x.IsCloseAction && x.ActionChangedString == "edit");
+            var closeDeleteActions = responseChangeAction.Actions.Where(x => x.IsCloseAction && x.ActionChangedString == "delete");
+            var openList = response.ActionPlan.OpenActions.ToList();
+            var closeList = response.ActionPlan.CloseActions.ToList();
+
+            if (openEditActions.Any() || openDeleteActions.Any())
+                for(int i = 0; i < openList.Count(); i++)
+                {
+                    //Edit Open
+                    if (openEditActions.Select(a => a.Action.ActionId).Contains(openList[i].ActionId))
+                        openList[i] = _mapper.Map<ActionDAOObject>(openEditActions.First(a => a.Action.ActionId == openList[i].ActionId).Action);
+                    //Delete Open
+                    else if (openDeleteActions.Select(a => a.Action.ActionId).Contains(openList[i].ActionId))
+                        openList.RemoveAt(i);
+                }
+
+            if (closeEditActions.Any() || closeDeleteActions.Any())
+                for (int i = 0; i < closeList.Count(); i++)
+                {
+                    //Edit Close
+                    if (closeEditActions.Select(a => a.Action.ActionId).Contains(closeList[i].ActionId))
+                        closeList[i] = _mapper.Map<ActionDAOObject>(closeEditActions.First(a => a.Action.ActionId == closeList[i].ActionId).Action);
+                    //Delete Close
+                    else if (closeDeleteActions.Select(a => a.Action.ActionId).Contains(closeList[i].ActionId))
+                        closeList.RemoveAt(i);
+                }
+
+            //Add Close
+            if(closeAddActions.Any())
+                closeList.AddRange(_mapper.Map<IEnumerable<ActionDAOObject>>(closeAddActions.Select(a => { a.Action.ActionId = Guid.NewGuid(); return a.Action; })));
+            //Add Open
+            if(openAddActions.Any())
+                openList.AddRange(_mapper.Map<IEnumerable<ActionDAOObject>>(openAddActions.Select(a => { a.Action.ActionId = Guid.NewGuid(); return a.Action; })));
+
+            response.ActionPlan.OpenActions = openList.AsEnumerable();
+            response.ActionPlan.CloseActions = closeList.AsEnumerable();
+
+            return response;
         }
     }
 }

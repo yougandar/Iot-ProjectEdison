@@ -30,7 +30,7 @@ namespace Edison.EventProcessorService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
-            services.EnableKubernetes();
+            services.AddApplicationInsightsKubernetesEnricher();
             services.AddApplicationInsightsTelemetry(Configuration);
             services.Configure<RestServiceOptions>(Configuration.GetSection("RestService"));
             services.Configure<ServiceBusRabbitMQOptions>(Configuration.GetSection("ServiceBusRabbitMQ"));
@@ -43,6 +43,7 @@ namespace Edison.EventProcessorService
             services.AddScoped<EventClusterCloseRequestedConsumer>();
 
             services.AddSingleton<IEventClusterRestService, EventClusterRestService>();
+            services.AddSingleton<IDeviceRestService, DeviceRestService>();
             services.AddSingleton<IMassTransitServiceBus, ServiceBusRabbitMQ>();
         }
 

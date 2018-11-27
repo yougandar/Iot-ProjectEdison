@@ -12,6 +12,8 @@ import {
     GetActionPlanError,
     UpdateActionPlan,
     GetActionPlan,
+    PutActionPlan,
+    PutActionPlanError,
 } from '../reducers/action-plan/action-plan.actions'
 import { mockActionPlans } from '../mockData/mockActionPlans'
 import { ActionPlan } from '../reducers/action-plan/action-plan.model'
@@ -70,6 +72,28 @@ export class ActionPlanEffects {
                                 : new GetActionPlanError()
                     ),
                     catchError(() => of(new GetActionPlansError()))
+                )
+        )
+    )
+
+    @Effect()
+    updateActionPlan$: Observable<Action> = this.actions$.pipe(
+        ofType(ActionPlanActionTypes.PutActionPlan),
+        mergeMap((action: PutActionPlan) =>
+            this.http.put(`${environment.baseUrl}${environment.apiUrl}actionplans`, action.payload.actionPlan)
+                .pipe(
+                    map(
+                        (actionPlan: ActionPlan) =>
+                            actionPlan
+                                ? new UpdateActionPlan({
+                                    actionPlan: {
+                                        id: actionPlan.actionPlanId,
+                                        changes: actionPlan,
+                                    },
+                                })
+                                : new PutActionPlanError()
+                    ),
+                    catchError(() => of(new PutActionPlanError()))
                 )
         )
     )

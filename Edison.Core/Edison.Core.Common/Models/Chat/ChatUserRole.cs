@@ -6,7 +6,6 @@ namespace Edison.Core.Common.Models
     [JsonConverter(typeof(StringEnumConverter))]
     public enum ChatUserRole
     {
-        //Unknown,
         Consumer,
         Admin
     }

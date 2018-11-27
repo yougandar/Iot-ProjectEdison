@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core'
+import { NgModule, ModuleWithProviders } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { SidenavComponent } from './components/sidenav/sidenav.component'
 import { MaterialModule } from '../material/material.module'
@@ -17,6 +17,11 @@ import { DelayButtonComponent } from './components/delay-button/delay-button.com
 import { TextTemplateComponent } from './components/action-list-item/templates/text-template/text-template.component'
 import { NumberDatePipe } from '../../core/pipes/number-date';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component'
+import {
+    PerfectScrollbarConfigInterface,
+    PerfectScrollbarModule,
+    PERFECT_SCROLLBAR_CONFIG
+} from 'ngx-perfect-scrollbar';
 
 const sharedComponents = [
     SidenavComponent,
@@ -28,11 +33,21 @@ const sharedComponents = [
     ActionListItemComponent,
     DelayButtonComponent,
     NumberDatePipe,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
 ]
 
+const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
+    suppressScrollX: true
+};
+
 @NgModule({
-    imports: [ CommonModule, MaterialModule, FormsModule, RoundProgressModule ],
+    imports: [
+        CommonModule,
+        MaterialModule,
+        FormsModule,
+        RoundProgressModule,
+        PerfectScrollbarModule
+    ],
     entryComponents: [
         NotificationTemplateComponent,
         RadiusTemplateComponent,
@@ -46,6 +61,24 @@ const sharedComponents = [
         RadiusTemplateComponent,
         TextTemplateComponent,
     ],
-    exports: [ ...sharedComponents ],
+    exports: [ ...sharedComponents, PerfectScrollbarModule, MaterialModule ],
+    providers: [
+        {
+            provide: PERFECT_SCROLLBAR_CONFIG,
+            useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
+        }
+    ]
 })
-export class SharedModule { }
+export class SharedModule {
+    static forRoot(): ModuleWithProviders {
+        return {
+            ngModule: SharedModule,
+            providers: [
+                {
+                    provide: PERFECT_SCROLLBAR_CONFIG,
+                    useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
+                }
+            ]
+        };
+    }
+}

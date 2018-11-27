@@ -7,11 +7,14 @@ import { UserChatComponent } from './components/user-chat/user-chat.component'
 import { SharedModule } from '../shared/shared.module'
 import { MaterialModule } from '../material/material.module'
 import { FormsModule } from '@angular/forms'
-import { ScrollingModule } from '@angular/cdk/scrolling';
-import { NgxAutoScrollModule } from "ngx-auto-scroll";
 
 @NgModule({
-    imports: [ CommonModule, SharedModule, MaterialModule, FormsModule, ScrollingModule, NgxAutoScrollModule ],
+    imports: [
+        CommonModule,
+        SharedModule,
+        MaterialModule,
+        FormsModule,
+    ],
     declarations: [
         RecentlyActiveComponent,
         MessageListComponent,

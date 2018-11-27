@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core'
-import { Observable, Subscribable, Subscription } from 'rxjs';
-import { Store } from '@ngrx/store';
+import { Observable, Subscription } from 'rxjs';
+import { Store, select } from '@ngrx/store';
 import { AppState } from '../../../../reducers';
 import { chatActiveUsersCountSelector, chatAllMessagesSelector } from '../../../../reducers/chat/chat.selectors';
-import { SelectActiveUser, SendNewMessage } from '../../../../reducers/chat/chat.actions';
+import { ToggleAllUsersChatWindow, SendNewMessage } from '../../../../reducers/chat/chat.actions';
 import { Message } from '../../../../reducers/chat/chat.model';
 
 @Component({
@@ -20,10 +20,10 @@ export class AllUsersChatComponent implements OnInit {
     constructor (private store: Store<AppState>) { }
 
     ngOnInit() {
-        this.messagesSub$ = this.store.select(chatAllMessagesSelector).subscribe(messages => {
+        this.messagesSub$ = this.store.pipe(select(chatAllMessagesSelector)).subscribe(messages => {
             this.messages = messages;
         });
-        this.userCount$ = this.store.select(chatActiveUsersCountSelector);
+        this.userCount$ = this.store.pipe(select(chatActiveUsersCountSelector));
     }
 
     onEnter(event) {
@@ -34,7 +34,9 @@ export class AllUsersChatComponent implements OnInit {
         this.store.dispatch(new SendNewMessage({ message: this.message, userId: '*' }));
         this.messages.push({
             name: 'YOU',
-            text: this.message
+            text: this.message,
+            role: 'admin',
+            self: true,
         });
         this.message = '';
 
@@ -43,6 +45,6 @@ export class AllUsersChatComponent implements OnInit {
     }
 
     close() {
-        this.store.dispatch(new SelectActiveUser({}));
+        this.store.dispatch(new ToggleAllUsersChatWindow({ open: false }));
     }
 }

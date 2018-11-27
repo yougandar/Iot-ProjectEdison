@@ -1,6 +1,6 @@
 ﻿using System;
 using Edison.Mobile.Common.Auth;
-using Edison.Mobile.Common.Geolocation;
+using Edison.Mobile.Common.Geo;
 using Edison.Mobile.Common.Notifications;
 using Edison.Mobile.Common.Shared;
 

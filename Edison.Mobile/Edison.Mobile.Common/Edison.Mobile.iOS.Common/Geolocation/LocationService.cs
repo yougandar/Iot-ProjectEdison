@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CoreLocation;
-using Edison.Mobile.Common.Geolocation;
+using Edison.Mobile.Common.Geo;
 using Edison.Mobile.Common.Logging;
 using Foundation;
 using UIKit;

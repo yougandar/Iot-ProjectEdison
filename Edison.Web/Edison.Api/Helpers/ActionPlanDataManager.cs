@@ -15,15 +15,12 @@ namespace Edison.Api.Helpers
 {
     public class ActionPlanDataManager
     {
-        private readonly WebApiConfiguration _config;
         private readonly ICosmosDBRepository<ActionPlanDAO> _repoActionPlans;
         private readonly IMapper _mapper;
 
-        public ActionPlanDataManager(IOptions<WebApiConfiguration> config,
-            IMapper mapper,
+        public ActionPlanDataManager(IMapper mapper,
             ICosmosDBRepository<ActionPlanDAO> repoActionPlans)
         {
-            _config = config.Value;
             _mapper = mapper;
             _repoActionPlans = repoActionPlans;
         }

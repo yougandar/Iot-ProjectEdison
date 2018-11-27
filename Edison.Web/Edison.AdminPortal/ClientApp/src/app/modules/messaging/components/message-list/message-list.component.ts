@@ -1,29 +1,36 @@
-import { Component, ViewChild, Input, OnChanges, AfterViewInit } from '@angular/core'
+import { Component, ViewChild, Input, OnChanges, AfterViewInit, AfterViewChecked } from '@angular/core'
 import { Message } from '../../../../reducers/chat/chat.model';
-import { NgxAutoScroll } from 'ngx-auto-scroll';
+import { PerfectScrollbarComponent } from 'ngx-perfect-scrollbar';
 
 @Component({
     selector: 'app-message-list',
     templateUrl: './message-list.component.html',
-    styleUrls: [ './message-list.component.scss' ]
+    styleUrls: [ './message-list.component.scss' ],
+
 })
-export class MessageListComponent implements AfterViewInit, OnChanges {
-    @ViewChild(NgxAutoScroll) ngxAutoScroll: NgxAutoScroll;
+export class MessageListComponent implements OnChanges, AfterViewChecked {
+    @ViewChild(PerfectScrollbarComponent) componentRef?: PerfectScrollbarComponent;
+
+    contentChanged: boolean;
 
     @Input()
     messages: Message[];
 
     constructor () { }
 
-    ngAfterViewInit() {
-        this.scrollToBottom();
+    ngOnChanges() {
+        this.contentChanged = true;
     }
 
-    ngOnChanges() {
-        this.scrollToBottom();
+    ngAfterViewChecked(): void {
+        if (this.contentChanged) {
+            this.scrollToBottom();
+            this.contentChanged = false;
+        }
     }
+
 
     private scrollToBottom() {
-        this.ngxAutoScroll.forceScrollDown();
+        this.componentRef.directiveRef.scrollToBottom();
     }
 }

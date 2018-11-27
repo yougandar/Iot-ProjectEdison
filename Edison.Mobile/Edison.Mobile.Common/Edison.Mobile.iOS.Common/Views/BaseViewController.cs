@@ -1,7 +1,6 @@
 ﻿using Autofac;
-using Edison.Mobile.Common;
-using Edison.Mobile.Common.Ioc;
 using Edison.Mobile.Common.Shared;
+using Edison.Mobile.Common.Ioc;
 using UIKit;
 
 namespace Edison.Mobile.iOS.Common.Views
@@ -9,7 +8,7 @@ namespace Edison.Mobile.iOS.Common.Views
     public class BaseViewController<T> : UIViewController where T : BaseViewModel
     {
         T viewModel;
-        protected T ViewModel => viewModel ?? (viewModel = Container.Instance.Resolve<T>());
+        public T ViewModel => viewModel ?? (viewModel = Container.Instance.Resolve<T>());
 
         public override void ViewDidLoad()
         {

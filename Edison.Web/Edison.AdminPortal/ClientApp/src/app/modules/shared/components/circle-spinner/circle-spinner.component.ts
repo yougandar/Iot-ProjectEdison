@@ -77,7 +77,7 @@ export class CircleSpinnerComponent implements OnInit, OnChanges {
         this.click.emit();
     }
 
-    getSpinnerElement(text: string, tooltip?: string) {
+    getSpinnerElement(text: string, tooltip?: string, clickable?: boolean) {
         const node = this.elementRef.nativeElement.cloneNode(true);
 
         node.getElementsByClassName('content-circle')[ 0 ].innerHTML = text;
@@ -87,6 +87,10 @@ export class CircleSpinnerComponent implements OnInit, OnChanges {
 
             const elementContainer = node.getElementsByClassName('tooltip-container')[ 0 ];
             elementContainer.style.visibility = 'visible';
+        }
+
+        if (clickable) {
+            node.style.cursor = 'pointer';
         }
 
         return node;

@@ -21,11 +21,11 @@ namespace Edison.ChatService.Middleware
         private readonly BotOptions _config;
         private readonly IMassTransitServiceBus _serviceBus;
         private readonly BotRoutingDataManager _routingDataManager;
-        private readonly ReportDataManager _reportDataManager;
+        private readonly ChatReportDataManager _reportDataManager;
         private readonly ILogger<CommandMiddleware> _logger;
 
         public LogMessageMiddleware(IOptions<BotOptions> config, BotRoutingDataManager routingDataManager, 
-            ReportDataManager reportDataManager, IMassTransitServiceBus serviceBus,
+            ChatReportDataManager reportDataManager, IMassTransitServiceBus serviceBus,
         ILogger<CommandMiddleware> logger) : base(logger)
         {
             _config = config.Value;
@@ -50,15 +50,15 @@ namespace Edison.ChatService.Middleware
                     var allConsumerConservations = await _routingDataManager.GetConsumerConversations();
                     foreach(var consumerConversation in allConsumerConservations)
                     {
-                        await _reportDataManager.CreateOrUpdateReport(new ReportLogCreationModel()
+                        await _reportDataManager.CreateOrUpdateChatReport(new ChatReportLogCreationModel()
                         {
                             User = properties.From.Role == ChatUserRole.Admin ? new ChatUserModel() { Id = consumerConversation.User.Id } : properties.From,
-                            ReportType = properties.ReportType,
-                            Message = new ReportLogModel()
+                            Message = new ChatReportLogModel()
                             {
                                 From = properties.From,
                                 Date = activity.Timestamp.Value.DateTime,
                                 Message = activity.Text,
+                                ReportType = properties.ReportType,
                                 Id = activity.Id,
                                 IsBroadcast = true
                             }
@@ -67,25 +67,23 @@ namespace Edison.ChatService.Middleware
                 }
                 else
                 {
-                    Guid deviceId = Guid.Empty;
-                    if (properties.From.Role == ChatUserRole.Consumer && activity.Properties.ContainsKey("deviceId"))
-                        Guid.TryParse(activity.Properties["deviceId"].ToString(), out deviceId);
-
-                        //Log one message
-                        await _reportDataManager.CreateOrUpdateReport(new ReportLogCreationModel()
+                    //Log one message
+                    ChatReportModel chatReportModel = await _reportDataManager.CreateOrUpdateChatReport(new ChatReportLogCreationModel()
                     {
                         User = properties.From.Role == ChatUserRole.Admin ? new ChatUserModel() { Id = properties.UserId } : properties.From,
-                        ReportType = properties.ReportType,
-                        DeviceId = deviceId,
-                        Message = new ReportLogModel()
+                        ChannelId = activity.ChannelId,
+                        Message = new ChatReportLogModel()
                         {
                             From = properties.From,
                             Date = activity.Timestamp.Value.DateTime,
                             Message = activity.Text,
+                            ReportType = properties.ReportType,
                             Id = activity.Id
                         }
                     });
+                    turnContext.TurnState.Add(typeof(ChatReportModel).FullName, chatReportModel);
                 }
+
                 await next(cancellationToken).ConfigureAwait(false);
             }
         }

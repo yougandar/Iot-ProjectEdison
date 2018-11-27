@@ -1,12 +1,15 @@
 ﻿using System;
+using Edison.Core.Common.Models;
 using Edison.Mobile.User.Client.iOS.Shared;
 using UIKit;
 namespace Edison.Mobile.User.Client.iOS.Views
 {
     public class ResponseUpdateTableViewCell : UITableViewCell
     {
-        readonly float dotSize = 12;
-        readonly float cellPadding = 8;
+        public static float DotSize { get; } = 12;
+        public static float CellPadding { get; } = 8;
+        public static float LineWidth { get; } = 1;
+
         bool isInitialized;
 
         UILabel headerLabel;
@@ -17,7 +20,7 @@ namespace Edison.Mobile.User.Client.iOS.Views
 
         public ResponseUpdateTableViewCell(IntPtr handle) : base(handle) { }
 
-        public void Initialize(string content, bool showTopLine = true)
+        public void Initialize(NotificationModel notificationModel, bool showTopLine = true, bool makeDotRed = false)
         {
             if (!isInitialized)
             {
@@ -30,27 +33,26 @@ namespace Edison.Mobile.User.Client.iOS.Views
                     Font = Constants.Fonts.RubikOfSize(Constants.Fonts.Size.Twelve),
                     TextColor = Constants.Color.LightGray,
                     BackgroundColor = UIColor.Clear,
-                    Text = "MESSAGE - 9:41 PM",
                 };
 
                 ContentView.AddSubview(headerLabel);
-                headerLabel.TopAnchor.ConstraintEqualTo(ContentView.TopAnchor, cellPadding * 2).Active = true;
-                headerLabel.RightAnchor.ConstraintEqualTo(ContentView.RightAnchor, -cellPadding).Active = true;
+                headerLabel.TopAnchor.ConstraintEqualTo(ContentView.TopAnchor, CellPadding * 2).Active = true;
+                headerLabel.RightAnchor.ConstraintEqualTo(ContentView.RightAnchor, -CellPadding).Active = true;
 
                 dotView = new UIView
                 {
                     TranslatesAutoresizingMaskIntoConstraints = false,
-                    BackgroundColor = Constants.Color.LightGray,
+                    BackgroundColor = makeDotRed ? Constants.Color.Red : Constants.Color.LightGray,
                 };
 
                 ContentView.AddSubview(dotView);
-                dotView.LeftAnchor.ConstraintEqualTo(ContentView.LeftAnchor, cellPadding).Active = true;
-                dotView.TopAnchor.ConstraintEqualTo(ContentView.TopAnchor, cellPadding * 2).Active = true;
-                dotView.WidthAnchor.ConstraintEqualTo(dotSize).Active = true;
-                dotView.HeightAnchor.ConstraintEqualTo(dotSize).Active = true;
-                dotView.Layer.CornerRadius = dotSize / 2;
+                dotView.LeftAnchor.ConstraintEqualTo(ContentView.LeftAnchor, CellPadding).Active = true;
+                dotView.TopAnchor.ConstraintEqualTo(ContentView.TopAnchor, CellPadding * 2).Active = true;
+                dotView.WidthAnchor.ConstraintEqualTo(DotSize).Active = true;
+                dotView.HeightAnchor.ConstraintEqualTo(DotSize).Active = true;
+                dotView.Layer.CornerRadius = DotSize / 2;
 
-                headerLabel.LeftAnchor.ConstraintEqualTo(dotView.RightAnchor, cellPadding).Active = true;
+                headerLabel.LeftAnchor.ConstraintEqualTo(dotView.RightAnchor, CellPadding).Active = true;
                 headerLabel.CenterYAnchor.ConstraintEqualTo(dotView.CenterYAnchor).Active = true;
 
                 aboveDotLineView = new UIView
@@ -64,7 +66,7 @@ namespace Edison.Mobile.User.Client.iOS.Views
                 aboveDotLineView.TopAnchor.ConstraintEqualTo(ContentView.TopAnchor).Active = true;
                 aboveDotLineView.BottomAnchor.ConstraintEqualTo(dotView.CenterYAnchor).Active = true;
                 aboveDotLineView.CenterXAnchor.ConstraintEqualTo(dotView.CenterXAnchor).Active = true;
-                aboveDotLineView.WidthAnchor.ConstraintEqualTo(1).Active = true;
+                aboveDotLineView.WidthAnchor.ConstraintEqualTo(LineWidth).Active = true;
 
                 belowDotLineView = new UIView
                 {
@@ -76,7 +78,7 @@ namespace Edison.Mobile.User.Client.iOS.Views
                 belowDotLineView.TopAnchor.ConstraintEqualTo(dotView.CenterYAnchor).Active = true;
                 belowDotLineView.BottomAnchor.ConstraintEqualTo(ContentView.BottomAnchor).Active = true;
                 belowDotLineView.CenterXAnchor.ConstraintEqualTo(dotView.CenterXAnchor).Active = true;
-                belowDotLineView.WidthAnchor.ConstraintEqualTo(1).Active = true;
+                belowDotLineView.WidthAnchor.ConstraintEqualTo(LineWidth).Active = true;
 
                 contentLabel = new UILabel
                 {
@@ -90,17 +92,18 @@ namespace Edison.Mobile.User.Client.iOS.Views
 
                 ContentView.AddSubview(contentLabel);
 
-                contentLabel.TopAnchor.ConstraintEqualTo(headerLabel.BottomAnchor, cellPadding).Active = true;
+                contentLabel.TopAnchor.ConstraintEqualTo(headerLabel.BottomAnchor, CellPadding).Active = true;
                 contentLabel.BottomAnchor.ConstraintEqualTo(ContentView.BottomAnchor).Active = true;
                 contentLabel.LeftAnchor.ConstraintEqualTo(headerLabel.LeftAnchor).Active = true;
-                contentLabel.RightAnchor.ConstraintEqualTo(ContentView.RightAnchor, -cellPadding).Active = true;
+                contentLabel.RightAnchor.ConstraintEqualTo(ContentView.RightAnchor, -CellPadding).Active = true;
 
                 SelectionStyle = UITableViewCellSelectionStyle.None;
 
                 isInitialized = true;
             }
 
-            contentLabel.Text = content;
+            headerLabel.Text = $"MESSAGE - {notificationModel.CreationDate}";
+            contentLabel.Text = notificationModel.NotificationText;
         }
     }
 }

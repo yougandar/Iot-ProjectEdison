@@ -1,25 +1,26 @@
-import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core'
-import { MapDefaults } from '../../../map/models/mapDefaults'
-import { Event, EventInstance } from '../../../../reducers/event/event.model'
-import { AppState } from '../../../../reducers'
-import { Store, select } from '@ngrx/store'
-import { MapPin } from '../../../map/models/mapPin'
+import { Subscription } from 'rxjs';
+
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { select, Store } from '@ngrx/store';
+
+import { spinnerColors } from '../../../../core/spinnerColors';
+import { AppState } from '../../../../reducers';
+import { ToggleUserChatWindow } from '../../../../reducers/chat/chat.actions';
+import { SelectActiveEvent, ShowEvents } from '../../../../reducers/event/event.actions';
+import { Event, EventInstance } from '../../../../reducers/event/event.model';
+import { activeEventSelector } from '../../../../reducers/event/event.selectors';
 import {
-    ShowEvents,
-    SelectActiveEvent,
-} from '../../../../reducers/event/event.actions'
-import { spinnerColors } from '../../../../core/spinnerColors'
-import { activeEventSelector } from '../../../../reducers/event/event.selectors'
-import { Subscription } from 'rxjs'
-import { responsesSelector } from '../../../../reducers/response/response.selectors'
-import { Response, ResponseState } from '../../../../reducers/response/response.model'
-import { SelectActiveResponse } from '../../../../reducers/response/response.actions'
+    SelectActiveResponse, ShowActivateResponse, ShowManageResponse
+} from '../../../../reducers/response/response.actions';
+import { Response, ResponseState } from '../../../../reducers/response/response.model';
+import { responsesSelector } from '../../../../reducers/response/response.selectors';
+import { MapDefaults } from '../../../map/models/mapDefaults';
+import { MapPin } from '../../../map/models/mapPin';
 
 @Component({
     selector: 'app-event-card',
     templateUrl: './event-card.component.html',
-    styleUrls: [ './event-card.component.scss' ],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    styleUrls: [ './event-card.component.scss' ]
 })
 export class EventCardComponent implements OnInit, OnDestroy {
     mapOptions: MapDefaults
@@ -35,8 +36,7 @@ export class EventCardComponent implements OnInit, OnDestroy {
 
     latestEventInstance: EventInstance;
 
-    @Input()
-    event: Event
+    @Input() event: Event;
 
     private responsesSub$: Subscription
     private activeEventSub$: Subscription
@@ -85,6 +85,19 @@ export class EventCardComponent implements OnInit, OnDestroy {
                 }
             }
         })
+
+        this.activeEventSub$ = this.store
+            .pipe(select(activeEventSelector))
+            .subscribe(activeEvent => {
+                if (
+                    activeEvent &&
+                    activeEvent.eventClusterId === this.event.eventClusterId
+                ) {
+                    this.active = true;
+                } else {
+                    this.active = false;
+                }
+            })
     }
 
     getResponseColor() {
@@ -92,7 +105,7 @@ export class EventCardComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.activeEventSub$ && this.activeEventSub$.unsubscribe()
+        this.activeEventSub$.unsubscribe()
         this.responsesSub$.unsubscribe()
     }
 
@@ -106,13 +119,17 @@ export class EventCardComponent implements OnInit, OnDestroy {
     }
 
     showEvent = () => {
-        this.store.dispatch(new ShowEvents({ events: [ this.event ] }))
+        const { metadata: { userId, username } } = this.latestEventInstance;
+        if (this.event.closureDate === null) {
+            this.store.dispatch(new ToggleUserChatWindow({ open: true, userId: userId, userName: username }));
+        }
+        this.store.dispatch(new ShowEvents({ events: [ this.event ] }));
     }
 
     getBorderStyle = () => {
         if (this.active) {
             return {
-                border: '1px solid #3322FF',
+                'box-shadow': 'rgba(20, 13, 100, 1) 0px 0px 8px 0px'
             }
         }
 
@@ -120,24 +137,12 @@ export class EventCardComponent implements OnInit, OnDestroy {
     }
 
     activateResponse = () => {
-        this.activeEventSub$ = this.store
-            .pipe(select(activeEventSelector))
-            .subscribe(activeEvent => {
-                if (
-                    activeEvent &&
-                    activeEvent.eventClusterId === this.event.eventClusterId
-                ) {
-                    this.active = true
-                } else if (this.activeEventSub$) {
-                    this.active = false
-                    this.activeEventSub$.unsubscribe()
-                }
-            })
-        this.store.dispatch(new SelectActiveEvent({ event: this.event }))
+        this.store.dispatch(new ShowActivateResponse({ event: this.event }))
     }
 
     manageResponse = () => {
-        this.store.dispatch(new SelectActiveResponse({ response: this.response }))
+        this.store.dispatch(new SelectActiveResponse({ response: this.response }));
+        this.store.dispatch(new ShowManageResponse({ showManageResponse: true }));
     }
 
     toggleMapVisibility = () => {

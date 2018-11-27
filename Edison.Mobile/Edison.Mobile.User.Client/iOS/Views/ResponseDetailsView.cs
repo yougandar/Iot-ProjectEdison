@@ -59,8 +59,8 @@ namespace Edison.Mobile.User.Client.iOS.Views
             topBarView.AddSubview(logoImageView);
             logoImageView.CenterXAnchor.ConstraintEqualTo(logoImageBackground.CenterXAnchor).Active = true;
             logoImageView.CenterYAnchor.ConstraintEqualTo(logoImageBackground.CenterYAnchor).Active = true;
-            logoImageView.HeightAnchor.ConstraintEqualTo(logoImageBackground.HeightAnchor, multiplier: 0.70f).Active = true;
-            logoImageView.WidthAnchor.ConstraintEqualTo(logoImageBackground.WidthAnchor, multiplier: 0.70f).Active = true;
+            logoImageView.HeightAnchor.ConstraintEqualTo(logoImageBackground.HeightAnchor, multiplier: 0.65f).Active = true;
+            logoImageView.WidthAnchor.ConstraintEqualTo(logoImageBackground.WidthAnchor, multiplier: 0.65f).Active = true;
 
             titleLabel = new UILabel
             {

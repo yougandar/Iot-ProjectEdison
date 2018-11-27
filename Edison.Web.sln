@@ -71,6 +71,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "JS", "JS", "{C61C6B78-343C-
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edison.Common.DAO", "Edison.Web\Edison.Common.DAO\Edison.Common.DAO.csproj", "{25C66E37-B62D-481B-A1AE-8065D0975867}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edison.DeviceProvisioning", "Edison.Web\Edison.Microservices.DeviceProvisioning\Edison.DeviceProvisioning.csproj", "{6E2EF260-2396-41F0-81FD-9B885D6EB994}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -161,6 +163,10 @@ Global
 		{25C66E37-B62D-481B-A1AE-8065D0975867}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25C66E37-B62D-481B-A1AE-8065D0975867}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25C66E37-B62D-481B-A1AE-8065D0975867}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E2EF260-2396-41F0-81FD-9B885D6EB994}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E2EF260-2396-41F0-81FD-9B885D6EB994}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E2EF260-2396-41F0-81FD-9B885D6EB994}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E2EF260-2396-41F0-81FD-9B885D6EB994}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -187,6 +193,7 @@ Global
 		{E505A536-6F4C-4EF4-969C-A90CC38464B4} = {3106AEA3-74E5-4A2E-96E7-4F600C6C1567}
 		{C61C6B78-343C-41C6-9FAD-9FF00025FC7E} = {3106AEA3-74E5-4A2E-96E7-4F600C6C1567}
 		{25C66E37-B62D-481B-A1AE-8065D0975867} = {18DB0A16-A889-4DD1-AF93-CA2BB51B88F0}
+		{6E2EF260-2396-41F0-81FD-9B885D6EB994} = {99D54702-D589-4305-AC14-F337F405214F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DBD353FA-6D5D-44AC-9A3D-10237FEEC4AA}

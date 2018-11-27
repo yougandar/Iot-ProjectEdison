@@ -10,6 +10,7 @@ namespace Edison.Common.DAO
     {
         public string Title { get; set; }
         public string User { get; set; }
+        public string ResponseId { get; set; } 
         public string NotificationText { get; set; }
         public List<string> Tags { get; set; }
         public int Status { get; set; }

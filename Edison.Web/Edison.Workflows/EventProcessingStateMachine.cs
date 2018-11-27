@@ -62,7 +62,8 @@ namespace Edison.Workflows
                         DeviceId = context.Data.DeviceId,
                         EventType = context.Data.EventType,
                         Date = context.Data.Date,
-                        Data = context.Data.Data
+                        Data = context.Data.Data,
+                        CheckBoundary = context.Data.CheckBoundary
                     }))
                     .TransitionTo(ListeningToEvents)
                     );
@@ -82,7 +83,8 @@ namespace Edison.Workflows
                         DeviceId = context.Data.DeviceId,
                         EventType = context.Data.EventType,
                         Date = context.Data.Date,
-                        Data = context.Data.Data
+                        Data = context.Data.Data,
+                        CheckBoundary = context.Data.CheckBoundary
                     })),
                 //Result of an event being created or updated
                 When(EventClusterCreatedOrUpdated)

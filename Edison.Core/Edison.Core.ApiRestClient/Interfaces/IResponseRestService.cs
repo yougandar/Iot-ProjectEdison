@@ -15,7 +15,7 @@ namespace Edison.Core.Interfaces
         //Task<ResponseModel> UpdateResponse(ResponseUpdateModel responseObj);
         Task<ResponseModel> AddEventClusterIdsToResponse(ResponseEventClustersUpdateModel responseObj);
         Task<bool> DeleteResponse(Guid responseId);
-        Task<ResponseModel> AddActionToResponse(ResponseAddActionPlanModel responseObj);
+        Task<ResponseModel> ChangeResponseAction(ResponseChangeActionPlanModel responseObj);
         Task<bool> SetSafeStatus(ResponseSafeUpdateModel responseSafeUpdateObj);
     }
 }

@@ -103,9 +103,9 @@ namespace Edison.Core
             return null;
         }
 
-        public async Task<ResponseModel> AddActionToResponse(ResponseAddActionPlanModel responseObj)
+        public async Task<ResponseModel> ChangeResponseAction(ResponseChangeActionPlanModel responseObj)
         {
-            RestRequest request = await PrepareQuery("Responses/AddAction", Method.PUT);
+            RestRequest request = await PrepareQuery("Responses/ChangeAction", Method.PUT);
             request.AddParameter("application/json", JsonConvert.SerializeObject(responseObj), ParameterType.RequestBody);
             var queryResult = await _client.ExecuteTaskAsync<ResponseModel>(request);
             if (queryResult.IsSuccessful)

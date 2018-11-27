@@ -29,7 +29,7 @@ namespace Edison.ResponseService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
-            services.EnableKubernetes();
+            services.AddApplicationInsightsKubernetesEnricher();
             services.AddApplicationInsightsTelemetry(Configuration);
             services.Configure<RestServiceOptions>(Configuration.GetSection("RestService"));
             services.Configure<ServiceBusRabbitMQOptions>(Configuration.GetSection("ServiceBusRabbitMQ"));
@@ -38,7 +38,6 @@ namespace Edison.ResponseService
             {
                 c.AddConsumer<ResponseTagExistingEventClustersRequestedConsumer>();
                 c.AddConsumer<ResponseTagNewEventClusterRequestedConsumer>();
-                c.AddConsumer<ResponseActionEmailEventConsumer>();
                 c.AddConsumer<ResponseActionLightSensorEventConsumer>();
                 c.AddConsumer<ResponseActionNotificationEventConsumer>();
                 c.AddConsumer<ResponseActionRapidSOSEventConsumer>();
@@ -46,7 +45,6 @@ namespace Edison.ResponseService
             });
             services.AddScoped<ResponseTagExistingEventClustersRequestedConsumer>();
             services.AddScoped<ResponseTagNewEventClusterRequestedConsumer>();
-            services.AddScoped<ResponseActionEmailEventConsumer>();
             services.AddScoped<ResponseActionLightSensorEventConsumer>();
             services.AddScoped<ResponseActionNotificationEventConsumer>();
             services.AddScoped<ResponseActionRapidSOSEventConsumer>();

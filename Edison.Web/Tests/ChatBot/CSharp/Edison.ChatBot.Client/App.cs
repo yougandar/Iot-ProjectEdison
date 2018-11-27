@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using Edison.Core.Interfaces;
 using Edison.Core;
 using Microsoft.Extensions.Logging;
+using Edison.ChatService.Helpers;
 
 namespace Edison.ChatBot.Client
 {
@@ -56,6 +57,17 @@ namespace Edison.ChatBot.Client
             // Prompt the user to start talking to the bot.
             Console.Write("Type your message (or \"exit\" to end): ");
 
+            Activity transcriptMessage = new Activity
+            {
+                From = new ChannelAccount(_config.UserId, _config.Username), // <-- mandatory
+                Type = ActivityTypes.Message, // <-- mandatory
+                ChannelData = new Command() // <--- use this to retrieve chat history 
+                {
+                    BaseCommand = Commands.GetTranscript,
+                },
+            };
+            await client.Conversations.PostActivityAsync(conversation.ConversationId, transcriptMessage);
+
             // Loop until the user chooses to exit this loop.
             while (true)
             {
@@ -75,12 +87,11 @@ namespace Edison.ChatBot.Client
                         // Create a message activity with the text the user entered.
                         Activity userMessage = new Activity
                         {
-                            From = new ChannelAccount(_config.UserId, _config.Username),
-                            Text = input,
-                            Type = ActivityTypes.Message
+                            From = new ChannelAccount(_config.UserId, _config.Username), // <-- mandatory
+                            Text = input, // <-- not necessary to receive chat history
+                            Type = ActivityTypes.Message, // <-- mandatory
                         };
                         userMessage.Properties["reportType"] = _config.ReportType;
-                        userMessage.Properties["deviceId"] = _config.DeviceId;
 
                         // Send the message activity to the bot.
                         await client.Conversations.PostActivityAsync(conversation.ConversationId, userMessage);

@@ -1,6 +1,7 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { AppState } from '..';
 import { State, selectAll } from './chat.reducer';
+import { Chat } from './chat.model';
 
 const onlyUnique = (value, index, self) => {
     return self.indexOf(value.id) === index;
@@ -49,32 +50,41 @@ export const chatActiveUsersCountSelector = createSelector(
     users => users.length,
 )
 
+const formatChatMessage = (chat: Chat, userId: string) => {
+    const { channelData: { data: { from: { id, name, role } } } } = chat;
+    let userName = userId === id ? 'YOU' : name;
+    if (id !== userId && role.toLowerCase() === 'admin') {
+        userName = `${userName} (admin)`;
+    }
+    return {
+        name: userName,
+        text: chat.text,
+        id: chat.id,
+        role: role.toLowerCase(),
+        self: id === userId,
+    }
+}
+
 export const chatAllMessagesSelector = createSelector(
     chatMessagesSelector,
-    messages => messages
+    chatAuthSelector,
+    (messages, { user }) => messages
         .filter(m => m.channelData.data.from.role.toLowerCase() === 'admin' && m.channelData.data.userId === '*' ||
             m.channelData.data.from.role.toLowerCase() !== 'admin')
-        .map(m => ({
-            name: m.channelData.data.from.role.toLowerCase() === 'admin' ? 'YOU' : m.channelData.data.from.name,
-            text: m.text,
-            id: m.id,
-        }))
+        .map(message => formatChatMessage(message, user.id))
 )
 
 export const chatActiveMessagesSelector = createSelector(
     chatMessagesSelector,
     chatActiveUserIdSelector,
-    (messages, activeUserId) => {
+    chatAuthSelector,
+    (messages, activeUserId, { user }) => {
         if (activeUserId) {
             const firstUserMessage = messages.find(m => m.channelData.data.userId === activeUserId);
             return messages
                 .filter(m => m.channelData.data.userId === activeUserId ||
                     (m.channelData.data.userId === '*' && new Date(m.timestamp) > new Date(firstUserMessage.timestamp)))
-                .map(m => ({
-                    name: m.channelData.data.from.role.toLowerCase() === 'admin' ? 'YOU' : m.channelData.data.from.name,
-                    text: m.text,
-                    id: m.id,
-                }))
+                .map(message => formatChatMessage(message, user.id))
         }
 
         return [];

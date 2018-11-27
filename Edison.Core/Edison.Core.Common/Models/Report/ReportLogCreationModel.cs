@@ -8,8 +8,7 @@ namespace Edison.Core.Common.Models
     public class ReportLogCreationModel
     {
         public ChatUserModel User { get; set; }
-        public Guid DeviceId { get; set; }
-        public string ReportType { get; set; }
+        public string ChannelId { get; set; }
         public ReportLogModel Message { get; set; }
     }
 }

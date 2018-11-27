@@ -49,8 +49,8 @@ namespace Edison.Devices.SoundSensor
             BackgroundTaskDeferral deferral = taskInstance.GetDeferral();
 
             var app = new AppIoTBackgroundDeviceTask("SoundSensor", new Guid("8e2fb18a-e7ae-45f9-bf05-d42455ba6ce0"));
-            app.SetInitApplication(InitApplication);
-            app.SetStartApplication(StartApplication);
+            app.InitApplication += InitApplication;
+            app.StartApplication += StartApplication;
 
             await app.Run();
             deferral.Complete();
