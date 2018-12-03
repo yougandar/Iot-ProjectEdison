@@ -1,27 +1,22 @@
-﻿using Edison.Common.Messages;
-using Edison.Common.Messages.Interfaces;
-using Edison.Core.Common.Models;
-using Edison.Core.Interfaces;
-using MassTransit;
-using Microsoft.ApplicationInsights;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Net;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using MassTransit;
+using Edison.Core.Interfaces;
+using Edison.Core.Common.Models;
+using Edison.Common.Messages.Interfaces;
+using Edison.Common.Messages;
 
 namespace Edison.ResponseService.Consumers
 {
-    public class ResponseActionEventConsumer : IConsumer<IActionEvent>
+    /// <summary>
+    /// Masstransit consumer that handles a generic action from a response
+    /// </summary>
+    public class ResponseActionEventConsumer : ResponseActionBaseConsumer, IConsumer<IActionEvent>
     {
-        private readonly ILogger<ResponseActionEventConsumer> _logger;
-
-        public ResponseActionEventConsumer(
-            ILogger<ResponseActionEventConsumer> logger)
+        public ResponseActionEventConsumer(IResponseRestService responseRestService,
+            ILogger<ResponseActionEventConsumer> logger) : base (responseRestService, logger)
         {
-            _logger = logger;
         }
 
         public async Task Consume(ConsumeContext<IActionEvent> context)
@@ -29,7 +24,7 @@ namespace Edison.ResponseService.Consumers
             try
             {
                 _logger.LogDebug($"ResponseActionEventConsumer: Retrieved message from response '{context.Message.Action.ActionId}'.");
-                ActionModel action = context.Message.Action;
+                ResponseActionModel action = context.Message.Action;
                 if (!string.IsNullOrEmpty(action.ActionType))
                 {
                     _logger.LogDebug($"ResponseActionEventConsumer: ActionType retrieved: '{action.ActionType}'.");
@@ -38,23 +33,24 @@ namespace Edison.ResponseService.Consumers
                     {
                         case "notification":
                             _logger.LogDebug($"ResponseActionEventConsumer: Publish ActionNotificationEvent.");
-                            await context.Publish(new ActionNotificationEvent(action, context.Message.IsCloseAction) { ResponseId = context.Message.ResponseId });
+                            await context.Publish(new ActionNotificationEvent(action) {
+                                ResponseId = context.Message.ResponseId,
+                                ActionCorrelationId = context.Message.ActionCorrelationId
+                            });
                             break;
                         case "lightsensor":
                             _logger.LogDebug($"ResponseActionEventConsumer: Publish ActionLightSensorEvent.");
-                            await context.Publish(new ActionLightSensorEvent(action, context.Message.IsCloseAction) {
-                                 ResponseId = context.Message.ResponseId,
-                                 Epicenter = context.Message.Geolocation,
-                                 PrimaryRadius = context.Message.PrimaryRadius,
-                                 SecondaryRadius = context.Message.SecondaryRadius
+                            await context.Publish(new ActionLightSensorEvent(action) {
+                                ActionCorrelationId = context.Message.ActionCorrelationId,
+                                ResponseId = context.Message.ResponseId,
+                                GeolocationPoint = context.Message.Geolocation,
+                                PrimaryRadius = context.Message.PrimaryRadius,
+                                SecondaryRadius = context.Message.SecondaryRadius
                             });
                             break;
-                        case "rapidsos":
-                            _logger.LogDebug($"ResponseActionEventConsumer: Publish ActionRapidSOSEvent.");
-                            await context.Publish(new ActionRapidSOSEvent(action, context.Message.IsCloseAction) { ResponseId = context.Message.ResponseId });
-                            break;
                         default:
-                            throw new Exception($"Action Type: '{action.ActionType}' is invalid and unhandled");
+                            await GenerateActionCallback(context, ActionStatus.Skipped, DateTime.UtcNow, $"Action '{action.ActionId}': The action type '{action.ActionType}' cannot be handled.");
+                            break;
                     }
                     return;
                 }
@@ -64,6 +60,7 @@ namespace Edison.ResponseService.Consumers
             }
             catch (Exception e)
             {
+                await GenerateActionCallback(context, ActionStatus.Error, DateTime.UtcNow, $"Action '{context?.Message?.ActionId}': {e.Message}.");
                 _logger.LogError($"ResponseActionEventConsumer: {e.Message}");
                 throw e;
             }

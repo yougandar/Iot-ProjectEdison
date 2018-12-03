@@ -1,18 +1,19 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using FluentValidation.AspNetCore;
 using Swashbuckle.AspNetCore.Swagger;
-using Edison.Api.Config;
-using Edison.Api.Helpers;
 using AutoMapper;
-using Microsoft.AspNetCore.Authentication;
+using Edison.Core.Common;
+using Edison.Common;
 using Edison.Common.Interfaces;
 using Edison.Common.Config;
 using Edison.Common.DAO;
-using Edison.Common;
-using System.Security.Claims;
+using Edison.Api.Config;
+using Edison.Api.Helpers;
 
 namespace Edison.Api
 {
@@ -35,16 +36,16 @@ namespace Edison.Api
             //Authorization
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("Admin", policy => policy.RequireAssertion(context => context.User.HasClaim(c =>
+                options.AddPolicy(AuthenticationRoles.Admin, policy => policy.RequireAssertion(context => context.User.HasClaim(c =>
                     (c.Type == ClaimTypes.Role && c.Value == "Admin") ||
                     (c.Type == "appidacr" && c.Value == "1") ||
                     (c.Type == "azpacr" && c.Value == "1"))));
 
-                options.AddPolicy("SuperAdmin", policy => policy.RequireAssertion(context => context.User.HasClaim(c => 
+                options.AddPolicy(AuthenticationRoles.SuperAdmin, policy => policy.RequireAssertion(context => context.User.HasClaim(c => 
                     (c.Type == "appidacr" && c.Value == "1") || 
                     (c.Type == "azpacr" && c.Value == "1"))));
 
-                options.AddPolicy("Consumer", policy => policy.RequireAuthenticatedUser());
+                options.AddPolicy(AuthenticationRoles.Consumer, policy => policy.RequireAuthenticatedUser());
             });
 
             //Options

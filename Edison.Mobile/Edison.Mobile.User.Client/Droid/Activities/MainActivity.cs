@@ -10,19 +10,29 @@ using Edison.Mobile.User.Client.Droid.Views;
 using Edison.Mobile.User.Client.Droid.Shared;
 using Android.Support.Animation;
 using System;
+using Toolbar = Android.Support.V7.Widget.Toolbar;
+using Android.Support.V7.Widget;
+using Edison.Mobile.User.Client.Droid.Adapters;
+using System.Collections.Generic;
 
 namespace Edison.Mobile.User.Client.Droid.Activities
 {
-    [Activity(Theme = "@android:style/Theme.NoTitleBar")]
+    [Activity]
     public class MainActivity : BaseActivity<MainViewModel>, View.IOnTouchListener
     {
         bool isFirstLayout = true;
-        PulloutView pulloutView;
+        RelativeLayout relativeLayout;
+        RelativeLayout pulloutView;
         float? pulloutLastPosY;
-        VelocityTracker pulloutVelocityTracker;
 
+        VelocityTracker pulloutVelocityTracker;
         float pulloutBottomMarginDp;
         float pulloutTopMarginDp;
+        bool isMenuOpen;
+
+        RecyclerView recyclerView;
+        RecyclerView.LayoutManager layoutManager;
+        ResponsesAdapter adapter;
 
         public override void OnGlobalLayout()
         {
@@ -31,37 +41,68 @@ namespace Edison.Mobile.User.Client.Droid.Activities
             if (VisibleDisplayRect.Top > 0 && isFirstLayout)
             {
                 pulloutView.TranslationY = VisibleDisplayRect.Bottom - Constants.PulloutBottomMargin * Resources.DisplayMetrics.Density;
+
                 isFirstLayout = false;
             }
         }
+
+
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
+            adapter = new ResponsesAdapter(this);
+
+            SetContentView(Resource.Layout.main_activity);
+
+            // Get our RecyclerView layout:
+            recyclerView = FindViewById<RecyclerView>(Resource.Id.recyclerView);
+
+            // Plug the adapter into the RecyclerView:
+            recyclerView.SetAdapter(adapter);
+
+            layoutManager = new LinearLayoutManager(this, LinearLayoutManager.Horizontal, false);
+
+            recyclerView.SetLayoutManager(layoutManager);
+
             pulloutBottomMarginDp = Constants.PulloutBottomMargin * Resources.DisplayMetrics.Density;
             pulloutTopMarginDp = Constants.PulloutTopMargin * Resources.DisplayMetrics.Density;
 
-            var relativeLayout = new RelativeLayout(this) { Id = 1 };
-            var relativeLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
-            relativeLayout.LayoutParameters = relativeLayoutParams;
-            relativeLayout.SetBackgroundColor(Constants.BackgroundColor);
-            relativeLayout.Alpha = 0.5f;
+            // menuLeftMarginDp = Constants.MenuLeftMargin * Resources.DisplayMetrics.Density;
+            // menuRightMarginDp = Constants.MenuRightMargin * Resources.DisplayMetrics.Density;
 
-            pulloutView = new PulloutView(this);
+            relativeLayout = FindViewById<RelativeLayout>(Resource.Id.relativeLayout);
+            pulloutView = FindViewById<RelativeLayout>(Resource.Id.pulloutView);
             var pulloutViewLayoutParms = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
             pulloutViewLayoutParms.AddRule(LayoutRules.AlignEnd, relativeLayout.Id);
             pulloutView.LayoutParameters = pulloutViewLayoutParms;
 
             pulloutView.SetOnTouchListener(this);
+            pulloutView.BringToFront();
 
-            relativeLayout.AddView(pulloutView);
+            /* menuView = FindViewById<RelativeLayout>(Resource.Id.menuView);
+              var menuViewLayoutParms = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
+              menuViewLayoutParms.AddRule(LayoutRules.AlignStart, relativeLayout.Id);
+              menuView.LayoutParameters = menuViewLayoutParms;
+              menuView.SetOnTouchListener(this);
+              relativeLayout.SetOnTouchListener(this);*/
 
-            SetContentView(relativeLayout);
+            var menuButton = FindViewById<ImageButton>(Resource.Id.menu_btn);
+            menuButton.Click += OpenMenu;
         }
+
+        private void OpenMenu(object sender, EventArgs eventArgs)  { }
 
         public bool OnTouch(View v, MotionEvent e)
         {
+            //Menu
+            //var deltaX = (menuLastPosX ?? e.GetX() - e.GetX());
+            //var transX = menuView.TranslationX - deltaX;
+            //var transRightLimit = Constants.MenuRightMargin * Resources.DisplayMetrics.Density;
+            //var transLeftLimit = VisibleDisplayRect.Left - pulloutBottomMarginDp;
+
+            //Pullout
             var deltaY = (pulloutLastPosY ?? e.GetY()) - e.GetY();
             var transY = pulloutView.TranslationY - deltaY;
             var transTopLimit = Constants.PulloutTopMargin * Resources.DisplayMetrics.Density;
@@ -106,8 +147,10 @@ namespace Edison.Mobile.User.Client.Droid.Activities
                     return true;
                 default:
                     return true;
+
             }
         }
     }
 }
+
 

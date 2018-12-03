@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using Edison.Core.Common;
 
 namespace Microsoft.AspNetCore.Authentication
 {
@@ -11,7 +9,7 @@ namespace Microsoft.AspNetCore.Authentication
     {
         public static AuthenticationBuilder AddAzureAdBearer(this AuthenticationBuilder builder, IConfiguration configuration)
         {
-            builder.AddJwtBearer("AzureAd", options =>
+            builder.AddJwtBearer(AuthenticationBearers.AzureAD, options =>
             {
                 options.Audience = configuration["AzureAd:ClientId"];
                 options.TokenValidationParameters.ValidIssuers = new List<string>()

@@ -1,14 +1,9 @@
-﻿using Edison.Core.Common.Interfaces;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Edison.Core.Common.Models
 {
-    public class ActionModel : IActionModel
+    public class ActionModel
     {
-        public Guid ActionId { get; set; }
         public string ActionType { get; set; }
         public bool IsActive { get; set; }
         public string Description { get; set; }

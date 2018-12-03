@@ -2,6 +2,7 @@ export enum ActionPlanColor {
     Red = 'Red',
     Green = 'Green',
     Yellow = 'Yellow',
+    Off = 'Off',
 }
 
 export enum ActionPlanIcon {
@@ -23,18 +24,24 @@ export enum ActionPlanType {
     LightSensor = 'lightsensor',
 }
 
-export enum ActionPlanStatus {
-    InComplete,
-    Complete,
+export enum ActionStatus {
+    None = '',
+    Unknown = 'Unknown',
+    Success = 'Success',
+    Skipped = 'Skipped',
+    NotStarted = 'NotStarted',
+    Error = 'Error'
 }
 
 export interface ActionPlanAction {
-    actionId?: string
-    actionType: ActionPlanType
-    isActive: true
-    description?: string
-    parameters?: any
-    status?: ActionPlanStatus
+    actionId?: string;
+    actionType: ActionPlanType;
+    isActive: true;
+    description?: string;
+    parameters?: any;
+    endDate?: Date;
+    startDate?: Date;
+    status?: ActionStatus;
 }
 
 export enum ActionChangeType {
@@ -44,9 +51,10 @@ export enum ActionChangeType {
 }
 
 export interface AddEditAction {
-    isCloseAction: boolean;
-    actionChangedString: ActionChangeType
-    action: ActionPlanAction,
+    isRemoveAction?: boolean;
+    isCloseAction?: boolean;
+    actionChangedString?: ActionChangeType
+    action?: ActionPlanAction,
 }
 
 export interface ActionPlanTextAction extends ActionPlanAction {
@@ -70,20 +78,21 @@ export interface ActionPlanRadiusAction extends ActionPlanAction {
 }
 
 export type ActionPlanActionTypes =
+    | ActionPlanAction
     | ActionPlanNotificationAction
     | ActionPlanRadiusAction
     | ActionPlanTextAction
 
 export interface ActionPlan {
-    actionPlanId: string
-    name: string
-    description: string
-    isActive: true
-    acceptSafeStatus: boolean
-    primaryRadius: number
-    secondaryRadius: number
-    color: ActionPlanColor
-    icon: ActionPlanIcon
-    openActions?: ActionPlanAction[]
-    closeActions?: ActionPlanAction[]
+    actionPlanId: string;
+    name: string;
+    description: string;
+    isActive: true;
+    color: ActionPlanColor;
+    icon: ActionPlanIcon;
+    openActions?: ActionPlanActionTypes[];
+    closeActions?: ActionPlanActionTypes[];
+    primaryRadius: number;
+    secondaryRadius: number;
+    acceptSafeStatus: boolean;
 }

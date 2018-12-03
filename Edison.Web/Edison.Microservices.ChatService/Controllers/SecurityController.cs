@@ -1,19 +1,23 @@
-﻿using Edison.ChatService.Config;
-using Edison.ChatService.Helpers;
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Edison.ChatService.Models;
-using System.Threading.Tasks;
-using System;
 using Microsoft.Extensions.Logging;
-using System.Net;
-using Edison.Core.Interfaces;
+using Edison.Core.Common;
 using Edison.Core.Common.Models;
+using Edison.Core.Interfaces;
+using Edison.ChatService.Config;
+using Edison.ChatService.Models;
+
 
 namespace Edison.ChatService.Controllers
 {
-    [Authorize(AuthenticationSchemes = "B2CWeb,AzureAd")]
+    /// <summary>
+    /// Controller to handle security related to the Bot Chat
+    /// </summary>
+    [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureADAndB2C)]
     [Route("Security")]
     [ApiController]
     public class SecurityController : ControllerBase
@@ -22,6 +26,9 @@ namespace Edison.ChatService.Controllers
         private static IDirectLineRestService _directLineRestClient;
         private ILogger<SecurityController> _logger;
 
+        /// <summary>
+        /// DI constructor
+        /// </summary>
         public SecurityController(IOptions<BotOptions> config, IDirectLineRestService directLineRestClient, 
             ILogger<SecurityController> logger)
         {
@@ -30,6 +37,11 @@ namespace Edison.ChatService.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Retrieve a token using the SECRET of the direct line bot.
+        /// This call is made to be used with advanced security. Therefore user ids will start with "dl_"
+        /// </summary>
+        /// <returns>ChatUserTokenContext</returns>
         [HttpGet("GetToken")]
         public async Task<IActionResult> GetToken()
         {

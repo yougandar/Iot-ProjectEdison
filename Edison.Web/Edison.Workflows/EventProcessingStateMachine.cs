@@ -1,28 +1,28 @@
-﻿using Automatonymous;
-using Edison.Common.Config;
-using Edison.Common.Messages;
-using Edison.Common.Messages.Interfaces;
-using Edison.Core.Common.Models;
-using Edison.Workflows.Config;
-using MassTransit;
+﻿using System;
 using Microsoft.Extensions.Options;
-using System;
-using System.Threading.Tasks;
+using MassTransit;
+using Automatonymous;
+using Edison.Core.Common.Models;
+using Edison.Common.Config;
+using Edison.Common.Messages.Interfaces;
+using Edison.Common.Messages;
+using Edison.Workflows.Config;
 
 namespace Edison.Workflows
 {
+    /// <summary>
+    /// Saga to handle the lifecycle of an event cluster
+    /// </summary>
     internal class EventProcessingStateMachine : MassTransitStateMachine<EventProcessingState>
     {
         //Warning keep concurrency limit to 1
         private readonly ServiceBusRabbitMQOptions _configBus;
         private readonly WorkflowConfigEventProcessor _configWorkflow;
-        //private readonly WorkflowConfigResponse _configWorkflowResponse;
 
         public EventProcessingStateMachine(IOptions<ServiceBusRabbitMQOptions> configBus, IOptions<WorkflowConfig> configWorkflow)
         {
             _configBus = configBus.Value;
             _configWorkflow = configWorkflow.Value.EventProcessingWorkflow;
-            //_configWorkflowResponse = configWorkflow.Value.ResponseWorkflow;
 
             InstanceState(x => x.State);
 
@@ -33,6 +33,8 @@ namespace Edison.Workflows
 
             Event(() => EventClusterCreatedOrUpdated, x => x.CorrelateById(context => context.Message.EventCluster.EventClusterId));
             Event(() => EventClusterClosed, x => x.CorrelateById(context => context.Message.EventCluster.EventClusterId));
+
+            Event(() => EventClusterCreateOrUpdateRequestedFault, x => x.CorrelateById(context => context.Message.Message.EventClusterId));
 
             //UI Update notification, can be ignored if saga doesn't exist anymore
             //Event(() => EventClusterUIUpdated, x => { x.CorrelateById(context => context.Message.CorrelationId); x.OnMissingInstance(m => m.Discard()); });
@@ -62,8 +64,7 @@ namespace Edison.Workflows
                         DeviceId = context.Data.DeviceId,
                         EventType = context.Data.EventType,
                         Date = context.Data.Date,
-                        Data = context.Data.Data,
-                        CheckBoundary = context.Data.CheckBoundary
+                        Data = context.Data.Data
                     }))
                     .TransitionTo(ListeningToEvents)
                     );
@@ -83,8 +84,7 @@ namespace Edison.Workflows
                         DeviceId = context.Data.DeviceId,
                         EventType = context.Data.EventType,
                         Date = context.Data.Date,
-                        Data = context.Data.Data,
-                        CheckBoundary = context.Data.CheckBoundary
+                        Data = context.Data.Data
                     })),
                 //Result of an event being created or updated
                 When(EventClusterCreatedOrUpdated)
@@ -103,7 +103,7 @@ namespace Edison.Workflows
                             EventClusterUI = new EventClusterUIModel()
                             {
                                 EventCluster = context.Data.EventCluster,
-                                UpdateType = context.Data.EventCluster.EventCount > 1 ? "UpdateEventCluster" : "NewEventCluster"
+                                UpdateType = context.Data.EventCluster.EventCount > 1 ? EventClusterUpdateType.UpdateEventCluster.ToString() : EventClusterUpdateType.NewEventCluster.ToString()
                             }
                         }))
                         
@@ -135,7 +135,7 @@ namespace Edison.Workflows
                         EventClusterUI = new EventClusterUIModel()
                         {
                             EventCluster = context.Data.EventCluster,
-                            UpdateType = "CloseEventCluster"
+                            UpdateType = EventClusterUpdateType.CloseEventCluster.ToString()
                         }
                     }))
                     .Finalize()   
@@ -151,10 +151,10 @@ namespace Edison.Workflows
                      EventClusterId = context.Data.EventClusterId,
                      ClosureDate = DateTime.UtcNow,
                      EndDate = DateTime.UtcNow.AddMinutes(_configWorkflow.EventClusterCooldown)
-                 }))//,
+                 })),
                 //Fault while creating/adding an event to cluster
-                // When(EventClusterCreateOrUpdateRequestedFault)
-                //.ThenAsync(context => Console.Out.WriteLineAsync($"EventProcessing---{context.Instance.CorrelationId}: !!FAULT!! Event Cluster: {context.Data.Message}")),
+                When(EventClusterCreateOrUpdateRequestedFault)
+                .ThenAsync(context => Console.Out.WriteLineAsync($"EventProcessing---{context.Instance.CorrelationId}: !!FAULT!! Event Cluster: {context.Data.Message}"))
                 //UI Update acknoledgement - Disabled for performance improvement
                 //When(EventClusterUIUpdated)
                 //    .ThenAsync(context => Console.Out.WriteLineAsync($"EventProcessing---{context.Instance.CorrelationId}: UI Updated."))
@@ -169,6 +169,7 @@ namespace Edison.Workflows
 
         #region "Events"
         public Event<IEventClusterCreatedOrUpdated> EventClusterCreatedOrUpdated { get; private set; }
+        public Event<Fault<IEventClusterCreateOrUpdateRequested>> EventClusterCreateOrUpdateRequestedFault { get; private set; }
         public Event<IEventClusterClosed> EventClusterClosed { get; private set; }
 
         public Event<IEventSagaReceived> EventReceived { get; private set; }

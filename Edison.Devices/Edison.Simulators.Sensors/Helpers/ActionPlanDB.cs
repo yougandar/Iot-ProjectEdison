@@ -236,7 +236,6 @@ namespace Edison.Simulators.Sensors.Helpers
         {
             return new ActionDAOObject()
             {
-                ActionId = Guid.NewGuid(),
                 ActionType = "lightsensor",
                 IsActive = 1,
                 Description = "Connected Lights Primary Radius",
@@ -254,7 +253,6 @@ namespace Edison.Simulators.Sensors.Helpers
         {
             return new ActionDAOObject()
             {
-                ActionId = Guid.NewGuid(),
                 ActionType = "lightsensor",
                 IsActive = 1,
                 Description = "Connected Lights Secondary Radius",
@@ -272,7 +270,6 @@ namespace Edison.Simulators.Sensors.Helpers
         {
             return new ActionDAOObject()
             {
-                ActionId = Guid.NewGuid(),
                 ActionType = "notification",
                 IsActive = 1,
                 Description = "Mobile App Notification will be sent",
@@ -289,7 +286,6 @@ namespace Edison.Simulators.Sensors.Helpers
         {
             return new ActionDAOObject()
             {
-                ActionId = Guid.NewGuid(),
                 ActionType = "rapidsos",
                 IsActive = 1,
                 Description = "911 will be called by RapidSOS",

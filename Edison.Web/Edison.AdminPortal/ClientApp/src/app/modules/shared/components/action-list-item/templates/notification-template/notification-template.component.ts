@@ -1,18 +1,11 @@
 import {
-    Component,
-    Input,
-    ChangeDetectionStrategy,
-    EventEmitter,
-    OnInit,
-    ElementRef,
-    ViewChild,
-    AfterViewInit,
-} from '@angular/core'
+    AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit,
+    ViewChild
+} from '@angular/core';
+
 import {
-    ActionPlanNotificationAction,
-    ActionChangeType,
-    AddEditAction
-} from '../../../../../../reducers/action-plan/action-plan.model'
+    ActionChangeType, ActionPlanNotificationAction, ActionStatus, AddEditAction
+} from '../../../../../../reducers/action-plan/action-plan.model';
 
 @Component({
     selector: 'app-notification-template',
@@ -31,6 +24,7 @@ export class NotificationTemplateComponent implements OnInit, AfterViewInit {
     notificationText: string;
     editing = false;
     adding = false;
+    actionStatus = ActionStatus;
 
     ngOnInit(): void {
         this.notificationText = this.context.parameters.message;
@@ -57,8 +51,12 @@ export class NotificationTemplateComponent implements OnInit, AfterViewInit {
     }
 
     remove() {
-        this.notificationText = '';
-        this.adding = false;
+        const addEditAction: AddEditAction = { isRemoveAction: true };
+
+        this.onchange.emit({
+            actionId: this.context.actionId,
+            addEditAction,
+        });
     }
 
     edit() {

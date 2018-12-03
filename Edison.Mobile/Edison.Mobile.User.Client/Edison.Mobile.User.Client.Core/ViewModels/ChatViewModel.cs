@@ -8,7 +8,6 @@ using Edison.Mobile.User.Client.Core.Network;
 using Edison.Mobile.User.Client.Core.Chat;
 using Microsoft.Bot.Connector.DirectLine;
 using Newtonsoft.Json.Linq;
-using Edison.Mobile.Common.Shared;
 using Edison.Mobile.Common.Geo;
 using Edison.Mobile.Common.Notifications;
 using Edison.Mobile.Common.Auth;
@@ -16,6 +15,7 @@ using Edison.Mobile.Common.Network;
 using Timer = System.Timers.Timer;
 using System.Linq;
 using Edison.Mobile.User.Client.Core.Shared;
+using Edison.Mobile.Common.ViewModels;
 
 namespace Edison.Mobile.User.Client.Core.ViewModels
 {
@@ -26,11 +26,13 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
         readonly ILocationService locationService;
         readonly INotificationService notificationService;
         readonly ActionPlanRestService actionPlanRestService;
+        readonly ResponseRestService responseRestService;
         readonly AuthService authService;
         readonly ChatClientConfig chatClientConfig;
         readonly Timer geolocationTimer;
 
         bool isInConversation;
+        bool isSafe;
         string chatWatermark;
         Task readMessagesTask;
         CancellationTokenSource readMessagesCancellationTokenSource;
@@ -40,6 +42,16 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
         Conversation conversation;
 
         public ChatUserTokenContext ChatTokenContext { get; set; }
+
+        public bool IsSafe 
+        {
+            get => isSafe;
+            set 
+            {
+                isSafe = value;
+                OnIsSafeChanged?.Invoke(this, isSafe);
+            }
+        }
 
         public ObservableRangeCollection<ChatMessage> ChatMessages { get; } = new ObservableRangeCollection<ChatMessage>();
         public ObservableRangeCollection<ActionPlanListModel> ActionPlans { get; } = new ObservableRangeCollection<ActionPlanListModel>();
@@ -56,11 +68,13 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
             set 
             {
                 currentActionPlan = value;
-                OnCurrentActionPlanChanged?.Invoke(this, new EventArgs());
+                OnCurrentActionPlanChanged?.Invoke(this, currentActionPlan);
             }
         }
 
-        public event EventHandler<EventArgs> OnCurrentActionPlanChanged;
+        public event EventHandler<ActionPlanListModel> OnCurrentActionPlanChanged;
+        public event EventHandler<ChatPromptType> OnChatPromptActivated;
+        public event EventHandler<bool> OnIsSafeChanged;
 
         public string Initials => authService.Initials;
 
@@ -71,7 +85,8 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
             AuthService authService,
             LocationRestService locationRestService,
             ILocationService locationService,
-            ActionPlanRestService actionPlanRestService
+            ActionPlanRestService actionPlanRestService,
+            ResponseRestService responseRestService
         )
         {
             this.chatRestService = chatRestService;
@@ -81,6 +96,7 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
             this.authService = authService;
             this.actionPlanRestService = actionPlanRestService;
             this.locationService = locationService;
+            this.responseRestService = responseRestService;
 
             geolocationTimer = new Timer(Shared.Constants.UpdateLocationTimerInterval);
             geolocationTimer.Elapsed += HandleGeolocationTimer;
@@ -126,20 +142,34 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
                 Text = message,
             };
 
-            if (CurrentActionPlan == null) 
-            {
-                CurrentActionPlan = GetDefaultActionPlan();
-            }
-
             if (isPromptedFromActionPlanButton)
             {
-                newActivity.Properties["reportType"] = CurrentActionPlan.ActionPlanId;
+                newActivity.Properties["reportType"] = CurrentActionPlan?.ActionPlanId ?? GetEmergencyActionPlan().ActionPlanId;
             }
 
             newActivity.Properties["deviceId"] = chatClientConfig.DeviceId;
 
             var response = await client.Conversations.PostActivityAsync(conversation.ConversationId, newActivity);
             return response != null;
+        }
+
+        public async Task ActivateChatPrompt(ChatPromptType chatPromptType) 
+        {
+            OnChatPromptActivated?.Invoke(this, chatPromptType);
+
+            if (chatPromptType == ChatPromptType.Emergency) 
+            {
+                BeginConversationWithActionPlan(GetEmergencyActionPlan());
+            }
+            else if (chatPromptType == ChatPromptType.SafetyCheck) 
+            {
+                IsSafe = !IsSafe;
+                await responseRestService.SendIsSafe(IsSafe);
+            }
+            else if (chatPromptType == ChatPromptType.ReportActivity) 
+            {
+
+            }
         }
 
         public void ChatSummoned()
@@ -155,7 +185,7 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
 
         public void BeginConversationWithActionPlan(ActionPlanListModel actionPlanListModel = null)
         {
-            var actionPlan = actionPlanListModel ?? GetDefaultActionPlan();
+            var actionPlan = actionPlanListModel ?? GetEmergencyActionPlan();
             CurrentActionPlan = actionPlan;
 
             Task.Run(async () => 
@@ -232,7 +262,7 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
                                     Text = activity.Text,
                                     UserModel = sendMessageProperties.From,
                                     ActionPlan = actionPlan,
-                                    IsNewActionPlan = CurrentActionPlan != null && previousActionPlan != CurrentActionPlan,
+                                    IsNewActionPlan = isMyChatId && CurrentActionPlan != null && previousActionPlan != CurrentActionPlan,
                                 });
                             }
                         }
@@ -273,6 +303,7 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
                     if (isEndingConversation)
                     {
                         isInConversation = false;
+                        CurrentActionPlan = null;
                     }
                 }
                 catch (Exception e)
@@ -286,6 +317,6 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
 
         bool IsMyChatId(string chatId) => chatId.Contains(authService.Email);
 
-        ActionPlanListModel GetDefaultActionPlan() => ActionPlans.First(a => a.Name == "Emergency"); // TODO: no magic strings
+        ActionPlanListModel GetEmergencyActionPlan() => ActionPlans.First(a => a.Name == "Emergency"); // TODO: no magic strings
     }
 }

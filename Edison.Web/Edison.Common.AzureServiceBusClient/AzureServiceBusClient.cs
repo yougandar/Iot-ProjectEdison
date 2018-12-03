@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace Edison.Common
@@ -79,7 +78,7 @@ namespace Edison.Common
 
             // Complete the message so that it is not received again.
             // This can be done only if the queue Client is created in ReceiveMode.PeekLock mode (which is the default).
-            await _queueClient.CompleteAsync(message.SystemProperties.LockToken);
+            await _queueClient.CompleteAsync(message.SystemProperties.LockToken).ConfigureAwait(false);
         }
 
         private Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)

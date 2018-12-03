@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Edison.Api.Config;
-using Edison.Api.Helpers;
-using Edison.Common.Config;
-using Edison.Common.Interfaces;
-using Edison.Common.Messages;
-using Edison.Core.Common.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.NotificationHubs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Microsoft.Azure.NotificationHubs;
 using Newtonsoft.Json;
+using Edison.Core.Common;
+using Edison.Core.Common.Models;
+using Edison.Api.Config;
+using Edison.Api.Helpers;
 
 namespace Edison.Api.Controllers
 {
+    /// <summary>
+    /// Controller to handle operations on notification
+    /// </summary>
     [ApiController]
     [Route("api/Notifications")]
     public class NotificationHubController : Controller
@@ -27,6 +28,9 @@ namespace Edison.Api.Controllers
         private readonly DevicesDataManager _devicesDataManager;
         private static IOptions<NotificationsOptions> _notificationOptions;
 
+        /// <summary>
+        /// DI Constructor
+        /// </summary>
         public NotificationHubController(IConfiguration configuration, IOptions<NotificationsOptions> notificationOptions, NotificationHubDataManager notificationDataManager, DevicesDataManager devicesDataManager)
         {
             _configuration = configuration;
@@ -37,7 +41,13 @@ namespace Edison.Api.Controllers
                                 .CreateClientFromConnectionString(notificationOptions.Value.ConnectionString, notificationOptions.Value.PathName, true);
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "Consumer")]
+        /// <summary>
+        /// Register a device to a notification platform (android or ios) and add the device to
+        /// the notification repository
+        /// </summary>
+        /// <param name="deviceRegistration">DeviceRegistrationModel</param>
+        /// <returns>DeviceMobileModel</returns>
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureADAndB2C, Policy = AuthenticationRoles.Consumer)]
         [Route("Register")]
         [Produces(typeof(DeviceMobileModel))]
         [HttpPost]
@@ -115,7 +125,12 @@ namespace Edison.Api.Controllers
             }
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "Consumer")]
+        /// <summary>
+        /// Delete a registration from the notification repository
+        /// </summary>
+        /// <param name="registrationId"></param>
+        /// <returns>True of the operation succeeded</returns>
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureADAndB2C, Policy = AuthenticationRoles.Consumer)]
         [Route("Register")]
         [HttpDelete]
         [Produces(typeof(bool))]
@@ -129,11 +144,16 @@ namespace Edison.Api.Controllers
             {
                 throw ex;
             }
-            var deleteDevice = await _devicesDataManager.DeleteDevice(registrationId);
+            var deleteDevice = await _devicesDataManager.DeleteMobileDevice(registrationId);
             return Ok(deleteDevice);
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "SuperAdmin")]
+        /// <summary>
+        /// Send a notification
+        /// </summary>
+        /// <param name="notificationReq">NotificationCreationModel</param>
+        /// <returns>List of responses per platform</returns>
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureADAndB2C, Policy = AuthenticationRoles.SuperAdmin)]
         [HttpPost]
         [Produces(typeof(List<NotificationOutcome>))]
         public async Task<IActionResult> SendNotification([FromBody] NotificationCreationModel notificationReq)
@@ -172,7 +192,13 @@ namespace Edison.Api.Controllers
             }
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "Consumer")]
+        /// <summary>
+        /// Get notifications
+        /// </summary>
+        /// <param name="pageSize">Size of a result page</param>
+        /// <param name="continuationToken">Continuation token</param>
+        /// <returns>List of notifications</returns>
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureADAndB2C, Policy = AuthenticationRoles.Consumer)]
         [Route("Responses")]
         [HttpGet]
         [Produces(typeof(IEnumerable<NotificationModel>))]
@@ -192,7 +218,12 @@ namespace Edison.Api.Controllers
             }
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "Consumer")]
+        /// <summary>
+        /// Get notifications by Response Id
+        /// </summary>
+        /// <param name="responseId">Response Id</param>
+        /// <returns></returns>
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureADAndB2C, Policy = AuthenticationRoles.Consumer)]
         [Route("Responses/{responseId}")]
         [HttpGet]
         [Produces(typeof(IEnumerable<NotificationModel>))]
@@ -212,7 +243,13 @@ namespace Edison.Api.Controllers
             }
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "Admin")]
+        /// <summary>
+        /// Get all registered devices from the notification hub
+        /// </summary>
+        /// <param name="pageSize">Size of a result page</param>
+        /// <param name="continuationToken">Continuation token</param>
+        /// <returns>List of registrations</returns>
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureADAndB2C, Policy = AuthenticationRoles.Admin)]
         [Route("Register")]
         [HttpGet]
         [Produces(typeof(CollectionQueryResult<RegistrationDescription>))]

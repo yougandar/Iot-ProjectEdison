@@ -1,16 +1,8 @@
+import { Component, EventEmitter, Input, OnChanges, OnInit } from '@angular/core';
+
 import {
-    Component,
-    Input,
-    EventEmitter,
-    OnInit,
-    OnChanges,
-} from '@angular/core'
-import {
-    ActionPlanRadiusAction,
-    ActionPlanColor,
-    ActionChangeType,
-    AddEditAction,
-} from '../../../../../../reducers/action-plan/action-plan.model'
+    ActionChangeType, ActionPlanColor, ActionPlanRadiusAction, ActionStatus, AddEditAction
+} from '../../../../../../reducers/action-plan/action-plan.model';
 
 @Component({
     selector: 'app-radius-template',
@@ -24,7 +16,8 @@ export class RadiusTemplateComponent implements OnInit, OnChanges {
     @Input() onchange: EventEmitter<{ actionId: string, addEditAction: AddEditAction }>;
 
     _color: string;
-    actionPlanColors = Object.keys(ActionPlanColor).map(key => ActionPlanColor[ key ]);
+    actionPlanColors = Object.keys(ActionPlanColor).map(key => (ActionPlanColor[ key ]).toLowerCase());
+    actionStatus = ActionStatus;
 
     ngOnInit(): void {
         this.updateLocalColor();

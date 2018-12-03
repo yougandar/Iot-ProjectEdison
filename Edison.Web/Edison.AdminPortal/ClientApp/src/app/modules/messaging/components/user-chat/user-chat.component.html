@@ -4,11 +4,11 @@
     <div class="name">{{userName}}</div>
 </div>
 <div class="response-container">
-    <div>
+    <div *ngIf="latestEventInstance && latestEventInstance.metadata">
         <div class="activity-reported">
-            <div>Activity Reported:</div>
             <mat-form-field>
-                <mat-select [(ngModel)]="latestEventInstance.metadata.reportType">
+                <mat-select [(ngModel)]="latestEventInstance.metadata.reportType"
+                            [placeholder]="'Activity Reported'">
                     <mat-option *ngFor="let actionPlan of actionPlans$ | async"
                                 [value]="actionPlan.actionPlanId">{{actionPlan.name}}</mat-option>
                 </mat-select>
@@ -17,16 +17,17 @@
     </div>
     <div class="info-row">
         <div class="app-icon building small"></div>
-        <div class="location">Near Performing Arts Center</div>
-        <div class="map-link">MAP</div>
+        <div class="location">{{this.event.device.location1}}</div>
+        <div class="map-link app-button primary"
+             (click)="showOnMap()">MAP</div>
     </div>
     <div class="info-row">
         <div class="app-icon time small"></div>
-        <div>15:09</div>
+        <div>{{latestEventInstance.date | date : 'shortTime'}}</div>
     </div>
-    <button class="app-button secondary"
-            (click)="activateResponse()">ACTIVATE RESPONSE</button>
     <button class="app-button primary"
+            (click)="activateResponse()">ACTIVATE RESPONSE</button>
+    <button class="app-button secondary"
             (click)="confirmEndChat()">END CONVERSATION</button>
 </div>
 <div class="body">

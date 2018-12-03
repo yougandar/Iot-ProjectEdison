@@ -2,19 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Edison.Api.Config;
-using Edison.Api.Helpers;
-using Edison.Common.Interfaces;
-using Edison.Common.Messages;
-using Edison.Common.Messages.Interfaces;
-using Edison.Core.Common;
-using Edison.Core.Common.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Edison.Core.Common;
+using Edison.Core.Common.Models;
+using Edison.Common.Interfaces;
+using Edison.Common.Messages.Interfaces;
+using Edison.Common.Messages;
+using Edison.Api.Config;
+using Edison.Api.Helpers;
 
 namespace Edison.Api.Controllers
 {
+    /// <summary>
+    /// Controller to handle operations on responses
+    /// </summary>
     [ApiController]
     [Route("api/Responses")]
     public class ResponsesController : ControllerBase
@@ -31,7 +34,7 @@ namespace Edison.Api.Controllers
             _serviceBus = serviceBusClient;
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "Consumer")]
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureADAndB2C, Policy = AuthenticationRoles.Consumer)]
         [HttpGet("{responseId}")]
         [Produces(typeof(ResponseModel))]
         public async Task<IActionResult> GetResponseDetail(Guid responseId)
@@ -40,7 +43,7 @@ namespace Edison.Api.Controllers
             return Ok(responseObj);
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "Consumer")]
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureADAndB2C, Policy = AuthenticationRoles.Consumer)]
         [HttpGet]
         [Produces(typeof(IEnumerable<ResponseLightModel>))]
         public async Task<IActionResult> GetResponses()
@@ -49,7 +52,7 @@ namespace Edison.Api.Controllers
             return Ok(responseObjs);
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "Consumer")]
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureADAndB2C, Policy = AuthenticationRoles.Consumer)]
         [HttpPost("Radius")]
         [Produces(typeof(IEnumerable<ResponseModel>))]
         public async Task<IActionResult> GetResponsesFromPointRadius([FromBody]ResponseGeolocationModel responseGeolocationObj)
@@ -58,7 +61,7 @@ namespace Edison.Api.Controllers
             return Ok(responseObjs);
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "Consumer")]
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureADAndB2C, Policy = AuthenticationRoles.Consumer)]
         [HttpPut("Safe")]
         [Produces(typeof(bool))]
         public async Task<IActionResult> SetSafeStatus([FromBody]ResponseSafeUpdateModel responseSafeUpdateObj)
@@ -69,24 +72,24 @@ namespace Edison.Api.Controllers
             return Ok(result);
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd", Policy = "Admin")]
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureAD, Policy = AuthenticationRoles.Admin)]
         [HttpPost]
         [Produces(typeof(ResponseModel))]
         public async Task<IActionResult> CreateResponse([FromBody]ResponseCreationModel responseObj)
         {
             var result = await _responseDataManager.CreateResponse(responseObj);
-            if (!responseObj.DelayStart)
+            if (result != null)
             {
                 IEventSagaReceiveResponseCreated newMessage = new EventSagaReceiveResponseCreated()
                 {
-                    ResponseModel = result
+                    Response = result
                 };
                 await _serviceBus.BusAccess.Publish(newMessage);
             }
             return Ok(result);
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd", Policy = "Admin")]
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureAD, Policy = AuthenticationRoles.Admin)]
         [HttpPost("Locate")]
         public async Task<IActionResult> LocateResponse([FromBody]ResponseStartModel responseObj)
         {
@@ -94,17 +97,19 @@ namespace Edison.Api.Controllers
             {
                 ResponseId = responseObj.ResponseId,
                 Geolocation = responseObj.Geolocation
-            }
-            );
-            IEventSagaReceiveResponseCreated newMessage = new EventSagaReceiveResponseCreated()
+            });
+            if (result != null)
             {
-                ResponseModel = result
-            };
-            await _serviceBus.BusAccess.Publish(newMessage);
+                IEventSagaReceiveResponseUpdated newMessage = new EventSagaReceiveResponseUpdated()
+                {
+                    Response = result
+                };
+                await _serviceBus.BusAccess.Publish(newMessage);
+            }
             return Ok();
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd", Policy = "Admin")]
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureAD, Policy = AuthenticationRoles.Admin)]
         [HttpPut("Close")]
         [Produces(typeof(ResponseModel))]
         public async Task<IActionResult> CloseResponse(ResponseCloseModel responseObj)
@@ -112,13 +117,13 @@ namespace Edison.Api.Controllers
             var result = await _responseDataManager.CloseResponse(responseObj);
             IEventSagaReceiveResponseClosed newMessage = new EventSagaReceiveResponseClosed()
             {
-                ResponseModel = result
+                Response = result
             };
             await _serviceBus.BusAccess.Publish(newMessage);
             return Ok(result);
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd", Policy = "SuperAdmin")]
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureAD, Policy = AuthenticationRoles.SuperAdmin)]
         [HttpPut("AddEventClusters")]
         [Produces(typeof(ResponseModel))]
         public async Task<IActionResult> AddEventClusterIdsToResponse(ResponseEventClustersUpdateModel responseObj)
@@ -127,7 +132,7 @@ namespace Edison.Api.Controllers
             return Ok(result);
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd", Policy = "SuperAdmin")]
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureAD, Policy = AuthenticationRoles.SuperAdmin)]
         [HttpDelete]
         [Produces(typeof(bool))]
         public async Task<IActionResult> DeleteResponse(Guid responseId)
@@ -136,7 +141,16 @@ namespace Edison.Api.Controllers
             return Ok(result);
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd", Policy = "Admin")]
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureAD, Policy = AuthenticationRoles.SuperAdmin)]
+        [HttpPost("CompleteAction")]
+        [Produces(typeof(bool))]
+        public async Task<IActionResult> CompleteAction(ActionCompletionModel actionCompletionObj)
+        {
+            var result = await _responseDataManager.CompleteAction(actionCompletionObj);
+            return Ok(result);
+        }
+
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureAD, Policy = AuthenticationRoles.Admin)]
         [HttpPut("ChangeAction")]
         [Produces(typeof(ResponseModel))]
         public async Task<IActionResult> AddActionToResponse(ResponseChangeActionPlanModel responseObj)
@@ -144,14 +158,9 @@ namespace Edison.Api.Controllers
             ResponseModel result = await _responseDataManager.ChangeActionOnResponse(responseObj);
             if (result != null)
             {
-                EventSagaReceiveResponseActionsUpdated newMessage = new EventSagaReceiveResponseActionsUpdated()
+                IEventSagaReceiveResponseUpdated newMessage = new EventSagaReceiveResponseUpdated()
                 {
-                    //We do not want to trigger events for deleted actions or close actions
-                    Actions = responseObj.Actions.Where(x => !x.IsCloseAction && x.ActionChangedString != "delete").Select(a => a.Action),
-                    ResponseId = responseObj.ResponseId,
-                    Geolocation = result.Geolocation,
-                    PrimaryRadius = result.ActionPlan.PrimaryRadius,
-                    SecondaryRadius = result.ActionPlan.SecondaryRadius
+                    Response = result
                 };
                 await _serviceBus.BusAccess.Publish(newMessage);
             }

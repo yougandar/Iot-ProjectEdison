@@ -1,17 +1,16 @@
-﻿using AutoMapper;
-using Edison.Api.Helpers;
-using Edison.Core.Common.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
-using System.IO;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Edison.Core.Common;
+using Edison.Core.Common.Models;
+using Edison.Api.Helpers;
 
 namespace Edison.Api.Controllers
 {
+    /// <summary>
+    /// Controller to handle audit reports
+    /// </summary>
     [ApiController]
     [Route("api/Reports")]
     public class ReportsController : ControllerBase
@@ -24,13 +23,13 @@ namespace Edison.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetReports()
-        //public async Task<IActionResult> GetReports([FromBody]ReportCreationModel reportRequest)
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureADAndB2C, Policy = AuthenticationRoles.Admin)]
+        public async Task<IActionResult> GetReports([FromBody]ReportCreationModel reportRequest)
         {
-            ReportCreationModel reportRequest = new ReportCreationModel() { };
+
             var result = await _reportDataManager.GetReport(reportRequest);
             if(result != null && result.Length > 0)
-                return File(result, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "report.xlsx");
+                return File(result, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{(string.IsNullOrEmpty(reportRequest.Filename) ? "report" : reportRequest.Filename)}.xlsx");
             if (result != null && result.Length == 0)
                 return Ok();
             return StatusCode(StatusCodes.Status500InternalServerError);

@@ -1,26 +1,31 @@
-﻿using AutoMapper;
-using Edison.Core.Common.Models;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using System.Threading.Tasks;
+using Edison.Core.Common;
+using Edison.Core.Common.Models;
+using Edison.Api.Helpers;
 
 namespace Edison.Api.Controllers
 {
+    /// <summary>
+    /// Controller to handle operations on signalr
+    /// </summary>
     [ApiController]
     [Route("api/SignalR")]
     public class SignalRController : ControllerBase
     {
         private readonly IHubContext<SignalRHub> _hub;
-        private readonly IMapper _Mapper;
+        private readonly ResponseDataManager _responseDataManager;
 
-        public SignalRController(IMapper mapper, IHubContext<SignalRHub> hub)
+        public SignalRController(IHubContext<SignalRHub> hub, ResponseDataManager responseDataManager)
         {
-            _Mapper = mapper;
             _hub = hub;
+            _responseDataManager = responseDataManager;
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd", Policy = "SuperAdmin")]
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureAD, Policy = AuthenticationRoles.SuperAdmin)]
         [HttpPut("EventCluster")]
         public async Task<IActionResult> UpdateEventClusterUI([FromBody]EventClusterUIModel eventClusterUIUpdate)
         {
@@ -28,7 +33,7 @@ namespace Edison.Api.Controllers
             return Ok();
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd", Policy = "SuperAdmin")]
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureAD, Policy = AuthenticationRoles.SuperAdmin)]
         [HttpPut("Device")]
         public async Task<IActionResult> UpdateDeviceUI([FromBody]DeviceUIModel deviceUIUpdate)
         {
@@ -36,19 +41,21 @@ namespace Edison.Api.Controllers
             return Ok();
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd", Policy = "SuperAdmin")]
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureAD, Policy = AuthenticationRoles.SuperAdmin)]
         [HttpPut("Response")]
         public async Task<IActionResult> UpdateResponseUI([FromBody]ResponseUIModel responseUIUpdate)
         {
+            if (responseUIUpdate.Response == null && responseUIUpdate.ResponseId != Guid.Empty)
+                responseUIUpdate.Response = await _responseDataManager.GetResponse(responseUIUpdate.ResponseId);
             await _hub.Clients.All.SendAsync("UpdateResponseUI", responseUIUpdate);
             return Ok();
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd", Policy = "SuperAdmin")]
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureAD, Policy = AuthenticationRoles.SuperAdmin)]
         [HttpPut("Response/ActionClose")]
-        public async Task<IActionResult> UpdateActionCloseUI([FromBody]ActionCloseUIModel actionCloseUIUpdate)
+        public async Task<IActionResult> UpdateActionCallbackUI([FromBody]ActionCallbackUIModel actionCallbackUIUpdate)
         {
-            await _hub.Clients.All.SendAsync("UpdateActionCloseUI", actionCloseUIUpdate);
+            await _hub.Clients.All.SendAsync("UpdateActionCallbackUI", actionCallbackUIUpdate);
             return Ok();
         }
     }

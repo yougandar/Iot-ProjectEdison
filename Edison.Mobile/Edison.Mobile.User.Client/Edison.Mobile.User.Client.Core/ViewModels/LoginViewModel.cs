@@ -3,6 +3,7 @@ using Edison.Mobile.Common.Auth;
 using Edison.Mobile.Common.Geo;
 using Edison.Mobile.Common.Notifications;
 using Edison.Mobile.Common.Shared;
+using Edison.Mobile.Common.ViewModels;
 
 namespace Edison.Mobile.User.Client.Core.ViewModels
 {
@@ -12,7 +13,7 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
         readonly INotificationService notificationService;
         readonly ILocationService locationService;
 
-        bool IsInitialAppearance = true;
+        bool isInitialAppearance = true;
 
         public event ViewNotification OnDisplayLogin;
         public event ViewNotification OnNavigateToMainViewModel;
@@ -25,12 +26,21 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
             this.notificationService = notificationService;
         }
 
+        public override async void ViewAppearing()
+        {
+            base.ViewAppearing();
+
+            await locationService.RequestLocationPrivileges();
+            await notificationService.RequestNotificationPrivileges();
+        }
+
         public override async void ViewAppeared()
         {
             base.ViewAppeared();
 
-            if (IsInitialAppearance)
+            if (isInitialAppearance)
             {
+                isInitialAppearance = false;
                 var hasToken = await authService.AcquireTokenSilently();
                 if (hasToken)
                 {
@@ -41,8 +51,6 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
                     authService.OnAuthChanged += AuthServiceOnAuthChanged;
                     OnDisplayLogin?.Invoke();
                 }
-
-                IsInitialAppearance = false;
             }
         }
 
@@ -74,6 +82,7 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
             var gotPermissions = await GetAppPermissions();
             if (gotPermissions)
             {
+                await locationService.StartLocationUpdates();
                 OnNavigateToMainViewModel?.Invoke();
             }
             else
@@ -88,12 +97,17 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
             var hasLocationPrivileges = await locationService.HasLocationPrivileges();
             var locationSuccess = hasLocationPrivileges;
             var notificationSuccess = hasNotificationPrivileges;
+            
+            if (!locationSuccess)
+            {
+                locationSuccess = await locationService.RequestLocationPrivileges();            
+            }
 
-            if (!hasLocationPrivileges) locationSuccess = await locationService.RequestLocationPrivileges();
-            notificationSuccess = await notificationService.RequestNotificationPrivileges();
-
-            if (locationSuccess) await locationService.StartLocationUpdates();
-
+            if (!hasNotificationPrivileges)
+            {
+                notificationSuccess = await notificationService.RequestNotificationPrivileges();
+            }
+            
             return notificationSuccess && locationSuccess;
         }
     }

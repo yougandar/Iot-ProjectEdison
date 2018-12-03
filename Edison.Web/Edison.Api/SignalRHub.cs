@@ -1,10 +1,13 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Edison.Core.Common;
 
 namespace Edison.Api
 {
-    [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb")]
+    /// <summary>
+    /// SignalR class
+    /// </summary>
+    [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureADAndB2C)]
     public class SignalRHub : Hub
     {
         public SignalRHub()

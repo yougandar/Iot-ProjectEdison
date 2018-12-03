@@ -1,27 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Edison.Api.Helpers;
-using Edison.Core.Common.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Edison.Core.Common;
+using Edison.Core.Common.Models;
+using Edison.Api.Helpers;
 
 namespace Edison.Api.Controllers
 {
+    /// <summary>
+    /// Controller to handle CRUD operation on Action Plans
+    /// </summary>
     [ApiController]
     [Route("api/ActionPlans")]
     public class ActionPlansController : ControllerBase
     {
         private readonly ActionPlanDataManager _actionPlanDataManager;
 
+        /// <summary>
+        /// DI Constructor
+        /// </summary>
         public ActionPlansController(ActionPlanDataManager actionPlanDataManager)
         {
             _actionPlanDataManager = actionPlanDataManager;
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "Consumer")]
+        /// <summary>
+        /// Get action plan from an action plan Id
+        /// </summary>
+        /// <param name="actionPlanId">Action Plan Id</param>
+        /// <returns>ActionPlanModel</returns>
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureADAndB2C, Policy = AuthenticationRoles.Consumer)]
         [HttpGet("{actionPlanId}")]
         [Produces(typeof(ActionPlanModel))]
         public async Task<IActionResult> GetActionPlan(Guid actionPlanId)
@@ -30,7 +41,11 @@ namespace Edison.Api.Controllers
             return Ok(actionObj);
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd,B2CWeb", Policy = "Consumer")]
+        /// <summary>
+        /// Get all the actions plans
+        /// </summary>
+        /// <returns>List of Action Plans</returns>
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureADAndB2C, Policy = AuthenticationRoles.Consumer)]
         [HttpGet]
         [Produces(typeof(IEnumerable<ActionPlanListModel>))]
         public async Task<IActionResult> GetActionPlans()
@@ -39,7 +54,12 @@ namespace Edison.Api.Controllers
             return Ok(actionObjs);
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd", Policy = "Admin")]
+        /// <summary>
+        /// Update an action plan
+        /// </summary>
+        /// <param name="actionPlanObj">ActionPlanUpdateModel</param>
+        /// <returns>ActionPlanModel</returns>
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureAD, Policy = AuthenticationRoles.Admin)]
         [HttpPut]
         [Produces(typeof(ActionPlanModel))]
         public async Task<IActionResult> UpdateActionPlan(ActionPlanUpdateModel actionPlanObj)
@@ -48,7 +68,12 @@ namespace Edison.Api.Controllers
             return Ok(result);
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd", Policy = "Admin")]
+        /// <summary>
+        /// Create an action plan
+        /// </summary>
+        /// <param name="actionPlanObj">ActionPlanCreationModel</param>
+        /// <returns>ActionPlanModel</returns>
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureAD, Policy = AuthenticationRoles.Admin)]
         [HttpPost]
         [Produces(typeof(ActionPlanModel))]
         public async Task<IActionResult> CreationActionPlan(ActionPlanCreationModel actionPlanObj)
@@ -57,7 +82,12 @@ namespace Edison.Api.Controllers
             return Ok(result);
         }
 
-        [Authorize(AuthenticationSchemes = "AzureAd", Policy = "Admin")]
+        /// <summary>
+        /// Delete an action plan
+        /// </summary>
+        /// <param name="actionPlanId">Id of the action plan</param>
+        /// <returns>True if the action plan was removed</returns>
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureAD, Policy = AuthenticationRoles.Admin)]
         [HttpDelete]
         [Produces(typeof(HttpStatusCode))]
         public async Task<IActionResult> DeleteActionPlan(Guid actionPlanId)

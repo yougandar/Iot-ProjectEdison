@@ -1,15 +1,12 @@
-﻿using Edison.Core.Common;
-using Edison.Core.Common.Models;
-using Microsoft.Bot.Schema;
+﻿using System;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+using Edison.Core.Common.Models;
 
 namespace Edison.ChatService.Models
 {
+    /// <summary>
+    /// Object that represents the channeldata for command SendMessage
+    /// </summary>
     [Serializable]
     public class CommandSendMessageProperties
     {
@@ -17,8 +14,6 @@ namespace Edison.ChatService.Models
         public string UserId { get; set; }
         [JsonProperty(PropertyName = "from")]
         public ChatUserModel From { get; set; }
-        //[JsonProperty(PropertyName = "to")]
-        //public ChatUser To { get; set; }
         [JsonProperty(PropertyName = "reportType")]
         public Guid? ReportType { get; set; }
     }

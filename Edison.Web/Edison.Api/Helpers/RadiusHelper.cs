@@ -1,12 +1,12 @@
-﻿using Edison.Common.DAO;
+﻿using System;
 using Edison.Core.Common.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Edison.Common.DAO;
 
 namespace Edison.Api.Helpers
 {
+    /// <summary>
+    /// Helper class to calculate if a point is within a specific radius
+    /// </summary>
     public static class RadiusHelper
     {
         private const double EARTH_RADIUS_KM = 6371;

@@ -1,10 +1,8 @@
 ﻿using Edison.Core.Common.Models;
-using System;
 
 namespace Edison.Common.Messages.Interfaces
 {
-    public interface IEventSagaReceiveResponseCreated : IMessage
+    public interface IEventSagaReceiveResponseCreated : IResponseMessage, IMessage
     {
-        ResponseModel ResponseModel { get; set; }
     }
 }

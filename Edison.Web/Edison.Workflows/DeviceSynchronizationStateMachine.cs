@@ -1,16 +1,17 @@
-﻿using Automatonymous;
-using Edison.Common.Config;
-using Edison.Common.Messages;
-using Edison.Common.Messages.Interfaces;
-using Edison.Core.Common.Models;
-using Edison.Workflows.Config;
-using MassTransit;
+﻿using System;
 using Microsoft.Extensions.Options;
-using System;
-using System.Threading.Tasks;
+using MassTransit;
+using Automatonymous;
+using Edison.Core.Common.Models;
+using Edison.Common.Config;
+using Edison.Common.Messages.Interfaces;
+using Edison.Common.Messages;
 
 namespace Edison.Workflows
 {
+    /// <summary>
+    /// Saga to handle the lifecycle of an iot device synchronization update
+    /// </summary>
     internal class DeviceSynchronizationStateMachine : MassTransitStateMachine<DeviceSynchronizationState>
     {
         //Warning keep concurrency limit to 1
@@ -29,6 +30,9 @@ namespace Edison.Workflows
             Event(() => DeviceCreatedOrUpdated, x => x.CorrelateById(context => context.Message.CorrelationId));
             //UI Update notification, can be ignored if saga doesn't exist anymore
             Event(() => DeviceUIUpdated, x => { x.CorrelateById(context => context.Message.CorrelationId); x.OnMissingInstance(m => m.Discard()); });
+
+            Event(() => DeviceDeleteRequestedFault, x => x.CorrelateById(context => context.Message.Message.CorrelationId));
+            Event(() => DeviceCreateOrUpdateRequestedFault, x => x.CorrelateById(context => context.Message.Message.CorrelationId));
             #endregion
 
             //The event is submitted from Azure Service Queue
@@ -73,7 +77,7 @@ namespace Edison.Workflows
                             {
                                 DeviceId = context.Instance.DeviceId,
                                 Device = context.Data.Device,
-                                UpdateType = context.Instance.ChangeType == "twinChangeNotification" || context.Instance.ChangeType == "ping"  ? "UpdateDevice" : "NewDevice"
+                                UpdateType = context.Instance.ChangeType == "twinChangeNotification" || context.Instance.ChangeType == "ping"  ? DeviceUpdateType.UpdateDevice.ToString() : DeviceUpdateType.NewDevice.ToString()
                             }
                         }))
                     )
@@ -86,18 +90,22 @@ namespace Edison.Workflows
                         DeviceUI = new DeviceUIModel()
                         {
                             DeviceId = context.Instance.DeviceId,
-                            UpdateType = "DeleteDevice"
+                            UpdateType = DeviceUpdateType.DeleteDevice.ToString()
                         }
                     }))
                     .Finalize()
                 );
 
             //Stateless
-            //DuringAny(
+            DuringAny(
+                When(DeviceDeleteRequestedFault)
+                .ThenAsync(context => Console.Out.WriteLineAsync($"DeviceSynchronization---{context.Instance.CorrelationId}: !!FAULT!! Device Deleted: {context.Data.Message}")),
+                When(DeviceCreateOrUpdateRequestedFault)
+                .ThenAsync(context => Console.Out.WriteLineAsync($"DeviceSynchronization---{context.Instance.CorrelationId}: !!FAULT!! Device Updated: {context.Data.Message}"))
             //    //UI Update acknoledgement
             //    When(DeviceUIUpdated)
             //        .ThenAsync(context => Console.Out.WriteLineAsync($"DeviceSynchronization---{context.Instance.CorrelationId}: UI Updated."))
-            //    );
+                );
 
 
             //Delete persisted saga after completion
@@ -109,6 +117,8 @@ namespace Edison.Workflows
         #region "Events"
         public Event<IDeviceDeleted> EventDeviceDeleted { get; private set; }
         public Event<IDeviceCreatedOrUpdated> DeviceCreatedOrUpdated { get; private set; }
+        public Event<Fault<IDeviceDeleteRequested>> DeviceDeleteRequestedFault { get; private set; }
+        public Event<Fault<IDeviceCreateOrUpdateRequested>> DeviceCreateOrUpdateRequestedFault { get; private set; }
         public Event<IEventSagaReceivedDeviceChange> EventReceived { get; private set; }
         public Event<IDeviceUIUpdateRequested> DeviceUIUpdated { get; private set; }
         #endregion

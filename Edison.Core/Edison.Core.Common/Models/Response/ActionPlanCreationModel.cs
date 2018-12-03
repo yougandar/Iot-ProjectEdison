@@ -1,8 +1,4 @@
-﻿using Edison.Core.Common.Interfaces;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Edison.Core.Common.Models
 {
@@ -13,6 +9,9 @@ namespace Edison.Core.Common.Models
         public bool IsActive { get; set; }
         public string Color { get; set; }
         public string Icon { get; set; }
+        public double PrimaryRadius { get; set; }
+        public double SecondaryRadius { get; set; }
+        public bool AcceptSafeStatus { get; set; }
         public IEnumerable<ActionModel> OpenActions { get; set; }
         public IEnumerable<ActionModel> CloseActions { get; set; }
     }

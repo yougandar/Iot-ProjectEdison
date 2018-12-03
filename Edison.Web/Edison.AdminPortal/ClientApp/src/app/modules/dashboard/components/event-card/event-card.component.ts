@@ -44,6 +44,7 @@ export class EventCardComponent implements OnInit, OnDestroy {
     constructor (private store: Store<AppState>) { }
 
     ngOnInit() {
+        this.active = false;
         this.mapOptions = {
             mapId: this.event.eventClusterId,
             height: '100px',
@@ -124,12 +125,14 @@ export class EventCardComponent implements OnInit, OnDestroy {
             this.store.dispatch(new ToggleUserChatWindow({ open: true, userId: userId, userName: username }));
         }
         this.store.dispatch(new ShowEvents({ events: [ this.event ] }));
+        this.store.dispatch(new SelectActiveEvent({ event: this.event }));
     }
 
     getBorderStyle = () => {
         if (this.active) {
             return {
-                'box-shadow': 'rgba(20, 13, 100, 1) 0px 0px 8px 0px'
+                // 'box-shadow': 'rgba(20, 13, 100, 1) 0px 0px 8px 0px'
+                border: '1px solid #3322FF'
             }
         }
 
