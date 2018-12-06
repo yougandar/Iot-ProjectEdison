@@ -1,6 +1,6 @@
 import { combineLatest, Subscription } from 'rxjs';
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 
 import { DeviceType } from '../../../../core/models/deviceType';
@@ -20,7 +20,9 @@ import { FilterGroupModel } from '../../models/filter-group.model';
     templateUrl: './devices.component.html',
     styleUrls: [ './devices.component.scss' ]
 })
-export class DevicesComponent implements OnInit, OnDestroy {
+export class DevicesComponent implements OnInit, OnDestroy, AfterViewInit {
+    @ViewChild('container') container: ElementRef;
+
     filters: FilterGroupModel[];
     devices: ExpandedDevice[];
     filteredDevices: ExpandedDevice[];
@@ -28,7 +30,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
 
     private showButtons: boolean = true;
     private showSoundSensors: boolean = true;
-    private showLightBulbs: boolean = true;
+    private showSmartBulbs: boolean = true;
     private showOnline: boolean = true;
     private showOffline: boolean = true;
 
@@ -41,12 +43,16 @@ export class DevicesComponent implements OnInit, OnDestroy {
         this.store.dispatch(new SetPageData({ title: 'DEVICES', sidebar: false }))
     }
 
+    ngAfterViewInit() {
+        this.container.nativeElement.focus();
+    }
+
     ngOnDestroy() {
         this.combinedStream$.unsubscribe();
     }
 
     onRowClick(device: ExpandedDevice) {
-        if (device.deviceType === DeviceType.LightBulb) {
+        if (device.deviceType === DeviceType.SmartBulb) {
             this.store.dispatch(new TestDevice(device));
         }
     }
@@ -95,7 +101,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
         this.filteredDevices = this.devices.filter(device => {
             return (device.deviceType !== DeviceType.ButtonSensor || this.showButtons) &&
                 (device.deviceType !== DeviceType.SoundSensor || this.showSoundSensors) &&
-                (device.deviceType !== DeviceType.LightBulb || this.showLightBulbs) &&
+                (device.deviceType !== DeviceType.SmartBulb || this.showSmartBulbs) &&
                 (this.showOnline && device.online || this.showOffline && !device.online)
         });
     }
@@ -117,8 +123,8 @@ export class DevicesComponent implements OnInit, OnDestroy {
                     checked: true,
                 },
                 {
-                    title: 'LightBulbs',
-                    onClick: (checked: boolean) => { this.showSoundSensors = checked; this.filterDevices() },
+                    title: 'SmartBulbs',
+                    onClick: (checked: boolean) => { this.showSmartBulbs = checked; this.filterDevices() },
                     iconClasses: 'app-icon medium-small grey light',
                     checked: true,
                 }
