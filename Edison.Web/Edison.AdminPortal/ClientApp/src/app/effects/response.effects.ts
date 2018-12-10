@@ -1,3 +1,4 @@
+import { ToastrService } from 'ngx-toastr';
 import { Observable, of, Subscriber } from 'rxjs';
 import { catchError, map, mergeMap, withLatestFrom } from 'rxjs/operators';
 import UUIDv1 from 'uuid/v1';
@@ -10,17 +11,47 @@ import { Action, Store } from '@ngrx/store';
 import { environment } from '../../environments/environment';
 import { AppState } from '../reducers';
 import { SelectActionPlan } from '../reducers/action-plan/action-plan.actions';
+import {
+    ActionPlanAction, ActionPlanType, ActionStatus
+} from '../reducers/action-plan/action-plan.model';
 import { SelectActiveEvent } from '../reducers/event/event.actions';
 import {
     ActivateResponseActionPlan, AddLocationToActiveResponse, AddLocationToActiveResponseError,
     AddLocationToActiveResponseSuccess, AddResponse, CloseResponse, CloseResponseError, GetResponse,
     GetResponseError, GetResponsesError, LoadResponses, PostNewResponse, PostNewResponseError,
     PostNewResponseSuccess, PutResponse, PutResponseError, ResponseActionTypes,
+    RetryResponseActions, RetryResponseActionsError, RetryResponseActionsSuccess,
     SelectActiveResponse, ShowActivateResponse, ShowSelectingLocation, SignalRUpdateResponseAction,
     UpdateResponse, UpdateResponseActions, UpdateResponseActionsError, UpdateResponseActionsSuccess
 } from '../reducers/response/response.actions';
 import { Response } from '../reducers/response/response.model';
 import { selectAll } from '../reducers/response/response.reducer';
+
+const getSuccessMessage = (actionPlanAction: ActionPlanAction) => {
+    switch (actionPlanAction.actionType) {
+        case ActionPlanType.LightSensor:
+            return `${actionPlanAction.parameters.radius.replace(/^\w/, c => c.toUpperCase())} radius lights activated.`;
+        case ActionPlanType.Notification:
+            return 'Notification sent successfully.';
+        case ActionPlanType.EmergencyCall:
+            return '911 Call initiated successfully.';
+        case ActionPlanType.Email:
+            return 'Email sent successfully.';
+    }
+}
+
+const getFailureMessage = (actionPlanAction: ActionPlanAction) => {
+    switch (actionPlanAction.actionType) {
+        case ActionPlanType.LightSensor:
+            return `${actionPlanAction.parameters.radius.replace(/^\w/, c => c.toUpperCase())} radius lights failed.`;
+        case ActionPlanType.Notification:
+            return 'Notification failed to send.';
+        case ActionPlanType.EmergencyCall:
+            return '911 Call failed.';
+        case ActionPlanType.Email:
+            return 'Email failed to send.';
+    }
+}
 
 @Injectable()
 export class ResponseEffects {
@@ -246,8 +277,9 @@ export class ResponseEffects {
             const respToUpdate = responses.find(r => r.responseId === responseId);
             if (respToUpdate) {
                 const { openActions, closeActions } = respToUpdate.actionPlan;
+                let foundAction: ActionPlanAction = null;
                 if (openActions) {
-                    let foundAction = openActions.find(oa => oa.actionId === actionId);
+                    foundAction = openActions.find(oa => oa.actionId === actionId);
                     if (foundAction) {
                         foundAction = {
                             ...foundAction,
@@ -257,12 +289,31 @@ export class ResponseEffects {
                 }
 
                 if (closeActions) {
-                    let foundAction = openActions.find(oa => oa.actionId === actionId);
+                    foundAction = openActions.find(oa => oa.actionId === actionId);
                     if (foundAction) {
                         foundAction = {
                             ...foundAction,
                             ...action.payload.message,
                         }
+                    }
+                }
+
+                if (foundAction) {
+                    const toastrOptions = {
+                        progressBar: true,
+                        closeButton: true,
+                    }
+                    switch (foundAction.status) {
+                        case ActionStatus.Error:
+                        case ActionStatus.Unknown:
+                            this.toastr.error(getFailureMessage(foundAction), respToUpdate.actionPlan.name, toastrOptions);
+                            break;
+                        case ActionStatus.NotStarted:
+                        case ActionStatus.Skipped:
+                            break;
+                        case ActionStatus.Success:
+                            this.toastr.success(getSuccessMessage(foundAction), respToUpdate.actionPlan.name, toastrOptions);
+                            break;
                     }
                 }
 
@@ -290,9 +341,20 @@ export class ResponseEffects {
         }))
     )
 
+    @Effect()
+    retryResponseActions$: Observable<Action> = this.actions$.pipe(
+        ofType(ResponseActionTypes.RetryResponseActions),
+        mergeMap((action: RetryResponseActions) =>
+            this.http.put(`${environment.baseUrl}${environment.apiUrl}responses/retryactions`, action.payload)
+                .pipe(map(() => new RetryResponseActionsSuccess()),
+                    catchError(() => of(new RetryResponseActionsError()))
+                ))
+    )
+
     constructor (
         private actions$: Actions,
         private http: HttpClient,
-        private store$: Store<AppState>
+        private store$: Store<AppState>,
+        private toastr: ToastrService
     ) { }
 }

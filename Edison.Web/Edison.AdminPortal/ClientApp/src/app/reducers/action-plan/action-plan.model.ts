@@ -20,7 +20,7 @@ export enum ActionPlanType {
     None,
     Notification = 'notification',
     Email = 'email',
-    RapidSOS = 'rapidsos',
+    EmergencyCall = 'rapidsos',
     LightSensor = 'lightsensor',
 }
 
@@ -42,6 +42,7 @@ export interface ActionPlanAction {
     endDate?: Date;
     startDate?: Date;
     status?: ActionStatus;
+    errorMessage?: string;
 }
 
 export enum ActionChangeType {
