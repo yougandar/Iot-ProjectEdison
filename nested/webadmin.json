@@ -1,0 +1,85 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "webSiteSettings": {
+            "type": "object"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2015-08-01",
+            "name": "[parameters('webSiteSettings').webAppHostingPlanName]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[parameters('webSiteSettings').location]",
+            "tags": {
+                "displayName": "HostingPlan"
+            },
+            "sku": {
+                "name": "[parameters('webSiteSettings').webAppSkuName1]",
+                "capacity": 1
+            },
+            "properties": {
+                "name": "[parameters('webSiteSettings').webAppHostingPlanName]"
+            }
+        },
+       {
+            "apiVersion": "2015-08-01",
+            "name": "[parameters('webSiteSettings').webAdmin]",
+            "type": "Microsoft.Web/sites",
+            "location": "[parameters('webSiteSettings').location]",
+            "tags": {
+                "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('webSiteSettings').webAppHostingPlanName)]": "Resource",
+                "displayName": "Website"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms/', parameters('webSiteSettings').webAppHostingPlanName)]"
+            ],
+            "properties": {
+                "name": "[parameters('webSiteSettings').webAdmin]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('webSiteSettings').webAppHostingPlanName)]"
+            },
+            "resources": [
+                {
+                    "apiVersion": "2015-08-01",
+                    "name": "web",
+                    "type": "config",
+                    "dependsOn": [
+                        "[concat('Microsoft.Web/sites/', parameters('webSiteSettings').webAdmin)]"
+                    ],
+                    "tags": {
+                        "displayName": "WebAppConfig"
+                    },
+                    "properties": {
+                        "phpVersion": "5.6",
+                        "netFrameworkVersion": "v4.6",
+                        "use32BitWorkerProcess": true,
+                        "webSocketsEnabled": true,
+                        "alwaysOn": false,
+                        "remoteDebuggingEnabled": true,
+                        "remoteDebuggingVersion": "VS2015"
+                    }
+                },
+                {
+                    "name": "MSDeploy",
+                    "type": "extensions",
+                    "location": "[parameters('webSiteSettings').location]",
+                    "apiVersion": "2015-08-01",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/sites', parameters('webSiteSettings').webAdmin)]",
+                        "[concat('Microsoft.Web/Sites/', parameters('webSiteSettings').webAdmin, '/config/web')]"
+                    ],
+                    "tags": {
+                        "displayName": "WebPackageDeploy"
+                    },
+                    "properties": {
+                        "packageUri": "[parameters('webSiteSettings').webAdminPackageUri]"
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {
+    }
+}

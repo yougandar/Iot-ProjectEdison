@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+   "iothubSettings":{
+     "type": "object"
+   }
+},
+  "variables": {},
+  "resources": [
+    {
+      "apiVersion": "2016-02-03",
+      "location": "[parameters('iothubSettings').location]",
+      "name": "[parameters('iothubSettings').iotHubName]",
+      "properties": {
+        "eventHubEndpoints": {
+          "events": {
+            "retentionTimeInDays":  "[parameters('iothubSettings').d2cMessageRetentionInDaysPeriod]",
+            "partitionCount": "[parameters('iothubSettings').d2cPartitionCount]"
+          }
+        }
+      },
+      "sku": {
+        "name": "[parameters('iothubSettings').skuName]",
+        "capacity": "[parameters('iothubSettings').capacityUnits]"
+      },
+      "type": "Microsoft.Devices/IotHubs"
+    },
+    {
+      "apiVersion": "2016-02-03",
+      "dependsOn": [
+        "[concat('Microsoft.Devices/iothubs/',parameters('iothubSettings').iotHubName)]"
+      ],
+      "name": "[concat(parameters('iothubSettings').iotHubName, '/events/',parameters('iothubSettings').d2cConsumerGroupName)]",
+      "type": "Microsoft.Devices/iotHubs/eventhubEndpoints/ConsumerGroups"
+    }
+  ],
+  "outputs": {}
+}

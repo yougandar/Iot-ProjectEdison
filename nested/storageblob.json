@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+     "storageBlobSettings":{
+         "type": "object"
+     }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[parameters('storageBlobSettings').storageAccountName]",
+            "apiVersion": "2018-07-01",
+            "location": "[parameters('storageBlobSettings').location]",
+            "sku":{
+                "name":"[parameters('storageBlobSettings').storageAccountType]"
+            },
+                "kind": "StorageV2",
+            "properties": {
+            },
+            "resources": [
+                {
+                    "name": "[concat('default/', parameters('storageBlobSettings').containerName)]",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-03-01-preview",
+                    "dependsOn": [
+                        "[parameters('storageBlobSettings').storageAccountName]"
+                    ]
+                }
+            ]
+        }
+    ]
+}
