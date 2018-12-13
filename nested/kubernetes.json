@@ -2,6 +2,9 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+      "omsSettings": {
+        "type": "object"
+    },
         "kubernetesSettings": {
             "type": "object"
         }
@@ -43,7 +46,65 @@
                     "dnsServiceIP": "10.0.0.10",
                     "dockerBridgeCidr": "172.17.0.1/16"
                 }
-            }
+            },
+            "resources": [
+                {
+                    "name": "Microsoft.Insights/service",
+                    "type": "providers/diagnosticSettings",
+                    "apiVersion": "2015-07-01",
+                    "dependsOn": [
+                       "[concat('Microsoft.ContainerService/managedClusters/', parameters('kubernetesSettings').servicename)]"
+                    ],
+                    "properties": {
+                        "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsSettings').omsWorkspaceName)]",
+                        "logs": [
+                            {
+                                "category": "kube-apiserver",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "kube-controller-manager",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "kube-scheduler",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "guard",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            }
+                        ],
+                        "metrics": [
+                            {
+                                "timeGrain": "AllMetrics",
+                                "category": "AllMetrics",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": false,
+                                    "days": 0
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
 
         }
     ],
