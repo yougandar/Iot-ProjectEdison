@@ -1,0 +1,29 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+     "cosmosDbSettings":{
+         "type": "object"
+     }
+  },
+  "variables": { },
+  "resources": [
+    {
+      "apiVersion": "2015-04-08",
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "kind": "GlobalDocumentDB",
+      "name": "[parameters('cosmosDbSettings').cosmosDbAccountName]",
+      "location": "[parameters('cosmosDbSettings').location]",
+      "properties": {
+        "name": "[parameters('cosmosDbSettings').cosmosDbAccountName]",
+        "databaseAccountOfferType": "[parameters('cosmosDbSettings').offerType]",
+        "locations": [
+          {
+            "locationName": "[parameters('cosmosDbSettings').location]",
+            "failoverPriority": 0
+          }
+        ]
+      }
+    }
+  ]
+}
