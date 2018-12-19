@@ -246,9 +246,7 @@
             "name": "Cosmosdb",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
-            "dependsOn": [
-                "Kubernetes"
-            ],
+            "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -289,9 +287,7 @@
             "name": "StorageBlob",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
-            "dependsOn": [
-                "Kubernetes"
-            ],
+            "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -384,14 +380,13 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2015-01-01",
             "dependsOn":[
-                "OmsWorkSpace",
-                "IotHub"
+                "OmsWorkSpace"
             ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'/nested/kubernetes.json?token=AT7l1akvQYgJSZFXzbtpnpirB4K7wOpgks5cG4ovwA%3D%3D')]",
-                    "contentVersion": "1.0.0.0"
+                    "uri": "[concat(variables('baseUrl'),'/nested/kubernetes.json?token=AT7l1d5rNN2cx1M-pGdNm1tvoxXjlhQzks5cIyg8wA%3D%3D')]",
+                    "contentVersion": "1.0.0.0"           
                 },
                 "parameters": {
                     "omsSettings": {
