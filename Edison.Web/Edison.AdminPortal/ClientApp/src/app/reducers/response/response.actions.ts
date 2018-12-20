@@ -14,6 +14,7 @@ export enum ResponseActionTypes {
     AddResponses = '[Response] Add Responses',
     UpsertResponses = '[Response] Upsert Responses',
     UpdateResponse = '[Response] Update Response',
+    UpdateResponseAsync = '[Response] Update Response Async',
     UpdateResponses = '[Response] Update Responses',
     DeleteResponse = '[Response] Delete Response',
     DeleteResponses = '[Response] Delete Responses',
@@ -34,6 +35,7 @@ export enum ResponseActionTypes {
     CloseResponse = '[Response] Close Response',
     CloseResponseError = '[Response] Close Response Error',
     ShowSelectingLocation = '[Response] Show Selecting Location',
+    DontShowSelectingLocation = '[Response] Dont Show Selecting Location',
     AddLocationToActiveResponse = '[Response] Add Location To Response',
     AddLocationToActiveResponseError = '[Response] Add Location To Response Error',
     AddLocationToActiveResponseSuccess = '[Response] Add Location To Response Success',
@@ -47,6 +49,17 @@ export enum ResponseActionTypes {
     RetryResponseActions = '[Response] Retry Response Actions',
     RetryResponseActionsSuccess = '[Response] Retry Response Actions Success',
     RetryResponseActionsError = '[Response] Retry Response Actions Error',
+    ResponseNonAction = '[Response] Response Non Action',
+}
+
+export enum LoadingType {
+    All,
+    Closed,
+    Open,
+}
+
+export class ResponseNonAction implements Action {
+    readonly type = ResponseActionTypes.ResponseNonAction;
 }
 
 export class RetryResponseActions implements Action {
@@ -121,6 +134,10 @@ export class ShowSelectingLocation implements Action {
     readonly type = ResponseActionTypes.ShowSelectingLocation;
 
     constructor (public payload: { showSelectingLocation: boolean, response?: Response }) { }
+}
+
+export class DontShowSelectingLocation implements Action {
+    readonly type = ResponseActionTypes.DontShowSelectingLocation;
 }
 
 export class CloseResponse implements Action {
@@ -235,6 +252,12 @@ export class UpdateResponse implements Action {
     readonly type = ResponseActionTypes.UpdateResponse;
 
     constructor (public payload: { response: Update<Response> }) { }
+}
+
+export class UpdateResponseAsync implements Action {
+    readonly type = ResponseActionTypes.UpdateResponseAsync;
+
+    constructor (public payload: { response: Response, loading: LoadingType, activateResponse?: boolean }) { }
 }
 
 export class UpdateResponses implements Action {

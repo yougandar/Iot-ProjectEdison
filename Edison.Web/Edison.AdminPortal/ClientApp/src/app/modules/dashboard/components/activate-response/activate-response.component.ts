@@ -8,19 +8,23 @@ import { fadeInOut } from '../../../../core/animations/fadeInOut';
 import { SearchListItem } from '../../../../core/models/searchListItem';
 import { AppState } from '../../../../reducers';
 import {
-    GetActionPlan, GetActionPlans, PutActionPlan, SelectActionPlan, SetSelectingActionPlan
+    GetActionPlan, GetActionPlans, SelectActionPlan, SetSelectingActionPlan
 } from '../../../../reducers/action-plan/action-plan.actions';
-import { ActionPlan, ActionStatus } from '../../../../reducers/action-plan/action-plan.model';
+import {
+    ActionPlan, ActionPlanAction, ActionPlanType, ActionStatus
+} from '../../../../reducers/action-plan/action-plan.model';
 import {
     actionPlansSelector, selectedActionPlanSelector
 } from '../../../../reducers/action-plan/action-plan.selectors';
 import { SelectActiveEvent } from '../../../../reducers/event/event.actions';
 import { Event } from '../../../../reducers/event/event.model';
 import {
-    PostNewResponse, ResponseActionTypes, ShowActivateResponse
+    PostNewResponse, ResponseActionTypes, RetryResponseActions, ShowActivateResponse
 } from '../../../../reducers/response/response.actions';
 import { Response } from '../../../../reducers/response/response.model';
-import { activeResponseSelector } from '../../../../reducers/response/response.selectors';
+import {
+    activeResponseSelector, responsesSelector
+} from '../../../../reducers/response/response.selectors';
 
 @Component({
     selector: 'app-activate-response',
@@ -49,7 +53,7 @@ export class ActivateResponseComponent implements OnInit, OnDestroy {
 
     private actionPlansSub$: Subscription;
     private activeEventSub$: Subscription;
-    private responsesSub$: Subscription;
+    private activeResponseSub$: Subscription;
 
     constructor (private store: Store<AppState>, private actions$: Actions) { }
 
@@ -60,9 +64,9 @@ export class ActivateResponseComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.actionPlansSub$.unsubscribe()
-        this.activeEventSub$.unsubscribe()
-        this.responsesSub$.unsubscribe()
+        this.actionPlansSub$.unsubscribe();
+        this.activeEventSub$.unsubscribe();
+        this.activeResponseSub$.unsubscribe();
     }
 
     initSubscriptions() {
@@ -82,7 +86,7 @@ export class ActivateResponseComponent implements OnInit, OnDestroy {
             .pipe(select(selectedActionPlanSelector))
             .subscribe(actionPlan => {
                 if (actionPlan) {
-                    this.selectedActionPlan = actionPlan
+                    this.selectedActionPlan = actionPlan;
                     if (this.loadingFullActionPlan &&
                         actionPlan.openActions &&
                         actionPlan.openActions.length > 0) {
@@ -106,12 +110,12 @@ export class ActivateResponseComponent implements OnInit, OnDestroy {
                 this.store.dispatch(new SetSelectingActionPlan({ isSelecting: this.active }))
             })
 
-        this.responsesSub$ = this.store
+        this.activeResponseSub$ = this.store
             .pipe(select(activeResponseSelector))
             .subscribe(({ activeResponse }) => {
                 this.activeResponse = activeResponse;
                 if (activeResponse) {
-                    this.selectedActionPlan = this.activeResponse.actionPlan;
+                    this.selectedActionPlan = activeResponse.actionPlan;
                 }
                 this.updateResponseStatus();
             })
@@ -156,27 +160,44 @@ export class ActivateResponseComponent implements OnInit, OnDestroy {
         this.store.dispatch(new SelectActionPlan({ actionPlan }))
     }
 
+    private _setActionsLoading = (actions: ActionPlanAction[], locationActionsOnly?: boolean) => {
+        if (actions) {
+            return actions
+                .filter(action => action.status !== ActionStatus.Success &&
+                    (!locationActionsOnly || action.actionType === ActionPlanType.LightSensor))
+                .map(action => ({
+                    ...action,
+                    loading: true
+                }));
+        }
+        return actions;
+    }
+
     activateActionPlan = () => {
-        this.store.dispatch(
-            new PostNewResponse({
-                event: this.activeEvent,
-                actionPlan: this.selectedActionPlan,
-            })
-        )
-        this.store.dispatch(new PutActionPlan({ actionPlan: this.selectedActionPlan }));
+        this.selectedActionPlan = {
+            ...this.selectedActionPlan,
+            openActions: this._setActionsLoading(this.selectedActionPlan.openActions),
+        }
+        this.store.dispatch(new PostNewResponse({ event: this.activeEvent, actionPlan: this.selectedActionPlan }));
         this.activated = true;
     }
 
+    retry() {
+        if (this.activeResponse) {
+            this.store.dispatch(new RetryResponseActions({ responseId: this.activeResponse.responseId }));
+        }
+    }
+
     onReturnToMapClick() {
-        this.toggleActive()
+        this.toggleActive();
     }
 
     toggleActive() {
         if (this.disabled) { return; }
 
         if (this.active) {
-            this.active = false
-            this.activated = false
+            this.active = false;
+            this.activated = false;
         } else {
             this.active = true;
         }

@@ -8,7 +8,7 @@ import { spinnerColors } from '../../../../core/spinnerColors';
 import { AppState } from '../../../../reducers';
 import { ToggleUserChatWindow } from '../../../../reducers/chat/chat.actions';
 import { SelectActiveEvent, ShowEvents } from '../../../../reducers/event/event.actions';
-import { Event, EventInstance } from '../../../../reducers/event/event.model';
+import { Event, EventInstance, EventType } from '../../../../reducers/event/event.model';
 import { activeEventSelector } from '../../../../reducers/event/event.selectors';
 import {
     SelectActiveResponse, ShowActivateResponse, ShowManageResponse
@@ -86,8 +86,13 @@ export class EventCardComponent implements OnInit, OnDestroy {
                         break;
                 }
                 if (this.response.responseState === ResponseState.Inactive) {
-                    this.spinnerColor = spinnerColors.greenSpinnerColor;
-                    this.circleColor = spinnerColors.greenCircleColor;
+                    if (this._isExpired()) {
+                        this.spinnerColor = spinnerColors.greySpinnerColor;
+                        this.circleColor = spinnerColors.greyCircleColor;
+                    } else {
+                        this.spinnerColor = spinnerColors.greenSpinnerColor;
+                        this.circleColor = spinnerColors.greenCircleColor;
+                    }
                 }
             }
         })
@@ -125,7 +130,7 @@ export class EventCardComponent implements OnInit, OnDestroy {
     }
 
     getResponseColor() {
-        return this.response ? this.response.responseState === ResponseState.Inactive ? 'green' : this.response.color.toLowerCase() : ''
+        return this.response ? this.response.responseState === ResponseState.Inactive ? this._isExpired() ? 'grey' : 'green' : this.response.color.toLowerCase() : ''
     }
 
     ngOnDestroy() {
@@ -144,7 +149,7 @@ export class EventCardComponent implements OnInit, OnDestroy {
 
     showEvent = () => {
         const { metadata: { userId, username } } = this.latestEventInstance;
-        if (this.event.closureDate === null) {
+        if (this.event.closureDate === null && this.event.eventType === EventType.Message) {
             this.store.dispatch(new ToggleUserChatWindow({ open: true, userId: userId, userName: username }));
         }
         this.store.dispatch(new ShowEvents({ events: [ this.event ] }));
@@ -173,5 +178,9 @@ export class EventCardComponent implements OnInit, OnDestroy {
 
     toggleMapVisibility = () => {
         this.mapVisible = !this.mapVisible
+    }
+
+    private _isExpired = () => {
+        return new Date().getTime() > new Date(this.event.endDate).getTime();
     }
 }

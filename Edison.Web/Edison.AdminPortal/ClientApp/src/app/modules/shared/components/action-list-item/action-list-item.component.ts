@@ -25,6 +25,7 @@ export class ActionListItemComponent implements OnInit, OnDestroy {
     @Input() last: boolean;
     @Input() first: boolean;
     @Input() canEdit: boolean;
+    @Input() isCloseAction: boolean;
     @Output() onchange = new EventEmitter<AddEditAction>();
 
     private componentRef: ComponentRef<{}>
@@ -35,6 +36,7 @@ export class ActionListItemComponent implements OnInit, OnDestroy {
         switch (type) {
             case ActionPlanType.EmergencyCall:
             case ActionPlanType.Email:
+            case ActionPlanType.Twilio:
                 return TextTemplateComponent
             case ActionPlanType.Notification:
                 return NotificationTemplateComponent
@@ -60,6 +62,7 @@ export class ActionListItemComponent implements OnInit, OnDestroy {
             instance.first = this.first;
             instance.canEdit = this.canEdit
             instance.onchange = this.onchange
+            instance.isCloseAction = this.isCloseAction;
         }
     }
 
@@ -74,9 +77,10 @@ export class ActionListItemComponent implements OnInit, OnDestroy {
 }
 
 export abstract class ActionListItemContext {
-    context: ActionPlanActionTypes
-    last: boolean
+    context: ActionPlanActionTypes;
+    last: boolean;
     first: boolean;
-    canEdit: boolean
-    onchange: EventEmitter<any>
+    canEdit: boolean;
+    onchange: EventEmitter<any>;
+    isCloseAction: boolean;
 }

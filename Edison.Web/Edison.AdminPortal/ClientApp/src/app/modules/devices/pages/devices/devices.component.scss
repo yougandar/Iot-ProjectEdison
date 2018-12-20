@@ -1,9 +1,8 @@
 @import 'icons';
 :host {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    right: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
     min-height: 20px;
     background-color: white;
     z-index: 4;
@@ -24,15 +23,11 @@
     .container {
         display: flex;
         flex-direction: column;
-        height: 350px;
+        height: 75%;
         overflow: auto;
         color: #3E3D4A;
         font-family: 'Rubik';
         font-size: 14px;
-        table {
-            width: 100%;
-            box-shadow: none;
-        }
         &:focus {
             outline: none;
         }

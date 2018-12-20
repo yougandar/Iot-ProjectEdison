@@ -17,44 +17,88 @@ import {
 import { SelectActiveEvent } from '../reducers/event/event.actions';
 import {
     ActivateResponseActionPlan, AddLocationToActiveResponse, AddLocationToActiveResponseError,
-    AddLocationToActiveResponseSuccess, AddResponse, CloseResponse, CloseResponseError, GetResponse,
-    GetResponseError, GetResponsesError, LoadResponses, PostNewResponse, PostNewResponseError,
-    PostNewResponseSuccess, PutResponse, PutResponseError, ResponseActionTypes,
-    RetryResponseActions, RetryResponseActionsError, RetryResponseActionsSuccess,
-    SelectActiveResponse, ShowActivateResponse, ShowSelectingLocation, SignalRUpdateResponseAction,
-    UpdateResponse, UpdateResponseActions, UpdateResponseActionsError, UpdateResponseActionsSuccess
+    AddLocationToActiveResponseSuccess, AddResponse, CloseResponse, CloseResponseError,
+    DontShowSelectingLocation, GetResponse, GetResponseError, GetResponsesError, LoadingType,
+    LoadResponses, PostNewResponse, PostNewResponseError, PostNewResponseSuccess, PutResponse,
+    PutResponseError, ResponseActionTypes, ResponseNonAction, RetryResponseActions,
+    RetryResponseActionsError, RetryResponseActionsSuccess, SelectActiveResponse,
+    ShowActivateResponse, ShowSelectingLocation, SignalRUpdateResponseAction, UpdateResponse,
+    UpdateResponseActions, UpdateResponseActionsError, UpdateResponseActionsSuccess,
+    UpdateResponseAsync
 } from '../reducers/response/response.actions';
 import { Response } from '../reducers/response/response.model';
 import { selectAll } from '../reducers/response/response.reducer';
 
-const getSuccessMessage = (actionPlanAction: ActionPlanAction) => {
+const _getSuccessMessage = (actionPlanAction: ActionPlanAction) => {
     switch (actionPlanAction.actionType) {
         case ActionPlanType.LightSensor:
             return `${actionPlanAction.parameters.radius.replace(/^\w/, c => c.toUpperCase())} radius lights activated.`;
         case ActionPlanType.Notification:
             return 'Notification sent successfully.';
         case ActionPlanType.EmergencyCall:
+        case ActionPlanType.Twilio:
             return '911 Call initiated successfully.';
         case ActionPlanType.Email:
             return 'Email sent successfully.';
+        default:
+            return null;
     }
 }
 
-const getFailureMessage = (actionPlanAction: ActionPlanAction) => {
+const _getFailureMessage = (actionPlanAction: ActionPlanAction) => {
     switch (actionPlanAction.actionType) {
         case ActionPlanType.LightSensor:
             return `${actionPlanAction.parameters.radius.replace(/^\w/, c => c.toUpperCase())} radius lights failed.`;
         case ActionPlanType.Notification:
             return 'Notification failed to send.';
         case ActionPlanType.EmergencyCall:
+        case ActionPlanType.Twilio:
             return '911 Call failed.';
         case ActionPlanType.Email:
             return 'Email failed to send.';
+        default:
+            return null;
     }
+}
+
+const _setActionsLoading = (actions: ActionPlanAction[], locationActionsOnly?: boolean) => {
+    if (actions) {
+        return actions
+            .filter(action => action.status !== ActionStatus.Success &&
+                (!locationActionsOnly || action.actionType === ActionPlanType.LightSensor))
+            .map(action => ({
+                ...action,
+                loading: true
+            }));
+    }
+    return actions;
 }
 
 @Injectable()
 export class ResponseEffects {
+    private _toastAction(foundAction, respToUpdate) {
+        if (foundAction) {
+            const toastrOptions = {
+                progressBar: true,
+                closeButton: true,
+            }
+            switch (foundAction.status) {
+                case ActionStatus.Error:
+                case ActionStatus.Unknown:
+                    const failMsg = _getFailureMessage(foundAction);
+                    if (failMsg) { this.toastr.error(failMsg, respToUpdate.actionPlan.name, toastrOptions); }
+                    break;
+                case ActionStatus.NotStarted:
+                case ActionStatus.Skipped:
+                    break;
+                case ActionStatus.Success:
+                    const successMsg = _getSuccessMessage(foundAction);
+                    if (successMsg) { this.toastr.success(successMsg, respToUpdate.actionPlan.name, toastrOptions); }
+                    break;
+            }
+        }
+    }
+
     @Effect()
     getResponses$: Observable<Action> = this.actions$.pipe(
         ofType(ResponseActionTypes.GetResponses),
@@ -100,25 +144,19 @@ export class ResponseEffects {
         ofType(ResponseActionTypes.PostNewResponse),
         withLatestFrom(this.store$),
         map(([ action, { auth: { user } } ]) => {
-            const {
-                payload: { event, actionPlan },
-            } = action as PostNewResponse
-            return new Response(event, actionPlan, user, environment.mockData ? UUIDv1() : null)
+            const { payload: { event, actionPlan } } = action as PostNewResponse;
+            return new Response(event, actionPlan, user, environment.mockData ? UUIDv1() : null);
         }),
         mergeMap((response: Response) => {
-
             return environment.mockData
                 ? new Observable<Action>((sub: Subscriber<Action>) =>
-                    sub.next(
-                        new AddResponse({ response: { ...response, eventClusterIds: [] } })
-                    )
+                    sub.next(new AddResponse({ response: { ...response, eventClusterIds: [] } }))
                 )
                 : this.http.post(`${environment.baseUrl}${environment.apiUrl}responses`, response).pipe(
-                    map(
-                        (response: Response) =>
-                            response
-                                ? new PostNewResponseSuccess({ response })
-                                : new PostNewResponseError()
+                    map((response: Response) =>
+                        response
+                            ? new PostNewResponseSuccess({ response })
+                            : new PostNewResponseError()
                     ),
                     catchError(() => of(new PostNewResponseError()))
                 )
@@ -128,12 +166,17 @@ export class ResponseEffects {
     @Effect()
     showSelectingLocation$: Observable<Action> = this.actions$.pipe(
         ofType(ResponseActionTypes.AddResponse, ResponseActionTypes.SignalRNewResponse),
-        map((action: AddResponse) =>
-            new ShowSelectingLocation({
-                showSelectingLocation: action.payload.response.primaryEventClusterId ? false : true,
-                response: action.payload.response
-            }))
-    )
+        map((action: AddResponse) => {
+            if (!action.payload.response.geolocation) {
+                return new ShowSelectingLocation({
+                    showSelectingLocation: action.payload.response.primaryEventClusterId ? false : true,
+                    response: action.payload.response
+                });
+            }
+
+            return new DontShowSelectingLocation();
+        }
+        ))
 
     @Effect()
     setActiveResponseOnShow$: Observable<Action> = this.actions$.pipe(
@@ -198,12 +241,10 @@ export class ResponseEffects {
 
     @Effect()
     responseActionsUpdated$: Observable<Action> = this.actions$.pipe(
-        ofType(ResponseActionTypes.UpdateResponseActionsSuccess),
-        map(({ payload: { response } }: UpdateResponseActionsSuccess) => new UpdateResponse({
-            response: {
-                id: response.responseId,
-                changes: response,
-            }
+        ofType(ResponseActionTypes.UpdateResponseActions),
+        map(({ payload: { response } }: UpdateResponseActions) => new UpdateResponseAsync({
+            response,
+            loading: LoadingType.All,
         }))
     )
 
@@ -228,15 +269,53 @@ export class ResponseEffects {
                     map(
                         (response: Response) =>
                             response
-                                ? new UpdateResponse({
-                                    response: { id: payload.responseId, changes: response },
-                                })
+                                ? new UpdateResponseAsync({ response, loading: LoadingType.Closed })
                                 : new CloseResponseError()
                     ),
                     catchError(() => of(new CloseResponseError()))
                 )
         })
     )
+
+    @Effect()
+    updateResponseAsync$: Observable<Action> = this.actions$.pipe(
+        ofType(ResponseActionTypes.UpdateResponseAsync),
+        map((action: UpdateResponseAsync) => {
+            const { response, loading } = action.payload;
+            if (response) {
+                let openActions = response.actionPlan.openActions;
+                let closeActions = response.actionPlan.closeActions;
+                switch (loading) {
+                    case LoadingType.All:
+                        closeActions = _setActionsLoading(closeActions);
+                        openActions = _setActionsLoading(openActions);
+                        break;
+                    case LoadingType.Closed:
+                        closeActions = _setActionsLoading(closeActions);
+                        break;
+                    case LoadingType.Open:
+                        openActions = _setActionsLoading(openActions);
+                        break;
+                }
+
+                return new UpdateResponse({
+                    response: {
+                        id: response.responseId,
+                        changes: {
+                            ...response,
+                            actionPlan: {
+                                ...response.actionPlan,
+                                closeActions,
+                                openActions
+                            }
+                        }
+                    }
+                })
+            }
+
+            return new ResponseNonAction();
+        })
+    );
 
     @Effect()
     updateActiveResponseLocation$: Observable<Action> = this.actions$.pipe(
@@ -275,55 +354,44 @@ export class ResponseEffects {
         map(({ action, responses }: { action: SignalRUpdateResponseAction, responses: Response[] }) => {
             const { responseId, actionId } = action.payload.message;
             const respToUpdate = responses.find(r => r.responseId === responseId);
-            if (respToUpdate) {
+            if (respToUpdate && respToUpdate.actionPlan) {
                 const { openActions, closeActions } = respToUpdate.actionPlan;
-                let foundAction = null;
+                let foundActionIndex = null;
                 if (openActions) {
-                    foundAction = openActions.findIndex(oa => oa.actionId === actionId);
-                    if (foundAction) {
-                        openActions[ foundAction ] = {
-                            ...openActions[ foundAction ],
+                    foundActionIndex = openActions.findIndex(oa => oa.actionId === actionId);
+                    if (foundActionIndex) {
+                        openActions[ foundActionIndex ] = {
+                            ...openActions[ foundActionIndex ],
                             ...action.payload.message,
                         }
+                        this._toastAction(openActions[ foundActionIndex ], respToUpdate);
                     }
                 }
 
                 if (closeActions) {
-                    foundAction = openActions.findIndex(oa => oa.actionId === actionId);
-                    if (foundAction) {
-                        openActions[ foundAction ] = {
-                            ...openActions[ foundAction ],
+                    foundActionIndex = closeActions.findIndex(oa => oa.actionId === actionId);
+                    if (foundActionIndex) {
+                        closeActions[ foundActionIndex ] = {
+                            ...closeActions[ foundActionIndex ],
                             ...action.payload.message,
                         }
+                        this._toastAction(closeActions[ foundActionIndex ], respToUpdate);
                     }
                 }
 
-                if (foundAction) {
-                    const toastrOptions = {
-                        progressBar: true,
-                        closeButton: true,
-                    }
-                    switch (foundAction.status) {
-                        case ActionStatus.Error:
-                        case ActionStatus.Unknown:
-                            this.toastr.error(getFailureMessage(foundAction), respToUpdate.actionPlan.name, toastrOptions);
-                            break;
-                        case ActionStatus.NotStarted:
-                        case ActionStatus.Skipped:
-                            break;
-                        case ActionStatus.Success:
-                            this.toastr.success(getSuccessMessage(foundAction), respToUpdate.actionPlan.name, toastrOptions);
-                            break;
-                    }
-                }
                 return new ActivateResponseActionPlan({
                     response: {
                         ...respToUpdate,
                         actionPlan: {
                             ...respToUpdate.actionPlan,
                             openActions,
+                            closeActions,
                         }
                     }
+                });
+            } else {
+                return new ActivateResponseActionPlan({
+                    response: respToUpdate
                 });
             }
         })
@@ -356,6 +424,36 @@ export class ResponseEffects {
                 .pipe(map(() => new RetryResponseActionsSuccess()),
                     catchError(() => of(new RetryResponseActionsError()))
                 ))
+    )
+
+    @Effect()
+    setResponseActionsLoadingOnRetry$: Observable<Action> = this.actions$.pipe(
+        ofType(ResponseActionTypes.RetryResponseActions),
+        withLatestFrom(this.store$),
+        map(([ action, { response } ]) => ({
+            action,
+            responses: selectAll(response)
+        })),
+        map(({ action, responses }: { action: RetryResponseActions, responses: Response[] }) => {
+            const response = responses.find(resp => resp.responseId === action.payload.responseId);
+            if (response && response.actionPlan) {
+                return new UpdateResponseAsync({ response, loading: LoadingType.All });
+            }
+
+            return new ResponseNonAction();
+        })
+    )
+
+    @Effect()
+    setResponseActionsLoadingOnUpdate$: Observable<Action> = this.actions$.pipe(
+        ofType(ResponseActionTypes.UpdateResponseActions),
+        map(({ payload: { response, actions } }: UpdateResponseActions) => {
+            if (response && response.actionPlan) {
+                return new UpdateResponseAsync({ response, loading: LoadingType.Open });
+            }
+
+            return new ResponseNonAction();
+        })
     )
 
     constructor (

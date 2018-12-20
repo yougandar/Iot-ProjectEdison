@@ -11,13 +11,15 @@ import {
 } from '../../../../core/services/directline/directline.service';
 import { MessageModel } from '../../../../core/services/directline/models/activity-model';
 import { AppState } from '../../../../reducers';
-import { AppActionTypes, SetPageData } from '../../../../reducers/app/app.actions';
+import { AppActionTypes, AppPage, SetPageData } from '../../../../reducers/app/app.actions';
 import {
     AddChat, ChatActionTypes, GetChatAuthToken, ToggleAllUsersChatWindow, ToggleUserChatWindow,
     UpdateUserReadReceipt
 } from '../../../../reducers/chat/chat.actions';
 import { chatAuthSelector } from '../../../../reducers/chat/chat.selectors';
-import { GetDevices } from '../../../../reducers/device/device.actions';
+import {
+    DeviceActionTypes, FocusDevices, GetDevices
+} from '../../../../reducers/device/device.actions';
 import { Device } from '../../../../reducers/device/device.model';
 import { devicesFilteredSelector } from '../../../../reducers/device/device.selectors';
 import {
@@ -48,6 +50,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     showEventsSub$: Subscription
     showUserChat: boolean;
     showAllUserChat: boolean;
+    focusDevicesSub$: Subscription;
+    setPageDataSub$: Subscription;
+    useColumnLayout: boolean = false;
+    showResponseButtons: boolean = true;
 
     defaultOptions: MapDefaults = {
         mapId: 'defaultMap',
@@ -130,12 +136,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 this.mapComponent.focusAllPins()
             })
 
+        this.focusDevicesSub$ = this.actions$
+            .ofType(DeviceActionTypes.FocusDevices)
+            .subscribe(({ payload: { devices } }: FocusDevices) => {
+                this.mapComponent.focusDevices(devices);
+            })
+
+        this.setPageDataSub$ = this.actions$
+            .ofType(AppActionTypes.UpdatePageData)
+            .subscribe(({ payload: { title } }: SetPageData) => {
+                this.useColumnLayout = title === AppPage.Devices;
+                this.showResponseButtons = title !== AppPage.Devices
+            })
+
         this.showResponses$ = this.store.pipe(select(responsesExist))
 
         this.store.dispatch(new GetDevices())
         this.store.dispatch(new GetEvents())
         this.store.dispatch(new GetResponses())
-        this.store.dispatch(new SetPageData({ title: 'Right Now' }))
+        this.store.dispatch(new SetPageData({ title: AppPage.RightNow }))
         if (environment.authorize) {
             this.store.dispatch(new GetChatAuthToken())
         }
@@ -145,6 +164,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.combinedStream$.unsubscribe()
         this.focusAllPinsSub$.unsubscribe()
         this.showEventsSub$.unsubscribe()
+        this.focusDevicesSub$.unsubscribe();
+        this.setPageDataSub$.unsubscribe();
     }
 
     updateEventAddresses(events: Event[]) {
@@ -163,14 +184,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
             if (response.responseState === ResponseState.Active) {
                 return response.color // response is active
             } else {
-                return 'green' // response has been resolved
+                const expired = new Date().getTime() > new Date(event.endDate).getTime();
+                if (expired) { return 'grey' };
+
+                return 'green'; // response has been resolved
             }
         } else {
-            if (event.closureDate === null) {
-                return 'blue'
-            } else {
-                return 'grey'
-            }
+            if (event.endDate === null) { return 'blue' }
+            else { return 'grey' }
         }
     }
 
@@ -196,7 +217,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         // Mobile device pins
         const eventPins: MapPin[] = events
             .filter(e => e.eventType === EventType.Message &&
-                e.device.geolocation)
+                e.device.geolocation && responses.some(r => r.primaryEventClusterId === e.eventClusterId && r.responseState === ResponseState.Active))
             .reduce((acc, event) => {
                 const existingEvent = acc.find(e => e.device.deviceId === event.device.deviceId);
                 if (!existingEvent) { acc.push(event); }
@@ -266,7 +287,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
         return events
             .filter(event => event.device.deviceId === deviceId)
-            .sort((a, b) => b.startDate.getTime() - a.startDate.getTime())
+            .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
             .slice(0, 1)[ 0 ]
     }
 }

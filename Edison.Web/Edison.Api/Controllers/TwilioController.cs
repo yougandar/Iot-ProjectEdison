@@ -36,7 +36,7 @@ namespace Edison.Api.Controllers
             //_restClient = twilioCreator.GetClient();
         }
 
-        //[Authorize(AuthenticationSchemes = AuthenticationBearers.AzureAD, Policy = AuthenticationRoles.Admin)]
+        [Authorize(AuthenticationSchemes = AuthenticationBearers.AzureAD, Policy = AuthenticationRoles.Admin)]
         [Route("Emergency")]
         [Produces(typeof(TwilioModel))]
         [HttpPost]
@@ -46,13 +46,22 @@ namespace Edison.Api.Controllers
             {
                 var to = new PhoneNumber(string.Concat("+",_twilioOptions.Value.EmergencyPhoneNumber));
                 var from = new PhoneNumber(string.Concat("+", _twilioOptions.Value.PhoneNumber));
-                var call = await CallResource.CreateAsync(to, from, url: new Uri(_twilioOptions.Value.ProxyServerUrl));
-
-                var result = new TwilioModel()
+                var result = new TwilioModel();
+                if (_twilioOptions.Value.BypassCalling == "1" || _twilioOptions.Value.BypassCalling.ToLower() == "true")
                 {
-                    CallSID = call.Sid,
-                    Message = obj.Message
-                };
+                    result.CallSID = Guid.Empty.ToString();
+                    result.Message = "Call Bypassed";
+                }
+                else
+                {
+                    var call = await CallResource.CreateAsync(to, from, url: new Uri(_twilioOptions.Value.ProxyServerUrl));
+
+                    result = new TwilioModel()
+                    {
+                        CallSID = call.Sid,
+                        Message = obj.Message
+                    };
+                }
 
                 return Ok(result);
             }
@@ -75,7 +84,7 @@ namespace Edison.Api.Controllers
                 dial.Number(string.Concat("+", _twilioOptions.Value.CallForwardingPhoneNumber), sendDigits: "wwww1928");
                 response.Append(dial);
 
-                return Content(response.ToString(), "text/xml", Encoding.UTF8);
+                return Content(response.ToString(), "text/xml");
             }
             catch (Exception e)
             {
