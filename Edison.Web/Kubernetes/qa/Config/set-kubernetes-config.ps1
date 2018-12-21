@@ -58,8 +58,8 @@ Copy-Item "config-edisondeviceprovisioning.json" -Destination "config.json"
 kubectl create configmap config-edisondeviceprovisioning --from-file=./config.json
 Remove-Item "config.json"
 
-Copy-Item "Secrets/common.secrets" -Destination "secrets.json"
-kubectl create secret generic secrets-common --from-file=./secrets.json
-Remove-Item "secrets.json"
+#Copy-Item "Secrets/common.secrets" -Destination "secrets.json"
+#kubectl create secret generic secrets-common --from-file=./secrets.json
+#Remove-Item "secrets.json"
 
-kubectl create secret generic rabbitmq-credentials --from-literal=Username=Admin --from-literal=Password=Edison1234
+#kubectl create secret generic rabbitmq-credentials --from-literal=Username=Admin --from-literal=Password=Edison1234
