@@ -37,15 +37,6 @@
             "description": "Disk size (in GB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023. Specifying 0 will apply the default disk size for that agentVMSize."
         }
     },
-    "agentCount": {
-        "defaultValue": 1,
-        "minValue": 1,
-        "maxValue": 50,
-        "type": "int",
-        "metadata": {
-            "description": "The number of agent nodes for the cluster."
-        }
-    },
     "servicePrincipalClientId": {
         "type": "securestring",
         "metadata": {
@@ -202,7 +193,7 @@
             "enableHttpApplicationRouting": "[parameters('enableHttpApplicationRouting')]",
             "osType": "Linux",
             "agentVMSize": "Standard_D2_v2",
-            "agentCount": "[parameters('agentCount')]",
+            "agentCount": 3,
             "servicePrincipalClientId": "[parameters('servicePrincipalClientId')]",
             "servicePrincipalClientSecret": "[parameters('servicePrincipalClientSecret')]",
             "networkPlugin": "kubenet",
