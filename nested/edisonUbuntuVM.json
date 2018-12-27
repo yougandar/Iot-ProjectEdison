@@ -20,7 +20,7 @@
       "properties": {}
     },
     {
-      "apiVersion": "[parameters('vmSettings').apiVersion]",
+      "apiVersion": "2018-10-01",
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[parameters('vmSettings').publicIPAddressName]",
       "location": "[parameters('vmSettings').location]",
@@ -32,7 +32,7 @@
       }
     },
     {
-      "apiVersion": "[parameters('vmSettings').apiVersion]",
+      "apiVersion": "2018-10-01",
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[parameters('vmSettings').virtualNetworkName]",
       "location": "[parameters('vmSettings').location]",
@@ -53,7 +53,7 @@
       }
     },
     {
-      "apiVersion": "[parameters('vmSettings').apiVersion]",
+      "apiVersion": "2018-10-01",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[parameters('vmSettings').nicName]",
       "location": "[parameters('vmSettings').location]",
@@ -79,7 +79,7 @@
       }
     },
     {
-      "apiVersion": "[parameters('vmSettings').apiVersion]",
+      "apiVersion": "2018-10-01",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('vmSettings').vmName]",
       "location": "[parameters('vmSettings').location]",
