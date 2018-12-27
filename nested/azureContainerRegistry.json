@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+     "acrSettings":{
+          "type": "object"
+     }
+  },
+  "resources": [
+    {
+      "name": "[parameters('acrSettings').acrName]",
+      "type": "Microsoft.ContainerRegistry/registries",
+      "apiVersion": "2017-10-01",
+      "location": "[parameters('acrSettings').location]",
+      "comments": "Container registry for storing docker images",
+      "tags": {
+        "displayName": "Container Registry",
+        "container.registry": "[parameters('acrSettings').acrName]"
+      },
+      "sku": {
+        "name": "[parameters('acrSettings').acrSku]",
+        "tier": "[parameters('acrSettings').acrSku]"
+      },
+      "properties": {
+        "adminUserEnabled": "[parameters('acrSettings').acrAdminUserEnabled]"
+      }
+    }
+  ],
+  "outputs": {
+    "acrLoginServer": {
+      "value": "[reference(resourceId('Microsoft.ContainerRegistry/registries',parameters('acrSettings').acrName),'2017-10-01').loginServer]",
+      "type": "string"
+    }
+  }
+}
