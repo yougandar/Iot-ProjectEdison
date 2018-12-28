@@ -3,10 +3,12 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "vmSettings":{
-       "type": "object"
-    }
+        "type": "object"
+     }
+   },
+  "variables": {
+    "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('vmSettings').virtualNetworkName, parameters('vmSettings').subnetName)]"
   },
-  "variables": {},
   "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
@@ -71,7 +73,7 @@
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('vmSettings').publicIPAddressName)]"
               },
               "subnet": {
-                "id": "[parameters('vmSettings').subnetRefId]"
+                "id": "[variables('subnetRef')]"
               }
             }
           }
@@ -131,5 +133,9 @@
     }
   ],
   "outputs": {
+    "hostname": {
+      "type": "string",
+      "value": "[reference(parameters('vmSettings').publicIPAddressName).dnsSettings.fqdn]"
+    }
   }
 }
