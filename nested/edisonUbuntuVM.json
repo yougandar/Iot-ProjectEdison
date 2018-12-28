@@ -6,17 +6,15 @@
         "type": "object"
      }
    },
-  "variables": {
-    "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets',parameters('vmSettings').virtualNetworkName, parameters('vmSettings').subnetName)]"
-  },
+  "variables": {},
   "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
-      "name": "[parameters('vmSettings').storageAccountName]",
+      "name": "[parameters('vmSettings').vmStorageAccountName]",
       "apiVersion": "2018-07-01",
       "location": "[parameters('vmSettings').location]",
       "sku": {
-        "name": "[parameters('vmSettings').storageAccountType]"
+        "name": "[parameters('vmSettings').vmStorageAccountType]"
       },
       "kind": "Storage",
       "properties": {}
@@ -73,7 +71,7 @@
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('vmSettings').publicIPAddressName)]"
               },
               "subnet": {
-                "id": "[variables('subnetRef')]"
+                "id": "[parameters('vmSettings').subnetRef]"
               }
             }
           }
@@ -86,7 +84,7 @@
       "name": "[parameters('vmSettings').vmName]",
       "location": "[parameters('vmSettings').location]",
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts/', parameters('vmSettings').storageAccountName)]",
+        "[resourceId('Microsoft.Storage/storageAccounts/', parameters('vmSettings').vmStorageAccountName)]",
         "[resourceId('Microsoft.Network/networkInterfaces/', parameters('vmSettings').nicName)]"
       ],
       "properties": {
@@ -126,7 +124,7 @@
         "diagnosticsProfile": {
           "bootDiagnostics": {
             "enabled": true,
-            "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('vmSettings').storageAccountName), '2016-01-01').primaryEndpoints.blob)]"
+            "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('vmSettings').vmStorageAccountName), '2016-01-01').primaryEndpoints.blob)]"
           }
         }
       }
