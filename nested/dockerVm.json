@@ -4,21 +4,13 @@
   "parameters": {
     "vmSettings":{
         "type": "object"
-     }
+     },
+     "storageBlobSettings":{
+      "type": "object"
+   }
    },
   "variables": {},
   "resources": [
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[parameters('vmSettings').vmStorageAccountName]",
-      "apiVersion": "2018-07-01",
-      "location": "[parameters('vmSettings').location]",
-      "sku": {
-        "name": "[parameters('vmSettings').vmStorageAccountType]"
-      },
-      "kind": "Storage",
-      "properties": {}
-    },
     {
       "apiVersion": "2018-10-01",
       "type": "Microsoft.Network/publicIPAddresses",
@@ -84,7 +76,7 @@
       "name": "[parameters('vmSettings').vmName]",
       "location": "[parameters('vmSettings').location]",
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts/', parameters('vmSettings').vmStorageAccountName)]",
+        "[resourceId('Microsoft.Storage/storageAccounts/', parameters('storageBlobSettings').storageAccountName)]",
         "[resourceId('Microsoft.Network/networkInterfaces/', parameters('vmSettings').nicName)]"
       ],
       "properties": {
@@ -124,7 +116,7 @@
         "diagnosticsProfile": {
           "bootDiagnostics": {
             "enabled": true,
-            "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('vmSettings').vmStorageAccountName), '2016-01-01').primaryEndpoints.blob)]"
+            "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('storageBlobSettings').storageAccountName), '2016-01-01').primaryEndpoints.blob)]"
           }
         }
       }
