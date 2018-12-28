@@ -1,0 +1,520 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "canadacentral",
+            "allowedValues": [
+                "australiasoutheast",
+                "canadacentral",
+                "centralindia",
+                "eastus",
+                "japaneast",
+                "southeastasia",
+                "uksouth",
+                "westeurope"
+            ]
+        },
+        "tenantId": {
+            "type": "string",
+            "defaultValue": "dcf9e4d3-f44a-4c28-be12-8245c0d35668",
+            "metadata": {
+                "description": "TenantId of the created Azure active directory application. For instructions, see  (https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-howto-tenant) in the Microsoft documentation"
+            }
+        },
+        "azureAccountName": {
+            "type": "string",
+            "defaultValue": "nvtuluva@sysgaininc.onmicrosoft.com"
+        },
+        "azurePassword": {
+            "type": "securestring",
+            "defaultValue": "v!vek@225"
+        },
+        "sessionId": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "cosmosdbModuleUri": {
+            "type": "string",
+            "defaultValue": "https://github.com/ChaitanyaGeddam/edison/raw/master/scripts/cosmos.zip"
+        },
+        "osDiskSizeGB": {
+            "defaultValue": 30,
+            "minValue": 30,
+            "maxValue": 1023,
+            "type": "int",
+            "metadata": {
+                "description": "Disk size (in GB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023. Specifying 0 will apply the default disk size for that agentVMSize."
+            }
+        },
+        "servicePrincipalClientId": {
+            "type": "securestring",
+            "defaultValue": "e00deb3a-8d64-455e-90d8-06970057efa8",
+            "metadata": {
+                "description": "Client ID (used by cloudprovider)"
+            }
+        },
+        "servicePrincipalClientSecret": {
+            "type": "securestring",
+            "defaultValue": "3bf06532-ac69-4166-8a16-3b6677e82c8f",
+            "metadata": {
+                "description": "The Service Principal Client Secret."
+            }
+        },
+        "omsWorkspaceRegion": {
+            "type": "string",
+            "defaultValue": "southeastasia",
+            "allowedValues": [
+                "australiasoutheast",
+                "canadacentral",
+                "centralindia",
+                "eastus",
+                "japaneast",
+                "southeastasia",
+                "uksouth",
+                "westeurope"
+            ],
+            "metadata": {
+                "description": "Choose location for OMS Log Analytics to deploy. For more information, see https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-overview"
+            }
+        },
+        "enableHttpApplicationRouting": {
+            "defaultValue": true,
+            "type": "bool",
+            "metadata": {
+                "description": "boolean flag to turn on and off of http application routing"
+            }
+        },
+        "enableRBAC": {
+            "defaultValue": true,
+            "type": "bool",
+            "metadata": {
+                "description": "boolean flag to turn on and off of RBAC"
+            }
+        },
+        "webAdminPackageUri": {
+            "type": "string",
+            "defaultValue": "https://github.com/ChaitanyaGeddam/edison/raw/master/code/Edison.AdminPortal.zip"
+        },
+        "clientId": {
+            "type": "string",
+            "defaultValue": "e34ff5c4-0cc5-4411-839c-53e7dc739055",
+            "metadata": {
+                "description": "Azure AD clientID"
+            }
+        },
+        "domain": {
+            "type": "string",
+            "defaultValue": "sysgaininc.onmicrosoft.com",
+            "metadata": {
+                "description": "Azure AD Domain name"
+            }
+        },
+        "adTenantId": {
+            "type": "string",
+            "defaultValue": "dcf9e4d3-f44a-4c28-be12-8245c0d35668",
+            "metadata": {
+                "description": "Azure AD TenantID"
+            }
+        },
+        "azureAdB2CClientId": {
+            "type": "string",
+            "defaultValue": "7c519e29-9718-4e9e-8fed-5253206dff9b",
+            "metadata": {
+                "description": "Azure AD B2C clientId"
+            }
+        },
+        "azureAdB2CDomain": {
+            "type": "string",
+            "defaultValue": "newiotp2.onmicrosoft.com",
+            "metadata": {
+                "description": "Azure AD B2C Domain name"
+            }
+        },
+        "signUpSignInPolicyId": {
+            "type": "string",
+            "defaultValue": "B2C_1_signup_signin",
+            "metadata": {
+                "description": "Azure AD B2C SignUp SignIn PolicyId"
+            }
+        },
+        "acrSku": {
+            "type": "string",
+            "defaultValue": "Basic",
+            "allowedValues": [
+                "Basic",
+                "Standard",
+                "Premium"
+            ],
+            "metadata": {
+                "description": "Tier of your Azure Container Registry."
+            }
+        },
+        "vmUsername": {
+            "type": "string",
+            "defaultValue": "sysgainuser",
+            "metadata": {
+                "description": "User name for the Virtual Machine"
+            }
+        },
+        "vmPassword": {
+            "type": "securestring",
+            "defaultValue": "Password@1234",
+            "metadata": {
+                "description": "Password for the Virtual Machine"
+            }
+        }
+    },
+    "variables": {
+        "notificationHub": {
+            "location": "[parameters('location')]",
+            "skuName": "free",
+            "namespaceType": "NotificationHub",
+            "notificationHubNamespaceName": "[concat('NotificationHubNS', variables('suffix'))]",
+            "notificationHubName": "[concat('NotificationHub', variables('suffix'))]"
+        },
+        "cosmosDbSettings": {
+            "cosmosDbAccountName": "[concat('edisondbacc',variables('suffix'))]",
+            "location": "[parameters('location')]",
+            "offerType": "Standard",
+            "cosmosDbName": "Edison",
+            "cosmosCollEventCluster": "EventClusters",
+            "cosmosCollResponses": "Responses",
+            "cosmosCollDevices": "Devices",
+            "cosmosCollActionPlans": "ActionPlans",
+            "cosmosCollNotifications": "Notifications"
+        },
+        "automationSettings": {
+            "automationAccountName": "[concat('AutomationAcc', variables('suffix'))]",
+            "automationLocation": "eastus2",
+            "automationSku": "Free",
+            "runbookName": "container",
+            "moduleName": "CosmosDB",
+            "cosmosdbModuleUri": "[parameters('cosmosdbModuleUri')]",
+            "runbookUri": "[concat(variables('baseUrl'),'/scripts/initializeCosmosDb.ps1?token=AT7l1RBHeTvUAc-lSlCx47C35Ojal_91ks5cLFe-wA%3D%3D')]",
+            "sessionId": "[parameters('sessionId')]",
+            "tenantId": "[parameters('tenantId')]",
+            "azureAccountName": "[parameters('azureAccountName')]",
+            "azurePassword": "[parameters('azurePassword')]"
+        },
+        "storageBlobSettings": {
+            "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
+            "location": "[parameters('location')]",
+            "containerName": "logs",
+            "storageAccountType": "Standard_LRS"
+        },
+        "iothubSettings": {
+            "location": "[parameters('location')]",
+            "iotHubName": "[concat('edisonhub',variables('suffix'))]",
+            "d2cMessageRetentionInDaysPeriod": 1,
+            "d2cPartitionCount": 2,
+            "skuName": "S1",
+            "capacityUnits": 1,
+            "d2cConsumerGroupName": "cg1"
+        },
+        "webSiteSettings": {
+            "webAppHostingPlanName": "[concat('edisonwebplan',variables('suffix'))]",
+            "location": "WestUS",
+            "webAppSkuName1": "F1",
+            "webAPI": "[concat('edisonWebAPI',variables('suffix'))]",
+            "webApiPackageuri": "",
+            "webAdminPackageUri": "[parameters('webAdminPackageUri')]",
+            "webAdmin": "[concat('edisonWebAdmin',variables('suffix'))]"
+        },
+        "omsSettings": {
+            "omsWorkspaceName": "[concat('omsworkspace', variables('suffix'))]",
+            "omsWorkspaceRegion": "[parameters('omsWorkspaceRegion')]",
+            "omsLogAnalyticsSku": "standalone",
+            "dataRetention": 7
+        },
+        "kubernetesSettings": {
+            "servicename": "[concat('kubernetes', variables('suffix'))]",
+            "kubernetesVersion": "1.11.5",
+            "location": "[parameters('location')]",
+            "enableRBAC": "[parameters('enableRBAC')]",
+            "dnsPrefix": "clusterdns",
+            "enableHttpApplicationRouting": "[parameters('enableHttpApplicationRouting')]",
+            "osType": "Linux",
+            "agentVMSize": "Standard_D2_v2",
+            "agentCount": 3,
+            "servicePrincipalClientId": "[parameters('servicePrincipalClientId')]",
+            "servicePrincipalClientSecret": "[parameters('servicePrincipalClientSecret')]",
+            "networkPlugin": "kubenet",
+            "osDiskSizeGB": "[parameters('osDiskSizeGB')]"
+        },
+        "azureAdSettings": {
+            "clientId": "[parameters('clientId')]",
+            "domain": "[parameters('domain')]",
+            "tenantId": "[parameters('adTenantId')]"
+        },
+        "azureAdB2CWebSettings": {
+            "clientId": "[parameters('azureAdB2CClientId')]",
+            "domain": "[parameters('AzureAdB2CDomain')]",
+            "signUpSignInPolicyId": "[parameters('SignUpSignInPolicyId')]"
+        },
+        "acrSettings": {
+            "acrName": "[concat('acr',variables('suffix'))]",
+            "acrAdminUserEnabled": false,
+            "location": "[parameters('location')]",
+            "acrSku": "[parameters('acrSku')]"
+        },
+        "vmSettings": {
+            "location": "[parameters('location')]",
+            "publicIPAddressName": "[concat('dockerPIP', variables('suffix'))]",
+            "publicIPAddressType": "Dynamic",
+            "dnsLabelPrefix": "[concat('dockerDns', variables('suffix'))]",
+            "virtualNetworkName": "[variables('virtualNetworkName1')]",
+            "addressPrefix": "10.0.0.0/16",
+            "subnetName": "[variables('subnetName1')]",
+            "subnetPrefix": "10.0.1.0/24",
+            "subnetRef": "[variables('subnetRef1')]",
+            "nicName": "dockerVmNic",
+            "vmSize": "Standard_A1",
+            "vmName": "dockerVM",
+            "imagePublisher": "Canonical",
+            "imageOffer": "UbuntuServer",
+            "ubuntuOSVersion": "16.04.0-LTS",
+            "adminUsername": "[parameters('vmUsername')]",
+            "adminPassword": "[parameters('vmPassword')]"
+        },
+        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage",
+        "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
+        "subnetRef1": "[concat(variables('vnetId'), '/subnets/', variables('subnetName1'))]",
+        "virtualNetworkName1":"[concat('dockerVnet', variables('suffix'))]",
+        "subnetName1":"dockerSubnet",
+        "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName1'))]"
+    },
+    "resources": [
+        {
+            "name": "NotificationHub",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), '/nested/notification-hub.json?token=AT7l1RL56-9oNSuK7WWKsMx0_xmfZZQwks5cLFeDwA%3D%3D')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "notificationHub": {
+                        "value": "[variables('notificationHub')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "Cosmosdb",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), '/nested/cosmosdb.json?token=AT7l1SYkkrnlzIGVUTFUppEVarfYlCT-ks5cLFdFwA%3D%3D')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "CosmosDbSettings": {
+                        "value": "[variables('CosmosDbSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "AutomationAccount",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "Cosmosdb"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), '/nested/automation-account.json?token=AT7l1av0yDrJpCpkGcwlTZKPZ6Td7UZwks5cLFciwA%3D%3D')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "automationSettings": {
+                        "value": "[variables('automationSettings')]"
+                    },
+                    "CosmosDbSettings": {
+                        "value": "[variables('cosmosDbSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "StorageBlob",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), '/nested/storageblob.json?token=AT7l1aZ1DrElASsq_pf7kOD-ntl38_iNks5cLFbvwA%3D%3D')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageBlobSettings": {
+                        "value": "[variables('storageBlobSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "IotHub",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), '/nested/iothub.json?token=AT7l1TBhL4XndB0DbD3dsnzCk769UPV7ks5cLFbLwA%3D%3D')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "iotHubSettings": {
+                        "value": "[variables('iotHubSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "WebAPI",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "Cosmosdb",
+                "IotHub",
+                "NotificationHub"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), '/nested/webapi-components.json?token=AT7l1TlhcSqQqA2x7Nw5p9G-GyLRr_s-ks5cLFajwA%3D%3D')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "webSiteSettings": {
+                        "value": "[variables('webSiteSettings')]"
+                    },
+                    "cosmosDbSettings": {
+                        "value": "[variables('cosmosDbSettings')]"
+                    },
+                    "notificationHub": {
+                        "value": "[variables('notificationHub')]"
+                    },
+                    "azureAdSettings": {
+                        "value": "[variables('AzureAdSettings')]"
+                    },
+                    "azureAdB2CWebSettings": {
+                        "value": "[variables('AzureAdB2CWebSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "WebAdmin",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "Cosmosdb",
+                "IotHub",
+                "NotificationHub"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), '/nested/webadmin.json?token=AT7l1ZZXOv2kfKuIjiUIJfU_xFV7e1DDks5cLFZZwA%3D%3D')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "webSiteSettings": {
+                        "value": "[variables('webSiteSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "Kubernetes",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [
+                "OmsWorkSpace"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'/nested/kubernetes.json?token=AT7l1WXme0u1eTM0FqyX0DMW5757YyWBks5cLFYywA%3D%3D')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    },
+                    "kubernetesSettings": {
+                        "value": "[variables('kubernetesSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "OmsWorkSpace",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'/nested/omsWorkspace.json?token=AT7l1WNVCjvRRI-_zQybseM9pYEPDRRgks5cLFYFwA%3D%3D')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "AzureContainerRegistry",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'/nested/azureContainerRegistry.json?token=AT7l1ZsJt0x9Ed0DNTxUhoU4kmgLclfWks5cLbXLwA%3D%3D')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "acrSettings": {
+                        "value": "[variables('acrSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "DockerVM",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [
+                "AzureContainerRegistry"       
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'/nested/dockerVm.json?token=AT7l1VdeeFRifUpvG_k-QDpQ3geokmFvks5cL0lnwA%3D%3D')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vmSettings": {
+                        "value": "[variables('vmSettings')]"
+                    }
+                }
+            }
+        }
+    ]
+}
