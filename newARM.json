@@ -150,20 +150,6 @@
             "metadata": {
                 "description": "Tier of your Azure Container Registry."
             }
-        },
-        "vmUsername": {
-            "type": "string",
-            "defaultValue": "sysgainuser",
-            "metadata": {
-                "description": "User name for the Virtual Machine"
-            }
-        },
-        "vmPassword": {
-            "type": "securestring",
-            "defaultValue": "Password@1234",
-            "metadata": {
-                "description": "Password for the Virtual Machine"
-            }
         }
     },
     "variables": {
@@ -259,28 +245,28 @@
             "location": "[parameters('location')]",
             "acrSku": "[parameters('acrSku')]"
         },
-        "vmSettings": {
+        "vm":{
+            "pipName":"[concat('edgepip',variables('suffix'))]",
             "location": "[parameters('location')]",
-            "publicIPAddressName": "[concat('dockerPIP', variables('suffix'))]",
-            "publicIPAddressType": "Dynamic",
-            "dnsLabelPrefix": "[concat('dockerDns', variables('suffix'))]",
+            "publicIpAddressType": "Static",
+            "dnsLabelPrefix": "[concat('edgedns',variables('suffix'))]",
             "virtualNetworkName": "[variables('virtualNetworkName1')]",
             "addressPrefix": "10.0.0.0/16",
             "subnetName": "[variables('subnetName1')]",
             "subnetPrefix": "10.0.1.0/24",
-            "subnetRef": "[variables('subnetRef1')]",
-            "nicName": "dockerVmNic",
-            "vmSize": "Standard_A1",
-            "vmName": "dockerVM",
+            "nicName":"edge-nic",
+            "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName1'))]",
+            "vmName":"iotEdgeVm",
+            "edgeUsername":"sysgainuser",
+            "edgePassword":"Password@1234",
+            "edgevmSize":"standard_A2",
             "imagePublisher": "Canonical",
             "imageOffer": "UbuntuServer",
-            "ubuntuOSVersion": "16.04.0-LTS",
-            "adminUsername": "[parameters('vmUsername')]",
-            "adminPassword": "[parameters('vmPassword')]"
+            "ubuntuOSVersion":"16.04.0-LTS"
+
         },
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
-        "subnetRef1": "[concat(variables('vnetId'), '/subnets/', variables('subnetName1'))]",
         "virtualNetworkName1":"[concat('dockerVnet', variables('suffix'))]",
         "subnetName1":"dockerSubnet",
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName1'))]"
@@ -501,17 +487,18 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2015-01-01",
             "dependsOn": [
-                "AzureContainerRegistry"       
+                "AzureContainerRegistry",
+                "StorageBlob"
             ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'/nested/dockerVm.json?token=AT7l1VdeeFRifUpvG_k-QDpQ3geokmFvks5cL0lnwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'/nested/vm.json?token=AT3nZi3wtGUTo9XhmK014NsUk2umRu5rks5cMf_zwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "vmSettings": {
-                        "value": "[variables('vmSettings')]"
+                    "vm": {
+                        "value": "[variables('vm')]"
                     }
                 }
             }
