@@ -63,5 +63,9 @@ workflow  container{
     start-Sleep -s 30
     New-CosmosDbCollection -Context $cosmosDbContext -Id 'Notifications' -OfferThroughput 400
     start-Sleep -s 30
-}
+    New-CosmosDbCollection -Context $cosmosDbContext -Id 'Bot' -OfferThroughput 400
+    start-Sleep -s 30
+    New-CosmosDbCollection -Context $cosmosDbContext -Id 'ChatReports' -OfferThroughput 400
+    start-Sleep -s 30
+  }
 }
