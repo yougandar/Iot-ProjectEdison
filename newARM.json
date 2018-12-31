@@ -262,7 +262,8 @@
             "edgevmSize":"standard_A2",
             "imagePublisher": "Canonical",
             "imageOffer": "UbuntuServer",
-            "ubuntuOSVersion":"16.04.0-LTS"
+            "ubuntuOSVersion":"16.04.0-LTS",
+            "networkSecurityGroupName":"nsg"
 
         },
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage",
@@ -433,7 +434,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'/nested/kubernetes.json?token=AT7l1WXme0u1eTM0FqyX0DMW5757YyWBks5cLFYywA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'/nested/kubernetes.json?token=AT3nZk74b-x9VZOp1Vtwk6Q6-XdIRS6jks5cMvK-wA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -493,7 +494,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'/nested/vm.json?token=AT3nZi3wtGUTo9XhmK014NsUk2umRu5rks5cMf_zwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'/nested/vm.json?token=AT3nZrenIKV2BhqtRkIrYG8Ox56JySvEks5cMvKFwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
