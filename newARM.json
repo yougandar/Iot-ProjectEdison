@@ -25,11 +25,11 @@
         },
         "azureAccountName": {
             "type": "string",
-            "defaultValue": "nvtuluva@sysgaininc.onmicrosoft.com"
+            "defaultValue": ""
         },
         "azurePassword": {
             "type": "securestring",
-            "defaultValue": "v!vek@225"
+            "defaultValue": ""
         },
         "sessionId": {
             "type": "string",
@@ -37,7 +37,7 @@
         },
         "cosmosdbModuleUri": {
             "type": "string",
-            "defaultValue": "https://github.com/ChaitanyaGeddam/edison/raw/master/scripts/cosmos.zip"
+            "defaultValue": "https://github.com/sysgain/Iot-ProjectEdison/raw/stage/builds/code/cosmos.zip"
         },
         "osDiskSizeGB": {
             "defaultValue": 30,
@@ -79,77 +79,9 @@
                 "description": "Choose location for OMS Log Analytics to deploy. For more information, see https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-overview"
             }
         },
-        "enableHttpApplicationRouting": {
-            "defaultValue": true,
-            "type": "bool",
-            "metadata": {
-                "description": "boolean flag to turn on and off of http application routing"
-            }
-        },
-        "enableRBAC": {
-            "defaultValue": true,
-            "type": "bool",
-            "metadata": {
-                "description": "boolean flag to turn on and off of RBAC"
-            }
-        },
         "webAdminPackageUri": {
             "type": "string",
-            "defaultValue": "https://github.com/ChaitanyaGeddam/edison/raw/master/code/Edison.AdminPortal.zip"
-        },
-        "clientId": {
-            "type": "string",
-            "defaultValue": "e34ff5c4-0cc5-4411-839c-53e7dc739055",
-            "metadata": {
-                "description": "Azure AD clientID"
-            }
-        },
-        "domain": {
-            "type": "string",
-            "defaultValue": "sysgaininc.onmicrosoft.com",
-            "metadata": {
-                "description": "Azure AD Domain name"
-            }
-        },
-        "adTenantId": {
-            "type": "string",
-            "defaultValue": "dcf9e4d3-f44a-4c28-be12-8245c0d35668",
-            "metadata": {
-                "description": "Azure AD TenantID"
-            }
-        },
-        "azureAdB2CClientId": {
-            "type": "string",
-            "defaultValue": "7c519e29-9718-4e9e-8fed-5253206dff9b",
-            "metadata": {
-                "description": "Azure AD B2C clientId"
-            }
-        },
-        "azureAdB2CDomain": {
-            "type": "string",
-            "defaultValue": "newiotp2.onmicrosoft.com",
-            "metadata": {
-                "description": "Azure AD B2C Domain name"
-            }
-        },
-        "signUpSignInPolicyId": {
-            "type": "string",
-            "defaultValue": "B2C_1_signup_signin",
-            "metadata": {
-                "description": "Azure AD B2C SignUp SignIn PolicyId"
-            }
-        },
-        "acrSku": {
-            "type": "string",
-            "defaultValue": "Basic",
-            "allowedValues": [
-                "Basic",
-                "Standard",
-                "Premium"
-            ],
-            "metadata": {
-                "description": "Tier of your Azure Container Registry."
-            }
+            "defaultValue": "https://github.com/sysgain/Iot-ProjectEdison/raw/stage/builds/code/Edison.AdminPortal.zip"
         }
     },
     "variables": {
@@ -203,8 +135,6 @@
             "webAppHostingPlanName": "[concat('edisonwebplan',variables('suffix'))]",
             "location": "WestUS",
             "webAppSkuName1": "F1",
-            "webAPI": "[concat('edisonWebAPI',variables('suffix'))]",
-            "webApiPackageuri": "",
             "webAdminPackageUri": "[parameters('webAdminPackageUri')]",
             "webAdmin": "[concat('edisonWebAdmin',variables('suffix'))]"
         },
@@ -218,9 +148,9 @@
             "servicename": "[concat('kubernetes', variables('suffix'))]",
             "kubernetesVersion": "1.11.5",
             "location": "[parameters('location')]",
-            "enableRBAC": "[parameters('enableRBAC')]",
+            "enableRBAC": true,
             "dnsPrefix": "clusterdns",
-            "enableHttpApplicationRouting": "[parameters('enableHttpApplicationRouting')]",
+            "enableHttpApplicationRouting": true,
             "osType": "Linux",
             "agentVMSize": "Standard_D2_v2",
             "agentCount": 3,
@@ -229,21 +159,11 @@
             "networkPlugin": "kubenet",
             "osDiskSizeGB": "[parameters('osDiskSizeGB')]"
         },
-        "azureAdSettings": {
-            "clientId": "[parameters('clientId')]",
-            "domain": "[parameters('domain')]",
-            "tenantId": "[parameters('adTenantId')]"
-        },
-        "azureAdB2CWebSettings": {
-            "clientId": "[parameters('azureAdB2CClientId')]",
-            "domain": "[parameters('AzureAdB2CDomain')]",
-            "signUpSignInPolicyId": "[parameters('SignUpSignInPolicyId')]"
-        },
         "acrSettings": {
             "acrName": "[concat('acr',variables('suffix'))]",
-            "acrAdminUserEnabled": false,
+            "acrAdminUserEnabled": true,
             "location": "[parameters('location')]",
-            "acrSku": "[parameters('acrSku')]"
+            "acrSku": "Basic"
         },
         "vm":{
             "pipName":"[concat('edgepip',variables('suffix'))]",
@@ -369,40 +289,6 @@
             }
         },
         {
-            "name": "WebAPI",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-02-01",
-            "dependsOn": [
-                "Cosmosdb",
-                "IotHub",
-                "NotificationHub"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), '/nested/webapi-components.json?token=AT7l1TlhcSqQqA2x7Nw5p9G-GyLRr_s-ks5cLFajwA%3D%3D')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "webSiteSettings": {
-                        "value": "[variables('webSiteSettings')]"
-                    },
-                    "cosmosDbSettings": {
-                        "value": "[variables('cosmosDbSettings')]"
-                    },
-                    "notificationHub": {
-                        "value": "[variables('notificationHub')]"
-                    },
-                    "azureAdSettings": {
-                        "value": "[variables('AzureAdSettings')]"
-                    },
-                    "azureAdB2CWebSettings": {
-                        "value": "[variables('AzureAdB2CWebSettings')]"
-                    }
-                }
-            }
-        },
-        {
             "name": "WebAdmin",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
@@ -494,7 +380,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'/nested/vm.json?token=AT3nZrenIKV2BhqtRkIrYG8Ox56JySvEks5cMvKFwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'/nested/vm.json?token=AT3nZmjGh_HG7fPdPi2JHZo7LnbjQdOoks5cMvVBwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
