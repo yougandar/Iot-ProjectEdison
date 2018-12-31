@@ -42,6 +42,29 @@
             }
         },
         {
+            "name": "[parameters('vm').networkSecurityGroupName]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2016-09-01",
+            "location": "[parameters('vm').location]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "custom",
+                        "properties": {
+                            "priority": 1001,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "*",
+                            "destinationPortRange": "22",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        },
+        {
             "apiVersion": "2017-04-01",
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[parameters('vm').nicName]",
