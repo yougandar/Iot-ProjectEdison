@@ -422,5 +422,23 @@
                 }
             }
         }
-    ]
+    ],
+    "outputs": {
+        "servicebusConnectionString":{
+            "type": "string",
+            "value": "[reference('ServiceBus').outputs.NamespaceConnectionString.value]"
+        },
+        "dockervmIPAddress":{
+            "type": "string",
+            "value": "[reference('DockerVM').outputs.pipadd.value]"
+        },
+        "dockervmUserName":{
+            "type": "string",
+            "value": "[variables('vm').vmUsername]"
+        },
+        "dockervmPassword":{
+            "type": "string",
+            "value": "[variables('vm').vmPassword]"
+        }
+    }
 }
