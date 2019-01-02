@@ -49,7 +49,7 @@
             }
         },
         "servicePrincipalClientId": {
-            "type": "securestring",
+            "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "Client ID (used by cloudprovider)"
@@ -110,7 +110,7 @@
             "runbookName": "container",
             "moduleName": "CosmosDB",
             "cosmosdbModuleUri": "[parameters('cosmosdbModuleUri')]",
-            "runbookUri": "[concat(variables('baseUrl'),'scripts/initializeCosmosDb.ps1?token=AT3nZhR3zRM6hSUOCyLB2heONl0stuAiks5cNdfPwA%3D%3D')]",
+            "runbookUri": "[concat(variables('baseUrl'),'scripts/initializeCosmosDb.ps1?token=AT3nZnKOzH5P56DO_LV0O0yzvM8wsRL5ks5cNdqywA%3D%3D')]",
             "sessionId": "[parameters('sessionId')]",
             "tenantId": "[parameters('tenantId')]",
             "azureAccountName": "[parameters('azureAccountName')]",
@@ -185,21 +185,20 @@
             "ubuntuOSVersion": "16.04.0-LTS",
             "networkSecurityGroupName": "nsg"
         },
-        "servicebusProperties": {
-            "serviceBusNamespaceName": "[concat('servicebus',variables('suffix'))]",
+        "serviceBusProperties": {
+            "serviceBusNamespaceName": "[variables('serviceBusNamespaceName')]",
             "location": "[parameters('location')]",
-            "serviceBusQueueName1": "device-synchronization-messages",
-            "serviceBusQueueName2": "iothub-controller-messages",
-            "serviceBusQueueName3": "notification-messages",
-            "serviceBusQueueName4": "response-messages",
-            "serviceBusQueueName5": "signalr-messages",
-            "serviceBusQueueName6": "state-sagas"
+            "serviceBusDefaultSASKeyName": "[variables('serviceBusDefaultSASKeyName')]",
+            "serviceBusAuthRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName'), variables('serviceBusDefaultSASKeyName'))]",
+            "skuName": "Standard"
         },
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
         "virtualNetworkName1": "[concat('edisonVnet', variables('suffix'))]",
         "subnetName1": "edisonSubnet",
-        "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName1'))]"
+        "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName1'))]",
+        "serviceBusDefaultSASKeyName": "RootManageSharedAccessKey",
+        "serviceBusNamespaceName": "[concat('snamespace',variables('suffix'))]"
     },
     "resources": [
         {
@@ -404,17 +403,16 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2015-01-01",
             "dependsOn": [
-                "OmsWorkSpace"
             ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/servicebus.json?token=AT3nZs6H4stZlWrtbN1TW7P_bpEuPSgpks5cNc-hwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/servicebus.json?token=AT3nZu1mspgCsT8M6oE_GzB1doj6Alsoks5cNeUGwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "servicebusProperties": {
-                        "value": "[variables('servicebusProperties')]"
+                    "serviceBusProperties": {
+                        "value": "[variables('serviceBusProperties')]"
                     },
                     "omsSettings": {
                         "value": "[variables('omsSettings')]"
@@ -422,23 +420,5 @@
                 }
             }
         }
-    ],
-    "outputs": {
-        "servicebusConnectionString":{
-            "type": "string",
-            "value": "[reference('ServiceBus').outputs.NamespaceConnectionString.value]"
-        },
-        "dockervmIPAddress":{
-            "type": "string",
-            "value": "[reference('DockerVM').outputs.pipadd.value]"
-        },
-        "dockervmUserName":{
-            "type": "string",
-            "value": "[variables('vm').vmUsername]"
-        },
-        "dockervmPassword":{
-            "type": "string",
-            "value": "[variables('vm').vmPassword]"
-        }
-    }
+    ]
 }
