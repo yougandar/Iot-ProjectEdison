@@ -161,35 +161,44 @@
         },
         "acrSettings": {
             "acrName": "[concat('acr',variables('suffix'))]",
-            "acrAdminUserEnabled": false,
+            "acrAdminUserEnabled": true,
             "location": "[parameters('location')]",
             "acrSku": "Basic"
         },
-        "vm":{
-            "pipName":"[concat('edgepip',variables('suffix'))]",
+        "vm": {
+            "pipName": "[concat('edisonpip',variables('suffix'))]",
             "location": "[parameters('location')]",
             "publicIpAddressType": "Static",
-            "dnsLabelPrefix": "[concat('edgedns',variables('suffix'))]",
+            "dnsLabelPrefix": "[concat('edisondns',variables('suffix'))]",
             "virtualNetworkName": "[variables('virtualNetworkName1')]",
             "addressPrefix": "10.0.0.0/16",
             "subnetName": "[variables('subnetName1')]",
             "subnetPrefix": "10.0.1.0/24",
-            "nicName":"edge-nic",
+            "nicName": "edison-nic",
             "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName1'))]",
-            "vmName":"iotEdgeVm",
-            "edgeUsername":"sysgainuser",
-            "edgePassword":"Password@1234",
-            "edgevmSize":"standard_A2",
+            "vmName": "edisonVm",
+            "vmUsername": "sysgainuser",
+            "vmPassword": "Password@1234",
+            "vmSize": "standard_A2",
             "imagePublisher": "Canonical",
             "imageOffer": "UbuntuServer",
-            "ubuntuOSVersion":"16.04.0-LTS",
-            "networkSecurityGroupName":"nsg"
-
+            "ubuntuOSVersion": "16.04.0-LTS",
+            "networkSecurityGroupName": "nsg"
+        },
+        "servicebusProperties": {
+            "serviceBusNamespaceName": "[concat('servicebus',variables('suffix'))]",
+            "location": "[parameters('location')]",
+            "serviceBusQueueName1": "device-synchronization-messages",
+            "serviceBusQueueName2": "iothub-controller-messages",
+            "serviceBusQueueName3": "notification-messages",
+            "serviceBusQueueName4": "response-messages",
+            "serviceBusQueueName5": "signalr-messages",
+            "serviceBusQueueName6": "state-sagas"
         },
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
-        "virtualNetworkName1":"[concat('dockerVnet', variables('suffix'))]",
-        "subnetName1":"dockerSubnet",
+        "virtualNetworkName1": "[concat('edisonVnet', variables('suffix'))]",
+        "subnetName1": "edisonSubnet",
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName1'))]"
     },
     "resources": [
@@ -386,6 +395,29 @@
                 "parameters": {
                     "vm": {
                         "value": "[variables('vm')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "ServiceBus",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [
+                "OmsWorkSpace"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/dockerVm.json?token=AT3nZlUtlZcLvtTPO-SO71-DUlNlJMP9ks5cNY0ywA%3D%3D')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vm": {
+                        "value": "[variables('vm')]"
+                    },
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
                     }
                 }
             }
