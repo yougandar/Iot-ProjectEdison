@@ -110,7 +110,7 @@
             "runbookName": "container",
             "moduleName": "CosmosDB",
             "cosmosdbModuleUri": "[parameters('cosmosdbModuleUri')]",
-            "runbookUri": "[concat(variables('baseUrl'),'scripts/initializeCosmosDb.ps1?token=AT3nZodnH3OGMRJJEcg_2jLBmXapDzZwks5cNY1awA%3D%3D')]",
+            "runbookUri": "[concat(variables('baseUrl'),'scripts/initializeCosmosDb.ps1?token=AT3nZhR3zRM6hSUOCyLB2heONl0stuAiks5cNdfPwA%3D%3D')]",
             "sessionId": "[parameters('sessionId')]",
             "tenantId": "[parameters('tenantId')]",
             "azureAccountName": "[parameters('azureAccountName')]",
@@ -368,7 +368,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry.json?token=AT3nZm55DNjlGdrLX4L6taUO2NLjzieoks5cNc-DwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry.json?token=AT3nZluDLSG7XaOXGBcDD38OUb-AHBRvks5cNdf0wA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
