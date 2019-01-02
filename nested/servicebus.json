@@ -64,9 +64,7 @@
                         "maxDeliveryCount": "10",
                         "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
                         "enablePartitioning": "false",
-                        "enableExpress": "false",
-                        "forwardTo": "[parameters('servicebusProperties').serviceBusQueueName1]",
-                        "forwardDeadLetteredMessagesTo": "[parameters('servicebusProperties').serviceBusQueueName1]"
+                        "enableExpress": "false"
                     }
                 },
                 {
@@ -88,9 +86,7 @@
                         "maxDeliveryCount": "10",
                         "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
                         "enablePartitioning": "false",
-                        "enableExpress": "false",
-                        "forwardTo": "[parameters('servicebusProperties').serviceBusQueueName2]",
-                        "forwardDeadLetteredMessagesTo": "[parameters('servicebusProperties').serviceBusQueueName2]"
+                        "enableExpress": "false"
                     }
                 },
                 {
@@ -112,9 +108,7 @@
                         "maxDeliveryCount": "10",
                         "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
                         "enablePartitioning": "false",
-                        "enableExpress": "false",
-                        "forwardTo": "[parameters('servicebusProperties').serviceBusQueueName3]",
-                        "forwardDeadLetteredMessagesTo": "[parameters('servicebusProperties').serviceBusQueueName3]"
+                        "enableExpress": "false"
                     }
                 },
                 {
@@ -136,9 +130,7 @@
                         "maxDeliveryCount": "10",
                         "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
                         "enablePartitioning": "false",
-                        "enableExpress": "false",
-                        "forwardTo": "[parameters('servicebusProperties').serviceBusQueueName4]",
-                        "forwardDeadLetteredMessagesTo": "[parameters('servicebusProperties').serviceBusQueueName4]"
+                        "enableExpress": "false"
                     }
                 },
                 {
@@ -160,9 +152,7 @@
                         "maxDeliveryCount": "10",
                         "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
                         "enablePartitioning": "false",
-                        "enableExpress": "false",
-                        "forwardTo": "[parameters('servicebusProperties').serviceBusQueueName5]",
-                        "forwardDeadLetteredMessagesTo": "[parameters('servicebusProperties').serviceBusQueueName5]"
+                        "enableExpress": "false"
                     }
                 },
                 {
