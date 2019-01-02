@@ -100,12 +100,12 @@
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "[parameters('vm').edgevmSize]"
+                    "vmSize": "[parameters('vm').vmSize]"
                 },
                 "osProfile": {
                     "computerName": "[parameters('vm').vmName]",
-                    "adminUsername": "[parameters('vm').edgeUsername]",
-                    "adminPassword": "[parameters('vm').edgePassword]"
+                    "adminUsername": "[parameters('vm').vmUsername]",
+                    "adminPassword": "[parameters('vm').vmPassword]"
                 },
                 "storageProfile": {
                     "imageReference": {
@@ -142,7 +142,7 @@
         },
         "sshCommand": {
             "type": "string",
-            "value": "[concat('ssh ', parameters('vm').edgeUsername, '@', reference(parameters('vm').pipName).dnsSettings.fqdn)]"
+            "value": "[concat('ssh ', parameters('vm').vmUsername, '@', reference(parameters('vm').pipName).dnsSettings.fqdn)]"
         },
         "pipadd": {
             "type": "string",

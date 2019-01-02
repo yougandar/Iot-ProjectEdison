@@ -368,7 +368,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry.json?token=AT3nZlurKbKV0MSFpnbUKZgWZqNs-mUoks5cNY0bwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry.json?token=AT3nZm55DNjlGdrLX4L6taUO2NLjzieoks5cNc-DwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -409,12 +409,12 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/dockerVm.json?token=AT3nZlUtlZcLvtTPO-SO71-DUlNlJMP9ks5cNY0ywA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/servicebus.json?token=AT3nZs6H4stZlWrtbN1TW7P_bpEuPSgpks5cNc-hwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "vm": {
-                        "value": "[variables('vm')]"
+                    "servicebusProperties": {
+                        "value": "[variables('servicebusProperties')]"
                     },
                     "omsSettings": {
                         "value": "[variables('omsSettings')]"
