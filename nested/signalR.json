@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "signalrSettings":{
+          "type": "object"
+      } 
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-03-01-preview",
+      "location": "[parameters('signalrSettings').location]",
+      "name": "[parameters('signalrSettings').name]",
+      "properties": {
+        "hostNamePrefix": "[parameters('signalrSettings').name]"
+      },
+      "sku": {
+        "capacity": "[parameters('signalrSettings').capacity]",
+        "name": "[parameters('signalrSettings').pricingTier]"
+      },
+      "type": "Microsoft.SignalRService/SignalR"
+    }
+  ]
+}
