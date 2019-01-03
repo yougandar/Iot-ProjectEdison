@@ -20,5 +20,11 @@
         "name": "[parameters('signalrSettings').pricingTier]"
       }    
     }
-  ]
+  ],
+  "outputs": {
+    "SignalRAccessKey": {
+      "type": "string",
+      "value": "[listKeys(resourceId('Microsoft.SignalRService/SignalR', parameters('signalrSettings').name), providers('Microsoft.SignalRService','SignalR').apiVersions[0]).primaryConnectionString]"
+    }
+  }
 }

@@ -4,7 +4,7 @@
     "parameters": {
         "location": {
             "type": "string",
-            "defaultValue": "canadacentral",
+            "defaultValue": "eastus",
             "allowedValues": [
                 "australiasoutheast",
                 "canadacentral",
@@ -16,20 +16,57 @@
                 "westeurope"
             ]
         },
+        "signalRlocation":{
+            "type": "string",
+            "defaultValue": "eastus",
+            "allowedValues": [
+                "eastus",
+                "westus",
+                "japaneast",
+                "southeastasia",
+                "westeurope",
+                "westus2",
+               " eastus2",
+               "northeurope",
+               "australiaeast",
+               "canadaeast",
+               "centralus"
+            ],
+            "metadata": {
+                "description": "Choose location for signalR to deploy."
+            }
+        },
+        "omsWorkspaceRegion": {
+            "type": "string",
+            "defaultValue": "southeastasia",
+            "allowedValues": [
+                "australiasoutheast",
+                "canadacentral",
+                "centralindia",
+                "eastus",
+                "japaneast",
+                "southeastasia",
+                "uksouth",
+                "westeurope"
+            ],
+            "metadata": {
+                "description": "Choose location for OMS Log Analytics to deploy. For more information, see https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-overview"
+            }
+        },
         "tenantId": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "dcf9e4d3-f44a-4c28-be12-8245c0d35668",
             "metadata": {
                 "description": "TenantId of the created Azure active directory application. For instructions, see  (https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-howto-tenant) in the Microsoft documentation"
             }
         },
         "azureAccountName": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "nvtuluva@sysgaininc.onmicrosoft.com"
         },
         "azurePassword": {
             "type": "securestring",
-            "defaultValue": ""
+            "defaultValue": "v!vek@225"
         },
         "sessionId": {
             "type": "string",
@@ -50,33 +87,16 @@
         },
         "servicePrincipalClientId": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "e00deb3a-8d64-455e-90d8-06970057efa8",
             "metadata": {
                 "description": "Client ID (used by cloudprovider)"
             }
         },
         "servicePrincipalClientSecret": {
             "type": "securestring",
-            "defaultValue": "",
+            "defaultValue": "3bf06532-ac69-4166-8a16-3b6677e82c8f",
             "metadata": {
                 "description": "The Service Principal Client Secret."
-            }
-        },
-        "omsWorkspaceRegion": {
-            "type": "string",
-            "defaultValue": "southeastasia",
-            "allowedValues": [
-                "australiasoutheast",
-                "canadacentral",
-                "centralindia",
-                "eastus",
-                "japaneast",
-                "southeastasia",
-                "uksouth",
-                "westeurope"
-            ],
-            "metadata": {
-                "description": "Choose location for OMS Log Analytics to deploy. For more information, see https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-overview"
             }
         },
         "webAdminPackageUri": {
@@ -98,13 +118,6 @@
             "metadata": {
                 "description": "The number of SignalR Unit."
             }
-        },
-        "signalRName":{
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "The globally unique name of the SignalR resource to create."
-              }
         }
     },
     "variables": {
@@ -213,11 +226,17 @@
             "location": "[parameters('location')]",
             "serviceBusDefaultSASKeyName": "[variables('serviceBusDefaultSASKeyName')]",
             "serviceBusAuthRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName'), variables('serviceBusDefaultSASKeyName'))]",
-            "skuName": "Standard"
+            "skuName": "Basic",
+            "serviceBusQueueName1":"device-synchronization-messages",
+            "serviceBusQueueName2":"iothub-controller-messages",
+            "serviceBusQueueName3":"notification-messages",
+            "serviceBusQueueName4":"response-messages",
+            "serviceBusQueueName5":"signalr-messages",
+            "serviceBusQueueName6":"state-sagas"
         },
         "signalrSettings": {
-            "location": "[parameters('location')]",
-            "name": "[parameters('signalRName')]",
+            "location": "[parameters('signalRlocation')]",
+            "name": "[concat('signalR',variables('suffix'))]",
             "pricingTier": "Standard_S1",
             "capacity": "[parameters('signalrCapacity')]"
         },
@@ -238,7 +257,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/notification-hub.json?token=AT3nZuEzPD5yXc-ahDquwtoeoXn3eBAWks5cNYsXwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/notification-hub.json?token=AT3nZl7lDx3Vn0zOarJolBZOK7peqHzuks5cNtyiwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -256,7 +275,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/cosmosdb.json?token=AT3nZgcPzUc8vAkWhAs2T9uRx--Nq1cqks5cNYtfwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/cosmosdb.json?token=AT3nZhRl74MIOlF03lkDa1W-4u1DDMBzks5cNty0wA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -276,7 +295,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/automation-account.json?token=AT3nZsLJFK0FqFBK-bCbg7gKCw_B9Ai3ks5cNYt9wA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/automation-account.json?token=AT3nZsjp_FowG8NRgEIryjh0U7s95KpTks5cNtzJwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -297,7 +316,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/storageblob.json?token=AT3nZrae1Ea76kyNLBHUIAnr1L9zU6Akks5cNYvEwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/storageblob.json?token=AT3nZi_X2ZSaHUotbqUDusWRtrcS7_Sxks5cNtzhwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -315,7 +334,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/iothub.json?token=AT3nZu-Jl4F0rqpfhUZdw9yngScTKfNLks5cNYvXwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/iothub.json?token=AT3nZq3pHT-C8WIXYngyZ-h5PpnesF4kks5cNtz4wA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -337,7 +356,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/webadmin.json?token=AT3nZkWmfF16og9hi0QxHAHou-Nd97MOks5cNYvrwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/webadmin.json?token=AT3nZmNTR8w0i6gmf6WQa3aejd0oXmv2ks5cNt0OwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -357,7 +376,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/kubernetes.json?token=AT3nZpBBmCnS_7lMOJp6KIxe9n7D9pYaks5cNYwewA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/kubernetes.json?token=AT3nZu0azsLR0CdWFMT2_nqaD9X2-lZnks5cNt0ywA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -378,7 +397,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/omsWorkspace.json?token=AT3nZq_mi5Zd-DYz1GNkdW3KDNS0Fqjlks5cNY0KwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/omsWorkspace.json?token=AT3nZs_yGCQuAWGyhy0HP4rNIRLtUuAlks5cNt1IwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -396,7 +415,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry.json?token=AT3nZluDLSG7XaOXGBcDD38OUb-AHBRvks5cNdf0wA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry.json?token=AT3nZhe_2al6jdsg7VjZIjnix0BZclZlks5cNt1fwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -417,7 +436,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/dockerVm.json?token=AT3nZhJ701gONS5f1R_zB5bT3-cbXrKRks5cNdBAwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/dockerVm.json?token=AT3nZgEnuQndKw8DlcvFlWUzL5RLZQvZks5cNt2hwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -435,7 +454,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/servicebus.json?token=AT3nZlZ80lHl1S2o659_DKyItQGNTOgXks5cNj_HwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/servicebus.json?token=AT3nZmbjeqcq7BqAqZdvPUslOtxtFpPaks5cNt4JwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -449,14 +468,14 @@
             }
         },
         {
-            "type": "Microsoft.Resources/deployments",
             "name": "SignalR",
+            "type": "Microsoft.Resources/deployments",
             "apiVersion": "2015-01-01",
             "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/signalR.json?token=AT7l1QvaOmbJiRmeQWFBhj-jdbPW2ObKks5cNfSPwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/signalR.json?token=AT3nZsCSxEXyW6dcBi_5aKzytMFezsr3ks5cNtqjwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {

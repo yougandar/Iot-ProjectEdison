@@ -182,7 +182,7 @@
         }
     ],
     "outputs": {
-        "svcConnectionString": {
+        "serviceBusConnectionString": {
             "type": "string",
             "value": "[listKeys(parameters('serviceBusProperties').serviceBusAuthRuleResourceId, '2017-04-01').primaryConnectionString]"
         }
