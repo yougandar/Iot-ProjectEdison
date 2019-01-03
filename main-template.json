@@ -82,6 +82,29 @@
         "webAdminPackageUri": {
             "type": "string",
             "defaultValue": "https://github.com/ChaitanyaGeddam/edison/raw/master/code/Edison.AdminPortal.zip"
+        },
+        "signalrCapacity": {
+            "type": "int",
+            "defaultValue": 1,
+            "allowedValues": [
+                1,
+                2,
+                5,
+                10,
+                20,
+                50,
+                100
+            ],
+            "metadata": {
+                "description": "The number of SignalR Unit."
+            }
+        },
+        "signalRName":{
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The globally unique name of the SignalR resource to create."
+              }
         }
     },
     "variables": {
@@ -191,6 +214,12 @@
             "serviceBusDefaultSASKeyName": "[variables('serviceBusDefaultSASKeyName')]",
             "serviceBusAuthRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName'), variables('serviceBusDefaultSASKeyName'))]",
             "skuName": "Standard"
+        },
+        "signalrSettings": {
+            "location": "[parameters('location')]",
+            "name": "[parameters('signalRName')]",
+            "pricingTier": "Standard_S1",
+            "capacity": "[parameters('signalrCapacity')]"
         },
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
@@ -402,12 +431,11 @@
             "name": "ServiceBus",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2015-01-01",
-            "dependsOn": [
-            ],
+            "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/servicebus.json?token=AT3nZu1mspgCsT8M6oE_GzB1doj6Alsoks5cNeUGwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/servicebus.json?token=AT3nZlZ80lHl1S2o659_DKyItQGNTOgXks5cNj_HwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -416,6 +444,24 @@
                     },
                     "omsSettings": {
                         "value": "[variables('omsSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "SignalR",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/signalR.json?token=AT7l1QvaOmbJiRmeQWFBhj-jdbPW2ObKks5cNfSPwA%3D%3D')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "signalrSettings": {
+                        "value": "[variables('signalrSettings')]"
                     }
                 }
             }
