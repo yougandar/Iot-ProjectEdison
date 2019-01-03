@@ -26,7 +26,7 @@
                 "iotHubs": [
                     {
                         "name": "[parameters('iothubSettings').iotHubName]",
-                        "connectionString": "[concat('HostName=', parameters('iothubSettings').iotHubName,'.azure-devices.net;SharedAccessKeyName=', parameters('iothubSettings').keyName, ';SharedAccessKey=', listkeys(resourceId('Microsoft.Devices/IotHubs/IotHubKeys',parameters('iothubSettings').iotHubName,'iothubowner'),'2016-02-03').primaryKey)]",
+                        "connectionString": "[concat('HostName=',parameters('iothubSettings').iotHubName,'.azure-devices.net;SharedAccessKeyName=',parameters('iothubSettings').keyName, ';SharedAccessKey=', listkeys(resourceId('Microsoft.Devices/IotHubs/IotHubKeys',parameters('iothubSettings').iotHubName,'iothubowner'),'2016-02-03').primaryKey)]",
                         "location": "[parameters('iothubSettings').location]"
                     }
                 ]
