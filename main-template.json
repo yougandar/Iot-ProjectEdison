@@ -16,7 +16,7 @@
                 "westeurope"
             ]
         },
-        "signalRlocation":{
+        "signalRlocation": {
             "type": "string",
             "defaultValue": "eastus",
             "allowedValues": [
@@ -26,11 +26,11 @@
                 "southeastasia",
                 "westeurope",
                 "westus2",
-               " eastus2",
-               "northeurope",
-               "australiaeast",
-               "canadaeast",
-               "centralus"
+                " eastus2",
+                "northeurope",
+                "australiaeast",
+                "canadaeast",
+                "centralus"
             ],
             "metadata": {
                 "description": "Choose location for signalR to deploy."
@@ -226,13 +226,13 @@
             "location": "[parameters('location')]",
             "serviceBusDefaultSASKeyName": "[variables('serviceBusDefaultSASKeyName')]",
             "serviceBusAuthRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName'), variables('serviceBusDefaultSASKeyName'))]",
-            "skuName": "Basic",
-            "serviceBusQueueName1":"device-synchronization-messages",
-            "serviceBusQueueName2":"iothub-controller-messages",
-            "serviceBusQueueName3":"notification-messages",
-            "serviceBusQueueName4":"response-messages",
-            "serviceBusQueueName5":"signalr-messages",
-            "serviceBusQueueName6":"state-sagas"
+            "skuName": "Standard",
+            "serviceBusQueueName1": "device-synchronization-messages",
+            "serviceBusQueueName2": "iothub-controller-messages",
+            "serviceBusQueueName3": "notification-messages",
+            "serviceBusQueueName4": "response-messages",
+            "serviceBusQueueName5": "signalr-messages",
+            "serviceBusQueueName6": "state-sagas"
         },
         "signalrSettings": {
             "location": "[parameters('signalRlocation')]",
@@ -415,7 +415,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry.json?token=AT3nZhe_2al6jdsg7VjZIjnix0BZclZlks5cNt1fwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry.json?token=AT3nZvgX5qvOpQ7TPi-uvc0QmwIefFQUks5cNvGQwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -436,7 +436,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/dockerVm.json?token=AT3nZgEnuQndKw8DlcvFlWUzL5RLZQvZks5cNt2hwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/dockerVm.json?token=AT3nZovmScZOMHTfcb4ChRODz0voEt32ks5cNwnWwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -454,7 +454,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/servicebus.json?token=AT3nZmbjeqcq7BqAqZdvPUslOtxtFpPaks5cNt4JwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/servicebus.json?token=AT3nZoTZIpsZtAvPqiWqy5uKTIBFbA2Bks5cNvG6wA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -475,7 +475,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/signalR.json?token=AT3nZsCSxEXyW6dcBi_5aKzytMFezsr3ks5cNtqjwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/signalR.json?token=AT3nZi4Fv0d9IM-5pLp0zw9eMeZ7VvG3ks5cNvHSwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -485,5 +485,11 @@
                 }
             }
         }
-    ]
+    ],
+    "outputs": {
+        "vmAdminUser":{
+            "type": "string",
+            "value": "[reference('linkedTemplate').outputs.greetingMessage.value]"
+        }
+    }
 }

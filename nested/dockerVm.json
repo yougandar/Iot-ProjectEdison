@@ -147,6 +147,14 @@
         "pipadd": {
             "type": "string",
             "value": "[reference(concat('Microsoft.Network/publicIpAddresses/', parameters('vm').pipName)).ipAddress]"
+        },
+        "vmAdminUser":{
+            "type": "string",
+            "value": "[parameters('vm').vmUsername]"
+        },
+        "vmPassword":{
+            "type": "string",
+            "value": "[parameters('vm').vmPassword]"
         }
     }
 }
