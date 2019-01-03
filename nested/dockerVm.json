@@ -4,9 +4,6 @@
     "parameters": {
         "vm": {
             "type": "object"
-        },
-        "acrSettings": {
-            "type": "object"
         }
     },
     "variables": {},
@@ -136,27 +133,6 @@
                     ]
                 }
             }
-        },
-        {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('vm').vmName,'/Extensions')]",
-            "location": "[parameters('vm').location]",
-            "apiVersion": "2017-03-30",
-            "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/',parameters('vm').vmName)]"
-            ],
-            "properties": {
-                "publisher": "Microsoft.Azure.Extensions",
-                "type": "CustomScript",
-                "typeHandlerVersion": "2.0",
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                    "fileUris": [
-                        "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/scripts/dockerimages.sh?token=AT3nZuvUA0v9qFNSlZN97IBEowEdsHKZks5cNx2OwA%3D%3D"
-                    ],
-                    "commandToExecute": "[concat('sh dockerimages.sh',' ',parameters('vm').giturl,' ',parameters('acrSettings').acrLoginServer,' ',parameters('acrSettings').acrLoginame,' ',parameters('acrSettings').acrLoginPassword,' ',parameters('vm').tag)]"
-                }
-            }
         }
     ],
     "outputs": {
@@ -172,11 +148,11 @@
             "type": "string",
             "value": "[reference(concat('Microsoft.Network/publicIpAddresses/', parameters('vm').pipName)).ipAddress]"
         },
-        "vmAdminUser": {
+        "vmAdminUser":{
             "type": "string",
             "value": "[parameters('vm').vmUsername]"
         },
-        "vmPassword": {
+        "vmPassword":{
             "type": "string",
             "value": "[parameters('vm').vmPassword]"
         }
