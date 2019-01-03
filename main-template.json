@@ -118,6 +118,10 @@
             "metadata": {
                 "description": "The number of SignalR Unit."
             }
+        },
+        "githuburl":{
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/scripts/dockerimages.sh?token=AT3nZjfWARrC4m2Goe2GTFb-bt18Cxtnks5cNyoDwA%3D%3D"
         }
     },
     "variables": {
@@ -200,7 +204,10 @@
             "acrName": "[concat('acr',variables('suffix'))]",
             "acrAdminUserEnabled": true,
             "location": "[parameters('location')]",
-            "acrSku": "Basic"
+            "acrSku": "Basic",
+            "acrLoginServer":"[variables('acrServerName')]",
+            "acrLoginame":"[variables('acrAdminName')]",
+            "acrLoginPassword":"[variables('acrLoginPassword')]"
         },
         "vm": {
             "pipName": "[concat('edisonpip',variables('suffix'))]",
@@ -221,7 +228,8 @@
             "imageOffer": "UbuntuServer",
             "ubuntuOSVersion": "16.04.0-LTS",
             "networkSecurityGroupName": "nsg",
-            "giturl":"https://github.com/litebulb/ProjectEdison.git"
+            "giturl":"[parameters('githuburl')]",
+            "tag":"latest"
         },
         "serviceBusProperties": {
             "serviceBusNamespaceName": "[variables('serviceBusNamespaceName')]",
@@ -252,7 +260,11 @@
         "subnetName1": "edisonSubnet",
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName1'))]",
         "serviceBusDefaultSASKeyName": "RootManageSharedAccessKey",
-        "serviceBusNamespaceName": "[concat('snamespace',variables('suffix'))]"
+        "serviceBusNamespaceName": "[concat('snamespace',variables('suffix'))]",
+        "acrServerName":"[concat(variables('acrSettings').acrName,'azurecr.io')]",
+        "acrAdminName":"[variables('acrSettings').acrName]",
+        "acrLoginPassword":"[listCredentials(resourceId('Microsoft.ContainerRegistry/registries',variables('acrSettings').acrName),'2017-10-01').passwords[0].value]"
+
     },
     "resources": [
         {
@@ -534,7 +546,7 @@
         },
         "acrLoginServer": {
             "type": "string",
-            "value": "[reference('AzureContainerRegistry').outputs.acrLoginServer.value]"
+            "value": "[reference('AzureContainerRegistry').outputs.acrLogin.value]"
         },
         "acrUsername": {
             "type": "string",

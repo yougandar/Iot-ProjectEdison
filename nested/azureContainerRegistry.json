@@ -27,7 +27,7 @@
         }
     ],
     "outputs": {
-        "acrLoginServer": {
+        "acrLogin": {
             "value": "[reference(resourceId('Microsoft.ContainerRegistry/registries',parameters('acrSettings').acrName),'2017-10-01').loginServer]",
             "type": "string"
         },
