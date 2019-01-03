@@ -501,7 +501,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/signalR.json?token=AT3nZi4Fv0d9IM-5pLp0zw9eMeZ7VvG3ks5cNvHSwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/dps.json?token=AT3nZkXD5Fxz_LgkLpEb5QN07e6hqaQYks5cNyk_wA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
