@@ -21,7 +21,7 @@
             "properties": {},
             "resources": [
                 {
-                    "name": "device-synchronization-messages",
+                    "name": "[parameters('servicebusProperties').serviceBusQueueName1]",
                     "apiVersion": "2017-04-01",
                     "type": "Queues",
                     "dependsOn": [
@@ -42,7 +42,7 @@
                     }
                 },
                 {
-                    "name": "iothub-controller-messages",
+                    "name": "[parameters('servicebusProperties').serviceBusQueueName2]",
                     "apiVersion": "2017-04-01",
                     "type": "Queues",
                     "dependsOn": [
@@ -63,7 +63,7 @@
                     }
                 },
                 {
-                    "name": "notification-messages",
+                    "name": "[parameters('servicebusProperties').serviceBusQueueName3]",
                     "apiVersion": "2017-04-01",
                     "type": "Queues",
                     "dependsOn": [
@@ -84,7 +84,7 @@
                     }
                 },
                 {
-                    "name": "response-messages",
+                    "name": "[parameters('servicebusProperties').serviceBusQueueName4]",
                     "apiVersion": "2017-04-01",
                     "type": "Queues",
                     "dependsOn": [
@@ -105,7 +105,7 @@
                     }
                 },
                 {
-                    "name": "signalr-messages",
+                    "name": "[parameters('servicebusProperties').serviceBusQueueName5]",
                     "apiVersion": "2017-04-01",
                     "type": "Queues",
                     "dependsOn": [
@@ -126,7 +126,7 @@
                     }
                 },
                 {
-                    "name": "state-sagas",
+                    "name": "[parameters('servicebusProperties').serviceBusQueueName6]",
                     "apiVersion": "2017-04-01",
                     "type": "Queues",
                     "dependsOn": [
