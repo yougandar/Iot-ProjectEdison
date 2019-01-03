@@ -436,7 +436,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/dockerVm.json?token=AT3nZovmScZOMHTfcb4ChRODz0voEt32ks5cNwnWwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/dockerVm.json?token=AT3nZlm2IhxuPqqwJERIJzLjrIOgyP7_ks5cNwtEwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -489,7 +489,31 @@
     "outputs": {
         "vmAdminUser":{
             "type": "string",
-            "value": "[reference('linkedTemplate').outputs.greetingMessage.value]"
+            "value": "[reference('DockerVM').outputs.vmAdminUser.value]"
+        },
+        "vmPassword":{
+            "type": "string",
+            "value": "[reference('DockerVM').outputs.vmPassword.value]"
+        },
+        "serviceBusConnectionString":{
+            "type": "string",
+            "value": "[reference('ServiceBus').outputs.serviceBusConnectionString.value]"
+        },
+        "SignalRAccessKey":{
+            "type": "string",
+            "value": "[reference('SignalR').outputs.SignalRAccessKey.value]"
+        },
+        "acrLoginServer":{
+            "type": "string",
+            "value": "[reference('AzureContainerRegistry').outputs.acrLoginServer.value]"
+        },
+        "acrUsername":{
+            "type": "string",
+            "value": "[reference('AzureContainerRegistry').outputs.acrUsername.value]"
+        },
+        "acrPassword":{
+            "type": "string",
+            "value": "[reference('AzureContainerRegistry').outputs.acrPassword.value]"
         }
     }
 }
