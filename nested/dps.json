@@ -12,20 +12,19 @@
     "variables": {},
     "resources": [
         {
+            "name": "[parameters('dpsSettings').name]",
+            "apiVersion": "2017-11-15",
+            "location": "[parameters('dpsSettings').location]",
             "type": "Microsoft.Devices/provisioningServices",
             "sku": {
                 "name": "S1",
                 "tier": "Standard",
                 "capacity": 1
             },
-            "name": "[parameters('dpsSettings').name]",
-            "apiVersion": "2017-11-15",
-            "location": "[parameters('dpsSettings').location]",
-            "scale": null,
             "properties": {
                 "iotHubs": [
                     {
-                        "name": "[parameters('iothubSettings').iotHubName]",
+                        "name": "[concat(parameters('iothubSettings').iotHubName,'.azure-devices.net')]",
                         "connectionString": "[concat('HostName=',parameters('iothubSettings').iotHubName,'.azure-devices.net;SharedAccessKeyName=',parameters('iothubSettings').keyName, ';SharedAccessKey=', listkeys(resourceId('Microsoft.Devices/IotHubs/IotHubKeys',parameters('iothubSettings').iotHubName,'iothubowner'),'2016-02-03').primaryKey)]",
                         "location": "[parameters('iothubSettings').location]"
                     }
