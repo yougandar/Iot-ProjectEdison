@@ -165,7 +165,8 @@
             "d2cPartitionCount": 2,
             "skuName": "S1",
             "capacityUnits": 1,
-            "d2cConsumerGroupName": "cg1"
+            "d2cConsumerGroupName": "cg1",
+            "keyName": "iothubowner"
         },
         "webSiteSettings": {
             "webAppHostingPlanName": "[concat('edisonwebplan',variables('suffix'))]",
@@ -219,7 +220,8 @@
             "imagePublisher": "Canonical",
             "imageOffer": "UbuntuServer",
             "ubuntuOSVersion": "16.04.0-LTS",
-            "networkSecurityGroupName": "nsg"
+            "networkSecurityGroupName": "nsg",
+            "giturl":"https://github.com/litebulb/ProjectEdison.git"
         },
         "serviceBusProperties": {
             "serviceBusNamespaceName": "[variables('serviceBusNamespaceName')]",
@@ -239,6 +241,10 @@
             "name": "[concat('signalR',variables('suffix'))]",
             "pricingTier": "Standard_S1",
             "capacity": "[parameters('signalrCapacity')]"
+        },
+        "dpsSettings": {
+            "name": "[concat('dps',variables('suffix'))]",
+            "location": "[parameters('location')]"
         },
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
@@ -484,34 +490,57 @@
                     }
                 }
             }
+        },
+        {
+            "name": "IotDps",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [
+                "IotHub"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/signalR.json?token=AT3nZi4Fv0d9IM-5pLp0zw9eMeZ7VvG3ks5cNvHSwA%3D%3D')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "dpsSettings": {
+                        "value": "[variables('dpsSettings')]"
+                    },
+                    "iothubSettings": {
+                        "value": "[variables('iothubSettings')]"
+                    }
+                }
+            }
         }
     ],
     "outputs": {
-        "vmAdminUser":{
+        "vmAdminUser": {
             "type": "string",
             "value": "[reference('DockerVM').outputs.vmAdminUser.value]"
         },
-        "vmPassword":{
+        "vmPassword": {
             "type": "string",
             "value": "[reference('DockerVM').outputs.vmPassword.value]"
         },
-        "serviceBusConnectionString":{
+        "serviceBusConnectionString": {
             "type": "string",
             "value": "[reference('ServiceBus').outputs.serviceBusConnectionString.value]"
         },
-        "SignalRAccessKey":{
+        "SignalRAccessKey": {
             "type": "string",
             "value": "[reference('SignalR').outputs.SignalRAccessKey.value]"
         },
-        "acrLoginServer":{
+        "acrLoginServer": {
             "type": "string",
             "value": "[reference('AzureContainerRegistry').outputs.acrLoginServer.value]"
         },
-        "acrUsername":{
+        "acrUsername": {
             "type": "string",
             "value": "[reference('AzureContainerRegistry').outputs.acrUsername.value]"
         },
-        "acrPassword":{
+        "acrPassword": {
             "type": "string",
             "value": "[reference('AzureContainerRegistry').outputs.acrPassword.value]"
         }
