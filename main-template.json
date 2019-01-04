@@ -55,25 +55,25 @@
         },
         "tenantId": {
             "type": "string",
-            "defaultValue": "dcf9e4d3-f44a-4c28-be12-8245c0d35668",
+            "defaultValue": "",
             "metadata": {
                 "description": "TenantId of the created Azure active directory application. For instructions, see  (https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-howto-tenant) in the Microsoft documentation"
             }
         },
         "adObjectId": {
             "type": "string",
-            "defaultValue": "277b4abb-f68a-462e-b04d-ef2f4e3a5337",
+            "defaultValue": "",
             "metadata": {
               "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
             }
           },
         "azureAccountName": {
             "type": "string",
-            "defaultValue": "nvtuluva@sysgaininc.onmicrosoft.com"
+            "defaultValue": ""
         },
         "azurePassword": {
             "type": "securestring",
-            "defaultValue": "v!vek@225"
+            "defaultValue": ""
         },
         "sessionId": {
             "type": "string",
@@ -94,14 +94,14 @@
         },
         "servicePrincipalClientId": {
             "type": "string",
-            "defaultValue": "e00deb3a-8d64-455e-90d8-06970057efa8",
+            "defaultValue": "",
             "metadata": {
                 "description": "Client ID (used by cloudprovider)"
             }
         },
         "servicePrincipalClientSecret": {
             "type": "securestring",
-            "defaultValue": "3bf06532-ac69-4166-8a16-3b6677e82c8f",
+            "defaultValue": "",
             "metadata": {
                 "description": "The Service Principal Client Secret."
             }
