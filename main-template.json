@@ -235,7 +235,8 @@
             "ubuntuOSVersion": "18.04-LTS",
             "networkSecurityGroupName": "nsg",
             "giturl": "[parameters('githuburl')]",
-            "tag": "latest"
+            "tag": "latest",
+            "fileUri":"[concat(variables('baseUrl'),'')]"
         },
         "serviceBusProperties": {
             "serviceBusNamespaceName": "[variables('serviceBusNamespaceName')]",

@@ -155,7 +155,7 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/scripts/dockerimages.sh?token=AT3nZuvUA0v9qFNSlZN97IBEowEdsHKZks5cNx2OwA%3D%3D"
+                        "[parameters('vm').fileUri]"
                     ],
                     "commandToExecute": "[concat('sh dockerimages.sh',' ',parameters('vm').giturl,' ',parameters('acrSettings').acrLoginServer,' ',parameters('acrSettings').acrLoginame,' ',parameters('acrLoginPassword'),' ',parameters('vm').tag)]"
                 }
