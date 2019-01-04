@@ -9,7 +9,9 @@
             "type": "object"
         }
     },
-    "variables": {},
+    "variables": {
+        "acrLoginPassword":"[listCredentials(resourceId('Microsoft.ContainerRegistry/registries',parameters('acrSettings').acrName),'2017-10-01').passwords[0].value]"
+    },
     "resources": [
         {
             "apiVersion": "2017-04-01",
@@ -154,7 +156,7 @@
                     "fileUris": [
                         "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/scripts/dockerimages.sh?token=AT3nZuvUA0v9qFNSlZN97IBEowEdsHKZks5cNx2OwA%3D%3D"
                     ],
-                    "commandToExecute": "[concat('sh dockerimages.sh',' ',parameters('vm').giturl,' ',parameters('acrSettings').acrLoginServer,' ',parameters('acrSettings').acrLoginame,' ',parameters('acrSettings').acrLoginPassword,' ',parameters('vm').tag)]"
+                    "commandToExecute": "[concat('sh dockerimages.sh',' ',parameters('vm').giturl,' ',parameters('acrSettings').acrLoginServer,' ',parameters('acrSettings').acrLoginame,' ',variables('acrLoginPassword'),' ',parameters('vm').tag)]"
                 }
             }
         }
