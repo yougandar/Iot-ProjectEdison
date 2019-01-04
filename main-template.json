@@ -232,7 +232,7 @@
             "vmSize": "standard_A2",
             "imagePublisher": "Canonical",
             "imageOffer": "UbuntuServer",
-            "ubuntuOSVersion": "18.04.0-LTS",
+            "ubuntuOSVersion": "18.04-LTS",
             "networkSecurityGroupName": "nsg",
             "giturl": "[parameters('githuburl')]",
             "tag": "latest"
