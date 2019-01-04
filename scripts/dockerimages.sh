@@ -10,6 +10,7 @@ ACR_USERNAME="$3"
 ACR_PASSWD="$4"
 TAG="$5"
 GIT_PATH=`pwd`
+echo "$GIT_URL" >>  $LOG
 
 #Installing Azure CLI
 sudo apt-get install apt-transport-https lsb-release ca-certificates curl software-properties-common gnupg2 pass -y
