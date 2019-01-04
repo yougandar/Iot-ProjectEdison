@@ -1,7 +1,6 @@
 #!/bin/bash
 #Comment - Installs the required packages for building images
-#Author - Komali and gang
-
+#Author
 AZ_REPO=$(lsb_release -cs)
 LOG="/tmp/install.log.`date +%d%m%Y_%T`"
 GIT_URL="$1"
@@ -10,6 +9,7 @@ ACR_USERNAME="$3"
 ACR_PASSWD="$4"
 TAG="$5"
 GIT_PATH=`pwd`
+echo "$GIT_URL" >>  $LOG
 
 #Installing Azure CLI
 sudo apt-get install apt-transport-https lsb-release ca-certificates curl software-properties-common gnupg2 pass -y
