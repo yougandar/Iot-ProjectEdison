@@ -55,25 +55,18 @@
         },
         "tenantId": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "dcf9e4d3-f44a-4c28-be12-8245c0d35668",
             "metadata": {
                 "description": "TenantId of the created Azure active directory application. For instructions, see  (https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-howto-tenant) in the Microsoft documentation"
             }
         },
-        "adObjectId": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-              "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
-            }
-          },
         "azureAccountName": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "nvtuluva@sysgaininc.onmicrosoft.com"
         },
         "azurePassword": {
             "type": "securestring",
-            "defaultValue": ""
+            "defaultValue": "v!vek@225"
         },
         "sessionId": {
             "type": "string",
@@ -94,14 +87,14 @@
         },
         "servicePrincipalClientId": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "e00deb3a-8d64-455e-90d8-06970057efa8",
             "metadata": {
                 "description": "Client ID (used by cloudprovider)"
             }
         },
         "servicePrincipalClientSecret": {
             "type": "securestring",
-            "defaultValue": "",
+            "defaultValue": "3bf06532-ac69-4166-8a16-3b6677e82c8f",
             "metadata": {
                 "description": "The Service Principal Client Secret."
             }
@@ -125,6 +118,10 @@
             "metadata": {
                 "description": "The number of SignalR Unit."
             }
+        },
+        "githuburl": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/scripts/dockerimages.sh?token=AT3nZjfWARrC4m2Goe2GTFb-bt18Cxtnks5cNyoDwA%3D%3D"
         }
     },
     "variables": {
@@ -204,10 +201,12 @@
             "osDiskSizeGB": "[parameters('osDiskSizeGB')]"
         },
         "acrSettings": {
-            "acrName": "[concat('acr',variables('suffix'))]",
+            "acrName": "[variables('acrName1')]",
             "acrAdminUserEnabled": true,
             "location": "[parameters('location')]",
-            "acrSku": "Basic"
+            "acrSku": "Basic",
+            "acrLoginServer": "[variables('acrServerName')]",
+            "acrLoginame": "[variables('acrAdminName')]"
         },
         "vm": {
             "pipName": "[concat('edisonpip',variables('suffix'))]",
@@ -228,7 +227,8 @@
             "imageOffer": "UbuntuServer",
             "ubuntuOSVersion": "16.04.0-LTS",
             "networkSecurityGroupName": "nsg",
-            "giturl":"https://github.com/litebulb/ProjectEdison.git"
+            "giturl": "[parameters('githuburl')]",
+            "tag": "latest"
         },
         "serviceBusProperties": {
             "serviceBusNamespaceName": "[variables('serviceBusNamespaceName')]",
@@ -253,25 +253,16 @@
             "name": "[concat('dps',variables('suffix'))]",
             "location": "[parameters('location')]"
         },
-        "keyVaultSettings":{
-            "keyVaultName": "[concat('keyvault',variables('suffix'))]",
-            "tenantId": "[parameters('tenantId')]",
-            "objectId": "[parameters('adObjectId')]",
-            "keysPermissions": ["list"],
-            "secretsPermissions": ["list"],
-            "skuName": "Standard",
-            "enableVaultForDeployment": false,
-            "enableVaultForDiskEncryption": false,
-            "enabledForTemplateDeployment": false,
-            "location": "[parameters('location')]"
-        },
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
         "virtualNetworkName1": "[concat('edisonVnet', variables('suffix'))]",
         "subnetName1": "edisonSubnet",
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName1'))]",
         "serviceBusDefaultSASKeyName": "RootManageSharedAccessKey",
-        "serviceBusNamespaceName": "[concat('snamespace',variables('suffix'))]"
+        "serviceBusNamespaceName": "[concat('snamespace',variables('suffix'))]",
+        "acrName1": "[concat('acr',variables('suffix'))]",
+        "acrServerName": "[concat(variables('acrName1'),'.azurecr.io')]",
+        "acrAdminName": "[variables('acrName1')]"
     },
     "resources": [
         {
@@ -440,7 +431,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry.json?token=AT7l1fl7sTvNOenrFb81faQVt2PXfW6Iks5cN0PJwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry.json?token=AT3nZiP396mpUCXZMiWUIfCAqWL6mK9Nks5cNzLJwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -461,12 +452,18 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/dockerVm.json?token=AT7l1XRhe_fw-7kfpBt1jR0vEEJe0dUFks5cN0QXwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/dockervmext.json?token=AT3nZrBg_0Wajv6vmPCZRVsgUsrs6LZ5ks5cODkTwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "vm": {
                         "value": "[variables('vm')]"
+                    },
+                    "acrSettings": {
+                        "value": "[variables('acrSettings')]"
+                    },
+                    "acrLoginPassword":{
+                        "value":"[reference('AzureContainerRegistry').outputs.acrPassword.value]"
                     }
                 }
             }
@@ -529,24 +526,6 @@
                     },
                     "iothubSettings": {
                         "value": "[variables('iothubSettings')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "keyVault",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-02-01",
-            "dependsOn": [],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/keyVault.json?token=AT7l1QvqHUMlmodNEM8XDjEFFcADxmzKks5cN0Q-wA%3D%3D')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "keyVaultSettings": {
-                        "value": "[variables('keyVaultSettings')]"
                     }
                 }
             }
