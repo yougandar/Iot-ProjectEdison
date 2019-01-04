@@ -225,7 +225,7 @@
             "vmSize": "standard_A2",
             "imagePublisher": "Canonical",
             "imageOffer": "UbuntuServer",
-            "ubuntuOSVersion": "16.04.0-LTS",
+            "ubuntuOSVersion": "18.04.0-LTS",
             "networkSecurityGroupName": "nsg",
             "giturl": "[parameters('githuburl')]",
             "tag": "latest"
@@ -452,7 +452,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/dockervmext.json?token=AT3nZrBg_0Wajv6vmPCZRVsgUsrs6LZ5ks5cODkTwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/dockerVm.json?token=AT3nZoulkHYY16twNJByEeLPux0fPKpkks5cOER3wA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
