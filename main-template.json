@@ -128,7 +128,7 @@
         },
         "githuburl": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/scripts/dockerimages.sh?token=AT3nZjfWARrC4m2Goe2GTFb-bt18Cxtnks5cNyoDwA%3D%3D"
+            "defaultValue": "https://github.com/litebulb/ProjectEdison.git"
         }
     },
     "variables": {
@@ -236,7 +236,7 @@
             "networkSecurityGroupName": "nsg",
             "giturl": "[parameters('githuburl')]",
             "tag": "latest",
-            "fileUri":"[concat(variables('baseUrl'),'')]"
+            "fileUri":"[concat(variables('baseUrl'),'scripts/dockerimages.sh?token=AT3nZtMYSuIR_oFMmhh4wKxPqTWu5tweks5cOGLEwA%3D%3D')]"
         },
         "serviceBusProperties": {
             "serviceBusNamespaceName": "[variables('serviceBusNamespaceName')]",
