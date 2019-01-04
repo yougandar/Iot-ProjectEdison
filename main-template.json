@@ -60,6 +60,13 @@
                 "description": "TenantId of the created Azure active directory application. For instructions, see  (https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-howto-tenant) in the Microsoft documentation"
             }
         },
+        "adObjectId": {
+            "type": "string",
+            "defaultValue": "277b4abb-f68a-462e-b04d-ef2f4e3a5337",
+            "metadata": {
+              "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
+            }
+          },
         "azureAccountName": {
             "type": "string",
             "defaultValue": ""
@@ -251,6 +258,18 @@
         },
         "dpsSettings": {
             "name": "[concat('dps',variables('suffix'))]",
+            "location": "[parameters('location')]"
+        },
+         "keyVaultSettings":{
+            "keyVaultName": "[concat('keyvault',variables('suffix'))]",
+            "tenantId": "[parameters('tenantId')]",
+            "objectId": "[parameters('adObjectId')]",
+            "keysPermissions": ["list"],
+            "secretsPermissions": ["list"],
+            "skuName": "Standard",
+            "enableVaultForDeployment": false,
+            "enableVaultForDiskEncryption": false,
+            "enabledForTemplateDeployment": false,
             "location": "[parameters('location')]"
         },
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/",
@@ -526,6 +545,24 @@
                     },
                     "iothubSettings": {
                         "value": "[variables('iothubSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "keyVault",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/keyVault.json?token=AT7l1ZjJkOvjmHZMxrzw9PwuzZA_CnGAks5cOEeHwA%3D%3D')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "keyVaultSettings": {
+                        "value": "[variables('keyVaultSettings')]"
                     }
                 }
             }
