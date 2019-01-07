@@ -10,6 +10,9 @@
         },
         "acrLoginPassword":{
             "type": "string"
+        },
+        "serviceBusProperties":{
+            "type": "string"
         }
     },
     "variables": {},
@@ -157,7 +160,7 @@
                     "fileUris": [
                         "[parameters('vm').fileUri]"
                     ],
-                    "commandToExecute": "[concat('sh dockerimages1.sh',' ',parameters('vm').giturl,' ',parameters('acrSettings').acrLoginServer,' ',parameters('acrSettings').acrLoginame,' ',parameters('acrLoginPassword'),' ',parameters('vm').tag)]"
+                    "commandToExecute": "[concat('sh dockerimages1.sh',' ',parameters('vm').giturl,' ',parameters('acrSettings').acrLoginServer,' ',parameters('acrSettings').acrLoginame,' ',parameters('acrLoginPassword'),' ',parameters('vm').tag,' ',parameters('serviceBusProperties').servicebusep,' ',parameters('serviceBusProperties').servicebusAccessKeyName,' ',parameters('serviceBusProperties').serviceBusAccessKey,' ',parameters('serviceBusProperties').entity)]"
                 }
             }
         }
