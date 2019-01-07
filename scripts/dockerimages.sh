@@ -83,7 +83,7 @@ else
         echo "------------------------------------" >> $LOG
         echo "The $GIT_PATH doen't exist & clone failed" >> $LOG
 fi
-
+sleep 40s
 #Checking for Edison images
 
         IMAGE=`docker images edison* --format "{{.Repository}}" | wc -l`
