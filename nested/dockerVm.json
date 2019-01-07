@@ -12,7 +12,7 @@
             "type": "string"
         },
         "serviceBusProperties":{
-            "type": "string"
+            "type": "object"
         }
     },
     "variables": {},
