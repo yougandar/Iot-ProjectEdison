@@ -236,7 +236,7 @@
             "networkSecurityGroupName": "nsg",
             "giturl": "[parameters('githuburl')]",
             "tag": "latest",
-            "fileUri":"[concat(variables('baseUrl'),'scripts/dockerimages.sh?token=AT3nZjS_jLbAua2Z10RbBrL-D6TB0kyKks5cPD-uwA%3D%3D')]"
+            "fileUri":"[concat(variables('baseUrl'),'scripts/dockerimages1.sh?token=AT3nZkT_l2tDwNf2lct6eNW6bAWePv-4ks5cPGkBwA%3D%3D')]"
         },
         "serviceBusProperties": {
             "serviceBusNamespaceName": "[variables('serviceBusNamespaceName')]",
@@ -537,11 +537,11 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/dps.json?token=AT3nZiu4I0S_iaO00E2XQAG3oJSulmeFks5cPEEmwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/dps.json?token=AT3nZiIWsuqRtqCIOrJy5pZmGYf7iOnoks5cPGjUwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "dpsSettings": {
+                    "iotDpsSettings": {
                         "value": "[variables('iotDpsSettings')]"
                     },
                     "iothubSettings": {
