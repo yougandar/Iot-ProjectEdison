@@ -2,7 +2,7 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "dpsSettings":{
+        "iotDpsSettings":{
                 "type": "object"
         },
         "iothubSettings":{
@@ -12,9 +12,9 @@
     "variables": {},
     "resources": [
         {
-            "name": "[parameters('dpsSettings').name]",
+            "name": "[parameters('iotDpsSettings').iotDpsName]",
             "apiVersion": "2017-11-15",
-            "location": "[parameters('dpsSettings').location]",
+            "location": "[parameters('iotDpsSettings').location]",
             "type": "Microsoft.Devices/provisioningServices",
             "sku": {
                 "name": "S1",
@@ -32,5 +32,15 @@
             },
             "dependsOn": []
         }
-    ]
+    ],
+    "outputs": {
+        "iotDpsIdScope": {
+            "value": "[reference(resourceId('Microsoft.Devices/ProvisioningServices',parameters('iotDpsSettings').iotDpsName)).idScope]",
+            "type": "string"
+        },
+        "iotDpsPrimaryKey": {
+            "value": "[listkeys(resourceId('Microsoft.Devices/ProvisioningServices/keys',parameters('iotDpsSettings').iotDpsName,'provisioningserviceowner'),'2017-08-21-preview').primaryKey]",
+            "type": "string"
+        }
+    }
 }
