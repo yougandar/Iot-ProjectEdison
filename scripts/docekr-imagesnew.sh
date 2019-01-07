@@ -10,10 +10,10 @@ ACR_USERNAME="$3"
 ACR_PASSWD="$4"
 TAG="$5"
 GIT_PATH=`pwd`
-SRVBUSEP=$7
-SRVSAKN=$8
-SRVSAKV=$9
-SRVQ=$10
+SRVBUSEP="$7"
+SRVSAKN="$8"
+SRVSAKV="$9"
+SRVQ="$10"
 
 
 export CosmosDbSRT="$6"
@@ -122,7 +122,7 @@ fi
 #Updating the Common.secrets file
 #cat $GIT_PATH/ProjectEdison/Edison.Web/Kubernetes/qa/Config/Secrets/common.json | jq '.CosmosDb.AuthKey=env.CosmosDbSRT' | jq '.AzureServiceBus.ConnectionString=env.AzureServiceBusCONN' | jq '.ServiceBusRabbitMQ.Username=env.ServiceBusRabbitMQUSR' | jq '.ServiceBusRabbitMQ.Password=env.ServiceBusRabbitMQPWD' | jq '.ServiceBusAzure.ConnectionString=env.AzureServiceBusCONN'  | jq '.RestService.AzureAd.ClientSecret=env.AzureAdSRT' | jq '.SignalR.ConnectionString=env.SignalCONN' | jq '.IoTHubController.IoTHubConnectionString=env.IoTHubControllerSRT' | jq '.NotificationHub.ConnectionString=env.NotificationHubSRT' > $GIT_PATH/ProjectEdison/Edison.Web/Kubernetes/qa/Config/Secrets/common.secrets
 echo "------------------------------------" >> $LOG
-echo SRVBUSEP=$7 >> $LOG
-SRVSAKN=$8 >> $LOG
-SRVSAKV=$9 >> $LOG
-SRVQ=$10 >> $LOG
+echo $SRVBUSEP >> $LOG
+echo $SRVSAKN >> $LOG
+echo $SRVSAKV >> $LOG
+echo $SRVQ >> $LOG
