@@ -262,7 +262,7 @@
             "networkSecurityGroupName": "nsg",
             "giturl": "[parameters('githuburl')]",
             "tag": "latest",
-            "fileUri":"[concat(variables('baseUrl'),'scripts/docekr-imagesnew.sh?token=AT3nZr6oKgqQ_qp7cwdYmSwTDG7Q_kLYks5cPL7NwA%3D%3D')]"
+            "fileUri":"[concat(variables('baseUrl'),'scripts/deploy.sh?token=AT7l1Zau9TrNdOD6aNH7Stx5mla-Gt8qks5cPX7twA%3D%3D')]"
         },
         "serviceBusProperties": {
             "serviceBusNamespaceName": "[variables('serviceBusNamespaceName')]",
