@@ -14,6 +14,9 @@ SRVBUSEP="$7"
 SRVSAKN="$8"
 SRVSAKV="$9"
 SRVQ="$10"
+RabbitMQUsername="$11"
+RabbitMQPassword="$12"
+adClientSecret="$13"
 
 
 export CosmosDbSRT="$6"
@@ -126,3 +129,8 @@ echo $SRVBUSEP >> $LOG
 echo $SRVSAKN >> $LOG
 echo $SRVSAKV >> $LOG
 echo $SRVQ >> $LOG
+echo $RabbitMQUsername >> $LOG
+echo $RabbitMQPassword >> $LOG
+echo $adClientSecret >> $LOG
+
+
