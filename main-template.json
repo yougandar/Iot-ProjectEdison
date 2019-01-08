@@ -149,6 +149,17 @@
                 "description": "The number of SignalR Unit."
             }
         },
+        "dockerVM": {
+            "type": "string",
+            "defaultValue": "",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Choose Yes/No to add Docker VM as part of Solution deployment"
+            }
+        }, 
         "githuburl": {
             "type": "string",
             "defaultValue": "https://github.com/litebulb/ProjectEdison.git",
@@ -496,7 +507,8 @@
         {
             "name": "DockerVM",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2015-01-01",
+            "apiVersion": "2016-02-01",
+            "condition": "[equals(parameters('dockerVM'), 'Yes')]",
             "dependsOn": [
                 "AzureContainerRegistry",
                 "StorageBlob"
@@ -605,14 +617,6 @@
         }
     ],
     "outputs": {
-        "vmAdminUser": {
-            "type": "string",
-            "value": "[reference('DockerVM').outputs.vmAdminUser.value]"
-        },
-        "vmPassword": {
-            "type": "string",
-            "value": "[reference('DockerVM').outputs.vmPassword.value]"
-        },
         "serviceBusConnectionString": {
             "type": "string",
             "value": "[reference('ServiceBus').outputs.serviceBusConnectionString.value]"
