@@ -1,29 +1,47 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-     "cosmosDbSettings":{
-         "type": "object"
-     }
-  },
-  "variables": { },
-  "resources": [
-    {
-      "apiVersion": "2015-04-08",
-      "type": "Microsoft.DocumentDB/databaseAccounts",
-      "kind": "GlobalDocumentDB",
-      "name": "[parameters('cosmosDbSettings').cosmosDbAccountName]",
-      "location": "[parameters('cosmosDbSettings').location]",
-      "properties": {
-        "name": "[parameters('cosmosDbSettings').cosmosDbAccountName]",
-        "databaseAccountOfferType": "[parameters('cosmosDbSettings').offerType]",
-        "locations": [
-          {
-            "locationName": "[parameters('cosmosDbSettings').location]",
-            "failoverPriority": 0
-          }
-        ]
-      }
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "cosmosDbSettings": {
+            "type": "object"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2015-04-08",
+            "type": "Microsoft.DocumentDB/databaseAccounts",
+            "kind": "GlobalDocumentDB",
+            "name": "[parameters('cosmosDbSettings').cosmosDbAccountName]",
+            "location": "[parameters('cosmosDbSettings').location]",
+            "properties": {
+                "name": "[parameters('cosmosDbSettings').cosmosDbAccountName]",
+                "databaseAccountOfferType": "[parameters('cosmosDbSettings').offerType]",
+                "locations": [
+                    {
+                        "locationName": "[parameters('cosmosDbSettings').location]",
+                        "failoverPriority": 0
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {
+        "cosmosDBAccountName": {
+            "type": "string",
+            "value": "[parameters('cosmosDbSettings').cosmosDbAccountName]"
+        },
+        "cosmosDBAccountEndPoint": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('cosmosDbSettings').cosmosDbAccountName)).documentEndpoint]"
+        },
+        "cosmosDBAccountKey": {
+            "type": "string",
+            "value": "[listkeys(resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('cosmosDbSettings').cosmosDbAccountName), '2015-04-08').primaryMasterKey]"
+        },
+        "connectionString": {
+            "type": "string",
+            "value": "[concat('AccountEndpoint=https://', parameters('cosmosDbSettings').cosmosDbAccountName, '.documents.azure.com:443/;AccountKey=', listkeys(resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('cosmosDbSettings').cosmosDbAccountName), '2015-04-08').primaryMasterKey, ';')]"
+        }
     }
-  ]
 }
