@@ -1,0 +1,57 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            " value": "eastus"
+        },
+        "signalRlocation": {
+            " value": "eastus"
+        },
+        "omsWorkspaceRegion": {
+            " value": "southeastasia"
+        },
+        "tenantId": {
+            " value": "dcf9e4d3-f44a-4c28-be12-8245c0d35668"
+        },
+        "adObjectId": {
+            " value": "277b4abb-f68a-462e-b04d-ef2f4e3a5337"
+        },
+        "azureAccountName": {
+            " value": ""
+        },
+        "azurePassword": {
+            " value": ""
+        },
+        "sessionId": {
+            " value": ""
+        },
+        "vmUsername": {
+            " value": "sysgainadmin"
+        },
+        "vmPassword": {
+            " value": "Password@1234"
+        },
+        "cosmosdbModuleUri": {
+            " value": "https://github.com/ChaitanyaGeddam/edison/raw/master/scripts/cosmos.zip"
+        },
+        "osDiskSizeGB": {
+            " value": 30
+        },
+        "servicePrincipalClientId": {
+            " value": "e00deb3a-8d64-455e-90d8-06970057efa8"
+        },
+        "servicePrincipalClientSecret": {
+            " value": "3bf06532-ac69-4166-8a16-3b6677e82c8f"
+        },
+        "webAdminPackageUri": {
+            " value": "https://github.com/ChaitanyaGeddam/edison/raw/master/code/Edison.AdminPortal.zip"
+        },
+        "signalrCapacity": {
+            " value": 1
+        },
+        "githuburl": {
+            " value": "https://github.com/litebulb/ProjectEdison.git"
+        }
+    }
+}
