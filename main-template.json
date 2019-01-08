@@ -504,7 +504,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/dockerVm.json?token=AT3nZo9iCF42UZCenVCLarttaCugzzV8ks5cPJ2swA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/dockerVm.json?token=AT7l1f3u09uLMJ64ajRHDaiO9neg6fVvks5cPX8cwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
