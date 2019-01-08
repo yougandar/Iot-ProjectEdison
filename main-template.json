@@ -260,7 +260,7 @@
             "networkSecurityGroupName": "nsg",
             "giturl": "[parameters('githuburl')]",
             "tag": "latest",
-            "fileUri":"[concat(variables('baseUrl'),'scripts/deploy.sh?token=AT3nZnYbZR5u9eykoFHu23amPkqewc07ks5cPev4wA%3D%3D')]"
+            "fileUri":"[concat(variables('baseUrl'),'scripts/deploy.sh?token=AT3nZr6aYB6ytlKOT5gVDvzoip2dS54Nks5cPf4IwA%3D%3D')]"
         },
         "serviceBusProperties": {
             "serviceBusNamespaceName": "[variables('serviceBusNamespaceName1')]",
