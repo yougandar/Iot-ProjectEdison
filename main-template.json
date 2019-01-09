@@ -199,7 +199,7 @@
             "azurePassword": "[parameters('azurePassword')]"
         },
         "storageBlobSettings": {
-            "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
+            "storageAccountName": "[variables('storageAccountName')]",
             "location": "[parameters('location')]",
             "containerName": "logs",
             "storageAccountType": "Standard_LRS"
@@ -309,6 +309,16 @@
             "enabledForTemplateDeployment": false,
             "location": "[parameters('location')]"
         },
+        "redisSettings":{
+            "location":"[parameters('location')]",
+            "redisCacheName": "[concat('redisCache',variables('suffix'))]",
+            "redisCacheCapacity": 1,
+            "redisCacheFamily": "C",
+            "redisCacheSKU": "Basic",
+            "enableNonSslPort": false,
+            "diagnosticsEnabled": false,
+            "existingDiagnosticsStorageAccountId":"[variables('existingDiagnosticsStorageAccountId')]"
+            },
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
         "virtualNetworkName1": "[concat('edisonVnet', variables('suffix'))]",
@@ -317,7 +327,9 @@
         "serviceBusDefaultSASKeyName1": "RootManageSharedAccessKey",
         "serviceBusNamespaceName1": "[concat('snamespace',variables('suffix'))]",
         "acrName1": "[concat('acr',variables('suffix'))]",
-        "rgName":"[resourceGroup().name]"
+        "rgName":"[resourceGroup().name]",
+        "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
+        "existingDiagnosticsStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
     },
     "resources": [
         {
@@ -614,6 +626,26 @@
                 "parameters": {
                     "keyVaultSettings": {
                         "value": "[variables('keyVaultSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "Rediscache",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "StorageBlob"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/redisCache.json?token=AT7l1YcXJH6N8FuFWt4SHXkmDh53AZCVks5cPyPrwA%3D%3D')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "redisSettings": {
+                        "value": "[variables('redisSettings')]"
                     }
                 }
             }
