@@ -231,7 +231,7 @@
             "servicename": "[concat('kubernetes', variables('suffix'))]",
             "kubernetesVersion": "1.11.5",
             "location": "[parameters('location')]",
-            "enableRBAC": true,
+            "enableRBAC": false,
             "dnsPrefix": "clusterdns",
             "enableHttpApplicationRouting": true,
             "osType": "Linux",
