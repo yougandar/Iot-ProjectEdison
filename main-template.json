@@ -316,7 +316,7 @@
             "redisCacheFamily": "C",
             "redisCacheSKU": "Basic",
             "enableNonSslPort": false,
-            "diagnosticsEnabled": false,
+            "diagnosticsEnabled": true,
             "existingDiagnosticsStorageAccountId":"[variables('existingDiagnosticsStorageAccountId')]"
             },
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/",
