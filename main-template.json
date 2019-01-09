@@ -67,6 +67,13 @@
               "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
             }
           },
+          "adClientSecret": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+              "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
+            }
+          },
         "azureAccountName": {
             "type": "string",
             "defaultValue": "",
@@ -105,15 +112,6 @@
         "cosmosdbModuleUri": {
             "type": "string",
             "defaultValue": "https://github.com/ChaitanyaGeddam/edison/raw/master/scripts/cosmos.zip"
-        },
-        "osDiskSizeGB": {
-            "defaultValue": 30,
-            "minValue": 30,
-            "maxValue": 1023,
-            "type": "int",
-            "metadata": {
-                "description": "Disk size (in GB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023. Specifying 0 will apply the default disk size for that agentVMSize."
-            }
         },
         "servicePrincipalClientId": {
             "type": "string",
@@ -194,7 +192,7 @@
             "runbookName": "container",
             "moduleName": "CosmosDB",
             "cosmosdbModuleUri": "[parameters('cosmosdbModuleUri')]",
-            "runbookUri": "[concat(variables('baseUrl'),'scripts/initializeCosmosDb.ps1?token=AT3nZhyJmAGP4f2BwNcuwrEXKXL24jtCks5cPD-PwA%3D%3D')]",
+            "runbookUri": "[concat(variables('baseUrl'),'scripts/initializeCosmosDb.ps1?token=AT3nZpVxFMVbmFfWqhhkFbFDg-JPvS4kks5cPewfwA%3D%3D')]",
             "sessionId": "[parameters('sessionId')]",
             "tenantId": "[parameters('tenantId')]",
             "azureAccountName": "[parameters('azureAccountName')]",
@@ -242,15 +240,15 @@
             "servicePrincipalClientId": "[parameters('servicePrincipalClientId')]",
             "servicePrincipalClientSecret": "[parameters('servicePrincipalClientSecret')]",
             "networkPlugin": "kubenet",
-            "osDiskSizeGB": "[parameters('osDiskSizeGB')]"
+            "osDiskSizeGB": 30
         },
         "acrSettings": {
             "acrName": "[variables('acrName1')]",
             "acrAdminUserEnabled": true,
             "location": "[parameters('location')]",
             "acrSku": "Basic",
-            "acrLoginServer": "[variables('acrServerName')]",
-            "acrLoginame": "[variables('acrAdminName')]"
+            "acrLoginServer": "[concat(variables('acrName1'),'.azurecr.io')]",
+            "acrLoginame": "[variables('acrName1')]"
         },
         "vm": {
             "pipName": "[concat('edisonpip',variables('suffix'))]",
@@ -273,25 +271,21 @@
             "networkSecurityGroupName": "nsg",
             "giturl": "[parameters('githuburl')]",
             "tag": "latest",
-            "fileUri":"[concat(variables('baseUrl'),'scripts/deploy.sh?token=AT7l1Zau9TrNdOD6aNH7Stx5mla-Gt8qks5cPX7twA%3D%3D')]"
+            "fileUri":"[concat(variables('baseUrl'),'scripts/deploy.sh?token=AT3nZr6aYB6ytlKOT5gVDvzoip2dS54Nks5cPf4IwA%3D%3D')]"
         },
         "serviceBusProperties": {
-            "serviceBusNamespaceName": "[variables('serviceBusNamespaceName')]",
+            "serviceBusNamespaceName": "[variables('serviceBusNamespaceName1')]",
             "location": "[parameters('location')]",
-            "serviceBusDefaultSASKeyName": "[variables('serviceBusDefaultSASKeyName')]",
-            "serviceBusAuthRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName'), variables('serviceBusDefaultSASKeyName'))]",
+            "serviceBusDefaultSASKeyName": "[variables('serviceBusDefaultSASKeyName1')]",
+            "serviceBusAuthRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName1'), variables('serviceBusDefaultSASKeyName1'))]",
             "skuName": "Standard",
-            "serviceBusQueueName1": "device-synchronization-messages",
-            "serviceBusQueueName2": "iothub-controller-messages",
-            "serviceBusQueueName3": "notification-messages",
-            "serviceBusQueueName4": "response-messages",
-            "serviceBusQueueName5": "signalr-messages",
-            "serviceBusQueueName6": "state-sagas",
-            "cosmosdbkey":"582xmZxpszMIWxDh3sVeKxOqVaVTsvvezmcMGbik3cs=",
-            "servicebusep":"[concat('Endpoint=sb://',variables('serviceBusNamespaceName'),'.servicebus.windows.net/')]",
-            "servicebusAccessKeyName":"[concat('SharedAccessKeyName=iothubroutes_',variables('rgName'))]",
-            "serviceBusAccessKey":"SharedAccessKey=DjjvxImg+1yifmz5fBLdo3PeKURp+WqajAqEk+CCMuc=",
-            "entity":"EntityPath=edison_input"
+            "serviceBusQueueName1": "edison_input",
+            "servicebusEndPoint":"[concat('Endpoint=sb://',variables('serviceBusNamespaceName1'),'.servicebus.windows.net/')]",
+            "routesSharedAccessKeyName":"SharedAccessKeyName=edison_inputsend",
+            "entity":"EntityPath=edison_input",
+            "serviceBusRabbitMQUsername": "Admin",
+            "serviceBusRabbitMQPassword": "Edison1234",
+            "adClientSecret":"[parameters('adClientSecret')]"
         },
         "signalrSettings": {
             "location": "[parameters('signalRlocation')]",
@@ -315,16 +309,14 @@
             "enabledForTemplateDeployment": false,
             "location": "[parameters('location')]"
         },
-        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/",
+        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
         "virtualNetworkName1": "[concat('edisonVnet', variables('suffix'))]",
         "subnetName1": "edisonSubnet",
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName1'))]",
-        "serviceBusDefaultSASKeyName": "RootManageSharedAccessKey",
-        "serviceBusNamespaceName": "[concat('snamespace',variables('suffix'))]",
+        "serviceBusDefaultSASKeyName1": "RootManageSharedAccessKey",
+        "serviceBusNamespaceName1": "[concat('snamespace',variables('suffix'))]",
         "acrName1": "[concat('acr',variables('suffix'))]",
-        "acrServerName": "[concat(variables('acrName1'),'.azurecr.io')]",
-        "acrAdminName": "[variables('acrName1')]",
         "rgName":"[resourceGroup().name]"
     },
     "resources": [
@@ -336,7 +328,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/notification-hub.json?token=AT3nZtLUFgJ8EENlzzmNtOPysszDzv7Aks5cPD_pwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/notification-hub.json?token=AT3nZoWvapXmj7Gp4hWGxOxewrvFdrNFks5cPexDwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -347,14 +339,14 @@
             }
         },
         {
-            "name": "Cosmosdb",
+            "name": "CosmosDB",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/cosmosdb.json?token=AT3nZrQotlCTFxRm4JoLtvoP8py8OKE9ks5cPD_-wA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/cosmosdb.json?token=AT3nZvCQbyds6IyScqis6vUM_bBlc7puks5cPeyAwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -374,7 +366,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/automation-account.json?token=AT3nZvyn2Y3Xn7dfg6t8qSmbRHik_aYqks5cPEATwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/automation-account.json?token=AT3nZkiPA2ldl6EaAkrbG44OFbBwgnv9ks5cPezHwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -395,7 +387,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/storageblob.json?token=AT3nZqQ71Qn_2JYuLdYw3CWjMlzDhibgks5cPEAswA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/storageblob.json?token=AT3nZn3cijzyDsiSMpmAcv59zPdkfFUgks5cPezYwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -409,16 +401,21 @@
             "name": "IotHub",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
-            "dependsOn": [],
+            "dependsOn": [ 
+                "ServiceBus"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/iothub.json?token=AT3nZuK1NLukbWxzsiQO72M8tWJnfx_Sks5cPEBEwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/iothub.json?token=AT3nZp21kzbx3ktteQbcysL3q3PyKz8Jks5cPeztwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "iotHubSettings": {
                         "value": "[variables('iotHubSettings')]"
+                    },
+                    "serviceBusProperties": {
+                        "value": "[variables('serviceBusProperties')]"
                     }
                 }
             }
@@ -435,7 +432,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/webadmin.json?token=AT3nZgFSqhlSawP2SzYIfTQ9MfBxPpjNks5cPEB8wA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/webadmin.json?token=AT3nZiJrsSjnZXGKKn08COnZABwgPG6Hks5cPe0AwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -455,7 +452,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/kubernetes.json?token=AT3nZmfFMJAYSZlClpVzMthbVPuKFNxHks5cPECRwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/kubernetes.json?token=AT3nZmQPTdTTlJXMcKnBvy-6B7qqg36iks5cPe0VwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -476,7 +473,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/omsWorkspace.json?token=AT3nZmDCMGdXosvvPIiljHZls-P094qDks5cPECowA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/omsWorkspace.json?token=AT3nZnHjEk49wUw7-LPhN3RaS8CTeaceks5cPe0qwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -494,7 +491,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry.json?token=AT3nZkhUg5gcMQKuoDpvZdDCO2rbRn8sks5cPEDAwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry.json?token=AT3nZpi5lpw0ieH76sebxt5H6slTxjJxks5cPe1AwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -516,7 +513,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/dockerVm.json?token=AT7l1f3u09uLMJ64ajRHDaiO9neg6fVvks5cPX8cwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/dockerVm.json?token=AT3nZjDeNiQL9Sq-L9JVNypJRjBdOTQ_ks5cPe1gwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -531,6 +528,12 @@
                     },
                     "serviceBusProperties": {
                         "value": "[variables('serviceBusProperties')]"
+                    },
+                    "cosmosDBPrimaryKey":{
+                        "value": "[reference('CosmosDB').outputs.cosmosDBAccountKey.value]"
+                    },
+                    "sbPrimaryKey":{
+                        "value": "[concat('SharedAccessKey=',reference('ServiceBus').outputs.sbPrimaryKey.value)]"
                     }
                 }
             }
@@ -543,7 +546,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/servicebus.json?token=AT3nZgLOlj2brwOQM0PVqge7lKnPYhksks5cPEDzwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/servicebus.json?token=AT3nZrfd9_Tf-fKfF-Dzf11NkG0x_Y9Sks5cPe2LwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -564,7 +567,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/signalR.json?token=AT3nZgo7V1jhbGwlZ_pQdYnYjknpJvrYks5cPEEMwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/signalR.json?token=AT3nZsB_Ff7i9wEEx_wRx-K2--mNL1jaks5cPe2iwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -584,7 +587,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/dps.json?token=AT3nZiIWsuqRtqCIOrJy5pZmGYf7iOnoks5cPGjUwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/dps.json?token=AT3nZk8jQBLaezm7jafOsv5e_-rHInRuks5cPe26wA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -605,7 +608,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/keyVault.json?token=AT3nZgWG8gqdjFKgEQ13iwGfDUlkLKBqks5cPEE6wA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/keyVault.json?token=AT3nZtA-K3RDSdYL-_9HUra149sUXHN6ks5cPe3PwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -619,7 +622,7 @@
     "outputs": {
         "serviceBusConnectionString": {
             "type": "string",
-            "value": "[reference('ServiceBus').outputs.serviceBusConnectionString.value]"
+            "value": "[reference('ServiceBus').outputs.connectionString.value]"
         },
         "SignalRAccessKey": {
             "type": "string",

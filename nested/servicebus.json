@@ -39,112 +39,26 @@
                         "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
                         "enablePartitioning": "false",
                         "enableExpress": "false"
-                    }
-                },
-                {
-                    "name": "[parameters('servicebusProperties').serviceBusQueueName2]",
-                    "apiVersion": "2017-04-01",
-                    "type": "Queues",
-                    "dependsOn": [
-                        "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusProperties').serviceBusNamespaceName)]"
-                    ],
-                    "properties": {
-                        "lockDuration": "PT5M",
-                        "maxSizeInMegabytes": "1024",
-                        "requiresDuplicateDetection": "false",
-                        "requiresSession": "false",
-                        "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
-                        "deadLetteringOnMessageExpiration": "false",
-                        "duplicateDetectionHistoryTimeWindow": "PT10M",
-                        "maxDeliveryCount": "10",
-                        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
-                        "enablePartitioning": "false",
-                        "enableExpress": "false"
-                    }
-                },
-                {
-                    "name": "[parameters('servicebusProperties').serviceBusQueueName3]",
-                    "apiVersion": "2017-04-01",
-                    "type": "Queues",
-                    "dependsOn": [
-                        "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusProperties').serviceBusNamespaceName)]"
-                    ],
-                    "properties": {
-                        "lockDuration": "PT5M",
-                        "maxSizeInMegabytes": "1024",
-                        "requiresDuplicateDetection": "false",
-                        "requiresSession": "false",
-                        "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
-                        "deadLetteringOnMessageExpiration": "false",
-                        "duplicateDetectionHistoryTimeWindow": "PT10M",
-                        "maxDeliveryCount": "10",
-                        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
-                        "enablePartitioning": "false",
-                        "enableExpress": "false"
-                    }
-                },
-                {
-                    "name": "[parameters('servicebusProperties').serviceBusQueueName4]",
-                    "apiVersion": "2017-04-01",
-                    "type": "Queues",
-                    "dependsOn": [
-                        "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusProperties').serviceBusNamespaceName)]"
-                    ],
-                    "properties": {
-                        "lockDuration": "PT5M",
-                        "maxSizeInMegabytes": "1024",
-                        "requiresDuplicateDetection": "false",
-                        "requiresSession": "false",
-                        "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
-                        "deadLetteringOnMessageExpiration": "false",
-                        "duplicateDetectionHistoryTimeWindow": "PT10M",
-                        "maxDeliveryCount": "10",
-                        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
-                        "enablePartitioning": "false",
-                        "enableExpress": "false"
-                    }
-                },
-                {
-                    "name": "[parameters('servicebusProperties').serviceBusQueueName5]",
-                    "apiVersion": "2017-04-01",
-                    "type": "Queues",
-                    "dependsOn": [
-                        "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusProperties').serviceBusNamespaceName)]"
-                    ],
-                    "properties": {
-                        "lockDuration": "PT5M",
-                        "maxSizeInMegabytes": "1024",
-                        "requiresDuplicateDetection": "false",
-                        "requiresSession": "false",
-                        "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
-                        "deadLetteringOnMessageExpiration": "false",
-                        "duplicateDetectionHistoryTimeWindow": "PT10M",
-                        "maxDeliveryCount": "10",
-                        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
-                        "enablePartitioning": "false",
-                        "enableExpress": "false"
-                    }
-                },
-                {
-                    "name": "[parameters('servicebusProperties').serviceBusQueueName6]",
-                    "apiVersion": "2017-04-01",
-                    "type": "Queues",
-                    "dependsOn": [
-                        "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusProperties').serviceBusNamespaceName)]"
-                    ],
-                    "properties": {
-                        "lockDuration": "PT5M",
-                        "maxSizeInMegabytes": "1024",
-                        "requiresDuplicateDetection": "false",
-                        "requiresSession": "false",
-                        "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
-                        "deadLetteringOnMessageExpiration": "false",
-                        "duplicateDetectionHistoryTimeWindow": "PT10M",
-                        "maxDeliveryCount": "10",
-                        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
-                        "enablePartitioning": "false",
-                        "enableExpress": "false"
-                    }
+                    },
+                    "resources": [
+                        {
+                            "apiVersion": "2015-08-01",
+                            "name": "[concat(parameters('servicebusProperties').serviceBusQueueName1,'send')]",
+                            "type": "AuthorizationRules",
+                            "dependsOn": [
+                                "[parameters('servicebusProperties').serviceBusQueueName1]"
+                            ],
+                            "properties": {
+                                "keyName": "[concat(parameters('servicebusProperties').serviceBusQueueName1,'send')]",
+                                "claimType": "SharedAccessKey",
+                                "claimValue": "None",
+                                "rights": [
+                                    "Send"
+                                ],
+                                "revision": -1
+                            }
+                        }
+                    ]
                 },
                 {
                     "name": "Microsoft.Insights/service",
@@ -182,9 +96,17 @@
         }
     ],
     "outputs": {
-        "serviceBusConnectionString": {
+        "connectionString": {
             "type": "string",
-            "value": "[listKeys(parameters('serviceBusProperties').serviceBusAuthRuleResourceId, '2017-04-01').primaryConnectionString]"
+            "value": "[listKeys(resourceId(concat('Microsoft.ServiceBus/namespaces/AuthorizationRules'),parameters('serviceBusProperties').serviceBusNamespaceName,'RootManageSharedAccessKey'),'2015-08-01').primaryConnectionString]"
+        },
+        "sbPrimaryKey": {
+            "type": "string",
+            "value": "[listKeys(resourceId(concat('Microsoft.ServiceBus/namespaces/Queues/AuthorizationRules'),parameters('serviceBusProperties').serviceBusNamespaceName,parameters('servicebusProperties').serviceBusQueueName1,concat(parameters('servicebusProperties').serviceBusQueueName1,'send')),'2015-08-01').PrimaryKey]"
+        },
+        "PrimaryConnectionString": {
+            "type": "string",
+            "value": "[concat('Endpoint=sb://',parameters('serviceBusProperties').serviceBusNamespaceName,'.servicebus.windows.net/;SharedAccessKeyName=',parameters('servicebusProperties').serviceBusQueueName1,'send;SharedAccessKey=',listKeys(resourceId(concat('Microsoft.ServiceBus/namespaces/Queues/AuthorizationRules'),parameters('serviceBusProperties').serviceBusNamespaceName,parameters('servicebusProperties').serviceBusQueueName1,concat(parameters('servicebusProperties').serviceBusQueueName1,'send')),'2015-08-01').PrimaryKey,';EntityPath=',parameters('servicebusProperties').serviceBusQueueName1)]"
         }
     }
 }

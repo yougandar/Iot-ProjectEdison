@@ -1,52 +1,105 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-   "iothubSettings":{
-     "type": "object"
-   }
-},
-  "variables": {},
-  "resources": [
-    {
-      "apiVersion": "2016-02-03",
-      "location": "[parameters('iothubSettings').location]",
-      "name": "[parameters('iothubSettings').iotHubName]",
-      "properties": {
-        "eventHubEndpoints": {
-          "events": {
-            "retentionTimeInDays":  "[parameters('iothubSettings').d2cMessageRetentionInDaysPeriod]",
-            "partitionCount": "[parameters('iothubSettings').d2cPartitionCount]"
-          }
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "iothubSettings": {
+            "type": "object"
+        },
+        "serviceBusProperties": {
+            "type": "object"
         }
-      },
-      "sku": {
-        "name": "[parameters('iothubSettings').skuName]",
-        "capacity": "[parameters('iothubSettings').capacityUnits]"
-      },
-      "type": "Microsoft.Devices/IotHubs"
     },
-    {
-      "apiVersion": "2016-02-03",
-      "dependsOn": [
-        "[concat('Microsoft.Devices/iothubs/',parameters('iothubSettings').iotHubName)]"
-      ],
-      "name": "[concat(parameters('iothubSettings').iotHubName, '/events/',parameters('iothubSettings').d2cConsumerGroupName)]",
-      "type": "Microsoft.Devices/iotHubs/eventhubEndpoints/ConsumerGroups"
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('iothubSettings').iotHubName]",
+            "type": "Microsoft.Devices/IotHubs",
+            "apiVersion": "2016-02-03",
+            "location": "[parameters('iothubSettings').location]",
+            "properties": {
+                "eventHubEndpoints": {
+                    "events": {
+                        "retentionTimeInDays": "[parameters('iothubSettings').d2cMessageRetentionInDaysPeriod]",
+                        "partitionCount": "[parameters('iothubSettings').d2cPartitionCount]"
+                    }
+                },
+                "routing": {
+                    "endpoints": {
+                        "serviceBusQueues": [
+                            {
+                                "name":  "EdisonProcessor",
+                                "connectionString": "[concat('Endpoint=sb://',parameters('serviceBusProperties').serviceBusNamespaceName,'.servicebus.windows.net/;SharedAccessKeyName=',parameters('servicebusProperties').serviceBusQueueName1,'send;SharedAccessKey=',listKeys(resourceId(concat('Microsoft.ServiceBus/namespaces/Queues/AuthorizationRules'),parameters('serviceBusProperties').serviceBusNamespaceName,parameters('servicebusProperties').serviceBusQueueName1,concat(parameters('servicebusProperties').serviceBusQueueName1,'send')),'2015-08-01').PrimaryKey,';EntityPath=',parameters('servicebusProperties').serviceBusQueueName1)]",
+                                "subscriptionId": "[subscription().subscriptionId]",
+                                "resourceGroup": "[resourceGroup().name]"
+                            }
+                        ]
+                    },
+                    "routes": [
+                        {
+                            "name": "EdisonDevProcessorDeviceLifecycle",
+                            "source": "DeviceMessages",
+                            "condition": "true",
+                            "endpointNames": [
+                              "EdisonProcessor"
+                            ],
+                            "isEnabled": true
+                        },
+                        {
+                            "name": "EdisonDevProcessorDeviceTwinChanges",
+                            "source": "DeviceMessages",
+                            "condition": "true",
+                            "endpointNames": [
+                              "EdisonProcessor"
+                            ],
+                            "isEnabled": true
+                        },
+                        {
+                            "name": "EdisonDevProcessorRoute",
+                            "source": "DeviceMessages",
+                            "condition": "true",
+                            "endpointNames": [
+                              "EdisonProcessor"
+                            ],
+                            "isEnabled": true
+                        }
+                    ],
+                    "fallbackRoute": {
+                        "name": "$fallback",
+                        "source": "DeviceMessages",
+                        "condition": "true",
+                        "endpointNames": [
+                            "events"
+                        ],
+                        "isEnabled": true
+                    }
+                }
+            },
+            "sku": {
+                "name": "[parameters('iothubSettings').skuName]",
+                "capacity": "[parameters('iothubSettings').capacityUnits]"
+            }
+        },
+        {
+            "name": "[concat(parameters('iothubSettings').iotHubName, '/events/',parameters('iothubSettings').d2cConsumerGroupName)]",
+            "type": "Microsoft.Devices/iotHubs/eventhubEndpoints/ConsumerGroups",
+            "apiVersion": "2016-02-03",
+            "dependsOn": [
+                "[concat('Microsoft.Devices/iothubs/',parameters('iothubSettings').iotHubName)]"
+            ]
+        }
+    ],
+    "outputs": {
+        "iotHubName": {
+            "type": "string",
+            "value": "[parameters('iotHubSettings').iotHubName]"
+        },
+        "iotHubEndPoint": {
+            "value": "[reference(resourceId('Microsoft.Devices/IoTHubs',parameters('iotHubSettings').iotHubName)).hostName]",
+            "type": "string"
+        },
+        "iotHubPrimaryKey": {
+            "value": "[listkeys(resourceId('Microsoft.Devices/IotHubs/IotHubKeys',parameters('iotHubSettings').iotHubName,'iothubowner'),'2016-02-03').primaryKey]",
+            "type": "string"
+        }
     }
-  ],
-  "outputs": {
-    "iotHubName": {
-        "type": "string",
-        "value": "[parameters('iotHubSettings').iotHubName]"
-    },
-    "iotHubEndPoint": {
-        "value": "[reference(resourceId('Microsoft.Devices/IoTHubs',parameters('iotHubSettings').iotHubName)).hostName]",
-        "type": "string"
-    },
-    "iotHubPrimaryKey": {
-        "value": "[listkeys(resourceId('Microsoft.Devices/IotHubs/IotHubKeys',parameters('iotHubSettings').iotHubName,'iothubowner'),'2016-02-03').primaryKey]",
-        "type": "string"
-    }
-}
 }

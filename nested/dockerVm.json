@@ -13,6 +13,12 @@
         },
         "serviceBusProperties":{
             "type": "object"
+        },
+        "cosmosDBPrimaryKey":{
+            "type": "string"
+        },
+        "sbPrimaryKey":{
+            "type": "string"
         }
     },
     "variables": {},
@@ -160,7 +166,7 @@
                     "fileUris": [
                         "[parameters('vm').fileUri]"
                     ],
-                    "commandToExecute": "[concat('sh deploy.sh',' ',parameters('vm').giturl,' ',parameters('acrSettings').acrLoginServer,' ',parameters('acrSettings').acrLoginame,' ',parameters('acrLoginPassword'),' ',parameters('vm').tag,' ',parameters('serviceBusProperties').cosmosdbkey,' ',parameters('serviceBusProperties').servicebusep,' ',parameters('serviceBusProperties').servicebusAccessKeyName,' ',parameters('serviceBusProperties').serviceBusAccessKey,' ',parameters('serviceBusProperties').entity)]"
+                    "commandToExecute": "[concat('sh deploy.sh',' ',parameters('vm').giturl,' ',parameters('acrSettings').acrLoginServer,' ',parameters('acrSettings').acrLoginame,' ',parameters('acrLoginPassword'),' ',parameters('vm').tag,' ',parameters('cosmosDBPrimaryKey'),' ',parameters('serviceBusProperties').servicebusEndPoint,' ',parameters('serviceBusProperties').routesSharedAccessKeyName,' ',parameters('sbPrimaryKey'),' ',parameters('serviceBusProperties').entity,' ',parameters('serviceBusProperties').serviceBusRabbitMQUsername,' ',parameters('serviceBusProperties').serviceBusRabbitMQPassword,' ',parameters('serviceBusProperties').adClientSecret)]"
                 }
             }
         }
