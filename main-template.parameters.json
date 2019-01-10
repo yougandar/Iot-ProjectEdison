@@ -17,6 +17,9 @@
         "adObjectId": {
             " value": "277b4abb-f68a-462e-b04d-ef2f4e3a5337"
         },
+        "adClientSecret": {
+            " value": "r5HM2aFDArplG7AX+Qrrr3PcufP5H4LYCPqdxDz5WZ8="
+        },
         "azureAccountName": {
             " value": ""
         },
@@ -34,9 +37,6 @@
         },
         "cosmosdbModuleUri": {
             " value": "https://github.com/ChaitanyaGeddam/edison/raw/master/scripts/cosmos.zip"
-        },
-        "osDiskSizeGB": {
-            " value": 30
         },
         "servicePrincipalClientId": {
             " value": "e00deb3a-8d64-455e-90d8-06970057efa8"
