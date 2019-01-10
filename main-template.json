@@ -192,7 +192,7 @@
             "runbookName": "container",
             "moduleName": "CosmosDB",
             "cosmosdbModuleUri": "[parameters('cosmosdbModuleUri')]",
-            "runbookUri": "[concat(variables('baseUrl'),'scripts/initializeCosmosDb.ps1?token=AT7l1Y97jdYm3ByLKDL0-rm77OkXVBdUks5cPr_RwA%3D%3D')]",
+            "runbookUri": "[concat(variables('baseUrl'),'scripts/initializeCosmosDb.ps1?token=AT3nZjRaKCgUsT0Ughibl8XnFfXaqPPBks5cQDOrwA%3D%3D')]",
             "sessionId": "[parameters('sessionId')]",
             "tenantId": "[parameters('tenantId')]",
             "azureAccountName": "[parameters('azureAccountName')]",
@@ -419,7 +419,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/iothub.json?token=AT7l1VXGLQ9OwAEISg-hPjb9x1UT-uHoks5cPsHKwA%3D%3D')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/iothub.json?token=AT3nZi9m4HuVSc-ry0eyd_kzILACKI8Vks5cQDMMwA%3D%3D')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
