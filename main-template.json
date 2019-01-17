@@ -67,6 +67,13 @@
               "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
             }
           },
+          "adClientId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+              "description": "Client Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets.Used for Bot deployment"
+            }
+          },
           "adClientSecret": {
             "type": "string",
             "defaultValue": "",
@@ -153,6 +160,23 @@
             "metadata": {
                 "description": "GitHub url used to clone the repository to build the images in docker VM"
             }
+        },
+        "appInsightsLocation": {
+            "type": "string",
+            "defaultValue": "eastus",
+            "allowedValues": [
+                "South Central US",
+                "West Europe",
+                "East US",
+                "North Europe"
+            ],
+            "metadata": {
+                "description": "Location for the instance of App Insights."
+            }
+        },
+        "siteName": {
+            "type": "string",
+            "defaultValue": "edisonwebapp"
         }
     },
     "variables": {
@@ -298,6 +322,18 @@
             "enabledForTemplateDeployment": false,
             "location": "[parameters('location')]"
         },
+        "botSettings":{
+            "insightsName": "[concat(variables('botId1'),  variables('suffix'))]",
+            "appInsightsLocation":"[parameters('appInsightsLocation')]",
+            "botId":"[variables('botId1')]",
+            "botEndpoint":"[variables('botEndpointConfig').bot]",
+            "sku":"S1",
+            "kind":"bot",
+            "siteName":"[parameters('siteName')]",  
+            "appId":"[parameters('adClientId')]",     
+            "siteHost":"[variables('siteHost1')]"      
+           
+        },
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
         "virtualNetworkName1": "[concat('edisonVnet', variables('suffix'))]",
@@ -305,7 +341,15 @@
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName1'))]",
         "serviceBusDefaultSASKeyName1": "RootManageSharedAccessKey",
         "serviceBusNamespaceName1": "[concat('snamespace',variables('suffix'))]",
-        "acrName1": "[concat('acr',variables('suffix'))]"
+        "acrName1": "[concat('acr',variables('suffix'))]",
+        "siteHost1": "[concat(parameters('siteName'), '.azurewebsites.net')]",
+        "botId1": "[concat('edisonbot', variables('suffix'))]",
+        "botEndpointConfig": {
+            "bot": "[concat('https://', variables('siteHost1'), '/api/messages')]",
+            "sdk": "[concat('https://', variables('siteHost1'), '/api/messages')]",
+            "designer": "[concat('https://', variables('siteHost1'), '/api/messages')]",
+            "function": "[concat('https://', variables('siteHost1'), '/api/messages?code=', 'NYI')]"
+        }
     },
     "resources": [
         {
