@@ -305,8 +305,7 @@
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName1'))]",
         "serviceBusDefaultSASKeyName1": "RootManageSharedAccessKey",
         "serviceBusNamespaceName1": "[concat('snamespace',variables('suffix'))]",
-        "acrName1": "[concat('acr',variables('suffix'))]",
-        "rgName":"[resourceGroup().name]"
+        "acrName1": "[concat('acr',variables('suffix'))]"
     },
     "resources": [
         {

@@ -111,8 +111,8 @@
                             "sites": [
                                 {
                                     "siteName": "edisonsite",
-                                    "key": "[concat('uXuynMwVIBI.cwA.ve8.m2IbJ0McgjmxAq8vlZ1ZY1jAFdpdQj14GbgrS4z-', variables('suffix'))]",
-                                    "isEnabled": true
+                                    "isEnabled": true,
+                                    "isSecureSiteEnabled": true
                                 }
                             ]
                         }
