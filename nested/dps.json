@@ -15,6 +15,9 @@
             "name": "[parameters('iotDpsSettings').iotDpsName]",
             "apiVersion": "2017-11-15",
             "location": "[parameters('iotDpsSettings').location]",
+            "tags": {
+                "IotSuiteType": "[parameters('iotDpsSettings').solutionType]"
+            },
             "type": "Microsoft.Devices/provisioningServices",
             "sku": {
                 "name": "S1",

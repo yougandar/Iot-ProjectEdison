@@ -16,6 +16,9 @@
             "type": "Microsoft.Devices/IotHubs",
             "apiVersion": "2016-02-03",
             "location": "[parameters('iothubSettings').location]",
+            "tags": {
+                "IotSuiteType": "[parameters('iothubSettings').solutionType]"
+            },
             "properties": {
                 "eventHubEndpoints": {
                     "events": {

@@ -15,7 +15,9 @@
             "name": "[parameters('kubernetesSettings').servicename]",
             "apiVersion": "2018-03-31",
            "location": "[parameters('kubernetesSettings').location]",
-            "tags": {},
+           "tags": {
+            "IotSuiteType": "[parameters('kubernetesSettings').solutionType]"
+        },
             "properties": {
                 "kubernetesVersion": "[parameters('kubernetesSettings').kubernetesVersion]",
                "enableRBAC": "[parameters('kubernetesSettings').enableRBAC]",

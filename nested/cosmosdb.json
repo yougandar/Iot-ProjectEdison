@@ -14,6 +14,9 @@
             "kind": "GlobalDocumentDB",
             "name": "[parameters('cosmosDbSettings').cosmosDbAccountName]",
             "location": "[parameters('cosmosDbSettings').location]",
+            "tags": {
+                "IotSuiteType": "[parameters('cosmosDbSettings').solutionType]"
+            },
             "properties": {
                 "name": "[parameters('cosmosDbSettings').cosmosDbAccountName]",
                 "databaseAccountOfferType": "[parameters('cosmosDbSettings').offerType]",

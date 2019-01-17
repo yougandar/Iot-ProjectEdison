@@ -12,6 +12,9 @@
             "name": "[parameters('storageBlobSettings').storageAccountName]",
             "apiVersion": "2018-07-01",
             "location": "[parameters('storageBlobSettings').location]",
+            "tags": {
+                "IotSuiteType": "[parameters('storageBlobSettings').solutionType]"
+            },
             "sku":{
                 "name":"[parameters('storageBlobSettings').storageAccountType]"
             },

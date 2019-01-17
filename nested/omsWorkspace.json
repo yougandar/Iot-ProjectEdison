@@ -22,6 +22,9 @@
         "type": "Microsoft.OperationalInsights/workspaces",
         "name": "[parameters('omsSettings').omsWorkspaceName]",
         "location": "[parameters('omsSettings').omsWorkspaceRegion]",
+        "tags": {
+          "IotSuiteType": "[parameters('omsSettings').solutionType]"
+      },
         "properties": {
           "sku": {
               "name": "[parameters('omsSettings').omsLogAnalyticsSku]"
