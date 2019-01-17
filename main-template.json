@@ -430,6 +430,9 @@
                     },
                     "CosmosDbSettings": {
                         "value": "[variables('cosmosDbSettings')]"
+                    },
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
                     }
                 }
             }
