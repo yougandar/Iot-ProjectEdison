@@ -4,6 +4,9 @@
     "parameters": {
         "cosmosDbSettings": {
             "type": "object"
+        },
+        "omsSettings": {
+            "type": "object"
         }
     },
     "variables": {},
@@ -26,7 +29,49 @@
                         "failoverPriority": 0
                     }
                 ]
-            }
+            },
+            "resources": [
+                {
+                    "name": "Microsoft.Insights/service",
+                    "type": "providers/diagnosticSettings",
+                    "apiVersion": "2016-09-01",
+                    "dependsOn": [
+                        "[concat('Microsoft.DocumentDb/databaseAccounts/', parameters('cosmosDbSettings').cosmosDbAccountName)]"
+                    ],
+                    "properties": {
+                        "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsSettings').omsWorkspaceName)]",
+                        "logs": [
+                            {
+                                "category": "DataPlaneRequests",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "MongoRequests",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            }
+                        ],
+                        "metrics": [
+                            {
+                                "timeGrain": "AllMetrics",
+                                "category": "AllMetrics",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": false,
+                                    "days": 0
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
         }
     ],
     "outputs": {

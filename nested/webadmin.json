@@ -4,6 +4,9 @@
     "parameters": {
         "webSiteSettings": {
             "type": "object"
+        },
+        "omsSettings": {
+            "type": "object"
         }
     },
     "variables": {},
@@ -24,7 +27,7 @@
                 "name": "[parameters('webSiteSettings').webAppHostingPlanName]"
             }
         },
-       {
+        {
             "apiVersion": "2015-08-01",
             "name": "[parameters('webSiteSettings').webAdmin]",
             "type": "Microsoft.Web/sites",
@@ -76,10 +79,33 @@
                     "properties": {
                         "packageUri": "[parameters('webSiteSettings').webAdminPackageUri]"
                     }
+                },
+                {
+                    "name": "Microsoft.Insights/service",
+                    "type": "providers/diagnosticSettings",
+                    "apiVersion": "2016-09-01",
+                    "dependsOn": [
+                        "[concat('Microsoft.Web/sites/', parameters('webSiteSettings').deviceManagementPortalWebSiteName)]",
+                        "[concat('Microsoft.Web/Sites/', parameters('webSiteSettings').deviceManagementPortalWebSiteName, '/config/web')]",
+                        "[concat('Microsoft.Web/sites/', parameters('webSiteSettings').deviceManagementPortalWebSiteName, '/config/appsettings')]",
+                        "[concat('Microsoft.Web/sites/', parameters('webSiteSettings').deviceManagementPortalWebSiteName, '/extensions/MSDeploy')]"
+                    ],
+                    "properties": {
+                        "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsSettings').omsWorkspaceName)]",
+                        "metrics": [
+                            {
+                                "timeGrain": "PT1M",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": false,
+                                    "days": 0
+                                }
+                            }
+                        ]
+                    }
                 }
             ]
         }
     ],
-    "outputs": {
-    }
+    "outputs": {}
 }

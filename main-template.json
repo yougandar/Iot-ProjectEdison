@@ -2,6 +2,13 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "solutionType": {
+            "type": "string",
+            "defaultValue": "DeviceManagement",
+            "metadata": {
+                "description": "The type of solution"
+            }
+        },   
         "location": {
             "type": "string",
             "defaultValue": "eastus",
@@ -185,7 +192,8 @@
             "skuName": "free",
             "namespaceType": "NotificationHub",
             "notificationHubNamespaceName": "[concat('NotificationHubNS', variables('suffix'))]",
-            "notificationHubName": "[concat('NotificationHub', variables('suffix'))]"
+            "notificationHubName": "[concat('NotificationHub', variables('suffix'))]",
+            "solutionType": "[parameters('solutionType')]"
         },
         "cosmosDbSettings": {
             "cosmosDbAccountName": "[concat('edisondbacc',variables('suffix'))]",
@@ -196,7 +204,8 @@
             "cosmosCollResponses": "Responses",
             "cosmosCollDevices": "Devices",
             "cosmosCollActionPlans": "ActionPlans",
-            "cosmosCollNotifications": "Notifications"
+            "cosmosCollNotifications": "Notifications",
+            "solutionType": "[parameters('solutionType')]"
         },
         "automationSettings": {
             "automationAccountName": "[concat('AutomationAcc', variables('suffix'))]",
@@ -209,13 +218,15 @@
             "sessionId": "[parameters('sessionId')]",
             "tenantId": "[parameters('tenantId')]",
             "azureAccountName": "[parameters('azureAccountName')]",
-            "azurePassword": "[parameters('azurePassword')]"
+            "azurePassword": "[parameters('azurePassword')]",
+            "solutionType": "[parameters('solutionType')]"
         },
         "storageBlobSettings": {
             "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
             "location": "[parameters('location')]",
             "containerName": "logs",
-            "storageAccountType": "Standard_LRS"
+            "storageAccountType": "Standard_LRS",
+            "solutionType": "[parameters('solutionType')]"
         },
         "iothubSettings": {
             "location": "[parameters('location')]",
@@ -225,20 +236,23 @@
             "skuName": "S1",
             "capacityUnits": 1,
             "d2cConsumerGroupName": "cg1",
-            "keyName": "iothubowner"
+            "keyName": "iothubowner",
+            "solutionType": "[parameters('solutionType')]"
         },
         "webSiteSettings": {
             "webAppHostingPlanName": "[concat('edisonwebplan',variables('suffix'))]",
             "location": "WestUS",
             "webAppSkuName1": "F1",
             "webAdminPackageUri": "[parameters('webAdminPackageUri')]",
-            "webAdmin": "[concat('edisonWebAdmin',variables('suffix'))]"
+            "webAdmin": "[concat('edisonWebAdmin',variables('suffix'))]",
+            "solutionType": "[parameters('solutionType')]"
         },
         "omsSettings": {
             "omsWorkspaceName": "[concat('omsworkspace', variables('suffix'))]",
             "omsWorkspaceRegion": "[parameters('omsWorkspaceRegion')]",
             "omsLogAnalyticsSku": "standalone",
-            "dataRetention": 7
+            "dataRetention": 7,
+            "solutionType": "[parameters('solutionType')]"
         },
         "kubernetesSettings": {
             "servicename": "[concat('kubernetes', variables('suffix'))]",
@@ -253,7 +267,8 @@
             "servicePrincipalClientId": "[parameters('servicePrincipalClientId')]",
             "servicePrincipalClientSecret": "[parameters('servicePrincipalClientSecret')]",
             "networkPlugin": "kubenet",
-            "osDiskSizeGB": 30
+            "osDiskSizeGB": 30,
+            "solutionType": "[parameters('solutionType')]"
         },
         "acrSettings": {
             "acrName": "[variables('acrName1')]",
@@ -261,7 +276,8 @@
             "location": "[parameters('location')]",
             "acrSku": "Basic",
             "acrLoginServer": "[concat(variables('acrName1'),'.azurecr.io')]",
-            "acrLoginame": "[variables('acrName1')]"
+            "acrLoginame": "[variables('acrName1')]",
+            "solutionType": "[parameters('solutionType')]"
         },
         "vm": {
             "pipName": "[concat('edisonpip',variables('suffix'))]",
@@ -284,6 +300,7 @@
             "networkSecurityGroupName": "nsg",
             "giturl": "[parameters('githuburl')]",
             "tag": "latest",
+            "solutionType": "[parameters('solutionType')]",
             "fileUri":"[concat(variables('baseUrl'),'scripts/deploy.sh')]"
         },
         "serviceBusProperties": {
@@ -298,7 +315,8 @@
             "entity":"EntityPath=edison_input",
             "serviceBusRabbitMQUsername": "Admin",
             "serviceBusRabbitMQPassword": "Edison1234",
-            "adClientSecret":"[parameters('adClientSecret')]"
+            "adClientSecret":"[parameters('adClientSecret')]",
+            "solutionType": "[parameters('solutionType')]"
         },
         "signalrSettings": {
             "location": "[parameters('signalRlocation')]",
@@ -320,7 +338,8 @@
             "enableVaultForDeployment": false,
             "enableVaultForDiskEncryption": false,
             "enabledForTemplateDeployment": false,
-            "location": "[parameters('location')]"
+            "location": "[parameters('location')]",
+            "solutionType": "[parameters('solutionType')]"
         },
         "botSettings":{
             "insightsName": "[concat(variables('botId1'),  variables('suffix'))]",
@@ -331,7 +350,8 @@
             "kind":"bot",
             "siteName":"[parameters('siteName')]",  
             "appId":"[parameters('adClientId')]",     
-            "siteHost":"[variables('siteHost1')]"      
+            "siteHost":"[variables('siteHost1')]"    ,
+            "solutionType": "[parameters('solutionType')]"  
            
         },
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/",
@@ -384,6 +404,9 @@
                 "parameters": {
                     "CosmosDbSettings": {
                         "value": "[variables('CosmosDbSettings')]"
+                    },
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
                     }
                 }
             }
@@ -470,6 +493,9 @@
                 "parameters": {
                     "webSiteSettings": {
                         "value": "[variables('webSiteSettings')]"
+                    },
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
                     }
                 }
             }
