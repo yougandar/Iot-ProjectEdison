@@ -87,7 +87,6 @@
                     "dependsOn": [
                         "[concat('Microsoft.Web/sites/', parameters('webSiteSettings').webAdmin)]",
                         "[concat('Microsoft.Web/Sites/', parameters('webSiteSettings').webAdmin, '/config/web')]",
-                        "[concat('Microsoft.Web/sites/', parameters('webSiteSettings').webAdmin, '/config/appsettings')]",
                         "[concat('Microsoft.Web/sites/', parameters('webSiteSettings').webAdmin, '/extensions/MSDeploy')]"
                     ],
                     "properties": {
