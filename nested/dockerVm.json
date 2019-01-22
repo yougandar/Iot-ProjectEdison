@@ -164,9 +164,30 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "[parameters('vm').fileUri]"
+                        "[parameters('vm').fileUri1]" 
                     ],
                     "commandToExecute": "[concat('sh deploy.sh',' ',parameters('vm').giturl,' ',parameters('acrSettings').acrLoginServer,' ',parameters('acrSettings').acrLoginame,' ',parameters('acrLoginPassword'),' ',parameters('vm').tag,' ',parameters('cosmosDBPrimaryKey'),' ',parameters('serviceBusProperties').servicebusEndPoint,' ',parameters('serviceBusProperties').routesSharedAccessKeyName,' ',parameters('sbPrimaryKey'),' ',parameters('serviceBusProperties').entity,' ',parameters('serviceBusProperties').serviceBusRabbitMQUsername,' ',parameters('serviceBusProperties').serviceBusRabbitMQPassword,' ',parameters('serviceBusProperties').adClientSecret)]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('vm').vmName,'/Scripts-Download')]",
+            "location": "[parameters('vm').location]",
+            "apiVersion": "2017-03-30",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/',parameters('vm').vmName)]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.0",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "[parameters('vm').fileUri2]"
+                    ],
+                    "commandToExecute": "sh scripts-download.sh"
                 }
             }
         }
