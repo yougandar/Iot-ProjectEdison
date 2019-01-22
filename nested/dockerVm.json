@@ -151,7 +151,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('vm').vmName,'/deploy')]",
+            "name": "[concat(parameters('vm').vmName,'/Extensions')]",
             "location": "[parameters('vm').location]",
             "apiVersion": "2017-03-30",
             "dependsOn": [
@@ -162,6 +162,7 @@
                 "type": "CustomScript",
                 "typeHandlerVersion": "2.0",
                 "autoUpgradeMinorVersion": true,
+                "forceUpdateTag": "v.1.0",
                 "settings": {
                     "fileUris": [
                         "[parameters('vm').fileUri1]" 
@@ -172,7 +173,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('vm').vmName,'/scriptsdownload')]",
+            "name": "[concat(parameters('vm').vmName,'/Extensions')]",
             "location": "[parameters('vm').location]",
             "apiVersion": "2017-03-30",
             "dependsOn": [
@@ -181,9 +182,10 @@
             ],
             "properties": {
                 "publisher": "Microsoft.Azure.Extensions",
-                "type": "scriptsdownload",
+                "type": "CustomScript",
                 "typeHandlerVersion": "1.8",
                 "autoUpgradeMinorVersion": true,
+                "forceUpdateTag": "v.1.1",
                 "settings": {
                     "fileUris": [
                         "[parameters('vm').fileUri2]"
