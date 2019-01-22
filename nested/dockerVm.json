@@ -162,30 +162,6 @@
                 "type": "CustomScript",
                 "typeHandlerVersion": "2.0",
                 "autoUpgradeMinorVersion": true,
-                "forceUpdateTag": "v.1.0",
-                "settings": {
-                    "fileUris": [
-                        "[parameters('vm').fileUri1]" 
-                    ],
-                    "commandToExecute": "[concat('sh deploy.sh',' ',parameters('vm').giturl,' ',parameters('acrSettings').acrLoginServer,' ',parameters('acrSettings').acrLoginame,' ',parameters('acrLoginPassword'),' ',parameters('vm').tag,' ',parameters('cosmosDBPrimaryKey'),' ',parameters('serviceBusProperties').servicebusEndPoint,' ',parameters('serviceBusProperties').routesSharedAccessKeyName,' ',parameters('sbPrimaryKey'),' ',parameters('serviceBusProperties').entity,' ',parameters('serviceBusProperties').serviceBusRabbitMQUsername,' ',parameters('serviceBusProperties').serviceBusRabbitMQPassword,' ',parameters('serviceBusProperties').adClientSecret)]"
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('vm').vmName,'/Extensions')]",
-            "location": "[parameters('vm').location]",
-            "apiVersion": "2017-03-30",
-            "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/',parameters('vm').vmName)]",
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('vm').vmName,'/Extensions/deploy')]"
-            ],
-            "properties": {
-                "publisher": "Microsoft.Azure.Extensions",
-                "type": "CustomScript",
-                "typeHandlerVersion": "1.8",
-                "autoUpgradeMinorVersion": true,
-                "forceUpdateTag": "v.1.1",
                 "settings": {
                     "fileUris": [
                         "[parameters('vm').fileUri2]"
