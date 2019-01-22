@@ -164,9 +164,9 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "[parameters('vm').fileUri2]"
+                        "[parameters('vm').fileUri]"
                     ],
-                    "commandToExecute": "sh scripts-download.sh"
+                    "commandToExecute": "[concat('sh deploy.sh',' ',parameters('vm').giturl,' ',parameters('acrSettings').acrLoginServer,' ',parameters('acrSettings').acrLoginame,' ',parameters('acrLoginPassword'),' ',parameters('vm').tag,' ',parameters('cosmosDBPrimaryKey'),' ',parameters('serviceBusProperties').servicebusEndPoint,' ',parameters('serviceBusProperties').routesSharedAccessKeyName,' ',parameters('sbPrimaryKey'),' ',parameters('serviceBusProperties').entity,' ',parameters('serviceBusProperties').serviceBusRabbitMQUsername,' ',parameters('serviceBusProperties').serviceBusRabbitMQPassword,' ',parameters('serviceBusProperties').adClientSecret)]"
                 }
             }
         }
