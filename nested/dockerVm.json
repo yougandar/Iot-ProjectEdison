@@ -151,7 +151,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('vm').vmName,'/Extensions')]",
+            "name": "[concat(parameters('vm').vmName,'/deploy')]",
             "location": "[parameters('vm').location]",
             "apiVersion": "2017-03-30",
             "dependsOn": [
@@ -172,11 +172,12 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('vm').vmName,'/Extensions')]",
+            "name": "[concat(parameters('vm').vmName,'/scriptsdownload')]",
             "location": "[parameters('vm').location]",
             "apiVersion": "2017-03-30",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/',parameters('vm').vmName)]"
+                "[concat('Microsoft.Compute/virtualMachines/',parameters('vm').vmName)]",
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('vm').vmName,'/Extensions/deploy')]"
             ],
             "properties": {
                 "publisher": "Microsoft.Azure.Extensions",
