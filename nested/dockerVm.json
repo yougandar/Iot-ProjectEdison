@@ -172,7 +172,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('vm').vmName,'/Scripts-Download')]",
+            "name": "[concat(parameters('vm').vmName,'/Extensions')]",
             "location": "[parameters('vm').location]",
             "apiVersion": "2017-03-30",
             "dependsOn": [
