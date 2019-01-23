@@ -53,11 +53,31 @@
                 "description": "Choose location for OMS Log Analytics to deploy. For more information, see https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-overview"
             }
         },
+        "appInsightsLocation": {
+            "type": "string",
+            "defaultValue": "eastus",
+            "allowedValues": [
+                "South Central US",
+                "West Europe",
+                "East US",
+                "North Europe"
+            ],
+            "metadata": {
+                "description": "Location for the instance of App Insights."
+            }
+        },
         "tenantId": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "TenantId of the created Azure active directory application. For instructions, see  (https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-howto-tenant) in the Microsoft documentation"
+            }
+        },
+        "adClientId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Client Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets.Used for Bot deployment"
             }
         },
         "adObjectId": {
@@ -164,6 +184,10 @@
             "metadata": {
                 "description": "GitHub url used to clone the repository to build the images in docker VM"
             }
+        },
+        "siteName": {
+            "type": "string",
+            "defaultValue": "edisonwebapp"
         }
     },
     "variables": {
@@ -319,6 +343,17 @@
             "diagnosticsEnabled": true,
             "existingDiagnosticsStorageAccountId":"[variables('existingDiagnosticsStorageAccountId')]"
             },
+            "botSettings": {
+                "insightsName": "[concat(variables('botId1'),  variables('suffix'))]",
+                "appInsightsLocation": "[parameters('appInsightsLocation')]",
+                "botId": "[variables('botId1')]",
+                "botEndpoint": "[variables('botEndpointConfig').bot]",
+                "sku": "S1",
+                "kind": "bot",
+                "siteName": "[parameters('siteName')]",
+                "appId": "[parameters('adClientId')]",
+                "siteHost": "[variables('siteHost1')]"
+            },
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
         "virtualNetworkName1": "[concat('edisonVnet', variables('suffix'))]",
@@ -329,7 +364,15 @@
         "acrName1": "[concat('acr',variables('suffix'))]",
         "rgName":"[resourceGroup().name]",
         "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
-        "existingDiagnosticsStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+        "existingDiagnosticsStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+        "siteHost1": "[concat(parameters('siteName'), '.azurewebsites.net')]",
+        "botId1": "[concat('edisonbot', variables('suffix'))]",
+        "botEndpointConfig": {
+            "bot": "[concat('https://', variables('siteHost1'), '/api/messages')]",
+            "sdk": "[concat('https://', variables('siteHost1'), '/api/messages')]",
+            "designer": "[concat('https://', variables('siteHost1'), '/api/messages')]",
+            "function": "[concat('https://', variables('siteHost1'), '/api/messages?code=', 'NYI')]"
+        }
     },
     "resources": [
         {
@@ -646,6 +689,24 @@
                 "parameters": {
                     "redisSettings": {
                         "value": "[variables('redisSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "Bot",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/bot.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "botSettings": {
+                        "value": "[variables('botSettings')]"
                     }
                 }
             }
