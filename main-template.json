@@ -57,9 +57,9 @@
             "type": "string",
             "defaultValue": "eastus",
             "allowedValues": [
-                "South Central US",
-                "West Europe",
-                "East US",
+                "southcentralus",
+                "westeurope",
+                "eastus",
                 "North Europe"
             ],
             "metadata": {
