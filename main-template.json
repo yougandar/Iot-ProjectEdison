@@ -295,7 +295,7 @@
             "networkSecurityGroupName": "nsg",
             "giturl": "[parameters('githuburl')]",
             "tag": "latest",
-            "fileUri":"[concat(variables('baseUrl'),'scripts/deploy.sh')]"
+            "fileUri":"[concat(variables('baseUrl'),'scripts/scripts-download.sh')]"
         },
         "serviceBusProperties": {
             "serviceBusNamespaceName": "[variables('serviceBusNamespaceName1')]",
