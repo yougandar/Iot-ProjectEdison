@@ -73,7 +73,7 @@
                 "description": "TenantId of the created Azure active directory application. For instructions, see  (https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-howto-tenant) in the Microsoft documentation"
             }
         },
-        "adClientId": {
+        "botAdClientId": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
@@ -84,16 +84,16 @@
             "type": "string",
             "defaultValue": "",
             "metadata": {
-              "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
+                "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
             }
-          },
-          "adClientSecret": {
+        },
+        "adClientSecret": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
-              "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
+                "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
             }
-          },
+        },
         "azureAccountName": {
             "type": "string",
             "defaultValue": "",
@@ -118,11 +118,11 @@
         "vmUsername": {
             "type": "string",
             "defaultValue": "",
-             "metadata": {
+            "metadata": {
                 "description": "Username to login into Virtual Machine"
             }
         },
-        "vmPassword":{
+        "vmPassword": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
@@ -177,7 +177,7 @@
             "metadata": {
                 "description": "Choose Yes/No to add Docker VM as part of Solution deployment"
             }
-        }, 
+        },
         "githuburl": {
             "type": "string",
             "defaultValue": "https://github.com/litebulb/ProjectEdison.git",
@@ -295,7 +295,7 @@
             "networkSecurityGroupName": "nsg",
             "giturl": "[parameters('githuburl')]",
             "tag": "latest",
-            "fileUri":"[concat(variables('baseUrl'),'scripts/scripts-download.sh')]"
+            "fileUri": "[concat(variables('baseUrl'),'scripts/scripts-download.sh')]"
         },
         "serviceBusProperties": {
             "serviceBusNamespaceName": "[variables('serviceBusNamespaceName1')]",
@@ -304,12 +304,12 @@
             "serviceBusAuthRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName1'), variables('serviceBusDefaultSASKeyName1'))]",
             "skuName": "Standard",
             "serviceBusQueueName1": "edison_input",
-            "servicebusEndPoint":"[concat('Endpoint=sb://',variables('serviceBusNamespaceName1'),'.servicebus.windows.net/')]",
-            "routesSharedAccessKeyName":"SharedAccessKeyName=edison_inputsend",
-            "entity":"EntityPath=edison_input",
+            "servicebusEndPoint": "[concat('Endpoint=sb://',variables('serviceBusNamespaceName1'),'.servicebus.windows.net/')]",
+            "routesSharedAccessKeyName": "SharedAccessKeyName=edison_inputsend",
+            "entity": "EntityPath=edison_input",
             "serviceBusRabbitMQUsername": "Admin",
             "serviceBusRabbitMQPassword": "Edison1234",
-            "adClientSecret":"[parameters('adClientSecret')]"
+            "adClientSecret": "[parameters('adClientSecret')]"
         },
         "signalrSettings": {
             "location": "[parameters('signalRlocation')]",
@@ -321,39 +321,43 @@
             "iotDpsName": "[concat('dps',variables('suffix'))]",
             "location": "[parameters('location')]"
         },
-         "keyVaultSettings":{
+        "keyVaultSettings": {
             "keyVaultName": "[concat('keyvault',variables('suffix'))]",
             "tenantId": "[parameters('tenantId')]",
             "objectId": "[parameters('adObjectId')]",
-            "keysPermissions": ["list"],
-            "secretsPermissions": ["list"],
+            "keysPermissions": [
+                "list"
+            ],
+            "secretsPermissions": [
+                "list"
+            ],
             "skuName": "Standard",
             "enableVaultForDeployment": false,
             "enableVaultForDiskEncryption": false,
             "enabledForTemplateDeployment": false,
             "location": "[parameters('location')]"
         },
-        "redisSettings":{
-            "location":"[parameters('location')]",
+        "redisSettings": {
+            "location": "[parameters('location')]",
             "redisCacheName": "[concat('redisCache',variables('suffix'))]",
             "redisCacheCapacity": 1,
             "redisCacheFamily": "C",
             "redisCacheSKU": "Basic",
             "enableNonSslPort": false,
             "diagnosticsEnabled": true,
-            "existingDiagnosticsStorageAccountId":"[variables('existingDiagnosticsStorageAccountId')]"
-            },
-            "botSettings": {
-                "insightsName": "[concat(variables('botId1'),  variables('suffix'))]",
-                "appInsightsLocation": "[parameters('appInsightsLocation')]",
-                "botId": "[variables('botId1')]",
-                "botEndpoint": "[variables('botEndpointConfig').bot]",
-                "sku": "S1",
-                "kind": "bot",
-                "siteName": "[parameters('siteName')]",
-                "appId": "[parameters('adClientId')]",
-                "siteHost": "[variables('siteHost1')]"
-            },
+            "existingDiagnosticsStorageAccountId": "[variables('existingDiagnosticsStorageAccountId')]"
+        },
+        "botSettings": {
+            "insightsName": "[concat(variables('botId1'),  variables('suffix'))]",
+            "appInsightsLocation": "[parameters('appInsightsLocation')]",
+            "botId": "[variables('botId1')]",
+            "botEndpoint": "[variables('botEndpointConfig').bot]",
+            "sku": "S1",
+            "kind": "bot",
+            "siteName": "[parameters('siteName')]",
+            "botAppId": "[parameters('botAdClientId')]",
+            "siteHost": "[variables('siteHost1')]"
+        },
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
         "virtualNetworkName1": "[concat('edisonVnet', variables('suffix'))]",
@@ -362,7 +366,7 @@
         "serviceBusDefaultSASKeyName1": "RootManageSharedAccessKey",
         "serviceBusNamespaceName1": "[concat('snamespace',variables('suffix'))]",
         "acrName1": "[concat('acr',variables('suffix'))]",
-        "rgName":"[resourceGroup().name]",
+        "rgName": "[resourceGroup().name]",
         "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
         "existingDiagnosticsStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
         "siteHost1": "[concat(parameters('siteName'), '.azurewebsites.net')]",
@@ -456,7 +460,7 @@
             "name": "IotHub",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
-            "dependsOn": [ 
+            "dependsOn": [
                 "ServiceBus"
             ],
             "properties": {
@@ -578,16 +582,16 @@
                     "acrSettings": {
                         "value": "[variables('acrSettings')]"
                     },
-                    "acrLoginPassword":{
-                        "value":"[reference('AzureContainerRegistry').outputs.acrPassword.value]"
+                    "acrLoginPassword": {
+                        "value": "[reference('AzureContainerRegistry').outputs.acrPassword.value]"
                     },
                     "serviceBusProperties": {
                         "value": "[variables('serviceBusProperties')]"
                     },
-                    "cosmosDBPrimaryKey":{
+                    "cosmosDBPrimaryKey": {
                         "value": "[reference('CosmosDB').outputs.cosmosDBAccountKey.value]"
                     },
-                    "sbPrimaryKey":{
+                    "sbPrimaryKey": {
                         "value": "[concat('SharedAccessKey=',reference('ServiceBus').outputs.sbPrimaryKey.value)]"
                     }
                 }
