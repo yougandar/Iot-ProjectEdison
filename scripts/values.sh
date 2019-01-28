@@ -27,13 +27,13 @@ TauthToken=${24}
 
 TENANT_VALUE="$3"
 CLIENTID_VALUE="$2"
-*BASEURL_VALUE="${25}"
+*BASEURL_VALUE="${25}"    XXXX
 
 COSMOSDBENDPOINT=$7
-COSMOSDBKEY=${26}    yes
+COSMOSDBKEY=${11} 
 ADCLIENTID=$2
 ADSECRET=${15}
-ADDOMAIN=${27}
+ADDOMAIN=${26}
 ADTENANTID=$3
 B2CCLIENTID=$4
 B2CDOMAIN=$5
@@ -49,29 +49,29 @@ TWILIOPWD=${23}
 TWILIOACCID=$9
 TWILIOAUTHTOKEN=${24}
 MSAPPID=${10}
-MSAPPPWD=${28}
+MSAPPPWD=${27}
 IOTHUBCONN=${17}
-BOTSECRETTOKEN=${29}
+BOTSECRETTOKEN=${28}
 
-ACR_SERVERNAME="${30}"
-ACR_USERNAME="${31}"
-ACR_PASSWD="${32}"
-TAG="${33}"
+ACR_SERVERNAME="${29}"
+ACR_USERNAME="${30}"
+ACR_PASSWD="${31}"
+TAG="${32}"
 
-TenantId=${34}
-AzureUserId=${35}
-AzurePwd=${36}
-SubscriptionId=${37}
-ResourceGroupName=${38}
-ClusterName=${39}
+TenantId=${33}
+AzureUserId=${34}
+AzurePwd=${35}
+SubscriptionId=${36}
+ResourceGroupName=${37}
+ClusterName=${38}
 
-azureSubscriptionId="${37}"
-acrResourceGroup="${38}"
-acrSPName="${31}"
-acrSPClientId="${31}"
-acrSPPassword="${32}"
-acrContainerRegistryName="${31}"
-acrContainerRegistryUrl="${30}"
+azureSubscriptionId="${36}"
+acrResourceGroup="${37}"
+acrSPName="${30}"
+acrSPClientId="${30}"
+acrSPPassword="${31}"
+acrContainerRegistryName="${30}"
+acrContainerRegistryUrl="${29}"
 acrAccountEmail="nvtuluva@sysgain.com"
 
 

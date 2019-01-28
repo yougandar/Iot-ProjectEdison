@@ -720,15 +720,15 @@
     "outputs": {
         "cosmosDBEndpoint":{
             "type": "string",
-            "value": "[reference('CosmosDB').output.cosmosDBAccountEndPoint.value]"
+            "value": "[reference('CosmosDB').outputs.cosmosDBAccountEndPoint.value]"
         },
         "cosmosDbSRT":{
             "type": "string",
-            "value": "[reference('CosmosDB').output.connectionString.value]"
+            "value": "[reference('CosmosDB').outputs.connectionString.value]"
         },
         "CosmosDBKey":{
             "type": "string",
-            "value": "[reference('CosmosDB').output.cosmosDBAccountKey.value]"
+            "value": "[reference('CosmosDB').outputs.cosmosDBAccountKey.value]"
         },
         "NotificationHubName":{
             "type": "string",
