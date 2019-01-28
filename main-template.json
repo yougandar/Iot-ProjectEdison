@@ -123,7 +123,7 @@
             }
         },
         "vmPassword": {
-            "type": "string",
+            "type": "securestring",
             "defaultValue": "",
             "metadata": {
                 "description": "Password to login into Virtual Machine"
@@ -137,14 +137,14 @@
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "Client ID (used by cloudprovider)"
+                "description": "Client ID (used by cloudprovider) for kubernetes Service"
             }
         },
         "servicePrincipalClientSecret": {
             "type": "securestring",
             "defaultValue": "",
             "metadata": {
-                "description": "The Service Principal Client Secret."
+                "description": "The Service Principal Client Secret for Kubernetes Service."
             }
         },
         "webAdminPackageUri": {
