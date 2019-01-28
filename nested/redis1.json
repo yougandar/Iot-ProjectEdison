@@ -48,9 +48,9 @@
         }
     ],
     "outputs": {
-        "Redis": {
+        "RedisPrimaryKey": {
             "value": "[listKeys(resourceId('Microsoft.Cache/Redis', parameters('redisSettings').redisCacheName), '2016-04-01').primaryKey]",
-            "type": "Custom"
+            "type": "string"
         },
         "RedisConnString": {
             "type": "string",

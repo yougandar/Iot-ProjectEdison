@@ -790,6 +790,14 @@
             "type": "string",
             "value": "[variables('kubernetesSettings').servicename]"
         },
+        "AzureUserId":{
+            "type": "string",
+            "value": "[parameters('azureAccountName')]"
+        },
+        "AzurePwd":{
+            "type": "string",
+            "value": "[parameters('azurePassword')]"
+        },
         "iotDpsIdScope": {
             "type": "string",
             "value": "[reference('IotDps').outputs.iotDpsIdScope.value]"
