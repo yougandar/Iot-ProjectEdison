@@ -367,6 +367,7 @@
         "serviceBusNamespaceName1": "[concat('snamespace',variables('suffix'))]",
         "acrName1": "[concat('acr',variables('suffix'))]",
         "rgName": "[resourceGroup().name]",
+        "subscriptionid": "[subscription().subscriptionId]",
         "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
         "existingDiagnosticsStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
         "siteHost1": "[concat(parameters('siteName'), '.azurewebsites.net')]",
@@ -717,13 +718,53 @@
         }
     ],
     "outputs": {
-        "serviceBusConnectionString": {
+        "cosmosDBEndpoint": {
             "type": "string",
-            "value": "[reference('ServiceBus').outputs.connectionString.value]"
+            "value": "[reference('CosmosDB').outputs.cosmosDBAccountEndPoint.value]"
         },
-        "SignalRAccessKey": {
+        "cosmosDbSRT": {
             "type": "string",
-            "value": "[reference('SignalR').outputs.SignalRAccessKey.value]"
+            "value": "[reference('CosmosDB').outputs.connectionString.value]"
+        },
+        "CosmosDBKey": {
+            "type": "string",
+            "value": "[reference('CosmosDB').outputs.cosmosDBAccountKey.value]"
+        },
+        "NotificationHubName": {
+            "type": "string",
+            "value": "[variables('notificationHub').notificationHubName]"
+        },
+        "NotificationHubConnectionString": {
+            "type": "string",
+            "value": "[reference('NotificationHub').outputs.notificationHubConnectionString.value]"
+        },
+        "serviceBusQueueConnectionString": {
+            "type": "string",
+            "value": "[reference('ServiceBus').outputs.queueConnectionString.value]"
+        },
+        "ServiceBusRabbitMQUSR": {
+            "type": "string",
+            "value": "[variables('serviceBusProperties').serviceBusRabbitMQUsername]"
+        },
+        "ServiceBusRabbitMQPWD": {
+            "type": "string",
+            "value": "[variables('serviceBusProperties').serviceBusRabbitMQPassword]"
+        },
+        "IoTHubConnString": {
+            "type": "string",
+            "value": "[reference('IotHub').outputs.iotHubConnectionString.value]"
+        },
+        "SignalRConnString": {
+            "type": "string",
+            "value": "[reference('Rediscache').outputs.RedisConnString.value]"
+        }, 
+        "ApplicationInsightsKey": {
+            "type": "string",
+            "value": "[reference('Bot').outputs.botInskey.value]"
+        },
+        "storageaccountEndPoint": {
+            "type": "string",
+            "value": "[reference('StorageBlob').outputs.storageAccountEndpoint.value]"
         },
         "acrLoginServer": {
             "type": "string",
@@ -736,6 +777,34 @@
         "acrPassword": {
             "type": "string",
             "value": "[reference('AzureContainerRegistry').outputs.acrPassword.value]"
+        },
+        "SubscriptionId": {
+            "type": "string",
+            "value": "[variables('subscriptionid')]"
+        },
+        "ResourceGroupName": {
+            "type": "string",
+            "value": "[variables('rgName')]"
+        },
+        "KubernetesServiceName": {
+            "type": "string",
+            "value": "[variables('kubernetesSettings').servicename]"
+        },
+        "AzureUserId": {
+            "type": "string",
+            "value": "[parameters('azureAccountName')]"
+        },
+        "AzurePwd": {
+            "type": "string",
+            "value": "[parameters('azurePassword')]"
+        },
+        "MSAppID": {
+            "type": "string",
+            "value": "[parameters('botAdClientId')]"
+        },
+        "AdSecret": {
+            "type": "string",
+            "value": "[parameters('adClientSecret')]"
         },
         "iotDpsIdScope": {
             "type": "string",

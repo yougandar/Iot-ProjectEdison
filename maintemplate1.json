@@ -754,6 +754,10 @@
             "type": "string",
             "value": "[reference('IotHub').outputs.iotHubConnectionString.value]"
         },
+        "SignalRConnString": {
+            "type": "string",
+            "value": "[reference('Rediscache').outputs.RedisConnString.value]"
+        }, 
         "ApplicationInsightsKey": {
             "type": "string",
             "value": "[reference('Bot').outputs.botInskey.value]"
