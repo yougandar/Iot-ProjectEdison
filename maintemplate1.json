@@ -447,7 +447,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/storageblob.json')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/storage1.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -606,7 +606,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/servicebus.json')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/servicebus1.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -688,7 +688,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/redisCache.json')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/redis1.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
