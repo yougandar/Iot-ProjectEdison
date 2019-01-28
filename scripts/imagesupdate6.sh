@@ -26,7 +26,6 @@ then
                 echo "------------------------------------" >> $LOG
                 echo "All the 11 Edison Images are successfully built" >> $LOG
                 echo "$ACR_PASSWD" | docker login $ACR_SERVERNAME -u $ACR_USERNAME --password-stdin >> $LOG
-                IMAGE_NAMES=`docker images --format "{{.Repository}}" --filter=reference='edison*'`
                 echo "------------------------------------" >> $LOG
                 echo "Edison images names: " >> $LOG
                 echo $IMAGE_NAMES >> $LOG
