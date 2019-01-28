@@ -718,23 +718,23 @@
         }
     ],
     "outputs": {
-        "cosmosDBEndpoint":{
+        "cosmosDBEndpoint": {
             "type": "string",
             "value": "[reference('CosmosDB').outputs.cosmosDBAccountEndPoint.value]"
         },
-        "cosmosDbSRT":{
+        "cosmosDbSRT": {
             "type": "string",
             "value": "[reference('CosmosDB').outputs.connectionString.value]"
         },
-        "CosmosDBKey":{
+        "CosmosDBKey": {
             "type": "string",
             "value": "[reference('CosmosDB').outputs.cosmosDBAccountKey.value]"
         },
-        "NotificationHubName":{
+        "NotificationHubName": {
             "type": "string",
             "value": "[variables('notificationHub').notificationHubName]"
         },
-        "NotificationHubConnectionString":{
+        "NotificationHubConnectionString": {
             "type": "string",
             "value": "[reference('NotificationHub').outputs.notificationHubConnectionString.value]"
         },
@@ -742,23 +742,23 @@
             "type": "string",
             "value": "[reference('ServiceBus').outputs.queueConnectionString.value]"
         },
-        "ServiceBusRabbitMQUSR":{
+        "ServiceBusRabbitMQUSR": {
             "type": "string",
             "value": "[variables('serviceBusProperties').serviceBusRabbitMQUsername]"
         },
-        "ServiceBusRabbitMQPWD":{
+        "ServiceBusRabbitMQPWD": {
             "type": "string",
             "value": "[variables('serviceBusProperties').serviceBusRabbitMQPassword]"
         },
-        "IoTHubConnString":{
+        "IoTHubConnString": {
             "type": "string",
             "value": "[reference('IotHub').outputs.iotHubConnectionString.value]"
         },
-        "ApplicationInsightsKey":{
+        "ApplicationInsightsKey": {
             "type": "string",
             "value": "[reference('Bot').outputs.botInskey.value]"
         },
-        "storageaccountEndPoint":{
+        "storageaccountEndPoint": {
             "type": "string",
             "value": "[reference('StorageBlob').outputs.storageAccountEndpoint.value]"
         },
@@ -774,25 +774,33 @@
             "type": "string",
             "value": "[reference('AzureContainerRegistry').outputs.acrPassword.value]"
         },
-        "SubscriptionId":{
+        "SubscriptionId": {
             "type": "string",
             "value": "[variables('subscriptionid')]"
         },
-        "ResourceGroupName":{
+        "ResourceGroupName": {
             "type": "string",
-            "value":"[variables('rgName')]"
+            "value": "[variables('rgName')]"
         },
-        "KubernetesServiceName":{
+        "KubernetesServiceName": {
             "type": "string",
             "value": "[variables('kubernetesSettings').servicename]"
         },
-        "AzureUserId":{
+        "AzureUserId": {
             "type": "string",
             "value": "[parameters('azureAccountName')]"
         },
-        "AzurePwd":{
+        "AzurePwd": {
             "type": "string",
             "value": "[parameters('azurePassword')]"
+        },
+        "MSAppID": {
+            "type": "string",
+            "value": "[parameters('botAdClientId')]"
+        },
+        "AdSecret": {
+            "type": "string",
+            "value": "[parameters('adClientSecret')]"
         },
         "iotDpsIdScope": {
             "type": "string",
