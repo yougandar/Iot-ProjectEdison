@@ -10,7 +10,7 @@ TAG="$4"
 GITPATH=`pwd`
 GIT_DIRPATH="$GITPATH/ProjectEdison"
 LOG="/tmp/imagesupdate.log.`date +%d%m%Y_%T`"
-IMAGE=`docker images --format "{{.Repository}}" --filter=reference='edison*' | wc -l`
+
 #------------------------------------
 ls $GIT_DIRPATH
 if [ $? -eq 0 ]
@@ -19,6 +19,8 @@ then
         echo "The $GIT_DIRPATH exists" >> $LOG
         cd $GIT_DIRPATH
         sudo docker-compose build
+        sleep 30
+        IMAGE=`docker images --format "{{.Repository}}" --filter=reference='edison*' | wc -l`
         if [ $IMAGE -eq 11 ]
         then
                 echo "------------------------------------" >> $LOG
