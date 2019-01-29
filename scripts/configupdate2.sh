@@ -4,15 +4,15 @@
 
 
 #------------------------------------
-ADCLIENTID=`head -2 input.txt | awk -F: '{print $2}'`
-TENANTID=`head -3 input.txt | awk -F: '{print $2}'`
-B2CCLIENTID=`head -4 input.txt | awk -F: '{print $2}'`
-DOMAIN=`head -5 input.txt | awk -F: '{print $2}'`
-SIGNUPSIGNINPOLICYID=`head -6 input.txt | awk -F: '{print $2}'`
-COSMOSDBEP=`head -7 input.txt | awk -F: '{print $2}'`
-NOTIFICATIONHUBPATH=`head -8 input.txt | awk -F: '{print $2}'`
-TWILIOACCID=`head -9 input.txt | awk -F: '{print $2}'`
-MSAPPID=`head -10 input.txt | awk -F: '{print $2}'`
+ADCLIENTID=`head -2 input.txt | awk -F "\"" '{print $2}'| tail -1`
+TENANTID=`head -3 input.txt | awk -F "\"" '{print $2}'| tail -1`
+B2CCLIENTID=`head -4 input.txt | awk -F "\"" '{print $2}'| tail -1`
+DOMAIN=`head -5 input.txt | awk -F "\"" '{print $2}'| tail -1`
+SIGNUPSIGNINPOLICYID=`head -6 input.txt | awk -F "\"" '{print $2}'| tail -1`
+COSMOSDBEP=`head -7 input.txt | awk -F "\"" '{print $2}'| tail -1`
+NOTIFICATIONHUBPATH=`head -8 input.txt | awk -F "\"" '{print $2}'| tail -1`
+TWILIOACCID=`head -9 input.txt | awk -F "\"" '{print $2}'| tail -1`
+MSAPPID=`head -10 input.txt | awk -F "\"" '{print $2}'| tail -1`
 
 #------------------------------------
 GITPATH=`pwd`

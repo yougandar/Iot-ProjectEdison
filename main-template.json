@@ -790,10 +790,6 @@
             "type": "string",
             "value": "[variables('kubernetesSettings').servicename]"
         },
-        "AzureUserId": {
-            "type": "string",
-            "value": "[parameters('azureAccountName')]"
-        },
         "MSAppID": {
             "type": "string",
             "value": "[parameters('botAdClientId')]"
