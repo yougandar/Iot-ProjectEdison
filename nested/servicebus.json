@@ -57,6 +57,23 @@
                                 ],
                                 "revision": -1
                             }
+                        },
+                        {
+                            "apiVersion": "2015-08-01",
+                            "name": "[concat(parameters('servicebusProperties').serviceBusQueueName1,'Listen')]",
+                            "type": "AuthorizationRules",
+                            "dependsOn": [
+                                "[parameters('servicebusProperties').serviceBusQueueName1]"
+                            ],
+                            "properties": {
+                                "keyName": "[concat(parameters('servicebusProperties').serviceBusQueueName1,'Listen')]",
+                                "claimType": "SharedAccessKey",
+                                "claimValue": "None",
+                                "rights": [
+                                    "Listen"
+                                ],
+                                "revision": -1
+                            } 
                         }
                     ]
                 },
