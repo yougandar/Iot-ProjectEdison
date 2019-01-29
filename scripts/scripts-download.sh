@@ -1,4 +1,6 @@
 #!/bin/bash
+#downloading input.txt file
+sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/code/input.txt
 #downloading deploy1.sh
 sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/scripts/deploy1.sh
 #downloading configupdate2.sh
