@@ -794,10 +794,6 @@
             "type": "string",
             "value": "[parameters('azureAccountName')]"
         },
-        "AzurePwd": {
-            "type": "string",
-            "value": "[parameters('azurePassword')]"
-        },
         "MSAppID": {
             "type": "string",
             "value": "[parameters('botAdClientId')]"
