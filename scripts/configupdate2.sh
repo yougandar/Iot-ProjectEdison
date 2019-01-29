@@ -9,10 +9,10 @@ TENANTID=$2
 B2CCLIENTID=$3
 DOMAIN=$4
 SIGNUPSIGNINPOLICYID=$5
-COSMOSDBEP=$6
-NOTIFICATIONHUBPATH=$7
-TWILIOACCID=$8
-MSAPPID=$9
+COSMOSDBEP=`head -7 input.txt | awk -F: '{print $2}'`
+NOTIFICATIONHUBPATH=`head -8 input.txt | awk -F: '{print $2}'`
+TWILIOACCID=$6
+MSAPPID=`head -10 input.txt | awk -F: '{print $2}'`
 
 #------------------------------------
 GITPATH=`pwd`
