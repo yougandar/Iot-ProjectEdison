@@ -37,7 +37,7 @@
                     "routes": [
                         {
                             "name": "EdisonDevProcessorDeviceLifecycle",
-                            "source": "DeviceMessages",
+                            "source": "DeviceLifecycleEvents",
                             "condition": "true",
                             "endpointNames": [
                               "EdisonProcessor"
@@ -46,7 +46,7 @@
                         },
                         {
                             "name": "EdisonDevProcessorDeviceTwinChanges",
-                            "source": "DeviceMessages",
+                            "source": "TwinChangeEvents",
                             "condition": "true",
                             "endpointNames": [
                               "EdisonProcessor"
