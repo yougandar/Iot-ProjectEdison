@@ -15,9 +15,6 @@
             "type": "Microsoft.ServiceBus/namespaces",
             "apiVersion": "2017-04-01",
             "location": "[parameters('serviceBusProperties').location]",
-            "tags": {
-                "IotSuiteType": "[parameters('serviceBusProperties').solutionType]"
-            },
             "sku": {
                 "name": "[parameters('serviceBusProperties').skuName]"
             },
@@ -107,7 +104,7 @@
             "type": "string",
             "value": "[listKeys(resourceId(concat('Microsoft.ServiceBus/namespaces/Queues/AuthorizationRules'),parameters('serviceBusProperties').serviceBusNamespaceName,parameters('servicebusProperties').serviceBusQueueName1,concat(parameters('servicebusProperties').serviceBusQueueName1,'send')),'2015-08-01').PrimaryKey]"
         },
-        "PrimaryConnectionString": {
+        "queueConnectionString": {
             "type": "string",
             "value": "[concat('Endpoint=sb://',parameters('serviceBusProperties').serviceBusNamespaceName,'.servicebus.windows.net/;SharedAccessKeyName=',parameters('servicebusProperties').serviceBusQueueName1,'send;SharedAccessKey=',listKeys(resourceId(concat('Microsoft.ServiceBus/namespaces/Queues/AuthorizationRules'),parameters('serviceBusProperties').serviceBusNamespaceName,parameters('servicebusProperties').serviceBusQueueName1,concat(parameters('servicebusProperties').serviceBusQueueName1,'send')),'2015-08-01').PrimaryKey,';EntityPath=',parameters('servicebusProperties').serviceBusQueueName1)]"
         }

@@ -16,9 +16,6 @@
             "type": "Microsoft.Devices/IotHubs",
             "apiVersion": "2016-02-03",
             "location": "[parameters('iothubSettings').location]",
-            "tags": {
-                "IotSuiteType": "[parameters('iothubSettings').solutionType]"
-            },
             "properties": {
                 "eventHubEndpoints": {
                     "events": {
@@ -40,7 +37,7 @@
                     "routes": [
                         {
                             "name": "EdisonDevProcessorDeviceLifecycle",
-                            "source": "DeviceMessages",
+                            "source": "DeviceLifecycleEvents",
                             "condition": "true",
                             "endpointNames": [
                               "EdisonProcessor"
@@ -49,7 +46,7 @@
                         },
                         {
                             "name": "EdisonDevProcessorDeviceTwinChanges",
-                            "source": "DeviceMessages",
+                            "source": "TwinChangeEvents",
                             "condition": "true",
                             "endpointNames": [
                               "EdisonProcessor"
@@ -103,6 +100,10 @@
         "iotHubPrimaryKey": {
             "value": "[listkeys(resourceId('Microsoft.Devices/IotHubs/IotHubKeys',parameters('iotHubSettings').iotHubName,'iothubowner'),'2016-02-03').primaryKey]",
             "type": "string"
-        }
+        },
+        "iotHubConnectionString": {
+            "type": "string",
+            "value": "[concat('HostName=', reference(resourceId('Microsoft.Devices/IoTHubs', parameters('iotHubSettings').iotHubName), providers('Microsoft.Devices', 'IoTHubs').apiVersions[0]).hostName, ';SharedAccessKeyName=iothubowner;SharedAccessKey=', listKeys(resourceId('Microsoft.Devices/IotHubs', parameters('iotHubSettings').iotHubName), providers('Microsoft.Devices', 'IoTHubs').apiVersions[0]).value[0].primaryKey)]"
+          }
     }
 }

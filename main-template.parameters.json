@@ -1,4 +1,4 @@
-{
+l{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
@@ -11,11 +11,20 @@
         "omsWorkspaceRegion": {
             " value": "southeastasia"
         },
+        "appInsightsLocation":{
+            " value": "eastus"
+        },
         "tenantId": {
-            " value": "dcf9e4d3-f44a-4c28-be12-8245c0d35668"
+            " value": ""
+        },
+        "adClientId":{
+            "value": ""
         },
         "adObjectId": {
-            " value": "277b4abb-f68a-462e-b04d-ef2f4e3a5337"
+            " value": ""
+        },
+        "adClientSecret": {
+            " value": ""
         },
         "azureAccountName": {
             " value": ""
@@ -35,9 +44,6 @@
         "cosmosdbModuleUri": {
             " value": "https://github.com/ChaitanyaGeddam/edison/raw/master/scripts/cosmos.zip"
         },
-        "osDiskSizeGB": {
-            " value": 30
-        },
         "servicePrincipalClientId": {
             " value": "e00deb3a-8d64-455e-90d8-06970057efa8"
         },
@@ -50,8 +56,14 @@
         "signalrCapacity": {
             " value": 1
         },
+        "dockerVM":{
+            "value": "Yes"
+        },
         "githuburl": {
             " value": "https://github.com/litebulb/ProjectEdison.git"
+        },
+        "siteName":{
+            "value": "edisonwebapp"
         }
     }
 }

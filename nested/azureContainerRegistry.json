@@ -14,7 +14,7 @@
             "location": "[parameters('acrSettings').location]",
             "comments": "Container registry for storing docker images",
             "tags": {
-                "IotSuiteType": "[parameters('acrSettings').solutionType]",
+                "displayName": "Container Registry",
                 "container.registry": "[parameters('acrSettings').acrName]"
             },
             "sku": {

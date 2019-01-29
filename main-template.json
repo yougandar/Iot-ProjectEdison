@@ -2,13 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "solutionType": {
-            "type": "string",
-            "defaultValue": "DeviceManagement",
-            "metadata": {
-                "description": "The type of solution"
-            }
-        },   
         "location": {
             "type": "string",
             "defaultValue": "eastus",
@@ -60,6 +53,19 @@
                 "description": "Choose location for OMS Log Analytics to deploy. For more information, see https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-overview"
             }
         },
+        "appInsightsLocation": {
+            "type": "string",
+            "defaultValue": "eastus",
+            "allowedValues": [
+                "southcentralus",
+                "westeurope",
+                "eastus",
+                "North Europe"
+            ],
+            "metadata": {
+                "description": "Location for the instance of App Insights."
+            }
+        },
         "tenantId": {
             "type": "string",
             "defaultValue": "",
@@ -67,27 +73,27 @@
                 "description": "TenantId of the created Azure active directory application. For instructions, see  (https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-howto-tenant) in the Microsoft documentation"
             }
         },
+        "botAdClientId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Client Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets.Used for Bot deployment"
+            }
+        },
         "adObjectId": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
-              "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
+                "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
             }
-          },
-          "adClientId": {
+        },
+        "adClientSecret": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
-              "description": "Client Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets.Used for Bot deployment"
+                "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
             }
-          },
-          "adClientSecret": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-              "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
-            }
-          },
+        },
         "azureAccountName": {
             "type": "string",
             "defaultValue": "",
@@ -112,12 +118,12 @@
         "vmUsername": {
             "type": "string",
             "defaultValue": "",
-             "metadata": {
+            "metadata": {
                 "description": "Username to login into Virtual Machine"
             }
         },
-        "vmPassword":{
-            "type": "string",
+        "vmPassword": {
+            "type": "securestring",
             "defaultValue": "",
             "metadata": {
                 "description": "Password to login into Virtual Machine"
@@ -131,14 +137,14 @@
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "Client ID (used by cloudprovider)"
+                "description": "Client ID (used by cloudprovider) for kubernetes Service"
             }
         },
         "servicePrincipalClientSecret": {
             "type": "securestring",
             "defaultValue": "",
             "metadata": {
-                "description": "The Service Principal Client Secret."
+                "description": "The Service Principal Client Secret for Kubernetes Service."
             }
         },
         "webAdminPackageUri": {
@@ -161,24 +167,22 @@
                 "description": "The number of SignalR Unit."
             }
         },
+        "dockerVM": {
+            "type": "string",
+            "defaultValue": "",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Choose Yes/No to add Docker VM as part of Solution deployment"
+            }
+        },
         "githuburl": {
             "type": "string",
             "defaultValue": "https://github.com/litebulb/ProjectEdison.git",
             "metadata": {
                 "description": "GitHub url used to clone the repository to build the images in docker VM"
-            }
-        },
-        "appInsightsLocation": {
-            "type": "string",
-            "defaultValue": "eastus",
-            "allowedValues": [
-                "South Central US",
-                "West Europe",
-                "East US",
-                "North Europe"
-            ],
-            "metadata": {
-                "description": "Location for the instance of App Insights."
             }
         },
         "siteName": {
@@ -192,8 +196,7 @@
             "skuName": "free",
             "namespaceType": "NotificationHub",
             "notificationHubNamespaceName": "[concat('NotificationHubNS', variables('suffix'))]",
-            "notificationHubName": "[concat('NotificationHub', variables('suffix'))]",
-            "solutionType": "[parameters('solutionType')]"
+            "notificationHubName": "[concat('NotificationHub', variables('suffix'))]"
         },
         "cosmosDbSettings": {
             "cosmosDbAccountName": "[concat('edisondbacc',variables('suffix'))]",
@@ -204,8 +207,7 @@
             "cosmosCollResponses": "Responses",
             "cosmosCollDevices": "Devices",
             "cosmosCollActionPlans": "ActionPlans",
-            "cosmosCollNotifications": "Notifications",
-            "solutionType": "[parameters('solutionType')]"
+            "cosmosCollNotifications": "Notifications"
         },
         "automationSettings": {
             "automationAccountName": "[concat('AutomationAcc', variables('suffix'))]",
@@ -218,15 +220,13 @@
             "sessionId": "[parameters('sessionId')]",
             "tenantId": "[parameters('tenantId')]",
             "azureAccountName": "[parameters('azureAccountName')]",
-            "azurePassword": "[parameters('azurePassword')]",
-            "solutionType": "[parameters('solutionType')]"
+            "azurePassword": "[parameters('azurePassword')]"
         },
         "storageBlobSettings": {
-            "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
+            "storageAccountName": "[variables('storageAccountName')]",
             "location": "[parameters('location')]",
             "containerName": "logs",
-            "storageAccountType": "Standard_LRS",
-            "solutionType": "[parameters('solutionType')]"
+            "storageAccountType": "Standard_LRS"
         },
         "iothubSettings": {
             "location": "[parameters('location')]",
@@ -236,29 +236,26 @@
             "skuName": "S1",
             "capacityUnits": 1,
             "d2cConsumerGroupName": "cg1",
-            "keyName": "iothubowner",
-            "solutionType": "[parameters('solutionType')]"
+            "keyName": "iothubowner"
         },
         "webSiteSettings": {
             "webAppHostingPlanName": "[concat('edisonwebplan',variables('suffix'))]",
             "location": "WestUS",
             "webAppSkuName1": "F1",
             "webAdminPackageUri": "[parameters('webAdminPackageUri')]",
-            "webAdmin": "[concat('edisonWebAdmin',variables('suffix'))]",
-            "solutionType": "[parameters('solutionType')]"
+            "webAdmin": "[concat('edisonWebAdmin',variables('suffix'))]"
         },
         "omsSettings": {
             "omsWorkspaceName": "[concat('omsworkspace', variables('suffix'))]",
             "omsWorkspaceRegion": "[parameters('omsWorkspaceRegion')]",
             "omsLogAnalyticsSku": "standalone",
-            "dataRetention": 7,
-            "solutionType": "[parameters('solutionType')]"
+            "dataRetention": 7
         },
         "kubernetesSettings": {
             "servicename": "[concat('kubernetes', variables('suffix'))]",
             "kubernetesVersion": "1.11.5",
             "location": "[parameters('location')]",
-            "enableRBAC": true,
+            "enableRBAC": false,
             "dnsPrefix": "clusterdns",
             "enableHttpApplicationRouting": true,
             "osType": "Linux",
@@ -267,8 +264,7 @@
             "servicePrincipalClientId": "[parameters('servicePrincipalClientId')]",
             "servicePrincipalClientSecret": "[parameters('servicePrincipalClientSecret')]",
             "networkPlugin": "kubenet",
-            "osDiskSizeGB": 30,
-            "solutionType": "[parameters('solutionType')]"
+            "osDiskSizeGB": 30
         },
         "acrSettings": {
             "acrName": "[variables('acrName1')]",
@@ -276,8 +272,7 @@
             "location": "[parameters('location')]",
             "acrSku": "Basic",
             "acrLoginServer": "[concat(variables('acrName1'),'.azurecr.io')]",
-            "acrLoginame": "[variables('acrName1')]",
-            "solutionType": "[parameters('solutionType')]"
+            "acrLoginame": "[variables('acrName1')]"
         },
         "vm": {
             "pipName": "[concat('edisonpip',variables('suffix'))]",
@@ -300,8 +295,7 @@
             "networkSecurityGroupName": "nsg",
             "giturl": "[parameters('githuburl')]",
             "tag": "latest",
-            "solutionType": "[parameters('solutionType')]",
-            "fileUri":"[concat(variables('baseUrl'),'scripts/deploy.sh')]"
+            "fileUri": "[concat(variables('baseUrl'),'scripts/scripts-download.sh')]"
         },
         "serviceBusProperties": {
             "serviceBusNamespaceName": "[variables('serviceBusNamespaceName1')]",
@@ -310,13 +304,12 @@
             "serviceBusAuthRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName1'), variables('serviceBusDefaultSASKeyName1'))]",
             "skuName": "Standard",
             "serviceBusQueueName1": "edison_input",
-            "servicebusEndPoint":"[concat('Endpoint=sb://',variables('serviceBusNamespaceName1'),'.servicebus.windows.net/')]",
-            "routesSharedAccessKeyName":"SharedAccessKeyName=edison_inputsend",
-            "entity":"EntityPath=edison_input",
+            "servicebusEndPoint": "[concat('Endpoint=sb://',variables('serviceBusNamespaceName1'),'.servicebus.windows.net/')]",
+            "routesSharedAccessKeyName": "SharedAccessKeyName=edison_inputsend",
+            "entity": "EntityPath=edison_input",
             "serviceBusRabbitMQUsername": "Admin",
             "serviceBusRabbitMQPassword": "Edison1234",
-            "adClientSecret":"[parameters('adClientSecret')]",
-            "solutionType": "[parameters('solutionType')]"
+            "adClientSecret": "[parameters('adClientSecret')]"
         },
         "signalrSettings": {
             "location": "[parameters('signalRlocation')]",
@@ -328,33 +321,44 @@
             "iotDpsName": "[concat('dps',variables('suffix'))]",
             "location": "[parameters('location')]"
         },
-         "keyVaultSettings":{
+        "keyVaultSettings": {
             "keyVaultName": "[concat('keyvault',variables('suffix'))]",
             "tenantId": "[parameters('tenantId')]",
             "objectId": "[parameters('adObjectId')]",
-            "keysPermissions": ["list"],
-            "secretsPermissions": ["list"],
+            "keysPermissions": [
+                "list"
+            ],
+            "secretsPermissions": [
+                "list"
+            ],
             "skuName": "Standard",
             "enableVaultForDeployment": false,
             "enableVaultForDiskEncryption": false,
             "enabledForTemplateDeployment": false,
+            "location": "[parameters('location')]"
+        },
+        "redisSettings": {
             "location": "[parameters('location')]",
-            "solutionType": "[parameters('solutionType')]"
+            "redisCacheName": "[concat('redisCache',variables('suffix'))]",
+            "redisCacheCapacity": 1,
+            "redisCacheFamily": "C",
+            "redisCacheSKU": "Basic",
+            "enableNonSslPort": false,
+            "diagnosticsEnabled": true,
+            "existingDiagnosticsStorageAccountId": "[variables('existingDiagnosticsStorageAccountId')]"
         },
-        "botSettings":{
+        "botSettings": {
             "insightsName": "[concat(variables('botId1'),  variables('suffix'))]",
-            "appInsightsLocation":"[parameters('appInsightsLocation')]",
-            "botId":"[variables('botId1')]",
-            "botEndpoint":"[variables('botEndpointConfig').bot]",
-            "sku":"S1",
-            "kind":"bot",
-            "siteName":"[parameters('siteName')]",  
-            "appId":"[parameters('adClientId')]",     
-            "siteHost":"[variables('siteHost1')]"    ,
-            "solutionType": "[parameters('solutionType')]"  
-           
+            "appInsightsLocation": "[parameters('appInsightsLocation')]",
+            "botId": "[variables('botId1')]",
+            "botEndpoint": "[variables('botEndpointConfig').bot]",
+            "sku": "S1",
+            "kind": "bot",
+            "siteName": "[parameters('siteName')]",
+            "botAppId": "[parameters('botAdClientId')]",
+            "siteHost": "[variables('siteHost1')]"
         },
-        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/",
+        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
         "virtualNetworkName1": "[concat('edisonVnet', variables('suffix'))]",
         "subnetName1": "edisonSubnet",
@@ -362,6 +366,10 @@
         "serviceBusDefaultSASKeyName1": "RootManageSharedAccessKey",
         "serviceBusNamespaceName1": "[concat('snamespace',variables('suffix'))]",
         "acrName1": "[concat('acr',variables('suffix'))]",
+        "rgName": "[resourceGroup().name]",
+        "subscriptionid": "[subscription().subscriptionId]",
+        "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
+        "existingDiagnosticsStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
         "siteHost1": "[concat(parameters('siteName'), '.azurewebsites.net')]",
         "botId1": "[concat('edisonbot', variables('suffix'))]",
         "botEndpointConfig": {
@@ -404,9 +412,6 @@
                 "parameters": {
                     "CosmosDbSettings": {
                         "value": "[variables('CosmosDbSettings')]"
-                    },
-                    "omsSettings": {
-                        "value": "[variables('omsSettings')]"
                     }
                 }
             }
@@ -430,9 +435,6 @@
                     },
                     "CosmosDbSettings": {
                         "value": "[variables('cosmosDbSettings')]"
-                    },
-                    "omsSettings": {
-                        "value": "[variables('omsSettings')]"
                     }
                 }
             }
@@ -459,7 +461,7 @@
             "name": "IotHub",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
-            "dependsOn": [ 
+            "dependsOn": [
                 "ServiceBus"
             ],
             "properties": {
@@ -496,9 +498,6 @@
                 "parameters": {
                     "webSiteSettings": {
                         "value": "[variables('webSiteSettings')]"
-                    },
-                    "omsSettings": {
-                        "value": "[variables('omsSettings')]"
                     }
                 }
             }
@@ -565,7 +564,8 @@
         {
             "name": "DockerVM",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2015-01-01",
+            "apiVersion": "2016-02-01",
+            "condition": "[equals(parameters('dockerVM'), 'Yes')]",
             "dependsOn": [
                 "AzureContainerRegistry",
                 "StorageBlob"
@@ -583,16 +583,16 @@
                     "acrSettings": {
                         "value": "[variables('acrSettings')]"
                     },
-                    "acrLoginPassword":{
-                        "value":"[reference('AzureContainerRegistry').outputs.acrPassword.value]"
+                    "acrLoginPassword": {
+                        "value": "[reference('AzureContainerRegistry').outputs.acrPassword.value]"
                     },
                     "serviceBusProperties": {
                         "value": "[variables('serviceBusProperties')]"
                     },
-                    "cosmosDBPrimaryKey":{
+                    "cosmosDBPrimaryKey": {
                         "value": "[reference('CosmosDB').outputs.cosmosDBAccountKey.value]"
                     },
-                    "sbPrimaryKey":{
+                    "sbPrimaryKey": {
                         "value": "[concat('SharedAccessKey=',reference('ServiceBus').outputs.sbPrimaryKey.value)]"
                     }
                 }
@@ -679,6 +679,26 @@
             }
         },
         {
+            "name": "Rediscache",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "StorageBlob"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/redisCache.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "redisSettings": {
+                        "value": "[variables('redisSettings')]"
+                    }
+                }
+            }
+        },
+        {
             "name": "Bot",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
@@ -698,21 +718,53 @@
         }
     ],
     "outputs": {
-        "vmAdminUser": {
+        "cosmosDBEndpoint": {
             "type": "string",
-            "value": "[reference('DockerVM').outputs.vmAdminUser.value]"
+            "value": "[reference('CosmosDB').outputs.cosmosDBAccountEndPoint.value]"
         },
-        "vmPassword": {
+        "cosmosDbConnString": {
             "type": "string",
-            "value": "[reference('DockerVM').outputs.vmPassword.value]"
+            "value": "[reference('CosmosDB').outputs.connectionString.value]"
         },
-        "serviceBusConnectionString": {
+        "CosmosDBKey": {
             "type": "string",
-            "value": "[reference('ServiceBus').outputs.connectionString.value]"
+            "value": "[reference('CosmosDB').outputs.cosmosDBAccountKey.value]"
         },
-        "SignalRAccessKey": {
+        "NotificationHubName": {
             "type": "string",
-            "value": "[reference('SignalR').outputs.SignalRAccessKey.value]"
+            "value": "[variables('notificationHub').notificationHubName]"
+        },
+        "NotificationHubConnectionString": {
+            "type": "string",
+            "value": "[reference('NotificationHub').outputs.notificationHubConnectionString.value]"
+        },
+        "serviceBusQueueConnectionString": {
+            "type": "string",
+            "value": "[reference('ServiceBus').outputs.queueConnectionString.value]"
+        },
+        "ServiceBusRabbitMQUSR": {
+            "type": "string",
+            "value": "[variables('serviceBusProperties').serviceBusRabbitMQUsername]"
+        },
+        "ServiceBusRabbitMQPWD": {
+            "type": "string",
+            "value": "[variables('serviceBusProperties').serviceBusRabbitMQPassword]"
+        },
+        "IoTHubConnString": {
+            "type": "string",
+            "value": "[reference('IotHub').outputs.iotHubConnectionString.value]"
+        },
+        "SignalRConnString": {
+            "type": "string",
+            "value": "[reference('Rediscache').outputs.RedisConnString.value]"
+        }, 
+        "ApplicationInsightsKey": {
+            "type": "string",
+            "value": "[reference('Bot').outputs.botInskey.value]"
+        },
+        "storageaccountEndPoint": {
+            "type": "string",
+            "value": "[reference('StorageBlob').outputs.storageAccountEndpoint.value]"
         },
         "acrLoginServer": {
             "type": "string",
@@ -725,6 +777,34 @@
         "acrPassword": {
             "type": "string",
             "value": "[reference('AzureContainerRegistry').outputs.acrPassword.value]"
+        },
+        "SubscriptionId": {
+            "type": "string",
+            "value": "[variables('subscriptionid')]"
+        },
+        "ResourceGroupName": {
+            "type": "string",
+            "value": "[variables('rgName')]"
+        },
+        "KubernetesServiceName": {
+            "type": "string",
+            "value": "[variables('kubernetesSettings').servicename]"
+        },
+        "AzureUserId": {
+            "type": "string",
+            "value": "[parameters('azureAccountName')]"
+        },
+        "AzurePwd": {
+            "type": "string",
+            "value": "[parameters('azurePassword')]"
+        },
+        "MSAppID": {
+            "type": "string",
+            "value": "[parameters('botAdClientId')]"
+        },
+        "AdSecret": {
+            "type": "string",
+            "value": "[parameters('adClientSecret')]"
         },
         "iotDpsIdScope": {
             "type": "string",

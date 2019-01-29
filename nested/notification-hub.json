@@ -13,9 +13,6 @@
             "name": "[parameters('notificationHub').notificationHubNamespaceName]",
             "type": "Microsoft.NotificationHubs/namespaces",
             "location": "[parameters('notificationHub').location]",
-            "tags": {
-                "IotSuiteType": "[parameters('notificationHub').solutionType]"
-            },
             "sku": {
                 "name": "[parameters('notificationHub').skuName]"
             },
@@ -47,7 +44,7 @@
     ],
     "outputs": {
         "notificationHubConnectionString": {
-            "value": "[listKeys(resourceId('Microsoft.NotificationHubs/namespaces/notificationHubs/authorizationRules', parameters('notificationHub').notificationHubNamespaceName, parameters('notificationHub').notificationHubName, 'DefaultFullSharedAccessSignature'), providers('Microsoft.NotificationHubs', 'namespaces/notificationHubs').apiVersions[0]).primaryConnectionString]",
+            "value": "[listKeys(resourceId('Microsoft.NotificationHubs/namespaces/notificationHubs/authorizationRules', parameters('notificationHub').notificationHubNamespaceName, parameters('notificationHub').notificationHubName, 'DefaultListenSharedAccessSignature'), providers('Microsoft.NotificationHubs', 'namespaces/notificationHubs').apiVersions[0]).primaryConnectionString]",
             "type": "string"
         }
     }

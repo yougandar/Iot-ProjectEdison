@@ -7,9 +7,6 @@
         },
         "cosmosDbSettings": {
             "type": "object"
-        },
-        "omsSettings": {
-            "type": "object"
         }
     },
     "variables": {},
@@ -19,63 +16,12 @@
             "type": "Microsoft.Automation/automationAccounts",
             "apiVersion":"2015-10-31",
             "location": "[parameters('automationSettings').automationLocation]",
-            "tags": {
-                "IotSuiteType": "[parameters('automationSettings').solutionType]"
-            },
             "properties": {
                 "sku": {
                     "name": "[parameters('automationSettings').automationSku]"
                 }
             },
             "resources": [
-                {
-                    "name": "Microsoft.Insights/service",
-                    "type": "providers/diagnosticSettings",
-                    "apiVersion": "2016-09-01",
-                    "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('automationSettings').automationAccountName)]"
-                    ],
-                    "properties": {
-                        "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsSettings').omsWorkspaceName)]",
-                        "logs": [
-                            {
-                                "category": "JobLogs",
-                                "enabled": true,
-                                "retentionPolicy": {
-                                    "days": 0,
-                                    "enabled": false
-                                }
-                            },
-                            {
-                                "category": "JobStreams",
-                                "enabled": true,
-                                "retentionPolicy": {
-                                    "days": 0,
-                                    "enabled": false
-                                }
-                            },
-                            {
-                                "category": "DscNodeStatus",
-                                "enabled": true,
-                                "retentionPolicy": {
-                                    "days": 0,
-                                    "enabled": false
-                                }
-                            }
-                        ],
-                        "metrics": [
-                            {
-                                "timeGrain": "AllMetrics",
-                                "category": "AllMetrics",
-                                "enabled": true,
-                                "retentionPolicy": {
-                                    "enabled": false,
-                                    "days": 0
-                                }
-                            }
-                        ]
-                    }
-                },
                 {
                     "name": "[parameters('automationSettings').runbookName]",
                     "type": "runbooks",

@@ -27,9 +27,6 @@
             "name": "[parameters('botSettings').botId]",
             "apiVersion": "2017-12-01",
             "location": "global",
-            "tags": {
-                "IotSuiteType": "[parameters('botSettings').solutionType]"
-            },
             "properties": {
                 "name": "[parameters('botSettings').botId]",
                 "displayName":"[parameters('botSettings').botId]",
@@ -43,7 +40,7 @@
                     "directline",
                     "webchat"
                 ],
-                "msaAppId": "[parameters('botSettings').appId]",
+                "msaAppId": "[parameters('botSettings').botAppId]",
                 "developerAppInsightsApplicationId":"[parameters('botSettings').insightsName]",
                 "developerAppInsightKey": "[reference(resourceId('microsoft.insights/components/', parameters('botSettings').insightsName), '2015-05-01').InstrumentationKey]"
             },

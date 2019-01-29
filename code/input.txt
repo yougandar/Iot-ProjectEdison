@@ -1,0 +1,38 @@
+GIT_URL:
+ADCLIENTID:
+TENANTID:
+B2CCLIENTID:
+DOMAIN:
+SIGNUPSIGNINPOLICYID:
+COSMOSDBEP:yes                   
+NOTIFICATIONHUBPATH:yes
+TWILIOACCID:
+MSAPPID:yes
+CosmosDbSRT:yes
+AzureServiceBusCONN:yes
+ServiceBusRabbitMQUSR:yes
+ServiceBusRabbitMQPWD:yes
+AzureAdSRT:yes
+SignalCONN:yes
+IoTHubControllerSRT:yes
+NotificationHubSRT:yes
+ApplicationInsightsKey: yes
+BotAppPassword:  
+BotStorageep: yes
+TuserName:
+Tpassword:
+TauthToken:
+*BASEURL_VALUE:
+ADDOMAIN:
+MSAPPPWD:
+BOTSECRETTOKEN:
+ACR_SERVERNAME:yes
+ACR_USERNAME:yes
+ACR_PASSWD:yes
+TAG:
+TenantId:
+AzureUserId:yes
+AzurePwd:yes
+SubscriptionId: yes
+ResourceGroupName:yes
+ClusterName:yes
