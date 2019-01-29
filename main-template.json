@@ -182,7 +182,7 @@
             "type": "string",
             "defaultValue": "https://github.com/litebulb/ProjectEdison.git",
             "metadata": {
-                "description": "GitHub url used to clone the repository to build the images in docker VM"
+                "description": "GitHub url used to clone the repository"
             }
         },
         "siteName": {
@@ -718,6 +718,10 @@
         }
     ],
     "outputs": {
+        "gitHubUrl": {
+            "type": "string",
+            "value": "[parameters('githuburl')]"
+        },
         "cosmosDBEndpoint": {
             "type": "string",
             "value": "[reference('CosmosDB').outputs.cosmosDBAccountEndPoint.value]"
@@ -753,7 +757,7 @@
         "SignalRConnString": {
             "type": "string",
             "value": "[reference('Rediscache').outputs.RedisConnString.value]"
-        }, 
+        },
         "ApplicationInsightsKey": {
             "type": "string",
             "value": "[reference('Bot').outputs.botInskey.value]"
