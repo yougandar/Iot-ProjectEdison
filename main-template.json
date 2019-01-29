@@ -722,7 +722,7 @@
             "type": "string",
             "value": "[reference('CosmosDB').outputs.cosmosDBAccountEndPoint.value]"
         },
-        "cosmosDbSRT": {
+        "cosmosDbConnString": {
             "type": "string",
             "value": "[reference('CosmosDB').outputs.connectionString.value]"
         },
