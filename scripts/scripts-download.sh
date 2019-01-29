@@ -1,22 +1,22 @@
 #!/bin/bash
 #downloading input.txt file
-sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/code/input.txt
+sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/code/input.txt
 #downloading deploy1.sh
-sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/scripts/deploy1.sh
+sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/scripts/deploy1.sh
 #downloading configupdate2.sh
-sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/scripts/configupdate2.sh
+sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/scripts/configupdate2.sh
 #downloading commonupdate3.sh
-sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/scripts/commonupdate3.sh
+sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/scripts/commonupdate3.sh
 #downloading edisonwebenvupdate4.sh
-sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/scripts/edisonwebenvupdate4.sh
+sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/scripts/edisonwebenvupdate4.sh
 #downloading updateappsettings5.sh
-sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/scripts/updateappsettings5.sh
+sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/scripts/updateappsettings5.sh
 #downloading imagesupdate6.sh
-sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/scripts/imagesupdate6.sh
+sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/scripts/imagesupdate6.sh
 #downloading clusterconnect7.sh
-sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/scripts/clusterconnect7.sh
+sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/scripts/clusterconnect7.sh
 #downloading set-kubernetes-config8.sh
-sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/scripts/set-kubernetes-config8.sh
+sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/scripts/set-kubernetes-config8.sh
  
 
 cd /var/lib/waagent/custom-script/download/0

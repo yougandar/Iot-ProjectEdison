@@ -358,7 +358,7 @@
             "botAppId": "[parameters('botAdClientId')]",
             "siteHost": "[variables('siteHost1')]"
         },
-        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/",
+        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
         "virtualNetworkName1": "[concat('edisonVnet', variables('suffix'))]",
         "subnetName1": "edisonSubnet",
@@ -721,10 +721,6 @@
         "cosmosDBEndpoint": {
             "type": "string",
             "value": "[reference('CosmosDB').outputs.cosmosDBAccountEndPoint.value]"
-        },
-        "cosmosDbConnString": {
-            "type": "string",
-            "value": "[reference('CosmosDB').outputs.connectionString.value]"
         },
         "CosmosDBKey": {
             "type": "string",
