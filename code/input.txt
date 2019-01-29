@@ -5,20 +5,20 @@ B2CCLIENTID:
 DOMAIN:
 SIGNUPSIGNINPOLICYID:
 COSMOSDBEP:yes                   
-NOTIFICATIONHUBPATH:yes
+NOTIFICATIONHUBPATH:
 TWILIOACCID:
-MSAPPID:yes
-CosmosDbSRT:yes
-AzureServiceBusCONN:yes
-ServiceBusRabbitMQUSR:yes
-ServiceBusRabbitMQPWD:yes
-AzureAdSRT:yes
-SignalCONN:yes
-IoTHubControllerSRT:yes
-NotificationHubSRT:yes
-ApplicationInsightsKey: yes
-BotAppPassword:  
-BotStorageep: yes
+MSAPPID:
+CosmosDbSRT:
+AzureServiceBusCONN:
+ServiceBusRabbitMQUSR
+ServiceBusRabbitMQPWD:
+AzureAdSRT:
+SignalCONN:
+IoTHubControllerSRT:
+NotificationHubSRT:
+ApplicationInsightsKey: 
+BotAppPassword:
+BotStorageep:
 TuserName:
 Tpassword:
 TauthToken:
@@ -26,13 +26,13 @@ TauthToken:
 ADDOMAIN:
 MSAPPPWD:
 BOTSECRETTOKEN:
-ACR_SERVERNAME:yes
-ACR_USERNAME:yes
-ACR_PASSWD:yes
+ACR_SERVERNAME:
+ACR_USERNAME:
+ACR_PASSWD:
 TAG:
 TenantId:
-AzureUserId:yes
-AzurePwd:yes
-SubscriptionId: yes
-ResourceGroupName:yes
-ClusterName:yes
+AzureUserId:
+AzurePwd:
+SubscriptionId:
+ResourceGroupName:
+ClusterName:

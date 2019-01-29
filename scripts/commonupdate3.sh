@@ -3,20 +3,20 @@
 #Author - Vivek
 
 #------------------------------------
-CosmosDbSRT=$1
-AzureServiceBusCONN=$2
-ServiceBusRabbitMQUSR=$3
-ServiceBusRabbitMQPWD=$4
-AzureAdSRT=$5
-SignalCONN=$6
-IoTHubControllerSRT=$7
-NotificationHubSRT=$8
-ApplicationInsightsKey=$9
-BotAppPassword=${10}
-BotStorageep=${11}
-TuserName=${12}
-Tpassword=${13}
-TauthToken=${14}
+CosmosDbSRT=`head -11 input.txt | awk -F: '{print $2}'`
+AzureServiceBusCONN=`head -12 input.txt | awk -F: '{print $2}'`
+ServiceBusRabbitMQUSR=`head -13 input.txt | awk -F: '{print $2}'`
+ServiceBusRabbitMQPWD=`head -14 input.txt | awk -F: '{print $2}'`
+AzureAdSRT=`head -15 input.txt | awk -F: '{print $2}'`
+SignalCONN=`head -16 input.txt | awk -F: '{print $2}'`
+IoTHubControllerSRT=`head -17 input.txt | awk -F: '{print $2}'`
+NotificationHubSRT=`head -18 input.txt | awk -F: '{print $2}'`
+ApplicationInsightsKey=`head -19 input.txt | awk -F: '{print $2}'`
+BotAppPassword=`head -20 input.txt | awk -F: '{print $2}'`
+BotStorageep=`head -21 input.txt | awk -F: '{print $2}'`
+TuserName=`head -22 input.txt | awk -F: '{print $2}'`
+Tpassword=`head -23 input.txt | awk -F: '{print $2}'`
+TauthToken=`head -24 input.txt | awk -F: '{print $2}'`
 
 #------------------------------------
 export CosmosDbSRT

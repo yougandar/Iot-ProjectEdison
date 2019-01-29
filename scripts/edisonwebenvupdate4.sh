@@ -2,9 +2,9 @@
 #Comment - Updates the environment files for Edison Admin code
 #Author - Vivek
 #------------------------------------
-TENANT_VALUE="$1"
-CLIENTID_VALUE="$2"
-BASEURL_VALUE="$3"
+TENANT_VALUE=`head -3 input.txt | awk -F: '{print $2}'`
+CLIENTID_VALUE=`head -2 input.txt | awk -F: '{print $2}'`
+BASEURL_VALUE=`head -25 input.txt | awk -F: '{print $2}'`
 #------------------------------------
 GIT_URL="https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/scripts"
 GITPATH=`pwd`

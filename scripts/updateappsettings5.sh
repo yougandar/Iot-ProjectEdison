@@ -2,29 +2,29 @@
 #Comment - Updates the appsettings file for Edisonweb services code
 #Author - komali
 #------------------------------------
-COSMOSDBENDPOINT=$1
-COSMOSDBKEY=$2
-ADCLIENTID=$3
-ADSECRET=$4
-ADDOMAIN=$5
-ADTENANTID=$6
-B2CCLIENTID=$7
-B2CDOMAIN=$8
-B2CSIGNINPOLICY=$9
-NOTIFICATIONHUBNAME=${10}
-NOTIFICATIONCONNSTRING=${11}
-SIGNALLRCONNSTRING=${12}
-RABBITMQUSER=${13}
-RABBITMQPWD=${14}
-SERVICEBUSCONNSTRING=${15}
-TWILIOUSER=${16}
-TWILIOPWD=${17}
-TWILIOACCID=${18}
-TWILIOAUTHTOKEN=${19}
-MSAPPID=${20}
-MSAPPPWD=${21}
-IOTHUBCONN=${22}
-BOTSECRETTOKEN=${23}
+COSMOSDBENDPOINT=`head -7 input.txt | awk -F: '{print $2}'`
+COSMOSDBKEY=`head -11 input.txt | awk -F: '{print $2}'`
+ADCLIENTID=`head -2 input.txt | awk -F: '{print $2}'`
+ADSECRET=`head -15 input.txt | awk -F: '{print $2}'`
+ADDOMAIN=`head -26 input.txt | awk -F: '{print $2}'`
+ADTENANTID=`head -3 input.txt | awk -F: '{print $2}'`
+B2CCLIENTID=`head -4 input.txt | awk -F: '{print $2}'`
+B2CDOMAIN=`head -5 input.txt | awk -F: '{print $2}'`
+B2CSIGNINPOLICY=`head -6 input.txt | awk -F: '{print $2}'`
+NOTIFICATIONHUBNAME=`head -8 input.txt | awk -F: '{print $2}'`
+NOTIFICATIONCONNSTRING=`head -18 input.txt | awk -F: '{print $2}'`
+SIGNALLRCONNSTRING=`head -16 input.txt | awk -F: '{print $2}'`
+RABBITMQUSER=`head -13 input.txt | awk -F: '{print $2}'`
+RABBITMQPWD=`head -14 input.txt | awk -F: '{print $2}'`
+SERVICEBUSCONNSTRING=`head -12 input.txt | awk -F: '{print $2}'`
+TWILIOUSER=`head -22 input.txt | awk -F: '{print $2}'`
+TWILIOPWD=`head -23 input.txt | awk -F: '{print $2}'`
+TWILIOACCID=`head -9 input.txt | awk -F: '{print $2}'`
+TWILIOAUTHTOKEN=`head -24 input.txt | awk -F: '{print $2}'`
+MSAPPID=`head -10 input.txt | awk -F: '{print $2}'`
+MSAPPPWD=`head -27 input.txt | awk -F: '{print $2}'`
+IOTHUBCONN=`head -17 input.txt | awk -F: '{print $2}'`
+BOTSECRETTOKEN=`head -28 input.txt | awk -F: '{print $2}'`
 #------------------------------------
 GITPATH=`pwd`
 GIT_DIRPATH="$GITPATH/ProjectEdison"
