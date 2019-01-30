@@ -14,7 +14,7 @@
             "type": "Microsoft.Web/serverfarms",
             "location": "[parameters('webSiteSettings').location]",
             "tags": {
-                "displayName": "HostingPlan"
+                "IotSuiteType": "[parameters('webSiteSettings').solutionType]"
             },
             "sku": {
                 "name": "[parameters('webSiteSettings').webAppSkuName1]",
@@ -31,7 +31,7 @@
             "location": "[parameters('webSiteSettings').location]",
             "tags": {
                 "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('webSiteSettings').webAppHostingPlanName)]": "Resource",
-                "displayName": "Website"
+                "displayName": "[parameters('webSiteSettings').solutionType]"
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Web/serverfarms/', parameters('webSiteSettings').webAppHostingPlanName)]"

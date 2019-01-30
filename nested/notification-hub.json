@@ -13,6 +13,9 @@
             "name": "[parameters('notificationHub').notificationHubNamespaceName]",
             "type": "Microsoft.NotificationHubs/namespaces",
             "location": "[parameters('notificationHub').location]",
+            "tags": {
+                "IotSuiteType": "[parameters('notificationHub').solutionType]"
+            },
             "sku": {
                 "name": "[parameters('notificationHub').skuName]"
             },

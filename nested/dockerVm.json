@@ -4,21 +4,6 @@
     "parameters": {
         "vm": {
             "type": "object"
-        },
-        "acrSettings": {
-            "type": "object"
-        },
-        "acrLoginPassword":{
-            "type": "string"
-        },
-        "serviceBusProperties":{
-            "type": "object"
-        },
-        "cosmosDBPrimaryKey":{
-            "type": "string"
-        },
-        "sbPrimaryKey":{
-            "type": "string"
         }
     },
     "variables": {},
@@ -110,6 +95,9 @@
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[parameters('vm').vmName]",
             "location": "[parameters('vm').location]",
+            "tags": {
+                "IotSuiteType": "[parameters('vm').solutionType]"
+            },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces/', parameters('vm').nicName)]"
             ],

@@ -15,6 +15,9 @@
             "type": "Microsoft.ServiceBus/namespaces",
             "apiVersion": "2017-04-01",
             "location": "[parameters('serviceBusProperties').location]",
+            "tags": {
+                "IotSuiteType": "[parameters('serviceBusProperties').solutionType]"
+            },
             "sku": {
                 "name": "[parameters('serviceBusProperties').skuName]"
             },

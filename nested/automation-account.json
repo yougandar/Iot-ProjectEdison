@@ -16,6 +16,9 @@
             "type": "Microsoft.Automation/automationAccounts",
             "apiVersion":"2015-10-31",
             "location": "[parameters('automationSettings').automationLocation]",
+            "tags": {
+                "IotSuiteType": "[parameters('automationSettings').solutionType]"
+            },
             "properties": {
                 "sku": {
                     "name": "[parameters('automationSettings').automationSku]"

@@ -12,6 +12,9 @@
             "name": "[parameters('redisSettings').redisCacheName]",
             "type": "Microsoft.Cache/Redis",
             "location": "[parameters('redisSettings').location]",
+            "tags": {
+                "IotSuiteType": "[parameters('redisSettings').solutionType]"
+            },
             "properties": {
                 "enableNonSslPort": "[parameters('redisSettings').enableNonSslPort]",
                 "sku": {

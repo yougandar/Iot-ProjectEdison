@@ -2,6 +2,13 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "solutionType": {
+            "type": "string",
+            "defaultValue": "Project-Edison",
+            "metadata": {
+                "description": "The type of solution"
+            }
+        },
         "location": {
             "type": "string",
             "defaultValue": "eastus",
@@ -88,7 +95,7 @@
             }
         },
         "adClientSecret": {
-            "type": "string",
+            "type": "securestring",
             "defaultValue": "",
             "metadata": {
                 "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
@@ -192,6 +199,7 @@
     },
     "variables": {
         "notificationHub": {
+            "solutionType": "[parameters('solutionType')]",
             "location": "[parameters('location')]",
             "skuName": "free",
             "namespaceType": "NotificationHub",
@@ -199,6 +207,7 @@
             "notificationHubName": "[concat('NotificationHub', variables('suffix'))]"
         },
         "cosmosDbSettings": {
+            "solutionType": "[parameters('solutionType')]",
             "cosmosDbAccountName": "[concat('edisondbacc',variables('suffix'))]",
             "location": "[parameters('location')]",
             "offerType": "Standard",
@@ -210,6 +219,7 @@
             "cosmosCollNotifications": "Notifications"
         },
         "automationSettings": {
+            "solutionType": "[parameters('solutionType')]",
             "automationAccountName": "[concat('AutomationAcc', variables('suffix'))]",
             "automationLocation": "eastus2",
             "automationSku": "Free",
@@ -223,12 +233,14 @@
             "azurePassword": "[parameters('azurePassword')]"
         },
         "storageBlobSettings": {
+            "solutionType": "[parameters('solutionType')]",
             "storageAccountName": "[variables('storageAccountName')]",
             "location": "[parameters('location')]",
             "containerName": "logs",
             "storageAccountType": "Standard_LRS"
         },
         "iothubSettings": {
+            "solutionType": "[parameters('solutionType')]",
             "location": "[parameters('location')]",
             "iotHubName": "[concat('edisonhub',variables('suffix'))]",
             "d2cMessageRetentionInDaysPeriod": 1,
@@ -239,6 +251,7 @@
             "keyName": "iothubowner"
         },
         "webSiteSettings": {
+            "solutionType": "[parameters('solutionType')]",
             "webAppHostingPlanName": "[concat('edisonwebplan',variables('suffix'))]",
             "location": "WestUS",
             "webAppSkuName1": "F1",
@@ -246,12 +259,14 @@
             "webAdmin": "[concat('edisonWebAdmin',variables('suffix'))]"
         },
         "omsSettings": {
+            "solutionType": "[parameters('solutionType')]",
             "omsWorkspaceName": "[concat('omsworkspace', variables('suffix'))]",
             "omsWorkspaceRegion": "[parameters('omsWorkspaceRegion')]",
             "omsLogAnalyticsSku": "standalone",
             "dataRetention": 7
         },
         "kubernetesSettings": {
+            "solutionType": "[parameters('solutionType')]",
             "servicename": "[concat('kubernetes', variables('suffix'))]",
             "kubernetesVersion": "1.11.5",
             "location": "[parameters('location')]",
@@ -267,6 +282,7 @@
             "osDiskSizeGB": 30
         },
         "acrSettings": {
+            "solutionType": "[parameters('solutionType')]",
             "acrName": "[variables('acrName1')]",
             "acrAdminUserEnabled": true,
             "location": "[parameters('location')]",
@@ -275,6 +291,7 @@
             "acrLoginame": "[variables('acrName1')]"
         },
         "vm": {
+            "solutionType": "[parameters('solutionType')]",
             "pipName": "[concat('edisonpip',variables('suffix'))]",
             "location": "[parameters('location')]",
             "publicIpAddressType": "Static",
@@ -298,6 +315,7 @@
             "fileUri": "[concat(variables('baseUrl'),'scripts/scripts-download.sh')]"
         },
         "serviceBusProperties": {
+            "solutionType": "[parameters('solutionType')]",
             "serviceBusNamespaceName": "[variables('serviceBusNamespaceName1')]",
             "location": "[parameters('location')]",
             "serviceBusDefaultSASKeyName": "[variables('serviceBusDefaultSASKeyName1')]",
@@ -312,16 +330,19 @@
             "adClientSecret": "[parameters('adClientSecret')]"
         },
         "signalrSettings": {
+            "solutionType": "[parameters('solutionType')]",
             "location": "[parameters('signalRlocation')]",
             "name": "[concat('signalR',variables('suffix'))]",
             "pricingTier": "Standard_S1",
             "capacity": "[parameters('signalrCapacity')]"
         },
         "iotDpsSettings": {
+            "solutionType": "[parameters('solutionType')]",
             "iotDpsName": "[concat('dps',variables('suffix'))]",
             "location": "[parameters('location')]"
         },
         "keyVaultSettings": {
+            "solutionType": "[parameters('solutionType')]",
             "keyVaultName": "[concat('keyvault',variables('suffix'))]",
             "tenantId": "[parameters('tenantId')]",
             "objectId": "[parameters('adObjectId')]",
@@ -338,6 +359,7 @@
             "location": "[parameters('location')]"
         },
         "redisSettings": {
+            "solutionType": "[parameters('solutionType')]",
             "location": "[parameters('location')]",
             "redisCacheName": "[concat('redisCache',variables('suffix'))]",
             "redisCacheCapacity": 1,
@@ -348,6 +370,7 @@
             "existingDiagnosticsStorageAccountId": "[variables('existingDiagnosticsStorageAccountId')]"
         },
         "botSettings": {
+            "solutionType": "[parameters('solutionType')]",
             "insightsName": "[concat(variables('botId1'),  variables('suffix'))]",
             "appInsightsLocation": "[parameters('appInsightsLocation')]",
             "botId": "[variables('botId1')]",
@@ -370,7 +393,7 @@
         "subscriptionid": "[subscription().subscriptionId]",
         "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
         "existingDiagnosticsStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
-        "siteHost1": "[concat(parameters('siteName'), '.azurewebsites.net')]",
+        "siteHost1": "edisonapi",
         "botId1": "[concat('edisonbot', variables('suffix'))]",
         "botEndpointConfig": {
             "bot": "[concat('https://', variables('siteHost1'), '/api/messages')]",

@@ -12,6 +12,9 @@
       "name": "[parameters('keyVaultSettings').keyVaultName]",
       "apiVersion": "2016-10-01",
       "location": "[parameters('keyVaultSettings').location]",
+      "tags": {
+        "IotSuiteType": "[parameters('keyVaultSettings').solutionType]"
+    },
       "properties": {
         "enabledForDeployment": "[parameters('keyVaultSettings').enableVaultForDeployment]",
         "enabledForDiskEncryption": "[parameters('keyVaultSettings').enableVaultForDiskEncryption]",
