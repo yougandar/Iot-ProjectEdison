@@ -1,11 +1,11 @@
 #Azure Container Registry Configuration
-azureSubscriptionId=`head -35 input.txt | awk -F: '{print $2}'`
-acrResourceGroup=`head -36 input.txt | awk -F: '{print $2}'`
-acrSPName=`head -29 input.txt | awk -F: '{print $2}'`
-acrSPClientId=`head -29 input.txt | awk -F: '{print $2}'`
-acrSPPassword=`head -30 input.txt | awk -F: '{print $2}'`
-acrContainerRegistryName=`head -29 input.txt | awk -F: '{print $2}'`
-acrContainerRegistryUrl=`head -28 input.txt | awk -F: '{print $2}'`
+azureSubscriptionId=`head -35 input.txt | awk -F "\"" '{print $2}'| tail -1`
+acrResourceGroup=`head -36 input.txt | awk -F "\"" '{print $2}'| tail -1`
+acrSPName=`head -29 input.txt | awk -F "\"" '{print $2}'| tail -1`
+acrSPClientId=`head -29 input.txt | awk -F "\"" '{print $2}'| tail -1`
+acrSPPassword=`head -30 input.txt | awk -F "\"" '{print $2}'| tail -1`
+acrContainerRegistryName=`head -29 input.txt | awk -F "\"" '{print $2}'| tail -1`
+acrContainerRegistryUrl=`head -28 input.txt | awk -F "\"" '{print $2}'| tail -1`
 acrAccountEmail="nvtuluva@sysgain.com"
 
 #Registering Azure Container Registry Credentials
