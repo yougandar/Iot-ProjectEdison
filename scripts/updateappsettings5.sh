@@ -1,6 +1,5 @@
 #!/bin/bash
 #Comment - Updates the appsettings file for Edisonweb services code
-#Author - komali
 #------------------------------------
 COSMOSDBENDPOINT=`head -7 input.txt | awk -F "\"" '{print $2}'| tail -1`
 COSMOSDBKEY=`head -11 input.txt | awk -F "\"" '{print $2}'| tail -1`
@@ -24,7 +23,7 @@ TWILIOAUTHTOKEN=`head -24 input.txt | awk -F "\"" '{print $2}'| tail -1`
 MSAPPID=`head -10 input.txt | awk -F "\"" '{print $2}'| tail -1`
 MSAPPPWD=`head -20 input.txt | awk -F "\"" '{print $2}'| tail -1`
 IOTHUBCONN=`head -17 input.txt | awk -F "\"" '{print $2}'| tail -1`
-BOTSECRETTOKEN=`head -28 input.txt | awk -F "\"" '{print $2}'| tail -1`
+BOTSECRETTOKEN=`head -27 input.txt | awk -F "\"" '{print $2}'| tail -1`
 #------------------------------------
 GITPATH=`pwd`
 GIT_DIRPATH="$GITPATH/ProjectEdison"
