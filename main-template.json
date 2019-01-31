@@ -259,7 +259,7 @@
             "dnsPrefix": "clusterdns",
             "enableHttpApplicationRouting": true,
             "osType": "Linux",
-            "agentVMSize": "Standard B4ms",
+            "agentVMSize": "Standard_D2_v2",
             "agentCount": 3,
             "servicePrincipalClientId": "[parameters('servicePrincipalClientId')]",
             "servicePrincipalClientSecret": "[parameters('servicePrincipalClientSecret')]",
