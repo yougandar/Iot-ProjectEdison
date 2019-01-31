@@ -602,21 +602,6 @@
                 "parameters": {
                     "vm": {
                         "value": "[variables('vm')]"
-                    },
-                    "acrSettings": {
-                        "value": "[variables('acrSettings')]"
-                    },
-                    "acrLoginPassword": {
-                        "value": "[reference('AzureContainerRegistry').outputs.acrPassword.value]"
-                    },
-                    "serviceBusProperties": {
-                        "value": "[variables('serviceBusProperties')]"
-                    },
-                    "cosmosDBPrimaryKey": {
-                        "value": "[reference('CosmosDB').outputs.cosmosDBAccountKey.value]"
-                    },
-                    "sbPrimaryKey": {
-                        "value": "[concat('SharedAccessKey=',reference('ServiceBus').outputs.sbPrimaryKey.value)]"
                     }
                 }
             }
