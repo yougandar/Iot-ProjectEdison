@@ -53,7 +53,7 @@
                                 "claimType": "SharedAccessKey",
                                 "claimValue": "None",
                                 "rights": [
-                                    "Send", "Listen"
+                                    "Send","Listen"
                                 ],
                                 "revision": -1
                             }
