@@ -805,10 +805,6 @@
         "AdSecret": {
             "type": "string",
             "value": "[parameters('adClientSecret')]"
-        },
-        "iotDpsIdScope": {
-            "type": "string",
-            "value": "[reference('IotDps').outputs.iotDpsIdScope.value]"
         }
     }
 }
