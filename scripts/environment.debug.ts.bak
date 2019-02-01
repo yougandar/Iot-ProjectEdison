@@ -42,7 +42,7 @@ export const environment = {
         tenant: 'TENANTVALUE'
     },
     apiUrl: '/api/',
-    baseUrl: 'https://BASEURLVALUE',
+    baseUrl: 'http://localhost:26000',
     signalRUrl: '/signalr/',
     chatAuthUrl: '/chat/security/gettoken/',
     bingMapsKey:
