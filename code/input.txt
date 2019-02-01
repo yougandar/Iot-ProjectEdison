@@ -10,7 +10,7 @@ TWILIOACCID=""
 MSAPPID=""
 CosmosDbSRT=""
 AzureServiceBusCONN=""
-ServiceBusRabbitMQUSR
+ServiceBusRabbitMQUSR=""
 ServiceBusRabbitMQPWD=""
 AzureAdSRT=""
 SignalCONN=""
