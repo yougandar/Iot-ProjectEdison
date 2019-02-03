@@ -20,7 +20,8 @@
                 "japaneast",
                 "southeastasia",
                 "uksouth",
-                "westeurope"
+                "westeurope",
+                "westus"
             ]
         },
         "signalRlocation": {
