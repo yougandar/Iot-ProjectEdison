@@ -5,6 +5,7 @@
 TENANT_VALUE=`head -3 input.txt | awk -F "\"" '{print $2}'| tail -1`
 CLIENTID_VALUE=`head -2 input.txt | awk -F "\"" '{print $2}'| tail -1`
 BASEURL_VALUE=`head -25 input.txt | awk -F "\"" '{print $2}'| tail -1`
+LOCALHOST_VALUE="localhost:26000"
 #------------------------------------
 GIT_URL="https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/stage/scripts"
 GITPATH=`pwd`
@@ -37,7 +38,7 @@ then
         echo "------------------------------------" >> $LOG
         echo "Updating the $ENVDEBUG file..." >> $LOG
         wget -O $GIT_DIRCONFIGPATH$ENVDEBUG $GIT_URL$ENVDEBUG
-        sed -i -e s/TENANTVALUE/${TENANT_VALUE}/ -e s/CLIENTIDVALUE/${CLIENTID_VALUE}/ -e s/BASEURLVALUE/${BASEURL_VALUE}/ $GIT_DIRCONFIGPATH$ENVDEBUG
+        sed -i -e s/TENANTVALUE/${TENANT_VALUE}/ -e s/CLIENTIDVALUE/${CLIENTID_VALUE}/ -e s/BASEURLVALUE/${LOCALHOST_VALUE}/ $GIT_DIRCONFIGPATH$ENVDEBUG
         mv $GIT_DIRCONFIGPATH$ENVDEBUG $GIT_DIRCONFIGPATH/environment.debug.ts
         echo "------------------------------------" >> $LOG
         echo "Updating the $ENVPROD file..." >> $LOG
