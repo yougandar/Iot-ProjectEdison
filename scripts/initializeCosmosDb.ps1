@@ -23,7 +23,15 @@ workflow  container{
         
         [Parameter(Mandatory=$true)]
         [string]
-        $cosmosDbName
+        $cosmosDbName,
+
+        [Parameter(Mandatory=$true)]
+        [string]
+        $adminportalUri,
+
+        [Parameter(Mandatory=$true)]
+        [string]
+        $objectId
  
     )
  
@@ -35,6 +43,8 @@ workflow  container{
         $cosmosDBAccountKey = $Using:cosmosDBAccountKey
         $cosmosDbAccountName = $Using:cosmosDbAccountName
         $cosmosDbName = $Using:cosmosDbName
+        $adminportalUri = $Using:adminportalUri
+        $objectId = $Using:objectId
       
  
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned  -Force
@@ -69,5 +79,12 @@ workflow  container{
     start-Sleep -s 30
     New-CosmosDbCollection -Context $cosmosDbContext -Id 'Sagas' -OfferThroughput 400
     start-Sleep -s 30
+
+    #Update Azure AD applications reply urls
+    Connect-AzureAd -TenantId $tenantId -Credential $psCred -InformationAction Ignore
+    $adminURL=$adminportalUri+"/"
+    $replyURLList = @($adminURL);  
+    Write-Host '', 'Configuring and setting the Azure AD reply URLs' -ForegroundColor Green
+    Set-AzureADApplication -ObjectId $objectId -HomePage $adminportalUri -ReplyUrls $replyURLList -Verbose
   }
 }

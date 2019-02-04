@@ -7,6 +7,9 @@
         },
         "cosmosDbSettings": {
             "type": "object"
+        },
+        "adminportalUri": {
+            "type": "string"
         }
     },
     "variables": {},
@@ -74,7 +77,9 @@
                             "azurePassword": "[parameters('automationSettings').azurePassword]",
                             "cosmosDBAccountKey": "[listkeys(resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('cosmosDbSettings').cosmosDbAccountName), '2015-04-08').primaryMasterKey]",
                             "cosmosDbAccountName": "[parameters('cosmosDbSettings').cosmosDbAccountName]",
-                            "cosmosDbName": "[parameters('cosmosDbSettings').cosmosDbName]"
+                            "cosmosDbName": "[parameters('cosmosDbSettings').cosmosDbName]",
+                            "adminportalUri": "[parameters('adminportalUri')]",
+                            "objectId": "[parameters('automationSettings').objectId]"
                         }
                     },
                     "dependsOn": [

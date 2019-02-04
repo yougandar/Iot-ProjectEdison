@@ -459,6 +459,9 @@
                     },
                     "CosmosDbSettings": {
                         "value": "[variables('cosmosDbSettings')]"
+                    },
+                    "adminportalUri":{
+                        "value":" "
                     }
                 }
             }

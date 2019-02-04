@@ -53,3 +53,4 @@ else
         echo "------------------------------------" >> $LOG
         echo "The $GIT_INGRESS doesn't exist " >> $LOG
 fi
+
