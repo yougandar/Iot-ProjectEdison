@@ -1,3 +1,7 @@
+GITPATH=`pwd`
+GIT_DIRPATH="$GITPATH/ProjectEdison/Edison.Web/Kubernetes/qa/Config"
+LOG="/tmp/Config.log.`date +%d%m%Y_%T`"
+#--------------------------------------------------------
 #Azure Container Registry Configuration
 azureSubscriptionId=`head -35 input.txt | awk -F "\"" '{print $2}'| tail -1`
 acrResourceGroup=`head -36 input.txt | awk -F "\"" '{print $2}'| tail -1`
@@ -7,7 +11,20 @@ acrSPPassword=`head -30 input.txt | awk -F "\"" '{print $2}'| tail -1`
 acrContainerRegistryName=`head -29 input.txt | awk -F "\"" '{print $2}'| tail -1`
 acrContainerRegistryUrl=`head -28 input.txt | awk -F "\"" '{print $2}'| tail -1`
 acrAccountEmail="nvtuluva@sysgain.com"
-
+#------------------------------------------------------------
+# move the kubernetes script to config path for execution
+ls $GIT_DIRPATH
+if [ $? -eq 0 ]
+then
+        echo "------------------------------------" >> $LOG
+        echo "The $GIT_DIRPATH exists" >> $LOG
+        mv set-kubernetes-config8.sh $GIT_DIRPATH
+        cd $GIT_DIRPATH
+else
+        echo "------------------------------------" >> $LOG
+        echo "The $GIT_DIRPATH doesn't exist " >> $LOG
+fi
+#-----------------------------------------------------------------
 #Registering Azure Container Registry Credentials
 #First create a service principal first
 az ad sp create-for-rbac --scopes /subscriptions/$azureSubscriptionId/resourcegroups/$acrResourceGroup/providers/Microsoft.ContainerRegistry/registries/$acrContainerRegistryName --role Contributor --name $acrSPName

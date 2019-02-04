@@ -17,9 +17,10 @@ sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercon
 sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/scripts/clusterconnect7.sh
 #downloading set-kubernetes-config8.sh
 sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/scripts/set-kubernetes-config8.sh
- 
+#downloading helminstall9.sh
+sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/scripts/helminstall9.sh
 
 cd /var/lib/waagent/custom-script/download/0
-chmod +x deploy1.sh configupdate2.sh commonupdate3.sh edisonwebenvupdate4.sh updateappsettings5.sh imagesupdate6.sh clusterconnect7.sh set-kubernetes-config8.sh
+chmod +x deploy1.sh configupdate2.sh commonupdate3.sh edisonwebenvupdate4.sh updateappsettings5.sh imagesupdate6.sh clusterconnect7.sh set-kubernetes-config8.sh helminstall9.sh
 
 
