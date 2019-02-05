@@ -82,7 +82,7 @@ workflow  container{
 
     #Update Azure AD applications reply urls
     Connect-AzureAd -TenantId $tenantId -Credential $psCred -InformationAction Ignore
-    $adminURL=$adminportalUri+"/"
+    $adminURL=$adminportalUri
     $replyURLList = @($adminURL);  
     Write-Host '', 'Configuring and setting the Azure AD reply URLs' -ForegroundColor Green
     Set-AzureADApplication -ObjectId $objectId -HomePage $adminportalUri -ReplyUrls $replyURLList -Verbose
