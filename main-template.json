@@ -239,7 +239,8 @@
             "sessionId": "[parameters('sessionId')]",
             "tenantId": "[parameters('tenantId')]",
             "azureAccountName": "[parameters('azureAccountName')]",
-            "azurePassword": "[parameters('azurePassword')]"
+            "azurePassword": "[parameters('azurePassword')]",
+            "objectId": "[parameters('adObjectId')]"
         },
         "storageBlobSettings": {
             "solutionType": "[parameters('solutionType')]",
