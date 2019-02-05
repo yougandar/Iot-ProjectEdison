@@ -145,10 +145,6 @@
                 "description": "Password to login into Virtual Machine"
             }
         },
-        "cosmosdbModuleUri": {
-            "type": "string",
-            "defaultValue": "https://github.com/ChaitanyaGeddam/edison/raw/master/scripts/cosmos.zip"
-        },
         "servicePrincipalClientId": {
             "type": "string",
             "defaultValue": "",
@@ -165,7 +161,7 @@
         },
         "webAdminPackageUri": {
             "type": "string",
-            "defaultValue": "https://github.com/ChaitanyaGeddam/edison/raw/master/code/Edison.AdminPortal.zip"
+            "defaultValue": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/Edison.AdminPortal.zip"
         },
         "signalrCapacity": {
             "type": "int",
@@ -201,6 +197,17 @@
                 "description": "GitHub url used to clone the repository"
             }
         },
+        "azureAdPreviewModuleUri":{
+            "type": "string",
+            "defaultValue": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/AzureADPreview.zip",
+            "metadata": {   
+                "description": "Provide the url to install azure active directory preview module in azure automation from the github"
+            }
+        },
+        "cosmosdbModuleUri": {
+            "type": "string",
+            "defaultValue": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/cosmos.zip"
+        },
         "siteName": {
             "type": "string",
             "defaultValue": "edisonwebapp"
@@ -234,7 +241,9 @@
             "automationSku": "Free",
             "runbookName": "container",
             "moduleName": "CosmosDB",
+            "moduleName1": "AzureADPreview",
             "cosmosdbModuleUri": "[parameters('cosmosdbModuleUri')]",
+            "azureAdPreviewModuleUri":"[parameters('azureAdPreviewModuleUri')]",
             "runbookUri": "[concat(variables('baseUrl'),'scripts/initializeCosmosDb.ps1')]",
             "sessionId": "[parameters('sessionId')]",
             "tenantId": "[parameters('tenantId')]",
@@ -284,7 +293,7 @@
             "dnsPrefix": "clusterdns",
             "enableHttpApplicationRouting": true,
             "osType": "Linux",
-            "agentVMSize": "Standard_D2_v2",
+            "agentVMSize": "Standard_B2s",
             "agentCount": 3,
             "servicePrincipalClientId": "[parameters('servicePrincipalClientId')]",
             "servicePrincipalClientSecret": "[parameters('servicePrincipalClientSecret')]",
