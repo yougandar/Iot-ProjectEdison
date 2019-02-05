@@ -116,6 +116,14 @@
                 "description": "azure portal login password"
             }
         },
+        "adminName":{
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Name of Admin Portal used as hosts while executing the Ingress_Custom Script"
+
+            }
+        },
         "sessionId": {
             "type": "string",
             "defaultValue": "",
@@ -461,7 +469,7 @@
                         "value": "[variables('cosmosDbSettings')]"
                     },
                     "adminportalUri":{
-                        "value":" "
+                        "value": "[concat('https://',parameters('adminName'),'.cloudapp.azure.com')]"
                     }
                 }
             }
@@ -809,6 +817,10 @@
         "AdSecret": {
             "type": "string",
             "value": "[parameters('adClientSecret')]"
+        },
+        "AdminPortalURL":{
+            "type": "string",
+            "value": "[concat('https://',parameters('adminName'),'.cloudapp.azure.com')]"
         }
     }
 }
