@@ -8,7 +8,7 @@
   },
   "resources": [
     {
-      "name": "[parameters('signalrSettings').name]",
+      "name": "[parameters('signalrSettings').signalrName]",
       "apiVersion": "2018-03-01-preview",
       "type": "Microsoft.SignalRService/SignalR",
       "location": "[parameters('signalrSettings').location]",
@@ -16,18 +16,18 @@
         "IotSuiteType": "[parameters('signalrSettings').solutionType]"
     },
       "properties": {
-        "hostNamePrefix": "[parameters('signalrSettings').name]"
+        "hostNamePrefix": "[parameters('signalrSettings').signalrName]"
       },
       "sku": {
         "capacity": "[parameters('signalrSettings').capacity]",
-        "name": "[parameters('signalrSettings').pricingTier]"
+        "name": "[parameters('signalrSettings').pricingTier1]"
       }    
     }
   ],
   "outputs": {
     "SignalRAccessKey": {
       "type": "string",
-      "value": "[listKeys(resourceId('Microsoft.SignalRService/SignalR', parameters('signalrSettings').name), providers('Microsoft.SignalRService','SignalR').apiVersions[0]).primaryConnectionString]"
+      "value": "[listKeys(resourceId('Microsoft.SignalRService/SignalR', parameters('signalrSettings').signalrName), providers('Microsoft.SignalRService','SignalR').apiVersions[0]).primaryConnectionString]"
     }
   }
 }

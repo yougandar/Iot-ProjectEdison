@@ -1,0 +1,153 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "geo-paired-region": {
+            "type": "string",
+            "defaultValue": "",
+            "allowedValues": [
+                "EastUS2",
+                "CentralUS",
+                "WestUS2",
+                "WestCentralUS",
+                "CanadaCentral",
+                "CanadaEast",
+                "AustraliaEast",
+                "AustraliaSouthEast",
+                "CentralIndia",
+                "SouthIndia",
+                "EastAsia",
+                "SouthEastAsia",
+                "JapanWest",
+                "JapanEast",
+                "KoreaCentral",
+                "KoreaSouth",
+                "UKSouth",
+                "UKWest"
+            ],
+            "metadata": {
+                "description": "For Basic solution select the geopaired region as deployment region.If solution type is choosen as standard and premium, enter location for geo-paired-region, for more information about the geo-paired-region navigate to section 4 in the Getting Started Document(https://github.com/sysgain/MSIotDeviceManagement/blob/master/MSIotDeviceManagement-wiki/GettingStarted.md)"
+            }
+        },
+        "solutionType": {
+            "type": "string",
+            "defaultValue": "DeviceManagement",
+            "metadata": {
+                "description": "The type of the solution"
+            }
+        }
+    },
+    "variables": {
+        "notificationHub": {
+            "locationDr": "[variables('locationDr')]",
+            "skuName": "free",
+            "namespaceType": "NotificationHub",
+            "notificationHubNamespaceNameDr": "[concat('NotificationHubNSDr', variables('suffix'))]",
+            "notificationHubNameDr": "[concat('NotificationHubDr', variables('suffix'))]",
+            "solutionType": "[parameters('solutionType')]"
+        },
+        "webSiteSettings": {
+            "locationDr": "[variables('locationDr')]",
+            "webAppHostingPlanNameDr": "[concat('edisonwebplanDr', variables('suffix'))]",
+            "webAdminDr":"[concat('edisonWebAdminDr',variables('suffix'))]",
+            "webAppSkuName2": "S1",
+            "webAdminPackageUri": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/Edison.AdminPortal.zip",
+            "solutionType": "[parameters('solutionType')]"
+
+        },
+        "signalrSettings": {
+            "solutionType": "[parameters('solutionType')]",
+            "location": "[parameters('signalRlocation')]",
+            "signalrName": "[concat('signalR',variables('suffix'))]",
+            "pricingTier1": "Free_F1",
+            "pricingTier2": "Standard_S1",
+            "capacity": "[parameters('signalrCapacity')]"
+        },
+        "suffix": "[substring(uniqueString(resourceGroup().id), 0, 5)]",
+        "baseUrl": "https://raw.githubusercontent.com/sysgain/MSIotDeviceManagement/master",
+        "EastUS2": "CentralUS",
+        "CentralUS": "EastUS2",
+        "WestUS2": "West Central US",
+        "WestCentralUS": "WestUS2",
+        "CanadaCentral": "CanadaEast",
+        "CanadaEast": "CanadaCentral",
+        "AustraliaEast": "AustraliaSouthEast",
+        "AustraliaSouthEast": "AustraliaEast",
+        "CentralIndia": "SouthIndia",
+        "SouthIndia": "CentralIndia",
+        "EastAsia": "SouthEastAsia",
+        "SouthEastAsia": "EastAsia",
+        "JapanWest": "JapanEast",
+        "JapanEast": "JapanWest",
+        "KoreaCentral": "KoreaSouth",
+        "KoreaSouth": "KoreaCentral",
+        "UKSouth": "UKWest",
+        "UKWest": "UKSouth",
+        "locationDr": "[variables(parameters('geo-paired-region'))]",
+        "readRegionLocation": "[variables('locationDr')]"
+    },
+    "resources": [
+        {
+            "name": "NotificationHubR2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/notificationhub-r2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "notificationHub": {
+                        "value": "[variables('notificationHub')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "WebAdminR2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "Cosmosdb",
+                "IotHub",
+                "NotificationHub"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/webadmin-r2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "webSiteSettings": {
+                        "value": "[variables('webSiteSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "SignalR2",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Premium')]",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/signalR-r2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "signalrSettings": {
+                        "value": "[variables('signalrSettings')]"
+                    }
+                }
+            }
+        },
+
+    ],
+    "outputs": {
+    }
+}
