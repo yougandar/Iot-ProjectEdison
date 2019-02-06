@@ -68,6 +68,7 @@
                 "description": "Choose location for signalR to deploy."
             }
         },
+
         "omsWorkspaceRegion": {
             "type": "string",
             "defaultValue": "southeastasia",
@@ -367,7 +368,7 @@
         "serviceBusProperties": {
             "solutionType": "[parameters('solutionType')]",
             "serviceBusNamespaceName": "[variables('serviceBusNamespaceName1')]",
-            "location": "[parameters('location')]",
+             "location": "[parameters('geo-paired-region')]",
             "serviceBusDefaultSASKeyName": "[variables('serviceBusDefaultSASKeyName1')]",
             "serviceBusAuthRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName1'), variables('serviceBusDefaultSASKeyName1'))]",
             "skuName": "Standard",
@@ -382,8 +383,9 @@
         "signalrSettings": {
             "solutionType": "[parameters('solutionType')]",
             "location": "[parameters('signalRlocation')]",
-            "name": "[concat('signalR',variables('suffix'))]",
-            "pricingTier": "Standard_S1",
+            "signalrName": "[concat('signalR',variables('suffix'))]",
+            "pricingTier1": "Free_F1",
+            "pricingTier2": "Standard_S1",
             "capacity": "[parameters('signalrCapacity')]"
         },
         "iotDpsSettings": {
@@ -855,9 +857,53 @@
             }
         },
         {
-            "name": "DockerVM",
+            "name": "DockerVMBasic",
             "type": "Microsoft.Resources/deployments",
             "condition": "[and(equals(parameters('deployment Type'),'Basic'),equals(parameters('dockerVM'),'Yes'))]",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "AzureContainerRegistry",
+                "StorageBlob"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/dockerVm.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vm": {
+                        "value": "[variables('vm')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "DockerVMStandard",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[and(equals(parameters('deployment Type'),'Standard'),equals(parameters('dockerVM'),'Yes'))]",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "AzureContainerRegistry",
+                "StorageBlob"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/dockerVm.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vm": {
+                        "value": "[variables('vm')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "DockerVMPremium",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[and(equals(parameters('deployment Type'),'Premium'),equals(parameters('dockerVM'),'Yes'))]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "AzureContainerRegistry",
@@ -908,6 +954,25 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "uri": "[concat(variables('baseUrl'),'nested/signalR.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "signalrSettings": {
+                        "value": "[variables('signalrSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "SignalR1",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/signalR-r1.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
