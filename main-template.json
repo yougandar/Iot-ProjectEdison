@@ -9,6 +9,45 @@
                 "description": "The type of solution"
             }
         },
+        "deployment type": {
+            "type": "string",
+            "defaultValue": "",
+            "allowedValues": [
+                "Basic",
+                "Standard",
+                "Premium"
+            ],
+            "metadata": {
+                "description": "choose your deployment type to deploy"
+            }
+        },
+        "geo-paired-region": {
+            "type": "string",
+            "defaultValue": "",
+            "allowedValues": [
+                "EastUS2",
+                "CentralUS",
+                "WestUS2",
+                "WestCentralUS",
+                "CanadaCentral",
+                "CanadaEast",
+                "AustraliaEast",
+                "AustraliaSouthEast",
+                "CentralIndia",
+                "SouthIndia",
+                "EastAsia",
+                "SouthEastAsia",
+                "JapanWest",
+                "JapanEast",
+                "KoreaCentral",
+                "KoreaSouth",
+                "UKSouth",
+                "UKWest"
+            ],
+            "metadata": {
+                "description": "For Basic solution select the geopaired region as deployment region.If solution type is choosen as standard and premium, enter location for geo-paired-region, for more information about the geo-paired-region navigate to section 4 in the Getting Started Document(https://github.com/sysgain/MSIotDeviceManagement/blob/master/MSIotDeviceManagement-wiki/GettingStarted.md)"
+            }
+        },
         "location": {
             "type": "string",
             "defaultValue": "eastus",
@@ -220,7 +259,10 @@
             "skuName": "free",
             "namespaceType": "NotificationHub",
             "notificationHubNamespaceName": "[concat('NotificationHubNS', variables('suffix'))]",
-            "notificationHubName": "[concat('NotificationHub', variables('suffix'))]"
+            "notificationHubName": "[concat('NotificationHub', variables('suffix'))]",
+            "notificationHubNamespaceNameDr": "[concat('RecoveryNotificationHubNS', variables('suffix'))]",
+            "notificationHubNameDr": "[concat('RecoveryNotificationHub', variables('suffix'))]",
+            "locationDr": "[variables('locationDr')]"
         },
         "cosmosDbSettings": {
             "solutionType": "[parameters('solutionType')]",
@@ -419,12 +461,33 @@
             "sdk": "[concat('https://', variables('siteHost1'), '/api/messages')]",
             "designer": "[concat('https://', variables('siteHost1'), '/api/messages')]",
             "function": "[concat('https://', variables('siteHost1'), '/api/messages?code=', 'NYI')]"
-        }
+        },
+        "EastUS2": "CentralUS",
+        "CentralUS": "EastUS2",
+        "WestUS2": "West Central US",
+        "WestCentralUS": "WestUS2",
+        "CanadaCentral": "CanadaEast",
+        "CanadaEast": "CanadaCentral",
+        "AustraliaEast": "AustraliaSouthEast",
+        "AustraliaSouthEast": "AustraliaEast",
+        "CentralIndia": "SouthIndia",
+        "SouthIndia": "CentralIndia",
+        "EastAsia": "SouthEastAsia",
+        "SouthEastAsia": "EastAsia",
+        "JapanWest": "JapanEast",
+        "JapanEast": "JapanWest",
+        "KoreaCentral": "KoreaSouth",
+        "KoreaSouth": "KoreaCentral",
+        "UKSouth": "UKWest",
+        "UKWest": "UKSouth",
+        "locationDr": "[variables(parameters('geo-paired-region'))]",
+        "readRegionLocation": "[variables('locationDr')]"
     },
     "resources": [
         {
             "name": "NotificationHub",
             "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {
@@ -441,10 +504,51 @@
             }
         },
         {
-            "name": "CosmosDB",
+            "name": "NotificationHubR1",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
+            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
             "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/notification-hub.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "notificationHub": {
+                        "value": "[variables('notificationHub')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "NotificationHubR2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "condition": "[equals(parameters('deployment Type'),'Premium')]",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/notificationhub-r2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "notificationHub": {
+                        "value": "[variables('notificationHub')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "CosmosDB",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Basic')]",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "OmsWorkSpace"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -454,6 +558,33 @@
                 "parameters": {
                     "CosmosDbSettings": {
                         "value": "[variables('CosmosDbSettings')]"
+                    },
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "CosmosDBR1",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "OmsWorkSpace"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/cosmosdb-ha-wm.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "CosmosDbSettings": {
+                        "value": "[variables('CosmosDbSettings')]"
+                    },
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
                     }
                 }
             }
@@ -461,6 +592,7 @@
         {
             "name": "AutomationAccount",
             "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "Cosmosdb"
@@ -487,6 +619,7 @@
         {
             "name": "StorageBlob",
             "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {
@@ -503,8 +636,9 @@
             }
         },
         {
-            "name": "IotHub",
+            "name": "IotHubBasic",
             "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "ServiceBus"
@@ -521,6 +655,36 @@
                     },
                     "serviceBusProperties": {
                         "value": "[variables('serviceBusProperties')]"
+                    },
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "IotHubR1",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "OMSWorkSpace"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/iot-hub-ha-wm.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "iotHubSettings": {
+                        "value": "[variables('iotHubSettings')]"
+                    },
+                    "serviceBusProperties": {
+                        "value": "[variables('serviceBusProperties')]"
+                    },
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
                     }
                 }
             }
@@ -528,6 +692,7 @@
         {
             "name": "WebAdmin",
             "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "Cosmosdb",
@@ -550,6 +715,7 @@
         {
             "name": "Kubernetes",
             "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2015-01-01",
             "dependsOn": [
                 "OmsWorkSpace"
@@ -591,6 +757,7 @@
         {
             "name": "AzureContainerRegistry",
             "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2015-01-01",
             "dependsOn": [],
             "properties": {
@@ -609,6 +776,7 @@
         {
             "name": "DockerVM",
             "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2016-02-01",
             "condition": "[equals(parameters('dockerVM'), 'Yes')]",
             "dependsOn": [
@@ -631,6 +799,7 @@
         {
             "name": "ServiceBus",
             "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2015-01-01",
             "dependsOn": [],
             "properties": {
@@ -652,6 +821,7 @@
         {
             "name": "SignalR",
             "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2015-01-01",
             "dependsOn": [],
             "properties": {
@@ -670,6 +840,7 @@
         {
             "name": "IotDps",
             "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2015-01-01",
             "dependsOn": [
                 "IotHub"
@@ -693,6 +864,7 @@
         {
             "name": "keyVault",
             "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {
@@ -711,6 +883,7 @@
         {
             "name": "Rediscache",
             "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "StorageBlob"
@@ -731,6 +904,7 @@
         {
             "name": "Bot",
             "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {

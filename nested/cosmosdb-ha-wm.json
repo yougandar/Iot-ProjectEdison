@@ -27,6 +27,10 @@
                     {
                         "locationName": "[parameters('cosmosDbSettings').location]",
                         "failoverPriority": 0
+                    },
+                    {
+                        "locationName": "[parameters('cosmosDbSettings').readRegionLocation]",
+                        "failoverPriority": 1
                     }
                 ]
             },
