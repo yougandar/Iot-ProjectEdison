@@ -48,21 +48,6 @@
                 "description": "For Basic solution select the geopaired region as deployment region.If solution type is choosen as standard and premium, enter location for geo-paired-region, for more information about the geo-paired-region navigate to section 4 in the Getting Started Document(https://github.com/sysgain/MSIotDeviceManagement/blob/master/MSIotDeviceManagement-wiki/GettingStarted.md)"
             }
         },
-        "location": {
-            "type": "string",
-            "defaultValue": "eastus",
-            "allowedValues": [
-                "australiasoutheast",
-                "canadacentral",
-                "centralindia",
-                "eastus",
-                "japaneast",
-                "southeastasia",
-                "uksouth",
-                "westeurope",
-                "westus"
-            ]
-        },
         "signalRlocation": {
             "type": "string",
             "defaultValue": "eastus",
@@ -255,7 +240,7 @@
     "variables": {
         "notificationHub": {
             "solutionType": "[parameters('solutionType')]",
-            "location": "[parameters('location')]",
+            "location": "[parameters('geo-paired-region')]",
             "skuName": "free",
             "namespaceType": "NotificationHub",
             "notificationHubNamespaceName": "[concat('NotificationHubNS', variables('suffix'))]",
@@ -267,7 +252,7 @@
         "cosmosDbSettings": {
             "solutionType": "[parameters('solutionType')]",
             "cosmosDbAccountName": "[concat('edisondbacc',variables('suffix'))]",
-            "location": "[parameters('location')]",
+            "location": "[parameters('geo-paired-region')]",
             "offerType": "Standard",
             "cosmosDbName": "Edison",
             "cosmosCollEventCluster": "EventClusters",
@@ -296,13 +281,13 @@
         "storageBlobSettings": {
             "solutionType": "[parameters('solutionType')]",
             "storageAccountName": "[variables('storageAccountName')]",
-            "location": "[parameters('location')]",
+            "location": "[parameters('geo-paired-region')]",
             "containerName": "logs",
             "storageAccountType": "Standard_LRS"
         },
         "iothubSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "location": "[parameters('location')]",
+            "location": "[parameters('geo-paired-region')]",
             "iotHubName": "[concat('edisonhub',variables('suffix'))]",
             "d2cMessageRetentionInDaysPeriod": 1,
             "d2cPartitionCount": 2,
@@ -313,11 +298,15 @@
         },
         "webSiteSettings": {
             "solutionType": "[parameters('solutionType')]",
+            "locationDr": "[variables('locationDr')]",
             "webAppHostingPlanName": "[concat('edisonwebplan',variables('suffix'))]",
-            "location": "WestUS",
-            "webAppSkuName1": "F1",
+            "webAppHostingPlanNameDr": "[concat('edisonwebplanDr', variables('suffix'))]",
+            "location": "[parameters('geo-paired-region')]",
+            "webAppSkuName1": "B1",
+            "webAppSkuName2": "S1",
             "webAdminPackageUri": "[parameters('webAdminPackageUri')]",
-            "webAdmin": "[concat('edisonWebAdmin',variables('suffix'))]"
+            "webAdmin": "[concat('edisonWebAdmin',variables('suffix'))]",
+            "webAdminDr":"[concat('edisonWebAdminDr',variables('suffix'))]"
         },
         "omsSettings": {
             "solutionType": "[parameters('solutionType')]",
@@ -523,7 +512,7 @@
             }
         },
         {
-            "name": "NotificationHubR2",
+            "name": "NotificationHubHot",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
             "condition": "[equals(parameters('deployment Type'),'Premium')]",
@@ -617,9 +606,55 @@
             }
         },
         {
+            "name": "AutomationAccountR1",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "Cosmosdb"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/automation-account.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "automationSettings": {
+                        "value": "[variables('automationSettings')]"
+                    },
+                    "CosmosDbSettings": {
+                        "value": "[variables('cosmosDbSettings')]"
+                    },
+                    "adminportalUri":{
+                        "value": "[concat('https://',parameters('adminName'),'.cloudapp.azure.com')]"
+                    }
+                }
+            }
+        },
+        {
             "name": "StorageBlob",
             "type": "Microsoft.Resources/deployments",
             "condition": "[equals(parameters('deployment Type'),'Basic')]",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/storageblob.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageBlobSettings": {
+                        "value": "[variables('storageBlobSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "StorageBlobR1",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
             "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {
@@ -713,6 +748,52 @@
             }
         },
         {
+            "name": "WebAdminR1",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "Cosmosdb",
+                "IotHub",
+                "NotificationHub"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/webadmin-r1.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "webSiteSettings": {
+                        "value": "[variables('webSiteSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "WebAdminHot",
+            "type": "Microsoft.Resources/deployments",
+            "condition":"[equals(parameters('deployment Type'),'Premium')]",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "Cosmosdb",
+                "IotHub",
+                "NotificationHub"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/webadmin-r2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "webSiteSettings": {
+                        "value": "[variables('webSiteSettings')]"
+                    }
+                }
+            }
+        },
+        {
             "name": "Kubernetes",
             "type": "Microsoft.Resources/deployments",
             "condition": "[equals(parameters('deployment Type'),'Basic')]",
@@ -776,9 +857,8 @@
         {
             "name": "DockerVM",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
+            "condition": "[and(equals(parameters('deployment Type'),'Basic'),equals(parameters('dockerVM'),'Yes'))]",
             "apiVersion": "2016-02-01",
-            "condition": "[equals(parameters('dockerVM'), 'Yes')]",
             "dependsOn": [
                 "AzureContainerRegistry",
                 "StorageBlob"

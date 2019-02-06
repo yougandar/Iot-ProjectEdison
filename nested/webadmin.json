@@ -4,6 +4,9 @@
     "parameters": {
         "webSiteSettings": {
             "type": "object"
+        },
+        "omsSettings": {
+            "type": "object"
         }
     },
     "variables": {},
@@ -75,6 +78,29 @@
                     },
                     "properties": {
                         "packageUri": "[parameters('webSiteSettings').webAdminPackageUri]"
+                    }
+                },
+                {
+                    "name": "Microsoft.Insights/service",
+                    "type": "providers/diagnosticSettings",
+                    "apiVersion": "2016-09-01",
+                    "dependsOn": [
+                        "[concat('Microsoft.Web/sites/', parameters('webSiteSettings').webAdmin)]",
+                        "[concat('Microsoft.Web/Sites/', parameters('webSiteSettings').webAdmin, '/config/web')]",
+                        "[concat('Microsoft.Web/sites/', parameters('webSiteSettings').webAdmin, '/extensions/MSDeploy')]"
+                    ],
+                    "properties": {
+                        "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsSettings').omsWorkspaceName)]",
+                        "metrics": [
+                            {
+                                "timeGrain": "PT1M",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": false,
+                                    "days": 0
+                                }
+                            }
+                        ]
                     }
                 }
             ]
