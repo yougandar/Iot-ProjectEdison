@@ -155,8 +155,7 @@
                 "partnerNamespace": "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusProperties').serviceBusNamespaceNameDr)]"
             },
             "dependsOn": [
-                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusProperties').serviceBusNamespaceName)]",
-                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusProperties').serviceBusNamespaceNameDr)]"
+                "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusProperties').serviceBusNamespaceName)]"
             ]
         }
     ],
@@ -172,6 +171,10 @@
         "queueConnectionString": {
             "type": "string",
             "value": "[concat('Endpoint=sb://',parameters('serviceBusProperties').serviceBusNamespaceName,'.servicebus.windows.net/;SharedAccessKeyName=',parameters('servicebusProperties').serviceBusQueueName1,'send;SharedAccessKey=',listKeys(resourceId(concat('Microsoft.ServiceBus/namespaces/Queues/AuthorizationRules'),parameters('serviceBusProperties').serviceBusNamespaceName,parameters('servicebusProperties').serviceBusQueueName1,concat(parameters('servicebusProperties').serviceBusQueueName1,'send')),'2015-08-01').PrimaryKey,';EntityPath=',parameters('servicebusProperties').serviceBusQueueName1)]"
+        },
+        "aliasConnectionString": {
+            "type": "string",
+            "value": "[concat('Endpoint=sb://',parameters('serviceBusProperties').aliasName,'.servicebus.windows.net/;SharedAccessKeyName=',parameters('servicebusProperties').serviceBusQueueName1,'send;SharedAccessKey=',listKeys(resourceId(concat('Microsoft.ServiceBus/namespaces/Queues/AuthorizationRules'),parameters('serviceBusProperties').serviceBusNamespaceName,parameters('servicebusProperties').serviceBusQueueName1,concat(parameters('servicebusProperties').serviceBusQueueName1,'send')),'2015-08-01').PrimaryKey,';EntityPath=',parameters('servicebusProperties').serviceBusQueueName1)]"
         }
     }
 }
