@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+        <meta property="fb:app_id" content="1574881259485348" />
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@nuget">
+
+    <meta property="og:title" content="AzureADPreview 2.0.2.5" />
+    <meta property="og:type" content="nugetgallery:package" />
+    <meta property="og:url" content="https://powershellgallery.com/packages/AzureADPreview/" />
+    <meta property="og:description" content="Azure Active Directory V2 Preview Module. 
+This is a Public Preview release of Azure Active Directory V2 PowerShell Module. 
+For detailed information on how to install and run this module from the PowerShell Gallery including prerequisites, please refer to https://msdn.microsoft.com/powershell/gallery/readme " />
+    <meta property="og:determiner" content="a" />
+    <meta property="og:image" content="http://i67.tinypic.com/24y1m6e.jpg" />
+    <meta name="document_id" content="AzureADPreview" />
+
+    <!-- START: Livefyre CDN -->
+    <script src="//cdn.livefyre.com/Livefyre.js"></script>
+    <script src="https://open-commenting.azureedge.net/open-commenting.entry.min.js"></script>
+    <!-- END: Livefyre CDN -->
+
+    
+
+
+    <title>
+        PowerShell Gallery
+        | AzureADPreview 2.0.2.5
+    </title>
+
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link title="https://www.powershellgallery.com" type="application/opensearchdescription+xml" href="/opensearch.xml" rel="search">
+
+    <link href="/Content/gallery/css/site.min.css?v=6Wnopj6JdSh0VpxovgQwuJmXnXp8aGGw43du2BTw8Qo1" rel="stylesheet"/>
+
+    <link href="/Content/gallery/css/branding.css?v=1.2" rel="stylesheet"/>
+
+
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    
+
+    
+    
+    
+                <!-- Telemetry -->
+            <script type="text/javascript">
+                var appInsights = window.appInsights || function (config) {
+                    function s(config) {
+                        t[config] = function () {
+                            var i = arguments;
+                            t.queue.push(function () { t[config].apply(t, i) })
+                        }
+                    }
+
+                    var t = { config: config }, r = document, f = window, e = "script", o = r.createElement(e), i, u;
+                    for (o.src = config.url || "//az416426.vo.msecnd.net/scripts/a/ai.0.js", r.getElementsByTagName(e)[0].parentNode.appendChild(o), t.cookie = r.cookie, t.queue = [], i = ["Event", "Exception", "Metric", "PageView", "Trace"]; i.length;) s("track" + i.pop());
+                    return config.disableExceptionTracking || (i = "onerror", s("_" + i), u = f[i], f[i] = function (config, r, f, e, o) {
+                        var s = u && u(config, r, f, e, o);
+                        return s !== !0 && t["_" + i](config, r, f, e, o), s
+                    }), t
+                }({
+                    instrumentationKey: '50d4abc3-17d3-4a1b-8361-2d1e9ca8f6d5',
+                    samplingPercentage: 100
+                });
+
+                window.appInsights = appInsights;
+                appInsights.trackPageView();
+            </script>
+
+</head>
+<body>
+    
+
+
+
+
+<nav class="navbar navbar-inverse" role="navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <a href="#skippedToContent" class="showOnFocus" title="Skip To Content">Skip To Content</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-offset-1 col-sm-2">
+                <div class="navbar-header">                    
+                    <a href="/" class="nvabar-header-aLink">                        
+                        <img class="navbar-logo img-responsive" alt="PowerShell Gallery Home"
+                             src="/Content/Images/Branding/psgallerylogo.svg"
+                            onerror="this.src='https://powershellgallery.com/Content/Images/Branding/psgallerylogo.png'; this.onerror = null;"
+/>
+                    </a>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" title="Open Main Menu and profile dropdown">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-8 special-margin-left">
+                <div id="navbar" class="navbar-collapse collapse" role="navigation" aria-label="Navigation Bar">
+                    <table role="presentation">
+                        <tr>
+                            <td colspan="3">
+                                <ul class="nav navbar-nav" role="tablist">
+                                        <li class="" role="presentation">        
+        <a role="tab" aria-selected="false" href="/packages" target="" aria-label="Packages">
+            <span aria-hidden="true">Packages</span>
+        </a>
+    </li>
+
+                                        <li class="" role="presentation">        
+        <a role="tab" aria-selected="false" href="/packages/manage/upload" target="" aria-label="Publish">
+            <span aria-hidden="true">Publish</span>
+        </a>
+    </li>
+
+    <li class="" role="presentation">        
+        <a role="tab" aria-selected="false" href="/stats" target="" aria-label="Statistics">
+            <span aria-hidden="true">Statistics</span>
+        </a>
+    </li>
+                                                                            <li class="" role="presentation">        
+        <a role="tab" aria-selected="false" href="http://go.microsoft.com/fwlink/?LinkID=825202&amp;clcid=0x409" target="_blank" aria-label="Documentation">
+            <span aria-hidden="true">Documentation</span>
+        </a>
+    </li>
+
+                                </ul>
+                            </td>
+                            <td colspan="1" class="td-align-topright">
+                                    <ul class="nav navbar-nav navbar-right" role="tablist">
+    <li class="" role="presentation">        
+        <a role="tab" aria-selected="false" href="/users/account/LogOn?returnUrl=%2Fpackages%2FAzureADPreview%2F2.0.2.5" target="" aria-label="Sign in">
+            <span aria-hidden="true">Sign in</span>
+        </a>
+    </li>
+                                    </ul>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div class="container-fluid search-container">
+            <div class="row" id="search-row">               
+                <form aria-label="Package search bar" action="/packages" method="get" >
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-offset-1 col-sm-2"></div>
+                            <div class="col-sm-12 col-md-8">
+                                <div class="form-group special-margin-left">
+                                    <div class="input-group">
+    <input name="q" type="text" class="form-control ms-borderColor-blue search-box" id="search" aria-label="Enter packages to search"
+           placeholder="Search PowerShell packages..." autocomplete="on"
+           value=""
+           />
+    <span class="input-group-btn">
+        <button class="btn btn-default btn-search ms-borderColor-blue ms-borderColor-blue--hover" type="submit"
+                title="Search PowerShell packages" aria-label="Search">
+            <span class="ms-Icon ms-Icon--Search" aria-hidden="true"></span>
+        </button>
+    </span>
+</div>
+                                    <div id="autocomplete-results-container" class="text-left" tabindex="0"></div>
+
+<script type="text/html" id="autocomplete-results-row">
+    <!-- ko if: $data -->
+    <!-- ko if: $data.PackageRegistration -->
+    <div class="col-sm-4 autocomplete-row-id autocomplete-row-data">
+        <span data-bind="attr: { id: 'autocomplete-result-id-' + $data.PackageRegistration.Id, title: $data.PackageRegistration.Id }, text: $data.PackageRegistration.Id"></span>
+    </div>
+    <div class="col-sm-4 autocomplete-row-downloadcount text-right autocomplete-row-data">
+        <span data-bind="text: $data.DownloadCount + ' downloads'"></span>
+    </div>
+    <div class="col-sm-4 autocomplete-row-owners text-left autocomplete-row-data">
+        <span data-bind="text: $data.OwnersString + ' '"></span>
+    </div>
+    <!-- /ko -->
+    <!-- ko ifnot: $data.PackageRegistration -->
+    <div class="col-sm-12 autocomplete-row-id autocomplete-row-data">
+        <span data-bind="attr: { id: 'autocomplete-result-id-' + $data, title: $data  }, text: $data"></span>
+    </div>
+    <!-- /ko -->
+    <!-- /ko -->
+</script>
+
+<script type="text/html" id="autocomplete-results-template">
+    <!-- ko if: $data.data.length > 0 -->
+    <div data-bind="foreach: $data.data" id="autocomplete-results-list">
+        <a data-bind="attr: { id: 'autocomplete-result-row-' + $data, href: '/packages/' + $data, title: $data }" tabindex="-1">
+            <div data-bind="attr:{ id: 'autocomplete-container-' + $data }" class="autocomplete-results-row">
+            </div>
+        </a>
+    </div>
+    <!-- /ko -->
+</script>
+
+                                </div>
+                            </div>                            
+                        </div>                        
+                    </div>
+                </form>
+            </div>
+        </div>
+</nav>
+
+
+
+
+
+    <div id="skippedToContent">
+        
+
+
+
+
+
+<section role="main" class="container main-container page-package-details">
+    <div class="row">
+        <aside class="col-sm-offset-1 col-sm-2 package-details-info" aria-label="Package Details Info">
+            <h3 aria-hidden="true">
+                <img class="package-icon img-responsive" aria-hidden="true" alt=""
+                     src="http://i67.tinypic.com/24y1m6e.jpg"
+                         onerror="this.src='https://powershellgallery.com/Content/Images/Branding/packageDefaultIcon.png'; this.onerror = null;"
+ />
+            </h3>
+            <ul class="list-unstyled ms-Icon-ul">
+                <li>
+                    <h2>
+                        355,599
+                        <br/> 
+                        <text class="text-sideColumn">Downloads</text>
+                    </h2>
+                </li>
+                <li>
+                    <h2>
+                        92,078
+                        <br />
+                        <text class="text-sideColumn">
+                            Downloads of 2.0.2.5
+                        </text>
+                    </h2>
+                </li>
+            </ul>
+                <a href="/stats/packages/AzureADPreview?groupby=Version" title="Package Statistics">View full stats</a>
+            <ul class="list-unstyled ms-Icon-ul">
+                <li>
+                    <h2>
+                        10/5/2018
+                        <br/>
+                        <text class="text-sideColumn">Last Published</text>
+                    </h2>
+                    
+                </li>
+
+                <h3>Info</h3>
+                    <li>
+                        <a href="https://docs.microsoft.com/en-us/powershell/azuread/v2/azureactivedirectory" data-track="outbound-project-url" title="Visit the project site to learn more about this module" rel="nofollow">
+                            Project Site
+                        </a>
+                    </li>
+                                    <li>
+                        <a href="http://aka.ms/azps-license" data-track="outbound-license-url" title="Make sure you agree with the license" rel="nofollow">
+                            License Info
+                        </a>
+                    </li>
+                <li>
+                    <a href="/packages/AzureADPreview/2.0.2.5/ContactOwners" title="Ask the module owners a question">Contact owners</a>
+                </li>
+                    <li>
+                        <a href="/packages/AzureADPreview/2.0.2.5/ReportAbuse" title="Report the module as abusive">
+                            Report
+                        </a>
+                    </li>
+
+
+                
+
+            </ul>
+        </aside>
+        <article class="col-sm-12 col-md-8 package-details-main special-margin-left">
+            <div class="package-title">
+                <h1>
+                    AzureADPreview
+                </h1>
+                <h2>2.0.2.5</h2>
+
+            </div>
+
+                    <p>Azure Active Directory V2 Preview Module. <br />This is a Public Preview release of Azure Active Directory V2 PowerShell Module. <br />For detailed information on how to install and run this module from the PowerShell Gallery including prerequisites, please refer to <a href="https://msdn.microsoft.com/powershell/gallery/readme" rel="nofollow">https://msdn.microsoft.com/powershell/gallery/readme</a> </p>
+
+                <h2>Minimum PowerShell version</h2>
+                <p>3.0</p>
+
+
+
+
+
+
+
+
+
+
+                <h2>
+                    <a href="#" role="button" data-toggle="collapse" data-target="#installation-options"
+                       aria-expanded="true" aria-controls="installation-options"
+                       id="show-installation-options">
+                        <i class="ms-Icon ms-Icon--ChevronDown"
+                           aria-hidden="false"></i>
+                        <span>Installation Options</span>
+                    </a>
+                </h2>
+                <div id="installation-options" class="installation-options panel-collapse collapse in" aria-expanded="true">
+                    <div class="install-tabs">
+                        <ul class="nav nav-tabs" role="tablist">
+
+    <li role="presentation" class="active">
+        <a href="#install-item" aria-expanded="true"
+           aria-selected="true"
+           aria-controls="install-item" role="tab" data-toggle="tab"
+           title="Switch to tab panel which contains module installation command for Install Module">
+            Install Module
+        </a>
+    </li>
+    <li role="presentation" class="">
+        <a href="#azure-automation" aria-expanded="false"
+           aria-selected="false"
+           aria-controls="azure-automation" role="tab" data-toggle="tab"
+           title="Switch to tab panel which contains module installation command for Azure Automation">
+            Azure Automation
+        </a>
+    </li>
+    <li role="presentation" class="">
+        <a href="#manual-download" aria-expanded="false"
+           aria-selected="false"
+           aria-controls="manual-download" role="tab" data-toggle="tab"
+           title="Switch to tab panel which contains module installation command for Manual Download">
+            Manual Download
+        </a>
+    </li>
+                        </ul>
+                        <div class="tab-content">
+
+    <div role="tabpanel" class="tab-pane active" id="install-item">
+        <p>Copy and Paste the following command to install this package using PowerShellGet <a href='https://aka.ms/InstallModule' aria-label='Click here for more information on how to install this package using PowerShellGet.'>More Info</a></p>
+        <div>
+                <div class="install-script visible" id="install-item-text">
+                    <span>
+                        Install-Module -Name AzureADPreview
+                    </span>
+                </div>
+                <div class="copy-button visible">
+                    <button id="install-item-button" class="btn btn-default ms-bgColor-blue ms-borderColor-blue" type="button"
+                            data-toggle="popover" data-placement="bottom" data-content="Copied."
+                            aria-label="Copy the Install Module command">
+                        <span class="ms-Icon ms-Icon--Copy ms-fontColor-white" aria-hidden="true"></span>
+                    </button>
+                </div>
+
+        </div>
+    </div>
+    <div role="tabpanel" class="tab-pane " id="azure-automation">
+        <p>You can deploy this package directly to Azure Automation. Note that deploying packages with dependencies will deloy all the dependencies to Azure Automation. <a href='https://aka.ms/PSGalleryToAzureAutomation' aria-label='Click here to learn more about how to deploy this package to Azure Automation.'>Learn More</a></p>
+        <div>
+
+<button id="DeployToAzureAutomation_Button" type="button" title="Deploy this module to Azure Automation." onclick="window.open('/packages/AzureADPreview/2.0.2.5/DeployItemToAzureAutomation?itemType=PSModule&requireLicenseAcceptance=False', target='_blank')">Deploy to Azure Automation</button>        </div>
+    </div>
+    <div role="tabpanel" class="tab-pane " id="manual-download">
+        <p>Manually download the .nupkg file to your system's default download location. Note that the file won't be unpacked, and won't include any dependencies. <a href='https://aka.ms/psgallery-manualdownload' aria-label='Click here to learn more about how to manually download a raw nupkg file.'>Learn More</a></p>
+        <div>
+
+<button id="DownloadNupkg_Button" type="button" title="Download the raw nupkg file" onclick="location.href='https://www.powershellgallery.com/api/v2/package/AzureADPreview/2.0.2.5'">Download the raw nupkg file</button>        </div>
+    </div>
+                        </div>
+                    </div>
+                </div>
+
+                    <h2>Author(s)</h2>
+                    <p>Microsoft Corporation</p>
+                    <h2>Copyright</h2>
+                    <p>(c) 2017 Microsoft Corporation. All rights reserved.</p>
+                <!--  Requires License Acceptance  -->
+
+            <!--Full Item Details-->
+                <h2>
+                    <a href="#" role="button" data-toggle="collapse" data-target="#full-item-details"
+                       aria-expanded="false" aria-controls="full-item-details"
+                       id="show-full-item-details">
+                        <i class="ms-Icon ms-Icon--ChevronRight"
+                           aria-hidden="false"></i>
+                        <span>Package Details</span>
+                    </a>
+                </h2>
+                <div id="full-item-details" class="panel-collapse collapse full-item-details">
+                    <h3 class="h3-collapse-in">Owners</h3>
+                    <ul class="list-unstyled owner-list content-collapse-in">
+                                <li>
+                                        <a href="/profiles/AzureADPowerShell" title="AzureADPowerShell"><img src="https://secure.gravatar.com/avatar/bbaf5a1a35fd30332f5deb94100cc052?s=64&amp;r=g&amp;d=retro" class="owner-image" height="32" title="AzureADPowerShell" width="32" alt="gravatar" /></a>
+                                    <a href="/profiles/AzureADPowerShell" title="AzureADPowerShell">
+                                        AzureADPowerShell
+                                    </a>
+                                </li>
+                    </ul>
+
+                            <h3 class="h3-collapse-in">Tags</h3>
+        <p class="content-collapse-in">
+                <a href="/packages?q=Tags%3A%22Azure%22" title="Search for Azure" class="tag">Azure</a>
+                <a href="/packages?q=Tags%3A%22ActiveDirectory%22" title="Search for ActiveDirectory" class="tag">ActiveDirectory</a>
+                <a href="/packages?q=Tags%3A%22AzureAD%22" title="Search for AzureAD" class="tag">AzureAD</a>
+                <a href="/packages?q=Tags%3A%22AD%22" title="Search for AD" class="tag">AD</a>
+                <a href="/packages?q=Tags%3A%22AzureGraph%22" title="Search for AzureGraph" class="tag">AzureGraph</a>
+        </p>
+
+                            <h3 class="h3-collapse-in">Cmdlets</h3>
+        <p class="content-collapse-in">
+                <a href="/packages?q=Cmdlets%3A%22Add-AzureADApplicationOwner%22" title="Search for Add-AzureADApplicationOwner" class="tag">Add-AzureADApplicationOwner</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADApplication%22" title="Search for Get-AzureADApplication" class="tag">Get-AzureADApplication</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADApplicationExtensionProperty%22" title="Search for Get-AzureADApplicationExtensionProperty" class="tag">Get-AzureADApplicationExtensionProperty</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADApplicationOwner%22" title="Search for Get-AzureADApplicationOwner" class="tag">Get-AzureADApplicationOwner</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADApplicationServiceEndpoint%22" title="Search for Get-AzureADApplicationServiceEndpoint" class="tag">Get-AzureADApplicationServiceEndpoint</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADDeletedApplication%22" title="Search for Get-AzureADDeletedApplication" class="tag">Get-AzureADDeletedApplication</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADDeletedApplication%22" title="Search for Remove-AzureADDeletedApplication" class="tag">Remove-AzureADDeletedApplication</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADApplication%22" title="Search for New-AzureADApplication" class="tag">New-AzureADApplication</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADApplicationExtensionProperty%22" title="Search for New-AzureADApplicationExtensionProperty" class="tag">New-AzureADApplicationExtensionProperty</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADApplication%22" title="Search for Remove-AzureADApplication" class="tag">Remove-AzureADApplication</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADApplicationExtensionProperty%22" title="Search for Remove-AzureADApplicationExtensionProperty" class="tag">Remove-AzureADApplicationExtensionProperty</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADApplicationOwner%22" title="Search for Remove-AzureADApplicationOwner" class="tag">Remove-AzureADApplicationOwner</a>
+                <a href="/packages?q=Cmdlets%3A%22Restore-AzureADDeletedApplication%22" title="Search for Restore-AzureADDeletedApplication" class="tag">Restore-AzureADDeletedApplication</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADApplication%22" title="Search for Set-AzureADApplication" class="tag">Set-AzureADApplication</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADContact%22" title="Search for Get-AzureADContact" class="tag">Get-AzureADContact</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADContactDirectReport%22" title="Search for Get-AzureADContactDirectReport" class="tag">Get-AzureADContactDirectReport</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADContactManager%22" title="Search for Get-AzureADContactManager" class="tag">Get-AzureADContactManager</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADContactMembership%22" title="Search for Get-AzureADContactMembership" class="tag">Get-AzureADContactMembership</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADContact%22" title="Search for Remove-AzureADContact" class="tag">Remove-AzureADContact</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADContactManager%22" title="Search for Remove-AzureADContactManager" class="tag">Remove-AzureADContactManager</a>
+                <a href="/packages?q=Cmdlets%3A%22Select-AzureADGroupIdsContactIsMemberOf%22" title="Search for Select-AzureADGroupIdsContactIsMemberOf" class="tag">Select-AzureADGroupIdsContactIsMemberOf</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADContract%22" title="Search for Get-AzureADContract" class="tag">Get-AzureADContract</a>
+                <a href="/packages?q=Cmdlets%3A%22Add-AzureADDeviceRegisteredOwner%22" title="Search for Add-AzureADDeviceRegisteredOwner" class="tag">Add-AzureADDeviceRegisteredOwner</a>
+                <a href="/packages?q=Cmdlets%3A%22Add-AzureADDeviceRegisteredUser%22" title="Search for Add-AzureADDeviceRegisteredUser" class="tag">Add-AzureADDeviceRegisteredUser</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADDeviceRegisteredOwner%22" title="Search for Remove-AzureADDeviceRegisteredOwner" class="tag">Remove-AzureADDeviceRegisteredOwner</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADDevice%22" title="Search for Get-AzureADDevice" class="tag">Get-AzureADDevice</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADDeviceRegisteredOwner%22" title="Search for Get-AzureADDeviceRegisteredOwner" class="tag">Get-AzureADDeviceRegisteredOwner</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADDeviceRegisteredUser%22" title="Search for Get-AzureADDeviceRegisteredUser" class="tag">Get-AzureADDeviceRegisteredUser</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADDevice%22" title="Search for New-AzureADDevice" class="tag">New-AzureADDevice</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADDevice%22" title="Search for Remove-AzureADDevice" class="tag">Remove-AzureADDevice</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADDeviceRegisteredUser%22" title="Search for Remove-AzureADDeviceRegisteredUser" class="tag">Remove-AzureADDeviceRegisteredUser</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADDevice%22" title="Search for Set-AzureADDevice" class="tag">Set-AzureADDevice</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADDeviceConfiguration%22" title="Search for Get-AzureADDeviceConfiguration" class="tag">Get-AzureADDeviceConfiguration</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADObjectByObjectId%22" title="Search for Get-AzureADObjectByObjectId" class="tag">Get-AzureADObjectByObjectId</a>
+                <a href="/packages?q=Cmdlets%3A%22Enable-AzureADDirectoryRole%22" title="Search for Enable-AzureADDirectoryRole" class="tag">Enable-AzureADDirectoryRole</a>
+                <a href="/packages?q=Cmdlets%3A%22Add-AzureADDirectoryRoleMember%22" title="Search for Add-AzureADDirectoryRoleMember" class="tag">Add-AzureADDirectoryRoleMember</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADDirectoryRoleMember%22" title="Search for Get-AzureADDirectoryRoleMember" class="tag">Get-AzureADDirectoryRoleMember</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADDirectoryRole%22" title="Search for Get-AzureADDirectoryRole" class="tag">Get-AzureADDirectoryRole</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADDirectoryRoleMember%22" title="Search for Remove-AzureADDirectoryRoleMember" class="tag">Remove-AzureADDirectoryRoleMember</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADDirectoryRoleTemplate%22" title="Search for Get-AzureADDirectoryRoleTemplate" class="tag">Get-AzureADDirectoryRoleTemplate</a>
+                <a href="/packages?q=Cmdlets%3A%22Confirm-AzureADDomain%22" title="Search for Confirm-AzureADDomain" class="tag">Confirm-AzureADDomain</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADDomain%22" title="Search for Get-AzureADDomain" class="tag">Get-AzureADDomain</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADDomainNameReference%22" title="Search for Get-AzureADDomainNameReference" class="tag">Get-AzureADDomainNameReference</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADDomainServiceConfigurationRecord%22" title="Search for Get-AzureADDomainServiceConfigurationRecord" class="tag">Get-AzureADDomainServiceConfigurationRecord</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADDomainVerificationDnsRecord%22" title="Search for Get-AzureADDomainVerificationDnsRecord" class="tag">Get-AzureADDomainVerificationDnsRecord</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADDomain%22" title="Search for New-AzureADDomain" class="tag">New-AzureADDomain</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADDomain%22" title="Search for Remove-AzureADDomain" class="tag">Remove-AzureADDomain</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADDomain%22" title="Search for Set-AzureADDomain" class="tag">Set-AzureADDomain</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADExtensionProperty%22" title="Search for Get-AzureADExtensionProperty" class="tag">Get-AzureADExtensionProperty</a>
+                <a href="/packages?q=Cmdlets%3A%22Add-AzureADGroupMember%22" title="Search for Add-AzureADGroupMember" class="tag">Add-AzureADGroupMember</a>
+                <a href="/packages?q=Cmdlets%3A%22Add-AzureADGroupOwner%22" title="Search for Add-AzureADGroupOwner" class="tag">Add-AzureADGroupOwner</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADGroup%22" title="Search for Get-AzureADGroup" class="tag">Get-AzureADGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADGroupAppRoleAssignment%22" title="Search for Get-AzureADGroupAppRoleAssignment" class="tag">Get-AzureADGroupAppRoleAssignment</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADGroupMember%22" title="Search for Get-AzureADGroupMember" class="tag">Get-AzureADGroupMember</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADGroupOwner%22" title="Search for Get-AzureADGroupOwner" class="tag">Get-AzureADGroupOwner</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADGroup%22" title="Search for New-AzureADGroup" class="tag">New-AzureADGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADGroupAppRoleAssignment%22" title="Search for New-AzureADGroupAppRoleAssignment" class="tag">New-AzureADGroupAppRoleAssignment</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADGroup%22" title="Search for Remove-AzureADGroup" class="tag">Remove-AzureADGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADGroupAppRoleAssignment%22" title="Search for Remove-AzureADGroupAppRoleAssignment" class="tag">Remove-AzureADGroupAppRoleAssignment</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADGroupMember%22" title="Search for Remove-AzureADGroupMember" class="tag">Remove-AzureADGroupMember</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADGroupOwner%22" title="Search for Remove-AzureADGroupOwner" class="tag">Remove-AzureADGroupOwner</a>
+                <a href="/packages?q=Cmdlets%3A%22Select-AzureADGroupIdsGroupIsMemberOf%22" title="Search for Select-AzureADGroupIdsGroupIsMemberOf" class="tag">Select-AzureADGroupIdsGroupIsMemberOf</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADGroup%22" title="Search for Set-AzureADGroup" class="tag">Set-AzureADGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADOAuth2PermissionGrant%22" title="Search for Get-AzureADOAuth2PermissionGrant" class="tag">Get-AzureADOAuth2PermissionGrant</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADOAuth2PermissionGrant%22" title="Search for Remove-AzureADOAuth2PermissionGrant" class="tag">Remove-AzureADOAuth2PermissionGrant</a>
+                <a href="/packages?q=Cmdlets%3A%22Add-AzureADServicePrincipalOwner%22" title="Search for Add-AzureADServicePrincipalOwner" class="tag">Add-AzureADServicePrincipalOwner</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADServicePrincipal%22" title="Search for Get-AzureADServicePrincipal" class="tag">Get-AzureADServicePrincipal</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADServiceAppRoleAssignedTo%22" title="Search for Get-AzureADServiceAppRoleAssignedTo" class="tag">Get-AzureADServiceAppRoleAssignedTo</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADServiceAppRoleAssignment%22" title="Search for Get-AzureADServiceAppRoleAssignment" class="tag">Get-AzureADServiceAppRoleAssignment</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADServicePrincipalCreatedObject%22" title="Search for Get-AzureADServicePrincipalCreatedObject" class="tag">Get-AzureADServicePrincipalCreatedObject</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADServicePrincipalMembership%22" title="Search for Get-AzureADServicePrincipalMembership" class="tag">Get-AzureADServicePrincipalMembership</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADServicePrincipalOAuth2PermissionGrant%22" title="Search for Get-AzureADServicePrincipalOAuth2PermissionGrant" class="tag">Get-AzureADServicePrincipalOAuth2PermissionGrant</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADServicePrincipalOwnedObject%22" title="Search for Get-AzureADServicePrincipalOwnedObject" class="tag">Get-AzureADServicePrincipalOwnedObject</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADServicePrincipalOwner%22" title="Search for Get-AzureADServicePrincipalOwner" class="tag">Get-AzureADServicePrincipalOwner</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADServicePrincipal%22" title="Search for New-AzureADServicePrincipal" class="tag">New-AzureADServicePrincipal</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADServiceAppRoleAssignment%22" title="Search for New-AzureADServiceAppRoleAssignment" class="tag">New-AzureADServiceAppRoleAssignment</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADServicePrincipal%22" title="Search for Remove-AzureADServicePrincipal" class="tag">Remove-AzureADServicePrincipal</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADServiceAppRoleAssignment%22" title="Search for Remove-AzureADServiceAppRoleAssignment" class="tag">Remove-AzureADServiceAppRoleAssignment</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADServicePrincipalOwner%22" title="Search for Remove-AzureADServicePrincipalOwner" class="tag">Remove-AzureADServicePrincipalOwner</a>
+                <a href="/packages?q=Cmdlets%3A%22Select-AzureADGroupIdsServicePrincipalIsMemberOf%22" title="Search for Select-AzureADGroupIdsServicePrincipalIsMemberOf" class="tag">Select-AzureADGroupIdsServicePrincipalIsMemberOf</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADServicePrincipal%22" title="Search for Set-AzureADServicePrincipal" class="tag">Set-AzureADServicePrincipal</a>
+                <a href="/packages?q=Cmdlets%3A%22Revoke-AzureADSignedInUserAllRefreshToken%22" title="Search for Revoke-AzureADSignedInUserAllRefreshToken" class="tag">Revoke-AzureADSignedInUserAllRefreshToken</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADSubscribedSku%22" title="Search for Get-AzureADSubscribedSku" class="tag">Get-AzureADSubscribedSku</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADTenantDetail%22" title="Search for Get-AzureADTenantDetail" class="tag">Get-AzureADTenantDetail</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADTenantDetail%22" title="Search for Set-AzureADTenantDetail" class="tag">Set-AzureADTenantDetail</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADUser%22" title="Search for Get-AzureADUser" class="tag">Get-AzureADUser</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADUserAppRoleAssignment%22" title="Search for Get-AzureADUserAppRoleAssignment" class="tag">Get-AzureADUserAppRoleAssignment</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADUserCreatedObject%22" title="Search for Get-AzureADUserCreatedObject" class="tag">Get-AzureADUserCreatedObject</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADUserDirectReport%22" title="Search for Get-AzureADUserDirectReport" class="tag">Get-AzureADUserDirectReport</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADUserLicenseDetail%22" title="Search for Get-AzureADUserLicenseDetail" class="tag">Get-AzureADUserLicenseDetail</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADUserManager%22" title="Search for Get-AzureADUserManager" class="tag">Get-AzureADUserManager</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADUserMembership%22" title="Search for Get-AzureADUserMembership" class="tag">Get-AzureADUserMembership</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADUserOAuth2PermissionGrant%22" title="Search for Get-AzureADUserOAuth2PermissionGrant" class="tag">Get-AzureADUserOAuth2PermissionGrant</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADUserOwnedDevice%22" title="Search for Get-AzureADUserOwnedDevice" class="tag">Get-AzureADUserOwnedDevice</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADUserOwnedObject%22" title="Search for Get-AzureADUserOwnedObject" class="tag">Get-AzureADUserOwnedObject</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADUserRegisteredDevice%22" title="Search for Get-AzureADUserRegisteredDevice" class="tag">Get-AzureADUserRegisteredDevice</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADUser%22" title="Search for New-AzureADUser" class="tag">New-AzureADUser</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADUserAppRoleAssignment%22" title="Search for New-AzureADUserAppRoleAssignment" class="tag">New-AzureADUserAppRoleAssignment</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADUser%22" title="Search for Remove-AzureADUser" class="tag">Remove-AzureADUser</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADUserAppRoleAssignment%22" title="Search for Remove-AzureADUserAppRoleAssignment" class="tag">Remove-AzureADUserAppRoleAssignment</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADUserManager%22" title="Search for Remove-AzureADUserManager" class="tag">Remove-AzureADUserManager</a>
+                <a href="/packages?q=Cmdlets%3A%22Revoke-AzureADUserAllRefreshToken%22" title="Search for Revoke-AzureADUserAllRefreshToken" class="tag">Revoke-AzureADUserAllRefreshToken</a>
+                <a href="/packages?q=Cmdlets%3A%22Select-AzureADGroupIdsUserIsMemberOf%22" title="Search for Select-AzureADGroupIdsUserIsMemberOf" class="tag">Select-AzureADGroupIdsUserIsMemberOf</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADUser%22" title="Search for Set-AzureADUser" class="tag">Set-AzureADUser</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADUserLicense%22" title="Search for Set-AzureADUserLicense" class="tag">Set-AzureADUserLicense</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADUserManager%22" title="Search for Set-AzureADUserManager" class="tag">Set-AzureADUserManager</a>
+                <a href="/packages?q=Cmdlets%3A%22Connect-AzureAD%22" title="Search for Connect-AzureAD" class="tag">Connect-AzureAD</a>
+                <a href="/packages?q=Cmdlets%3A%22Disconnect-AzureAD%22" title="Search for Disconnect-AzureAD" class="tag">Disconnect-AzureAD</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADCurrentSessionInfo%22" title="Search for Get-AzureADCurrentSessionInfo" class="tag">Get-AzureADCurrentSessionInfo</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADApplicationLogo%22" title="Search for Get-AzureADApplicationLogo" class="tag">Get-AzureADApplicationLogo</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADApplicationLogo%22" title="Search for Set-AzureADApplicationLogo" class="tag">Set-AzureADApplicationLogo</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADUserPassword%22" title="Search for Set-AzureADUserPassword" class="tag">Set-AzureADUserPassword</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADContactThumbnailPhoto%22" title="Search for Get-AzureADContactThumbnailPhoto" class="tag">Get-AzureADContactThumbnailPhoto</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADUserThumbnailPhoto%22" title="Search for Get-AzureADUserThumbnailPhoto" class="tag">Get-AzureADUserThumbnailPhoto</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADUserThumbnailPhoto%22" title="Search for Set-AzureADUserThumbnailPhoto" class="tag">Set-AzureADUserThumbnailPhoto</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADApplicationKeyCredential%22" title="Search for New-AzureADApplicationKeyCredential" class="tag">New-AzureADApplicationKeyCredential</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADApplicationKeyCredential%22" title="Search for Get-AzureADApplicationKeyCredential" class="tag">Get-AzureADApplicationKeyCredential</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADApplicationKeyCredential%22" title="Search for Remove-AzureADApplicationKeyCredential" class="tag">Remove-AzureADApplicationKeyCredential</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADApplicationPasswordCredential%22" title="Search for New-AzureADApplicationPasswordCredential" class="tag">New-AzureADApplicationPasswordCredential</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADApplicationPasswordCredential%22" title="Search for Get-AzureADApplicationPasswordCredential" class="tag">Get-AzureADApplicationPasswordCredential</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADApplicationPasswordCredential%22" title="Search for Remove-AzureADApplicationPasswordCredential" class="tag">Remove-AzureADApplicationPasswordCredential</a>
+                <a href="/packages?q=Cmdlets%3A%22Update-AzureADSignedInUserPassword%22" title="Search for Update-AzureADSignedInUserPassword" class="tag">Update-AzureADSignedInUserPassword</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADServicePrincipalKeyCredential%22" title="Search for New-AzureADServicePrincipalKeyCredential" class="tag">New-AzureADServicePrincipalKeyCredential</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADServicePrincipalKeyCredential%22" title="Search for Get-AzureADServicePrincipalKeyCredential" class="tag">Get-AzureADServicePrincipalKeyCredential</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADServicePrincipalKeyCredential%22" title="Search for Remove-AzureADServicePrincipalKeyCredential" class="tag">Remove-AzureADServicePrincipalKeyCredential</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADServicePrincipalPasswordCredential%22" title="Search for New-AzureADServicePrincipalPasswordCredential" class="tag">New-AzureADServicePrincipalPasswordCredential</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADServicePrincipalPasswordCredential%22" title="Search for Get-AzureADServicePrincipalPasswordCredential" class="tag">Get-AzureADServicePrincipalPasswordCredential</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADServicePrincipalPasswordCredential%22" title="Search for Remove-AzureADServicePrincipalPasswordCredential" class="tag">Remove-AzureADServicePrincipalPasswordCredential</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADTrustedCertificateAuthority%22" title="Search for Get-AzureADTrustedCertificateAuthority" class="tag">Get-AzureADTrustedCertificateAuthority</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADTrustedCertificateAuthority%22" title="Search for New-AzureADTrustedCertificateAuthority" class="tag">New-AzureADTrustedCertificateAuthority</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADTrustedCertificateAuthority%22" title="Search for Set-AzureADTrustedCertificateAuthority" class="tag">Set-AzureADTrustedCertificateAuthority</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADTrustedCertificateAuthority%22" title="Search for Remove-AzureADTrustedCertificateAuthority" class="tag">Remove-AzureADTrustedCertificateAuthority</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADUserExtension%22" title="Search for Get-AzureADUserExtension" class="tag">Get-AzureADUserExtension</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADUserExtension%22" title="Search for Set-AzureADUserExtension" class="tag">Set-AzureADUserExtension</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADUserExtension%22" title="Search for Remove-AzureADUserExtension" class="tag">Remove-AzureADUserExtension</a>
+                <a href="/packages?q=Cmdlets%3A%22Add-AzureADAdministrativeUnitMember%22" title="Search for Add-AzureADAdministrativeUnitMember" class="tag">Add-AzureADAdministrativeUnitMember</a>
+                <a href="/packages?q=Cmdlets%3A%22Add-AzureADScopedRoleMembership%22" title="Search for Add-AzureADScopedRoleMembership" class="tag">Add-AzureADScopedRoleMembership</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADAdministrativeUnit%22" title="Search for Get-AzureADAdministrativeUnit" class="tag">Get-AzureADAdministrativeUnit</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADAdministrativeUnitMember%22" title="Search for Get-AzureADAdministrativeUnitMember" class="tag">Get-AzureADAdministrativeUnitMember</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADScopedRoleMembership%22" title="Search for Get-AzureADScopedRoleMembership" class="tag">Get-AzureADScopedRoleMembership</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADAdministrativeUnit%22" title="Search for New-AzureADAdministrativeUnit" class="tag">New-AzureADAdministrativeUnit</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADAdministrativeUnitMember%22" title="Search for Remove-AzureADAdministrativeUnitMember" class="tag">Remove-AzureADAdministrativeUnitMember</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADAdministrativeUnit%22" title="Search for Remove-AzureADAdministrativeUnit" class="tag">Remove-AzureADAdministrativeUnit</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADScopedRoleMembership%22" title="Search for Remove-AzureADScopedRoleMembership" class="tag">Remove-AzureADScopedRoleMembership</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADAdministrativeUnit%22" title="Search for Set-AzureADAdministrativeUnit" class="tag">Set-AzureADAdministrativeUnit</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADExternalDomainFederation%22" title="Search for Get-AzureADExternalDomainFederation" class="tag">Get-AzureADExternalDomainFederation</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADExternalDomainFederation%22" title="Search for New-AzureADExternalDomainFederation" class="tag">New-AzureADExternalDomainFederation</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADExternalDomainFederation%22" title="Search for Remove-AzureADExternalDomainFederation" class="tag">Remove-AzureADExternalDomainFederation</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADApplicationProxyApplication%22" title="Search for New-AzureADApplicationProxyApplication" class="tag">New-AzureADApplicationProxyApplication</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADApplicationProxyApplication%22" title="Search for Remove-AzureADApplicationProxyApplication" class="tag">Remove-AzureADApplicationProxyApplication</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADApplicationProxyApplication%22" title="Search for Set-AzureADApplicationProxyApplication" class="tag">Set-AzureADApplicationProxyApplication</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADApplicationProxyApplicationConnectorGroup%22" title="Search for Set-AzureADApplicationProxyApplicationConnectorGroup" class="tag">Set-AzureADApplicationProxyApplicationConnectorGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADApplicationProxyApplicationCustomDomainCertificate%22" title="Search for Set-AzureADApplicationProxyApplicationCustomDomainCertificate" class="tag">Set-AzureADApplicationProxyApplicationCustomDomainCertificate</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADApplicationProxyApplicationSingleSignOn%22" title="Search for Set-AzureADApplicationProxyApplicationSingleSignOn" class="tag">Set-AzureADApplicationProxyApplicationSingleSignOn</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADApplicationProxyConnector%22" title="Search for Set-AzureADApplicationProxyConnector" class="tag">Set-AzureADApplicationProxyConnector</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADApplicationProxyApplication%22" title="Search for Get-AzureADApplicationProxyApplication" class="tag">Get-AzureADApplicationProxyApplication</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADApplicationProxyApplicationConnectorGroup%22" title="Search for Get-AzureADApplicationProxyApplicationConnectorGroup" class="tag">Get-AzureADApplicationProxyApplicationConnectorGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADApplicationProxyConnector%22" title="Search for Get-AzureADApplicationProxyConnector" class="tag">Get-AzureADApplicationProxyConnector</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADApplicationProxyConnectorGroup%22" title="Search for Get-AzureADApplicationProxyConnectorGroup" class="tag">Get-AzureADApplicationProxyConnectorGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADApplicationProxyConnectorGroupMembers%22" title="Search for Get-AzureADApplicationProxyConnectorGroupMembers" class="tag">Get-AzureADApplicationProxyConnectorGroupMembers</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADApplicationProxyConnectorMemberOf%22" title="Search for Get-AzureADApplicationProxyConnectorMemberOf" class="tag">Get-AzureADApplicationProxyConnectorMemberOf</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADApplicationProxyConnectorGroup%22" title="Search for New-AzureADApplicationProxyConnectorGroup" class="tag">New-AzureADApplicationProxyConnectorGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADApplicationProxyApplicationConnectorGroup%22" title="Search for Remove-AzureADApplicationProxyApplicationConnectorGroup" class="tag">Remove-AzureADApplicationProxyApplicationConnectorGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADApplicationProxyConnectorGroup%22" title="Search for Remove-AzureADApplicationProxyConnectorGroup" class="tag">Remove-AzureADApplicationProxyConnectorGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADApplicationProxyConnectorGroup%22" title="Search for Set-AzureADApplicationProxyConnectorGroup" class="tag">Set-AzureADApplicationProxyConnectorGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADDirectorySetting%22" title="Search for Get-AzureADDirectorySetting" class="tag">Get-AzureADDirectorySetting</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADDirectorySetting%22" title="Search for New-AzureADDirectorySetting" class="tag">New-AzureADDirectorySetting</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADDirectorySetting%22" title="Search for Remove-AzureADDirectorySetting" class="tag">Remove-AzureADDirectorySetting</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADDirectorySetting%22" title="Search for Set-AzureADDirectorySetting" class="tag">Set-AzureADDirectorySetting</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADDirectorySettingTemplate%22" title="Search for Get-AzureADDirectorySettingTemplate" class="tag">Get-AzureADDirectorySettingTemplate</a>
+                <a href="/packages?q=Cmdlets%3A%22Add-AzureADMSLifecyclePolicyGroup%22" title="Search for Add-AzureADMSLifecyclePolicyGroup" class="tag">Add-AzureADMSLifecyclePolicyGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADMSGroupLifecyclePolicy%22" title="Search for Get-AzureADMSGroupLifecyclePolicy" class="tag">Get-AzureADMSGroupLifecyclePolicy</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADMSGroupLifecyclePolicy%22" title="Search for New-AzureADMSGroupLifecyclePolicy" class="tag">New-AzureADMSGroupLifecyclePolicy</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADMSGroupLifecyclePolicy%22" title="Search for Remove-AzureADMSGroupLifecyclePolicy" class="tag">Remove-AzureADMSGroupLifecyclePolicy</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADMSLifecyclePolicyGroup%22" title="Search for Remove-AzureADMSLifecyclePolicyGroup" class="tag">Remove-AzureADMSLifecyclePolicyGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22Reset-AzureADMSLifeCycleGroup%22" title="Search for Reset-AzureADMSLifeCycleGroup" class="tag">Reset-AzureADMSLifeCycleGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADMSGroupLifecyclePolicy%22" title="Search for Set-AzureADMSGroupLifecyclePolicy" class="tag">Set-AzureADMSGroupLifecyclePolicy</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADMSIdentityProvider%22" title="Search for Remove-AzureADMSIdentityProvider" class="tag">Remove-AzureADMSIdentityProvider</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADMSIdentityProvider%22" title="Search for Get-AzureADMSIdentityProvider" class="tag">Get-AzureADMSIdentityProvider</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADMSIdentityProvider%22" title="Search for New-AzureADMSIdentityProvider" class="tag">New-AzureADMSIdentityProvider</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADMSIdentityProvider%22" title="Search for Set-AzureADMSIdentityProvider" class="tag">Set-AzureADMSIdentityProvider</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADMSDeletedDirectoryObject%22" title="Search for Get-AzureADMSDeletedDirectoryObject" class="tag">Get-AzureADMSDeletedDirectoryObject</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADMSDeletedDirectoryObject%22" title="Search for Remove-AzureADMSDeletedDirectoryObject" class="tag">Remove-AzureADMSDeletedDirectoryObject</a>
+                <a href="/packages?q=Cmdlets%3A%22Restore-AzureADMSDeletedDirectoryObject%22" title="Search for Restore-AzureADMSDeletedDirectoryObject" class="tag">Restore-AzureADMSDeletedDirectoryObject</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADMSDeletedGroup%22" title="Search for Get-AzureADMSDeletedGroup" class="tag">Get-AzureADMSDeletedGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADMSLifecyclePolicyGroup%22" title="Search for Get-AzureADMSLifecyclePolicyGroup" class="tag">Get-AzureADMSLifecyclePolicyGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADMSGroup%22" title="Search for Get-AzureADMSGroup" class="tag">Get-AzureADMSGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADMSGroup%22" title="Search for New-AzureADMSGroup" class="tag">New-AzureADMSGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADMSGroup%22" title="Search for Remove-AzureADMSGroup" class="tag">Remove-AzureADMSGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADMSGroup%22" title="Search for Set-AzureADMSGroup" class="tag">Set-AzureADMSGroup</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADMSInvitation%22" title="Search for New-AzureADMSInvitation" class="tag">New-AzureADMSInvitation</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADObjectSetting%22" title="Search for Get-AzureADObjectSetting" class="tag">Get-AzureADObjectSetting</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADObjectSetting%22" title="Search for New-AzureADObjectSetting" class="tag">New-AzureADObjectSetting</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADObjectSetting%22" title="Search for Remove-AzureADObjectSetting" class="tag">Remove-AzureADObjectSetting</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADObjectSetting%22" title="Search for Set-AzureADObjectSetting" class="tag">Set-AzureADObjectSetting</a>
+                <a href="/packages?q=Cmdlets%3A%22Add-AzureADApplicationPolicy%22" title="Search for Add-AzureADApplicationPolicy" class="tag">Add-AzureADApplicationPolicy</a>
+                <a href="/packages?q=Cmdlets%3A%22Add-AzureADServicePrincipalPolicy%22" title="Search for Add-AzureADServicePrincipalPolicy" class="tag">Add-AzureADServicePrincipalPolicy</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADServicePrincipalPolicy%22" title="Search for Get-AzureADServicePrincipalPolicy" class="tag">Get-AzureADServicePrincipalPolicy</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADApplicationPolicy%22" title="Search for Get-AzureADApplicationPolicy" class="tag">Get-AzureADApplicationPolicy</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADPolicy%22" title="Search for Get-AzureADPolicy" class="tag">Get-AzureADPolicy</a>
+                <a href="/packages?q=Cmdlets%3A%22Get-AzureADPolicyAppliedObject%22" title="Search for Get-AzureADPolicyAppliedObject" class="tag">Get-AzureADPolicyAppliedObject</a>
+                <a href="/packages?q=Cmdlets%3A%22New-AzureADPolicy%22" title="Search for New-AzureADPolicy" class="tag">New-AzureADPolicy</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADApplicationPolicy%22" title="Search for Remove-AzureADApplicationPolicy" class="tag">Remove-AzureADApplicationPolicy</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADPolicy%22" title="Search for Remove-AzureADPolicy" class="tag">Remove-AzureADPolicy</a>
+                <a href="/packages?q=Cmdlets%3A%22Remove-AzureADServicePrincipalPolicy%22" title="Search for Remove-AzureADServicePrincipalPolicy" class="tag">Remove-AzureADServicePrincipalPolicy</a>
+                <a href="/packages?q=Cmdlets%3A%22Set-AzureADPolicy%22" title="Search for Set-AzureADPolicy" class="tag">Set-AzureADPolicy</a>
+        </p>
+
+                    
+                    
+                    
+                    
+                    
+                    
+
+                        <h3 class="h3-collapse-in">Dependencies</h3>
+                            <p class="content-collapse-in">This module has no dependencies.</p>
+
+                </div>
+
+            <!--  FileList  -->
+                <h2>
+                    <a href="#" role="button" data-toggle="collapse" data-target="#file-lists"
+                       aria-expanded="false" aria-controls="file-lists"
+                       id="show-file-lists">
+                        <i class="ms-Icon ms-Icon--ChevronRight"
+                           aria-hidden="false"></i>
+                        <span>FileList</span>
+                    </a>
+                </h2>
+                    <p>
+                        <ul class="list-styled panel-collapse collapse file-lists content-collapse-in tab-content" id="file-lists">
+                                    <li>
+                                        AzureADPreview.nuspec
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/AzureAD.Format.ps1xml" title="File content for AzureAD.Format.ps1xml">AzureAD.Format.ps1xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/AzureADPreview.psd1" title="File content for AzureADPreview.psd1">AzureADPreview.psd1</a>
+                                    </li>
+                                    <li>
+                                        Microsoft.Data.Edm.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/Microsoft.Data.Edm.xml" title="File content for Microsoft.Data.Edm.xml">Microsoft.Data.Edm.xml</a>
+                                    </li>
+                                    <li>
+                                        Microsoft.Data.OData.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/Microsoft.Data.OData.xml" title="File content for Microsoft.Data.OData.xml">Microsoft.Data.OData.xml</a>
+                                    </li>
+                                    <li>
+                                        Microsoft.Data.Services.Client.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/Microsoft.Data.Services.Client.xml" title="File content for Microsoft.Data.Services.Client.xml">Microsoft.Data.Services.Client.xml</a>
+                                    </li>
+                                    <li>
+                                        Microsoft.IdentityModel.Clients.ActiveDirectory.dll
+                                    </li>
+                                    <li>
+                                        Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.xml" title="File content for Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.xml">Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/Microsoft.IdentityModel.Clients.ActiveDirectory.xml" title="File content for Microsoft.IdentityModel.Clients.ActiveDirectory.xml">Microsoft.IdentityModel.Clients.ActiveDirectory.xml</a>
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.Azure.AD.CommonLibrary.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/Microsoft.Open.Azure.AD.CommonLibrary.dll-Help.xml" title="File content for Microsoft.Open.Azure.AD.CommonLibrary.dll-Help.xml">Microsoft.Open.Azure.AD.CommonLibrary.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.Azure.AD.CommonLibrary.pdb
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.Azure.AD.CommonLibrary.Resources.dll
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.Azure.AD.CommonLibrary.Resources.pdb
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.AzureAD16.Graph.Client.dll
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.AzureAD16.Graph.Client.pdb
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml" title="File content for Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml">Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.pdb
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.AzureAD16.Graph.PowerShell.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/Microsoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml" title="File content for Microsoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml">Microsoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.AzureAD16.Graph.PowerShell.pdb
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.AzureADBeta.Graph.Client.dll
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.AzureADBeta.Graph.Client.pdb
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.AzureADBeta.Graph.PowerShell.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/Microsoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml" title="File content for Microsoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml">Microsoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.AzureADBeta.Graph.PowerShell.pdb
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.MS.GraphBeta.Client.dll
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.MS.GraphBeta.Client.pdb
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.MS.GraphBeta.PowerShell.Custom.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/Microsoft.Open.MS.GraphBeta.PowerShell.Custom.dll-Help.xml" title="File content for Microsoft.Open.MS.GraphBeta.PowerShell.Custom.dll-Help.xml">Microsoft.Open.MS.GraphBeta.PowerShell.Custom.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.MS.GraphBeta.PowerShell.Custom.pdb
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.MS.GraphBeta.PowerShell.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/Microsoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml" title="File content for Microsoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml">Microsoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        Microsoft.Open.MS.GraphBeta.PowerShell.pdb
+                                    </li>
+                                    <li>
+                                        Newtonsoft.Json.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/Newtonsoft.Json.xml" title="File content for Newtonsoft.Json.xml">Newtonsoft.Json.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/OverrideEnvironment.config.txt" title="File content for OverrideEnvironment.config.txt">OverrideEnvironment.config.txt</a>
+                                    </li>
+                                    <li>
+                                        RestSharp.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/RestSharp.xml" title="File content for RestSharp.xml">RestSharp.xml</a>
+                                    </li>
+                                    <li>
+                                        System.IdentityModel.Tokens.Jwt.dll
+                                    </li>
+                                    <li>
+                                        System.IdentityModel.Tokens.Jwt.pdb
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/System.IdentityModel.Tokens.Jwt.xml" title="File content for System.IdentityModel.Tokens.Jwt.xml">System.IdentityModel.Tokens.Jwt.xml</a>
+                                    </li>
+                                    <li>
+                                        System.Management.Automation.dll
+                                    </li>
+                                    <li>
+                                        System.Spatial.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/System.Spatial.xml" title="File content for System.Spatial.xml">System.Spatial.xml</a>
+                                    </li>
+                                    <li>
+                                        de\Microsoft.Data.Edm.resources.dll
+                                    </li>
+                                    <li>
+                                        de\Microsoft.Data.OData.resources.dll
+                                    </li>
+                                    <li>
+                                        de\Microsoft.Data.Services.Client.resources.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/de%5CMicrosoft.Open.Azure.AD.CommonLibrary.dll-Help.xml" title="File content for de\Microsoft.Open.Azure.AD.CommonLibrary.dll-Help.xml">de\Microsoft.Open.Azure.AD.CommonLibrary.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        de\Microsoft.Open.Azure.AD.CommonLibrary.Resources.resources.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/de%5CMicrosoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml" title="File content for de\Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml">de\Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/de%5CMicrosoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml" title="File content for de\Microsoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml">de\Microsoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/de%5CMicrosoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml" title="File content for de\Microsoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml">de\Microsoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/de%5CMicrosoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml" title="File content for de\Microsoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml">de\Microsoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        de\System.Spatial.resources.dll
+                                    </li>
+                                    <li>
+                                        es\Microsoft.Data.Edm.resources.dll
+                                    </li>
+                                    <li>
+                                        es\Microsoft.Data.OData.resources.dll
+                                    </li>
+                                    <li>
+                                        es\Microsoft.Data.Services.Client.resources.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/es%5CMicrosoft.Open.Azure.AD.CommonLibrary.dll-Help.xml" title="File content for es\Microsoft.Open.Azure.AD.CommonLibrary.dll-Help.xml">es\Microsoft.Open.Azure.AD.CommonLibrary.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        es\Microsoft.Open.Azure.AD.CommonLibrary.Resources.resources.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/es%5CMicrosoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml" title="File content for es\Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml">es\Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/es%5CMicrosoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml" title="File content for es\Microsoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml">es\Microsoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/es%5CMicrosoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml" title="File content for es\Microsoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml">es\Microsoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/es%5CMicrosoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml" title="File content for es\Microsoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml">es\Microsoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        es\System.Spatial.resources.dll
+                                    </li>
+                                    <li>
+                                        fr\Microsoft.Data.Edm.resources.dll
+                                    </li>
+                                    <li>
+                                        fr\Microsoft.Data.OData.resources.dll
+                                    </li>
+                                    <li>
+                                        fr\Microsoft.Data.Services.Client.resources.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/fr%5CMicrosoft.Open.Azure.AD.CommonLibrary.dll-Help.xml" title="File content for fr\Microsoft.Open.Azure.AD.CommonLibrary.dll-Help.xml">fr\Microsoft.Open.Azure.AD.CommonLibrary.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        fr\Microsoft.Open.Azure.AD.CommonLibrary.Resources.resources.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/fr%5CMicrosoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml" title="File content for fr\Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml">fr\Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/fr%5CMicrosoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml" title="File content for fr\Microsoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml">fr\Microsoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/fr%5CMicrosoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml" title="File content for fr\Microsoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml">fr\Microsoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/fr%5CMicrosoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml" title="File content for fr\Microsoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml">fr\Microsoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        fr\System.Spatial.resources.dll
+                                    </li>
+                                    <li>
+                                        it\Microsoft.Data.Edm.resources.dll
+                                    </li>
+                                    <li>
+                                        it\Microsoft.Data.OData.resources.dll
+                                    </li>
+                                    <li>
+                                        it\Microsoft.Data.Services.Client.resources.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/it%5CMicrosoft.Open.Azure.AD.CommonLibrary.dll-Help.xml" title="File content for it\Microsoft.Open.Azure.AD.CommonLibrary.dll-Help.xml">it\Microsoft.Open.Azure.AD.CommonLibrary.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        it\Microsoft.Open.Azure.AD.CommonLibrary.Resources.resources.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/it%5CMicrosoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml" title="File content for it\Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml">it\Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/it%5CMicrosoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml" title="File content for it\Microsoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml">it\Microsoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/it%5CMicrosoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml" title="File content for it\Microsoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml">it\Microsoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/it%5CMicrosoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml" title="File content for it\Microsoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml">it\Microsoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        it\System.Spatial.resources.dll
+                                    </li>
+                                    <li>
+                                        ja\Microsoft.Data.Edm.resources.dll
+                                    </li>
+                                    <li>
+                                        ja\Microsoft.Data.OData.resources.dll
+                                    </li>
+                                    <li>
+                                        ja\Microsoft.Data.Services.Client.resources.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/ja%5CMicrosoft.Open.Azure.AD.CommonLibrary.dll-Help.xml" title="File content for ja\Microsoft.Open.Azure.AD.CommonLibrary.dll-Help.xml">ja\Microsoft.Open.Azure.AD.CommonLibrary.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        ja\Microsoft.Open.Azure.AD.CommonLibrary.Resources.resources.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/ja%5CMicrosoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml" title="File content for ja\Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml">ja\Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/ja%5CMicrosoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml" title="File content for ja\Microsoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml">ja\Microsoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/ja%5CMicrosoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml" title="File content for ja\Microsoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml">ja\Microsoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/ja%5CMicrosoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml" title="File content for ja\Microsoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml">ja\Microsoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        ja\System.Spatial.resources.dll
+                                    </li>
+                                    <li>
+                                        ko\Microsoft.Data.Edm.resources.dll
+                                    </li>
+                                    <li>
+                                        ko\Microsoft.Data.OData.resources.dll
+                                    </li>
+                                    <li>
+                                        ko\Microsoft.Data.Services.Client.resources.dll
+                                    </li>
+                                    <li>
+                                        ko\System.Spatial.resources.dll
+                                    </li>
+                                    <li>
+                                        ru\Microsoft.Data.Edm.resources.dll
+                                    </li>
+                                    <li>
+                                        ru\Microsoft.Data.OData.resources.dll
+                                    </li>
+                                    <li>
+                                        ru\Microsoft.Data.Services.Client.resources.dll
+                                    </li>
+                                    <li>
+                                        ru\System.Spatial.resources.dll
+                                    </li>
+                                    <li>
+                                        zh-Hans\Microsoft.Data.Edm.resources.dll
+                                    </li>
+                                    <li>
+                                        zh-Hans\Microsoft.Data.OData.resources.dll
+                                    </li>
+                                    <li>
+                                        zh-Hans\Microsoft.Data.Services.Client.resources.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/zh-Hans%5CMicrosoft.Open.Azure.AD.CommonLibrary.dll-Help.xml" title="File content for zh-Hans\Microsoft.Open.Azure.AD.CommonLibrary.dll-Help.xml">zh-Hans\Microsoft.Open.Azure.AD.CommonLibrary.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        zh-Hans\Microsoft.Open.Azure.AD.CommonLibrary.Resources.resources.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/zh-Hans%5CMicrosoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml" title="File content for zh-Hans\Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml">zh-Hans\Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/zh-Hans%5CMicrosoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml" title="File content for zh-Hans\Microsoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml">zh-Hans\Microsoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/zh-Hans%5CMicrosoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml" title="File content for zh-Hans\Microsoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml">zh-Hans\Microsoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/zh-Hans%5CMicrosoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml" title="File content for zh-Hans\Microsoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml">zh-Hans\Microsoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        zh-Hans\System.Spatial.resources.dll
+                                    </li>
+                                    <li>
+                                        zh-Hant\Microsoft.Data.Edm.resources.dll
+                                    </li>
+                                    <li>
+                                        zh-Hant\Microsoft.Data.OData.resources.dll
+                                    </li>
+                                    <li>
+                                        zh-Hant\Microsoft.Data.Services.Client.resources.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/zh-Hant%5CMicrosoft.Open.Azure.AD.CommonLibrary.dll-Help.xml" title="File content for zh-Hant\Microsoft.Open.Azure.AD.CommonLibrary.dll-Help.xml">zh-Hant\Microsoft.Open.Azure.AD.CommonLibrary.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        zh-Hant\Microsoft.Open.Azure.AD.CommonLibrary.Resources.resources.dll
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/zh-Hant%5CMicrosoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml" title="File content for zh-Hant\Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml">zh-Hant\Microsoft.Open.AzureAD16.Graph.PowerShell.Custom.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/zh-Hant%5CMicrosoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml" title="File content for zh-Hant\Microsoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml">zh-Hant\Microsoft.Open.AzureAD16.Graph.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/zh-Hant%5CMicrosoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml" title="File content for zh-Hant\Microsoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml">zh-Hant\Microsoft.Open.AzureADBeta.Graph.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        <a href="/packages/AzureADPreview/2.0.2.5/Content/zh-Hant%5CMicrosoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml" title="File content for zh-Hant\Microsoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml">zh-Hant\Microsoft.Open.MS.GraphBeta.PowerShell.dll-Help.xml</a>
+                                    </li>
+                                    <li>
+                                        zh-Hant\System.Spatial.resources.dll
+                                    </li>
+                        </ul>
+                    </p>
+
+            <!--Making this condition false so as to never enter this code block. 'if (false)' below needs to be replaced with 'if (!Model.Deleted)' whenever we are ready-->
+            
+
+            <h2>
+                <a href="#" role="button" data-toggle="collapse" data-target="#version-history"
+                   aria-expanded="true" aria-controls="version-history" id="show-version-history">
+                    <i class="ms-Icon ms-Icon--ChevronDown" aria-hidden="false"></i>
+                    <span>Version History</span>
+                </a>
+            </h2>
+            <div class="version-history panel-collapse collapse in col-xs-12 col-sm-12" aria-expanded="true" id="version-history">
+                <table class="table borderless content-collapse-in">
+                    <thead>
+                        <tr>
+                            <th>Version</th>
+                            <th>Downloads</th>
+                            <th>Last updated</th>
+                        </tr>
+                    </thead>
+                    <tbody class="no-border">
+
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.2.5">
+                                            <b>
+                                                2.0.2.5
+                                                    (current version)
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        92,078
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2018-10-05T19:54:16.6700000">10/5/2018</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.2.3">
+                                            <b>
+                                                2.0.2.3
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        2,882
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2018-10-03T00:51:19.2670000">10/3/2018</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.1.18">
+                                            <b>
+                                                2.0.1.18
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        64,049
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2018-06-28T18:58:27.4900000">6/28/2018</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.1.17">
+                                            <b>
+                                                2.0.1.17
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        4,605
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2018-06-21T17:37:27.6900000">6/21/2018</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.1.11">
+                                            <b>
+                                                2.0.1.11
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        26,350
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2018-05-07T15:11:48.4370000">5/7/2018</span>
+                                    </td>
+                                </tr>
+        </tbody><tbody class="no-border collapse " id="hidden-versions">
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.1.9">
+                                            <b>
+                                                2.0.1.9
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        1,378
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2018-05-02T21:07:25.2700000">5/2/2018</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.1.2">
+                                            <b>
+                                                2.0.1.2
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        16,142
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2018-03-19T19:34:55.9970000">3/19/2018</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.154">
+                                            <b>
+                                                2.0.0.154
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        13,028
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2018-02-14T23:00:01.0000000">2/14/2018</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.137">
+                                            <b>
+                                                2.0.0.137
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        60,492
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2017-08-06T19:36:20.5470000">8/6/2017</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.129">
+                                            <b>
+                                                2.0.0.129
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        8,453
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2017-07-10T18:39:17.3670000">7/10/2017</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.127">
+                                            <b>
+                                                2.0.0.127
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        10,300
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2017-06-08T22:44:58.2900000">6/8/2017</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.114">
+                                            <b>
+                                                2.0.0.114
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        12,845
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2017-05-01T21:02:45.4330000">5/1/2017</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.110">
+                                            <b>
+                                                2.0.0.110
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        4,596
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2017-04-18T21:39:53.3830000">4/18/2017</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.98">
+                                            <b>
+                                                2.0.0.98
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        8,956
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2017-03-28T07:08:40.2370000">3/28/2017</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.85">
+                                            <b>
+                                                2.0.0.85
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        3,116
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2017-03-17T16:55:16.5370000">3/17/2017</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.76">
+                                            <b>
+                                                2.0.0.76
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        2,136
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2017-03-07T19:06:39.0100000">3/7/2017</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.52">
+                                            <b>
+                                                2.0.0.52
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        7,491
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2017-01-25T05:47:36.6370000">1/25/2017</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.50">
+                                            <b>
+                                                2.0.0.50
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        1,582
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2017-01-11T18:49:03.3470000">1/11/2017</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.44">
+                                            <b>
+                                                2.0.0.44
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        1,678
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2016-12-07T17:43:44.1970000">12/7/2016</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.40">
+                                            <b>
+                                                2.0.0.40
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        653
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2016-12-02T16:09:14.3370000">12/2/2016</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.39">
+                                            <b>
+                                                2.0.0.39
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        86
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2016-12-01T18:00:21.1070000">12/1/2016</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.38">
+                                            <b>
+                                                2.0.0.38
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        143
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2016-11-30T16:35:24.0870000">11/30/2016</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.33">
+                                            <b>
+                                                2.0.0.33
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        691
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2016-11-21T17:01:47.3270000">11/21/2016</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.17">
+                                            <b>
+                                                2.0.0.17
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        6,254
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2016-10-25T23:23:36.1570000">10/25/2016</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.7">
+                                            <b>
+                                                2.0.0.7
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        1,956
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2016-10-06T18:17:42.5100000">10/6/2016</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.2">
+                                            <b>
+                                                2.0.0.2
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        316
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2016-09-22T00:21:55.0230000">9/22/2016</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/2.0.0.1">
+                                            <b>
+                                                2.0.0.1
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        237
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2016-09-12T19:24:43.2970000">9/12/2016</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/1.1.167.0">
+                                            <b>
+                                                1.1.167.0
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        597
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2016-08-12T20:39:23.4970000">8/12/2016</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/1.1.159.0">
+                                            <b>
+                                                1.1.159.0
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        146
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2016-08-03T17:30:50.2930000">8/3/2016</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/1.1.147.0">
+                                            <b>
+                                                1.1.147.0
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        343
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2016-07-08T14:12:06.1070000">7/8/2016</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/1.1.146.0">
+                                            <b>
+                                                1.1.146.0
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        48
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2016-07-07T02:39:58.9230000">7/7/2016</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="/packages/AzureADPreview/1.1.143.0">
+                                            <b>
+                                                1.1.143.0
+                                            </b>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        1,964
+                                    </td>
+                                    <td>
+                                        <span data-datetime="2016-06-30T22:56:06.4300000">6/30/2016</span>
+                                    </td>
+                                </tr>
+                    </tbody>
+                </table>
+                    <a href="#" role="button" data-toggle="collapse" class="icon-link" data-target="#hidden-versions"
+                       aria-expanded="false" aria-controls="hidden-versions" id="show-hidden-versions">
+                        <i class="ms-Icon ms-Icon--CalculatorAddition" aria-hidden="true"></i>
+                        <span>Show more</span>
+                    </a>
+            </div>
+            <div id="livefyre" class="col-xs-12 col-sm-12"></div>
+        </article>
+        </div>
+    </section>
+
+
+
+
+    </div>
+    <footer class="footer">
+    <div class="container footer-container" >
+        <div class="row">
+            <div class="hidden-xs footer-heading">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-offset-1 col-sm-1 footer-heading">
+                <span><a href="/policies/Contact">Contact Us</a></span>
+            </div>
+            <div class="col-sm-1 footer-heading">
+                <span><a href="/policies/Terms">Terms of Use</a></span>
+            </div>
+            <div class="col-sm-1 footer-heading">
+                <span><a href="http://go.microsoft.com/fwlink/?LinkId=521839">Privacy Policy</a></span>
+            </div>
+            <div class="col-sm-1 footer-heading">
+                <span><a href="https://aka.ms/psgallery-status/">Gallery Status</a></span>
+            </div>
+            <div class="col-sm-1 footer-heading">
+                <span><a href="https://github.com/PowerShell/PowerShellGallery/issues">Feedback</a></span>
+            </div>
+            <div class="col-sm-1 footer-heading">
+                <span><a href="https://aka.ms/PSGalleryPreviewFAQ">FAQs</a></span>
+            </div>
+            <div class="col-sm-4 footer-heading">
+                <span class="footer-heading-last">&copy; 2019 Microsoft Corporation</span>
+            </div>
+        </div>  
+    </div>
+</footer>
+
+    <script src="/Scripts/gallery/site.min.js?v=Vtff4LMjhlBwJGqmNwMQXhAG2Nw5eeiWHEGV7W1_z8E1"></script>
+
+    
+        <!-- START: Livefyre Embed -->
+                <script>
+            var commentOptions = {
+                serviceProvider: "livefyre",
+                network: "microsoft.fyre.co",
+                siteId: 384181,
+                containerElementId: "livefyre",
+                documentIdMetaName: "document_id",
+                theme: "docs"
+            };
+            opencomment(commentOptions);
+
+                </script>
+            <!-- End: Livefyre Embed -->
+
+
+
+            <style type="text/css">
+        #install-item .install-script span::before {    content: "PS> "}#azure-automation .install-script span::before {    content: ""}#manual-download .install-script span::before {    content: ""}
+            </style>
+
+            <script type="text/javascript">
+        var packageManagers = ["install-item","azure-automation","manual-download"];
+            </script>
+
+            <script src="/Scripts/gallery/page-display-package.min.js?v=uzkRu3j74W4vZu64bdy9SbZLeEj5hpEWJgBp_n72Od81"></script>
+
+        
+</body>
+</html>
