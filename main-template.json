@@ -444,7 +444,9 @@
             "name": "CosmosDB",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
-            "dependsOn": [],
+            "dependsOn": [
+                    "Kubernetes"            
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
