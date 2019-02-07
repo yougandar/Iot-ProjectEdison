@@ -481,7 +481,7 @@
                         "value": "[variables('cosmosDbSettings')]"
                     },
                     "adminportalUri":{
-                        "value": "[concat('https://',parameters('adminName'),'.cloudapp.azure.com')]"
+                        "value": "[concat('https://',parameters('adminName'),'.cloudapp.azure.com/')]"
                     }
                 }
             }
