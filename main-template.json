@@ -68,7 +68,6 @@
                 "description": "Choose location for signalR to deploy."
             }
         },
-
         "omsWorkspaceRegion": {
             "type": "string",
             "defaultValue": "southeastasia",
@@ -320,7 +319,7 @@
             "solutionType": "[parameters('solutionType')]",
             "servicename": "[concat('kubernetes', variables('suffix'))]",
             "kubernetesVersion": "1.11.5",
-            "location": "[parameters('location')]",
+            "location": "[parameters('geo-paired-region')]",
             "enableRBAC": false,
             "dnsPrefix": "clusterdns",
             "enableHttpApplicationRouting": true,
@@ -336,7 +335,7 @@
             "solutionType": "[parameters('solutionType')]",
             "acrName": "[variables('acrName1')]",
             "acrAdminUserEnabled": true,
-            "location": "[parameters('location')]",
+            "location": "[parameters('geo-paired-region')]",
             "acrSku": "Basic",
             "acrLoginServer": "[concat(variables('acrName1'),'.azurecr.io')]",
             "acrLoginame": "[variables('acrName1')]"
@@ -344,7 +343,7 @@
         "vm": {
             "solutionType": "[parameters('solutionType')]",
             "pipName": "[concat('edisonpip',variables('suffix'))]",
-            "location": "[parameters('location')]",
+            "location": "[parameters('geo-paired-region')]",
             "publicIpAddressType": "Static",
             "dnsLabelPrefix": "[concat('edisondns',variables('suffix'))]",
             "virtualNetworkName": "[variables('virtualNetworkName1')]",
@@ -368,17 +367,21 @@
         "serviceBusProperties": {
             "solutionType": "[parameters('solutionType')]",
             "serviceBusNamespaceName": "[variables('serviceBusNamespaceName1')]",
-             "location": "[parameters('geo-paired-region')]",
+            "serviceBusNamespaceNameDr": "[variables('serviceBusNamespaceNameDr1')]",
+            "location": "[parameters('geo-paired-region')]",
+            "locationDr": "[variables('locationDr')]",
             "serviceBusDefaultSASKeyName": "[variables('serviceBusDefaultSASKeyName1')]",
             "serviceBusAuthRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName1'), variables('serviceBusDefaultSASKeyName1'))]",
             "skuName": "Standard",
+            "skuName1": "Premium",
             "serviceBusQueueName1": "edison_input",
             "servicebusEndPoint": "[concat('Endpoint=sb://',variables('serviceBusNamespaceName1'),'.servicebus.windows.net/')]",
             "routesSharedAccessKeyName": "SharedAccessKeyName=edison_inputsend",
             "entity": "EntityPath=edison_input",
             "serviceBusRabbitMQUsername": "Admin",
             "serviceBusRabbitMQPassword": "Edison1234",
-            "adClientSecret": "[parameters('adClientSecret')]"
+            "adClientSecret": "[parameters('adClientSecret')]",
+            "aliasName": "[concat('servicebusgeo-alias',variables('suffix'))]"
         },
         "signalrSettings": {
             "solutionType": "[parameters('solutionType')]",
@@ -391,11 +394,12 @@
         "iotDpsSettings": {
             "solutionType": "[parameters('solutionType')]",
             "iotDpsName": "[concat('dps',variables('suffix'))]",
-            "location": "[parameters('location')]"
+            "location": "[parameters('geo-paired-region')]"
         },
         "keyVaultSettings": {
             "solutionType": "[parameters('solutionType')]",
             "keyVaultName": "[concat('keyvault',variables('suffix'))]",
+            "location": "[parameters('geo-paired-region')]",
             "tenantId": "[parameters('tenantId')]",
             "objectId": "[parameters('adObjectId')]",
             "keysPermissions": [
@@ -407,12 +411,12 @@
             "skuName": "Standard",
             "enableVaultForDeployment": false,
             "enableVaultForDiskEncryption": false,
-            "enabledForTemplateDeployment": false,
-            "location": "[parameters('location')]"
+            "enabledForTemplateDeployment": false
+           
         },
         "redisSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "location": "[parameters('location')]",
+            "location": "[parameters('geo-paired-region')]",
             "redisCacheName": "[concat('redisCache',variables('suffix'))]",
             "redisCacheCapacity": 1,
             "redisCacheFamily": "C",
@@ -440,6 +444,7 @@
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName1'))]",
         "serviceBusDefaultSASKeyName1": "RootManageSharedAccessKey",
         "serviceBusNamespaceName1": "[concat('snamespace',variables('suffix'))]",
+        "serviceBusNamespaceNameDr1": "[concat('snamespace','Dr',variables('suffix'))]",
         "acrName1": "[concat('acr',variables('suffix'))]",
         "rgName": "[resourceGroup().name]",
         "subscriptionid": "[subscription().subscriptionId]",
@@ -932,6 +937,28 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "uri": "[concat(variables('baseUrl'),'nested/servicebus.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serviceBusProperties": {
+                        "value": "[variables('serviceBusProperties')]"
+                    },
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "ServiceBusR1",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[and(equals(parameters('deployment Type'),'Premium'),equals(parameters('dockerVM'),'Yes'))]",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/servicebus-r1.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {

@@ -35,6 +35,42 @@
             "metadata": {
                 "description": "The type of the solution"
             }
+        },
+        "signalRlocation": {
+            "type": "string",
+            "defaultValue": "eastus",
+            "allowedValues": [
+                "eastus",
+                "westus",
+                "japaneast",
+                "southeastasia",
+                "westeurope",
+                "westus2",
+                " eastus2",
+                "northeurope",
+                "australiaeast",
+                "canadaeast",
+                "centralus"
+            ],
+            "metadata": {
+                "description": "Choose location for signalR to deploy."
+            }
+        },
+        "signalrCapacity": {
+            "type": "int",
+            "defaultValue": 1,
+            "allowedValues": [
+                1,
+                2,
+                5,
+                10,
+                20,
+                50,
+                100
+            ],
+            "metadata": {
+                "description": "The number of SignalR Unit."
+            }
         }
     },
     "variables": {
@@ -83,8 +119,7 @@
         "KoreaSouth": "KoreaCentral",
         "UKSouth": "UKWest",
         "UKWest": "UKSouth",
-        "locationDr": "[variables(parameters('geo-paired-region'))]",
-        "readRegionLocation": "[variables('locationDr')]"
+        "locationDr": "[variables(parameters('geo-paired-region'))]"
     },
     "resources": [
         {
@@ -130,7 +165,6 @@
         {
             "name": "SignalR2",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Premium')]",
             "apiVersion": "2015-01-01",
             "dependsOn": [],
             "properties": {
@@ -145,8 +179,7 @@
                     }
                 }
             }
-        },
-
+        }
     ],
     "outputs": {
     }
