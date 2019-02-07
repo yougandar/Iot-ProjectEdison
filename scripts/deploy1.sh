@@ -4,7 +4,7 @@
 
 AZ_REPO=$(lsb_release -cs)
 LOG="/tmp/install.log.`date +%d%m%Y_%T`"
-GIT_URL=`head -1 input.txt | awk -F "\"" '{print $2}'`
+GIT_URL="$1"
 GIT_PATH=`pwd`
 
 #Installing Azure CLI
