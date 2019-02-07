@@ -140,12 +140,11 @@
                 "description": "azure portal login password"
             }
         },
-        "adminName":{
+        "adminName": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "Name of Admin Portal used as hosts while executing the Ingress_Custom Script"
-
             }
         },
         "sessionId": {
@@ -221,10 +220,10 @@
                 "description": "GitHub url used to clone the repository"
             }
         },
-        "azureAdPreviewModuleUri":{
+        "azureAdPreviewModuleUri": {
             "type": "string",
             "defaultValue": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/AzureADPreview.zip",
-            "metadata": {   
+            "metadata": {
                 "description": "Provide the url to install azure active directory preview module in azure automation from the github"
             }
         },
@@ -270,7 +269,7 @@
             "moduleName": "CosmosDB",
             "moduleName1": "AzureADPreview",
             "cosmosdbModuleUri": "[parameters('cosmosdbModuleUri')]",
-            "azureAdPreviewModuleUri":"[parameters('azureAdPreviewModuleUri')]",
+            "azureAdPreviewModuleUri": "[parameters('azureAdPreviewModuleUri')]",
             "runbookUri": "[concat(variables('baseUrl'),'scripts/initializeCosmosDb.ps1')]",
             "sessionId": "[parameters('sessionId')]",
             "tenantId": "[parameters('tenantId')]",
@@ -306,7 +305,7 @@
             "webAppSkuName2": "S1",
             "webAdminPackageUri": "[parameters('webAdminPackageUri')]",
             "webAdmin": "[concat('edisonWebAdmin',variables('suffix'))]",
-            "webAdminDr":"[concat('edisonWebAdminDr',variables('suffix'))]"
+            "webAdminDr": "[concat('edisonWebAdminDr',variables('suffix'))]"
         },
         "omsSettings": {
             "solutionType": "[parameters('solutionType')]",
@@ -412,7 +411,6 @@
             "enableVaultForDeployment": false,
             "enableVaultForDiskEncryption": false,
             "enabledForTemplateDeployment": false
-           
         },
         "redisSettings": {
             "solutionType": "[parameters('solutionType')]",
@@ -606,7 +604,7 @@
                     "CosmosDbSettings": {
                         "value": "[variables('cosmosDbSettings')]"
                     },
-                    "adminportalUri":{
+                    "adminportalUri": {
                         "value": "[concat('https://',parameters('adminName'),'.cloudapp.azure.com')]"
                     }
                 }
@@ -633,7 +631,7 @@
                     "CosmosDbSettings": {
                         "value": "[variables('cosmosDbSettings')]"
                     },
-                    "adminportalUri":{
+                    "adminportalUri": {
                         "value": "[concat('https://',parameters('adminName'),'.cloudapp.azure.com')]"
                     }
                 }
@@ -780,7 +778,7 @@
         {
             "name": "WebAdminHot",
             "type": "Microsoft.Resources/deployments",
-            "condition":"[equals(parameters('deployment Type'),'Premium')]",
+            "condition": "[equals(parameters('deployment Type'),'Premium')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "Cosmosdb",
@@ -1174,7 +1172,7 @@
             "type": "string",
             "value": "[parameters('adClientSecret')]"
         },
-        "AdminPortalURL":{
+        "AdminPortalURL": {
             "type": "string",
             "value": "[concat('https://',parameters('adminName'),'.cloudapp.azure.com')]"
         }
