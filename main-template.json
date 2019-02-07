@@ -589,7 +589,7 @@
             "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
-                "Cosmosdb"
+                "CosmosDB"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -616,7 +616,7 @@
             "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
-                "Cosmosdb"
+                "CosmosDBR1"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -681,6 +681,7 @@
             "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
+                "OMSWorkSpace",
                 "ServiceBus"
             ],
             "properties": {
@@ -708,7 +709,8 @@
             "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
-                "OMSWorkSpace"
+                "OMSWorkSpace",
+                "ServiceBusR1"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -735,8 +737,8 @@
             "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
-                "Cosmosdb",
-                "IotHub",
+                "CosmosDB",
+                "IotHubBasic",
                 "NotificationHub"
             ],
             "properties": {
@@ -758,9 +760,9 @@
             "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
-                "Cosmosdb",
-                "IotHub",
-                "NotificationHub"
+                "CosmosDB",
+                "IotHubR1",
+                "NotificationHubR1"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -781,9 +783,9 @@
             "condition": "[equals(parameters('deployment Type'),'Premium')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
-                "Cosmosdb",
-                "IotHub",
-                "NotificationHub"
+                "CosmosDB",
+                "IotHubR1",
+                "NotificationHubHot"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -886,7 +888,7 @@
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "AzureContainerRegistry",
-                "StorageBlob"
+                "StorageBlobR1"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -908,7 +910,7 @@
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "AzureContainerRegistry",
-                "StorageBlob"
+                "StorageBlobR1"
             ],
             "properties": {
                 "mode": "Incremental",
