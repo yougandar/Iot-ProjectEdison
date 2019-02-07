@@ -1008,7 +1008,6 @@
         {
             "name": "IotDps",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2015-01-01",
             "dependsOn": [
                 "IotHub"
@@ -1032,7 +1031,6 @@
         {
             "name": "keyVault",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {
@@ -1051,7 +1049,6 @@
         {
             "name": "Rediscache",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "StorageBlob"
@@ -1072,7 +1069,6 @@
         {
             "name": "Bot",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {
