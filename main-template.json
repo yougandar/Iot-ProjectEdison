@@ -801,7 +801,6 @@
         {
             "name": "Kubernetes",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2015-01-01",
             "dependsOn": [
                 "OmsWorkSpace"
@@ -843,7 +842,6 @@
         {
             "name": "AzureContainerRegistry",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2015-01-01",
             "dependsOn": [],
             "properties": {
@@ -950,7 +948,7 @@
         {
             "name": "ServiceBusR1",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[and(equals(parameters('deployment Type'),'Premium'),equals(parameters('dockerVM'),'Yes'))]",
+            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
             "apiVersion": "2015-01-01",
             "dependsOn": [],
             "properties": {
