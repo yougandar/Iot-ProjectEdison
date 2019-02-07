@@ -1,13 +1,49 @@
+workflow  container{	
+    param(	
 
-$tenantId="dcf9e4d3-f44a-4c28-be12-8245c0d35668"
-$azureAccountName="nvtuluva@sysgain.com"
-$azurePassword="ush1b@123456"
-$cosmosDBAccountKey="cciNaze7pqnUYPYZ30rg9sGduiIWHR5qEtdATWi4uXT20SpAEcFjltYckUTPHO31oYTFIJYJnic5k3qaZ2EIAQ=="
-$cosmosDbAccountName="edisondb"
-$cosmosDbName="edison"
-$adminportalUri="https://edisonadmin.cloudapp.azure.com"
-$objectId="277b4abb-f68a-462e-b04d-ef2f4e3a5337"
-      
+        [Parameter(Mandatory=$true)]	
+        [string]	
+        $tenantId,	
+
+        [Parameter(Mandatory=$true)]	
+        [string]	
+        $azureAccountName,	
+
+        [Parameter(Mandatory=$true)]	
+        [string]	
+        $azurePassword,	
+
+        [Parameter(Mandatory=$true)]	
+        [string]	
+        $cosmosDBAccountKey,	
+
+        [Parameter(Mandatory=$true)]	
+        [string]	
+        $cosmosDbAccountName,	
+
+        [Parameter(Mandatory=$true)]	
+        [string]	
+        $cosmosDbName,
+
+        [Parameter(Mandatory=$true)]	
+        [string]	
+        $adminportalUri,	
+
+        [Parameter(Mandatory=$true)]	
+        [string]	
+        $objectId
+    )
+
+     InlineScript{	
+
+        $tenantId = $Using:tenantId	
+        $azureAccountName = $Using:azureAccountName	
+        $azurePassword = $Using:azurePassword	
+        $cosmosDBAccountKey = $Using:cosmosDBAccountKey	
+        $cosmosDbAccountName = $Using:cosmosDbAccountName	
+        $cosmosDbName = $Using:cosmosDbName	
+        $adminportalUri = $Using:adminportalUri	
+        $objectId = $Using:objectId
  
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned  -Force
     $password = ConvertTo-SecureString $azurePassword -AsPlainText -Force
@@ -48,4 +84,6 @@ $objectId="277b4abb-f68a-462e-b04d-ef2f4e3a5337"
     $replyURLList = @($adminURL);  
     Write-Host '', 'Configuring and setting the Azure AD reply URLs' -ForegroundColor Green
     Set-AzureADApplication -ObjectId $objectId -HomePage $adminportalUri -ReplyUrls $replyURLList -Verbose
+     }
+    }
   
