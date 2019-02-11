@@ -1,4 +1,5 @@
 #!/bin/bash
+git_url="$1"
 #downloading input.txt file
 sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/code/input.txt
 #downloading deploy1.sh
@@ -24,4 +25,4 @@ sudo wget -P /var/lib/waagent/custom-script/download/0 https://raw.githubusercon
 
 cd /var/lib/waagent/custom-script/download/0
 chmod +x deploy1.sh configupdate2.sh commonupdate3.sh edisonwebenvupdate4.sh updateappsettings5.sh imagesupdate6.sh clusterconnect7.sh set-kubernetes-config8.sh updateyaml9.sh ingress_custom10.sh
-sh deploy1.sh https://github.com/litebulb/ProjectEdison.git
+sh deploy1.sh $git_url
