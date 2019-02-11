@@ -2,7 +2,7 @@ GITPATH=`pwd`
 GIT_DIRPATH="$GITPATH/ProjectEdison/Edison.Web/Kubernetes/qa/Deployment"
 GIT_INGRESS="$GIT_DIRPATH/Ingress_Custom"
 GIT_INGRESSCUSTOM="Ingress_Custom "
-EXT_IP= head -3 services.txt | awk -F ' ' '{print $4}' | tail -1
+EXT_IP= `head -3 services.txt | awk -F ' ' '{print $4}' | tail -1`
 LOG="/tmp/deployhelm.log.`date +%d%m%Y_%T`"
 
 #1-InstallNGINXIngress
