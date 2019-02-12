@@ -3,13 +3,13 @@ GIT_DIRPATH="$GITPATH/ProjectEdison/Edison.Web/Kubernetes/qa/Config"
 LOG="/tmp/Config.log.`date +%d%m%Y_%T`"
 #--------------------------------------------------------
 #Azure Container Registry Configuration
-azureSubscriptionId=`head -35 input.txt | awk -F "\"" '{print $2}'| tail -1`
-acrResourceGroup=`head -36 input.txt | awk -F "\"" '{print $2}'| tail -1`
-acrSPName=`head -29 input.txt | awk -F "\"" '{print $2}'| tail -1`
-acrSPClientId=`head -29 input.txt | awk -F "\"" '{print $2}'| tail -1`
-acrSPPassword=`head -30 input.txt | awk -F "\"" '{print $2}'| tail -1`
-acrContainerRegistryName=`head -29 input.txt | awk -F "\"" '{print $2}'| tail -1`
-acrContainerRegistryUrl=`head -28 input.txt | awk -F "\"" '{print $2}'| tail -1`
+azureSubscriptionId=`head -34 input.txt | awk -F "\"" '{print $2}'| tail -1`
+acrResourceGroup=`head -35 input.txt | awk -F "\"" '{print $2}'| tail -1`
+acrSPName=`head -28 input.txt | awk -F "\"" '{print $2}'| tail -1`
+acrSPClientId=`head -28 input.txt | awk -F "\"" '{print $2}'| tail -1`
+acrSPPassword=`head -29 input.txt | awk -F "\"" '{print $2}'| tail -1`
+acrContainerRegistryName=`head -28 input.txt | awk -F "\"" '{print $2}'| tail -1`
+acrContainerRegistryUrl=`head -27 input.txt | awk -F "\"" '{print $2}'| tail -1`
 acrAccountEmail="nvtuluva@sysgain.com"
 #------------------------------------------------------------
 # move the kubernetes script to config path for execution
