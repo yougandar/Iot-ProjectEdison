@@ -48,7 +48,7 @@
             "value": "Password@1234"
         },
         "cosmosdbModuleUri": {
-            "value": "https://github.com/ChaitanyaGeddam/edison/raw/master/scripts/cosmos.zip"
+            "value": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/cosmos.zip"
         },
         "azureAdPreviewModuleUri": {
             "value": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/AzureADPreview.zip"
@@ -60,7 +60,7 @@
             "value": "3bf06532-ac69-4166-8a16-3b6677e82c8f"
         },
         "webAdminPackageUri": {
-            "value": "https://github.com/ChaitanyaGeddam/edison/raw/master/code/Edison.AdminPortal.zip"
+            "value": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/Edison.AdminPortal.zip"
         },
         "signalrCapacity": {
             "value": 1
