@@ -1,7 +1,10 @@
-l{
+{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "solutionType":{
+            " value": "Project-Edison"
+        },
         "location": {
             " value": "eastus"
         },
@@ -17,7 +20,7 @@ l{
         "tenantId": {
             " value": ""
         },
-        "adClientId":{
+      "botAdClientId": {
             "value": ""
         },
         "adObjectId": {
@@ -32,6 +35,9 @@ l{
         "azurePassword": {
             " value": ""
         },
+        "adminPortalURL": {
+            "value":""
+        },
         "sessionId": {
             " value": ""
         },
@@ -44,11 +50,14 @@ l{
         "cosmosdbModuleUri": {
             " value": "https://github.com/ChaitanyaGeddam/edison/raw/master/scripts/cosmos.zip"
         },
-        "servicePrincipalClientId": {
+        "aksServicePrincipalClientId": {
             " value": "e00deb3a-8d64-455e-90d8-06970057efa8"
         },
-        "servicePrincipalClientSecret": {
+        "aksServicePrincipalClientSecret": {
             " value": "3bf06532-ac69-4166-8a16-3b6677e82c8f"
+        },
+        "aksServicePrincipalObjectId":{
+            "value":""
         },
         "webAdminPackageUri": {
             " value": "https://github.com/ChaitanyaGeddam/edison/raw/master/code/Edison.AdminPortal.zip"
