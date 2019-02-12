@@ -116,12 +116,11 @@
                 "description": "azure portal login password"
             }
         },
-        "adminName":{
+        "adminPortalURL": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "Name of Admin Portal used as hosts while executing the Ingress_Custom Script"
-
             }
         },
         "sessionId": {
@@ -145,18 +144,24 @@
                 "description": "Password to login into Virtual Machine"
             }
         },
-        "servicePrincipalClientId": {
+        "aksServicePrincipalClientId": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "Client ID (used by cloudprovider) for kubernetes Service"
             }
         },
-        "servicePrincipalClientSecret": {
+        "aksServicePrincipalClientSecret": {
             "type": "securestring",
             "defaultValue": "",
             "metadata": {
                 "description": "The Service Principal Client Secret for Kubernetes Service."
+            }
+        },
+        "aksServicePrincipalObjectId": {
+            "type": "string",
+            "metadata": {
+                "description": "Object ID of the service principal."
             }
         },
         "webAdminPackageUri": {
@@ -197,10 +202,10 @@
                 "description": "GitHub url used to clone the repository"
             }
         },
-        "azureAdPreviewModuleUri":{
+        "azureAdPreviewModuleUri": {
             "type": "string",
             "defaultValue": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/AzureADPreview.zip",
-            "metadata": {   
+            "metadata": {
                 "description": "Provide the url to install azure active directory preview module in azure automation from the github"
             }
         },
@@ -243,7 +248,7 @@
             "moduleName": "CosmosDB",
             "moduleName1": "AzureADPreview",
             "cosmosdbModuleUri": "[parameters('cosmosdbModuleUri')]",
-            "azureAdPreviewModuleUri":"[parameters('azureAdPreviewModuleUri')]",
+            "azureAdPreviewModuleUri": "[parameters('azureAdPreviewModuleUri')]",
             "runbookUri": "[concat(variables('baseUrl'),'scripts/initializeCosmosDb.ps1')]",
             "sessionId": "[parameters('sessionId')]",
             "tenantId": "[parameters('tenantId')]",
@@ -286,19 +291,40 @@
         },
         "kubernetesSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "servicename": "[concat('kubernetes', variables('suffix'))]",
-            "kubernetesVersion": "1.11.5",
+            "identityName": "[variables('identityName1')]",
             "location": "[parameters('location')]",
-            "enableRBAC": false,
-            "dnsPrefix": "clusterdns",
-            "enableHttpApplicationRouting": true,
-            "osType": "Linux",
-            "agentVMSize": "Standard_B2s",
-            "agentCount": 3,
-            "servicePrincipalClientId": "[parameters('servicePrincipalClientId')]",
-            "servicePrincipalClientSecret": "[parameters('servicePrincipalClientSecret')]",
-            "networkPlugin": "kubenet",
-            "osDiskSizeGB": 30
+            "kubernetesVnetName": "[variables('kubernetesVnetName1')]",
+            "virtualNetworkAddressPrefix": "15.0.0.0/8",
+            "kubernetesSubnetName": "[variables('kubernetesSubnetName1')]",
+            "aksSubnetAddressPrefix": "15.0.0.0/16",
+            "applicationGatewaySubnetName": "[variables('applicationGatewaySubnetName1')]",
+            "applicationGatewaySubnetAddressPrefix": "15.1.0.0/16",
+            "applicationGatewayPublicIpName": "[variables('applicationGatewayPublicIpName1')]",
+            "applicationGatewayName": "[variables('applicationGatewayName1')]",
+            "applicationGatewaySubnetId": "[concat(variables('vnetID'),'/subnets/', variables('applicationGatewaySubnetName1'))]",
+            "vnetId": "[variables('kubeVnetId')]",
+            "kubernetesSubnetId": "[concat(variables('kubeVnetId'),'/subnets/', variables('kubernetesSubnetName1'))]",
+            "applicationGatewayPublicIpId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('applicationGatewayPublicIpName1'))]",
+            "applicationGatewayId": "[resourceId('Microsoft.Network/applicationGateways', variables('applicationGatewayName1'))]",
+            "subscriptionId": "[variables('subscriptionid')]",
+            "resourceGroup": "[variables('rgName')]",
+            "networkContributorRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
+            "managedIdentityOperatorRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'f1a07417-d97a-45cb-824c-7a7467783830')]",
+            "readerRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
+            "contributorRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+            "aksServicePrincipalObjectId": "[parameters('aksServicePrincipalObjectId')]",
+            "identityId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName1'))]",
+            "aksClusterName": "[variables('aksClusterName1')]",
+            "kubernetesVersion": "1.11.5",
+            "aksEnableRBAC": false,
+            "aksDnsPrefix": "aks",
+            "aksAgentOsDiskSizeGB": 30,
+            "aksAgentCount": 3,
+            "aksAgentVMSize": "Standard_B2s",
+            "aksServiceCIDR": "10.0.0.0/16",
+            "aksDnsServiceIP": "10.0.0.10",
+            "aksDockerBridgeCIDR": "172.17.0.1/16",
+            "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterName1'))]"
         },
         "acrSettings": {
             "solutionType": "[parameters('solutionType')]",
@@ -419,7 +445,15 @@
             "sdk": "[concat('https://', variables('siteHost1'), '/api/messages')]",
             "designer": "[concat('https://', variables('siteHost1'), '/api/messages')]",
             "function": "[concat('https://', variables('siteHost1'), '/api/messages?code=', 'NYI')]"
-        }
+        },
+        "applicationGatewaySubnetName1": "appgwsubnet",
+        "kubernetesVnetName1": "[concat('kubeVnet' , variables('suffix'))]",
+        "applicationGatewayPublicIpName1": "[concat('appgwpublicip' , variables('suffix'))]",
+        "applicationGatewayName1": "[concat('applicationgateway' , variables('suffix'))]",
+        "kubeVnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('kubernetesVnetName1'))]",
+        "kubernetesSubnetName1": "kubesubnet",
+        "identityName1": "[concat('appgwContrIdentity' , variables('suffix'))]",
+        "aksClusterName1": "[concat('aks' , variables('suffix'))]"
     },
     "resources": [
         {
@@ -445,7 +479,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
             "dependsOn": [
-                    "Kubernetes"            
+                "Kubernetes"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -480,8 +514,8 @@
                     "CosmosDbSettings": {
                         "value": "[variables('cosmosDbSettings')]"
                     },
-                    "adminportalUri":{
-                        "value": "[concat('https://',parameters('adminName'),'.cloudapp.azure.com/')]"
+                    "adminportalUri": {
+                        "value": "[concat('https://',parameters('adminPortalURL'),'.cloudapp.azure.com/')]"
                     }
                 }
             }
@@ -820,7 +854,7 @@
         },
         "KubernetesServiceName": {
             "type": "string",
-            "value": "[variables('kubernetesSettings').servicename]"
+            "value": "[variables('kubernetesSettings').aksClusterName]"
         },
         "MSAppID": {
             "type": "string",
@@ -830,9 +864,9 @@
             "type": "string",
             "value": "[parameters('adClientSecret')]"
         },
-        "AdminPortalURL":{
+        "AdminPortalURL": {
             "type": "string",
-            "value": "[concat('https://',parameters('adminName'),'.cloudapp.azure.com')]"
+            "value": "[concat('https://',parameters('adminPortalURL'),'.cloudapp.azure.com')]"
         }
     }
 }
