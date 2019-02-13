@@ -154,7 +154,7 @@
                     "fileUris": [
                         "[parameters('vm').fileUri]"
                     ],
-                    "commandToExecute": "[concat('scripts-download.sh', ' ' ,parameters('vm').giturl)]"
+                    "commandToExecute": "[concat('sh scripts-download.sh', ' ' ,parameters('vm').giturl)]"
                 }
             }
         }

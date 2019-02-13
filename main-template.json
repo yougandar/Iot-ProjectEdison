@@ -426,7 +426,7 @@
             "botAppId": "[parameters('botAdClientId')]",
             "siteHost": "[variables('siteHost1')]"
         },
-        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/",
+        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-kub-ha/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
         "virtualNetworkName1": "[concat('edisonVnet', variables('suffix'))]",
         "subnetName1": "edisonSubnet",
@@ -586,7 +586,7 @@
         {
             "name": "Kubernetes",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2015-01-01",
+            "apiVersion": "2017-05-10",
             "dependsOn": [
                 "OmsWorkSpace"
             ],
