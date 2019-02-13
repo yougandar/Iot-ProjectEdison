@@ -116,7 +116,7 @@
                 "description": "azure portal login password"
             }
         },
-        "adminName":{
+        "adminPortalName":{
             "type": "string",
             "defaultValue": "",
             "metadata": {
@@ -287,7 +287,7 @@
         "kubernetesSettings": {
             "solutionType": "[parameters('solutionType')]",
             "servicename": "[concat('kubernetes', variables('suffix'))]",
-            "kubernetesVersion": "1.11.5",
+            "kubernetesVersion": "1.12.4",
             "location": "[parameters('location')]",
             "enableRBAC": false,
             "dnsPrefix": "clusterdns",
@@ -415,10 +415,7 @@
         "siteHost1": "edisonapi",
         "botId1": "[concat('edisonbot', variables('suffix'))]",
         "botEndpointConfig": {
-            "bot": "[concat('https://', variables('siteHost1'), '/api/messages')]",
-            "sdk": "[concat('https://', variables('siteHost1'), '/api/messages')]",
-            "designer": "[concat('https://', variables('siteHost1'), '/api/messages')]",
-            "function": "[concat('https://', variables('siteHost1'), '/api/messages?code=', 'NYI')]"
+            "bot": "[concat('https://', variables('siteHost1'), '/api/messages')]"
         }
     },
     "resources": [
@@ -481,7 +478,7 @@
                         "value": "[variables('cosmosDbSettings')]"
                     },
                     "adminportalUri":{
-                        "value": "[concat('https://',parameters('adminName'),'.cloudapp.azure.com/')]"
+                        "value": "[concat('https://',parameters('adminPortalName'),'.cloudapp.azure.com/')]"
                     }
                 }
             }
