@@ -317,7 +317,7 @@
         "kubernetesSettings": {
             "solutionType": "[parameters('solutionType')]",
             "servicename": "[concat('kubernetes', variables('suffix'))]",
-            "kubernetesVersion": "1.11.5",
+            "kubernetesVersion": "1.12.4",
             "location": "[parameters('geo-paired-region')]",
             "enableRBAC": false,
             "dnsPrefix": "clusterdns",
