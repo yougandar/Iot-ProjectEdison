@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -19,7 +19,7 @@
     <DefineConstants>DEBUG;ENABLE_TEST_CLOUD;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodesignKey>iPhone Developer: Alexander Katz (469N9XNS2W)</CodesignKey>
+    <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
     <MtouchFastDev>true</MtouchFastDev>
@@ -30,7 +30,8 @@
     <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
     <PlatformTarget>x86</PlatformTarget>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignProvision>
+    </CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>pdbonly</DebugType>
@@ -45,7 +46,7 @@
     <MtouchArch>ARM64</MtouchArch>
     <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
     <PlatformTarget>x86</PlatformTarget>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignProvision>VS: com.bluemetal.edisonadmin Development</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>pdbonly</DebugType>
@@ -59,7 +60,7 @@
     <MtouchArch>x86_64</MtouchArch>
     <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
     <PlatformTarget>x86</PlatformTarget>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignProvision>VS: com.bluemetal.edisonadmin Development</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -81,7 +82,6 @@
     <MtouchArch>ARM64</MtouchArch>
     <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
     <PlatformTarget>x86</PlatformTarget>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'iOS User|iPhoneSimulator' ">
@@ -93,7 +93,7 @@
     <MtouchLink>None</MtouchLink>
     <MtouchArch>x86_64</MtouchArch>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignProvision>VS: com.bluemetal.edisonadmin Development</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'iOS User|iPhone' ">
     <Optimize>false</Optimize>
@@ -110,7 +110,7 @@
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
     <MtouchVerbosity>
     </MtouchVerbosity>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignProvision>VS: com.bluemetal.edisonadmin Development</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Android User|AnyCPU' ">
     <Optimize>false</Optimize>
@@ -124,7 +124,7 @@
     </MtouchVerbosity>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignProvision>VS: com.bluemetal.edisonadmin Development</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'iOS Admin|iPhoneSimulator' ">
     <Optimize>false</Optimize>
@@ -139,7 +139,7 @@
     <MtouchLink>None</MtouchLink>
     <MtouchArch>x86_64</MtouchArch>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignProvision>VS: com.bluemetal.edisonadmin Development</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'iOS Admin|iPhone' ">
     <Optimize>false</Optimize>
@@ -155,9 +155,54 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchArch>ARM64</MtouchArch>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignProvision>VS: com.bluemetal.edisonadmin Development</CodesignProvision>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Android User %28Release%29|iPhoneSimulator'">
+    <OutputPath>bin\iPhoneSimulator\Android User %28Release%29\</OutputPath>
+    <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Android User %28Release%29|iPhone'">
+    <OutputPath>bin\iPhone\Android User %28Release%29\</OutputPath>
+    <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Android User %28Release%29|AnyCPU'">
+    <OutputPath>bin\Android User %28Release%29\</OutputPath>
+    <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Android Admin|iPhoneSimulator'">
+    <OutputPath>bin\iPhoneSimulator\Android Admin\</OutputPath>
+    <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Android Admin|iPhone'">
+    <OutputPath>bin\iPhone\Android Admin\</OutputPath>
+    <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Android Admin|AnyCPU'">
+    <OutputPath>bin\Android Admin\</OutputPath>
+    <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="RestSharp, Version=106.6.7.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\..\Edison.Mobile.Common\packages\RestSharp.106.6.7\lib\netstandard2.0\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -190,9 +235,6 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\Edison.Mobile.Common\packages\Newtonsoft.Json.12.0.1\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="RestSharp">
-      <HintPath>..\..\Edison.Mobile.Common\packages\RestSharp.106.5.4\lib\netstandard2.0\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.IdentityModel.Logging">
       <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.IdentityModel.Logging.5.3.0\lib\netstandard2.0\Microsoft.IdentityModel.Logging.dll</HintPath>
@@ -229,10 +271,18 @@
     <ImageAsset Include="Assets.xcassets\LoginLogo.imageset\loginLogo%403x.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\Menu.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\Menu.imageset\menu.png" />
-    <ImageAsset Include="Assets.xcassets\Menu.imageset\menu%402x.png" />
-    <ImageAsset Include="Assets.xcassets\Menu.imageset\menu%403x.png" />
+    <ImageAsset Include="Assets.xcassets\Menu.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Menu.imageset\menu.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Menu.imageset\menu%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Menu.imageset\menu%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
     <ImageAsset Include="Assets.xcassets\SensorsGray.imageset\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>
@@ -245,69 +295,134 @@
     <ImageAsset Include="Assets.xcassets\SensorsGray.imageset\sensors%403x.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\SensorsBlue.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\SensorsBlue.imageset\sensorsBlue.png" />
-    <ImageAsset Include="Assets.xcassets\SensorsBlue.imageset\sensorsBlue%402x.png" />
-    <ImageAsset Include="Assets.xcassets\SensorsBlue.imageset\sensorsBlue%403x.png" />
-    <ImageAsset Include="Assets.xcassets\Plus.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\Plus.imageset\plus.png" />
-    <ImageAsset Include="Assets.xcassets\Plus.imageset\plus%402x.png" />
-    <ImageAsset Include="Assets.xcassets\Plus.imageset\plus%403x.png" />
-    <ImageAsset Include="Assets.xcassets\Gear.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\Gear.imageset\gear.png" />
-    <ImageAsset Include="Assets.xcassets\Gear.imageset\gear%402x.png" />
-    <ImageAsset Include="Assets.xcassets\Gear.imageset\gear%403x.png" />
-    <ImageAsset Include="Assets.xcassets\Power.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\Power.imageset\power.png" />
-    <ImageAsset Include="Assets.xcassets\Power.imageset\power%402x.png" />
-    <ImageAsset Include="Assets.xcassets\Power.imageset\power%403x.png" />
-    <ImageAsset Include="Assets.xcassets\Lines.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\Lines.imageset\lines.png" />
-    <ImageAsset Include="Assets.xcassets\Lines.imageset\lines%402x.png" />
-    <ImageAsset Include="Assets.xcassets\Lines.imageset\lines%403x.png" />
-    <ImageAsset Include="Assets.xcassets\ArrowRight.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\ArrowRight.imageset\arrowRight.png" />
-    <ImageAsset Include="Assets.xcassets\ArrowRight.imageset\arrowRight%402x.png" />
-    <ImageAsset Include="Assets.xcassets\ArrowRight.imageset\arrowRight%403x.png" />
-    <ImageAsset Include="Assets.xcassets\Check.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\Check.imageset\check.png" />
-    <ImageAsset Include="Assets.xcassets\Check.imageset\check%402x.png" />
-    <ImageAsset Include="Assets.xcassets\Check.imageset\check%403x.png" />
-    <ImageAsset Include="Assets.xcassets\ArrowLeft.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\ArrowLeft.imageset\arrowLeft.png" />
-    <ImageAsset Include="Assets.xcassets\ArrowLeft.imageset\arrowLeft%402x.png" />
-    <ImageAsset Include="Assets.xcassets\ArrowLeft.imageset\arrowLeft%403x.png" />
-    <ImageAsset Include="Assets.xcassets\CloseX.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\CloseX.imageset\closeX.png" />
-    <ImageAsset Include="Assets.xcassets\CloseX.imageset\closeX%402x.png" />
-    <ImageAsset Include="Assets.xcassets\CloseX.imageset\closeX%403x.png" />
+    <ImageAsset Include="Assets.xcassets\SensorsBlue.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\SensorsBlue.imageset\sensorsBlue.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\SensorsBlue.imageset\sensorsBlue%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\SensorsBlue.imageset\sensorsBlue%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Plus.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Plus.imageset\plus.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Plus.imageset\plus%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Plus.imageset\plus%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Gear.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Gear.imageset\gear.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Gear.imageset\gear%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Gear.imageset\gear%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Power.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Power.imageset\power.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Power.imageset\power%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Power.imageset\power%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Lines.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Lines.imageset\lines.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Lines.imageset\lines%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Lines.imageset\lines%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\ArrowRight.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\ArrowRight.imageset\arrowRight.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\ArrowRight.imageset\arrowRight%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\ArrowRight.imageset\arrowRight%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Check.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Check.imageset\check.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Check.imageset\check%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Check.imageset\check%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\ArrowLeft.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\ArrowLeft.imageset\arrowLeft.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\ArrowLeft.imageset\arrowLeft%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\ArrowLeft.imageset\arrowLeft%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\CloseX.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\CloseX.imageset\closeX.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\CloseX.imageset\closeX%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\CloseX.imageset\closeX%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\" />
-    <Folder Include="Ioc\" />
-    <Folder Include="ViewControllers\" />
-    <Folder Include="Shared\" />
-    <Folder Include="Assets.xcassets\LoginLogo.imageset\" />
-    <Folder Include="Assets.xcassets\Menu.imageset\" />
-    <Folder Include="Assets.xcassets\SensorsGray.imageset\" />
-    <Folder Include="Assets.xcassets\SensorsBlue.imageset\" />
-    <Folder Include="Assets.xcassets\Plus.imageset\" />
-    <Folder Include="Views\" />
-    <Folder Include="Assets.xcassets\Gear.imageset\" />
-    <Folder Include="Cells\" />
-    <Folder Include="ViewSources\" />
-    <Folder Include="Assets.xcassets\Power.imageset\" />
-    <Folder Include="Assets.xcassets\Lines.imageset\" />
-    <Folder Include="Assets.xcassets\ArrowRight.imageset\" />
+    <Folder Include="Assets.xcassets\ArrowLeft.imageset\" />
     <Folder Include="Assets.xcassets\ArrowRight.imageset\" />
     <Folder Include="Assets.xcassets\Check.imageset\" />
-    <Folder Include="Assets.xcassets\ArrowLeft.imageset\" />
     <Folder Include="Assets.xcassets\CloseX.imageset\" />
+    <Folder Include="Assets.xcassets\Gear.imageset\" />
+    <Folder Include="Assets.xcassets\Lines.imageset\" />
+    <Folder Include="Assets.xcassets\LoginLogo.imageset\" />
+    <Folder Include="Assets.xcassets\Menu.imageset\" />
+    <Folder Include="Assets.xcassets\Plus.imageset\" />
+    <Folder Include="Assets.xcassets\Power.imageset\" />
+    <Folder Include="Assets.xcassets\SensorsBlue.imageset\" />
+    <Folder Include="Assets.xcassets\SensorsGray.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="LaunchScreen.storyboard" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
     <None Include="packages.config" />
@@ -329,10 +444,15 @@
     <Compile Include="Views\CheckBoxItemView.cs" />
     <Compile Include="ViewControllers\RegisterDeviceViewController.cs" />
     <Compile Include="Views\CameraView.cs" />
-    <Compile Include="ViewControllers\ManualConnectViewController.cs" />
     <Compile Include="ViewSources\NetworksTableViewSource.cs" />
     <Compile Include="Cells\WifiNetworkTableViewCell.cs" />
     <Compile Include="ViewControllers\SelectWifiViewController.cs" />
+    <Compile Include="ViewControllers\ManageDeviceViewController.cs" />
+    <Compile Include="Views\TextFieldView.cs" />
+    <Compile Include="Extensions\UIViewExtensions.cs" />
+    <Compile Include="ViewControllers\EnterWifiPasswordViewController.cs" />
+    <Compile Include="ViewControllers\CompleteRegistrationViewController.cs" />
+    <Compile Include="Views\SwitchFieldView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Edison.Mobile.Common\Edison.Mobile.Common\Edison.Mobile.Common.csproj">

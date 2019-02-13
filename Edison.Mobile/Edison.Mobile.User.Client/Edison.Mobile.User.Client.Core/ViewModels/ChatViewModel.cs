@@ -77,6 +77,8 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
         public event EventHandler<bool> OnIsSafeChanged;
 
         public string Initials => authService.Initials;
+        public Uri ProfileImageUri => null;  // authService.ProfileImageUri or add from local file system- needs to be added
+        public string Email => authService.UserInfo?.Email;
 
         public ChatViewModel(
             ChatRestService chatRestService,
@@ -108,7 +110,11 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
 
             var actionPlans = await actionPlanRestService.GetActionPlans();
 
-            ActionPlans.AddRange(actionPlans);
+            if (actionPlans != null)
+            {
+                ActionPlans.Clear();
+                ActionPlans.AddRange(actionPlans);
+            }
 
             ChatTokenContext = await chatRestService.GetToken();
 
@@ -130,7 +136,7 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
         public override void ViewDisappearing()
         {
             base.ViewDisappearing();
-            readMessagesCancellationTokenSource.Cancel();
+            readMessagesCancellationTokenSource?.Cancel();
         }
 
         public async Task<bool> SendMessage(string message, bool isPromptedFromActionPlanButton = false)
@@ -143,32 +149,35 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
             };
 
             if (isPromptedFromActionPlanButton)
-            {
                 newActivity.Properties["reportType"] = CurrentActionPlan?.ActionPlanId ?? GetEmergencyActionPlan().ActionPlanId;
-            }
 
             newActivity.Properties["deviceId"] = chatClientConfig.DeviceId;
 
-            var response = await client.Conversations.PostActivityAsync(conversation.ConversationId, newActivity);
+            ResourceResponse response = null;
+            try
+            {
+                response = await client.Conversations.PostActivityAsync(conversation.ConversationId, newActivity);
+            }
+            catch { }
             return response != null;
         }
 
         public async Task ActivateChatPrompt(ChatPromptType chatPromptType) 
         {
             OnChatPromptActivated?.Invoke(this, chatPromptType);
-
-            if (chatPromptType == ChatPromptType.Emergency) 
+            switch (chatPromptType)
             {
-                BeginConversationWithActionPlan(GetEmergencyActionPlan());
-            }
-            else if (chatPromptType == ChatPromptType.SafetyCheck) 
-            {
-                IsSafe = !IsSafe;
-                await responseRestService.SendIsSafe(IsSafe);
-            }
-            else if (chatPromptType == ChatPromptType.ReportActivity) 
-            {
-
+                case ChatPromptType.Emergency:
+                    BeginConversationWithActionPlan(GetEmergencyActionPlan());
+                    break;
+                case ChatPromptType.SafetyCheck:
+                    IsSafe = !IsSafe;
+                    await responseRestService.SendIsSafe(IsSafe);
+                    break;
+                case ChatPromptType.ReportActivity:
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -199,6 +208,21 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
                 await SendMessage(CurrentActionPlan.Name, true);
             });
         }
+
+        public async Task BeginConversationWithActionPlanAsync(ActionPlanListModel actionPlanListModel = null)
+        {
+            var actionPlan = actionPlanListModel ?? GetEmergencyActionPlan();
+            CurrentActionPlan = actionPlan;
+            await locationRestService.UpdateDeviceLocation(new Geolocation 
+            {
+                Latitude = locationService.LastKnownLocation.Latitude,
+                Longitude = locationService.LastKnownLocation.Longitude,
+            });
+
+            await SendMessage(CurrentActionPlan.Name, true);
+        }
+
+
 
         async void HandleGeolocationTimer(object sender, EventArgs e)
         {
@@ -292,9 +316,7 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
                     if (chatMessages.Count > 0)
                     {
                         if (!isInConversation)
-                        {
                             ChatMessages.Clear();
-                        }
 
                         isInConversation = true;
                         ChatMessages.AddRange(chatMessages);

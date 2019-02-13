@@ -7,8 +7,9 @@ import { CommonModule } from '@angular/common';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { NumberDatePipe } from '../../core/pipes/number-date';
-import { SafePipe } from '../../core/pipes/safe';
+import { NumberDatePipe, SafePipe } from '../../core/pipes';
+import { DeviceIconPipe } from '../../core/pipes/device-icon';
+import { XMinutesAgoPipe } from '../../core/pipes/x-minutes-ago';
 import { MaterialModule } from '../material/material.module';
 import {
     ActionListItemStateComponent
@@ -27,6 +28,7 @@ import { ActionListComponent } from './components/action-list/action-list.compon
 import { CircleSpinnerComponent } from './components/circle-spinner/circle-spinner.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { DelayButtonComponent } from './components/delay-button/delay-button.component';
+import { IconComponent } from './components/icon/icon.component';
 import { SearchListItemComponent } from './components/search-list-item/search-list-item.component';
 import { SearchListComponent } from './components/search-list/search-list.component';
 import { SidenavComponent } from './components/sidenav/sidenav.component';
@@ -43,7 +45,8 @@ const sharedComponents = [
     DelayButtonComponent,
     NumberDatePipe,
     ConfirmDialogComponent,
-    ActionListItemStateComponent
+    ActionListItemStateComponent,
+    IconComponent,
 ]
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
@@ -67,11 +70,20 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     declarations: [
         ...sharedComponents,
         SafePipe,
+        XMinutesAgoPipe,
+        DeviceIconPipe,
         NotificationTemplateComponent,
         RadiusTemplateComponent,
         TextTemplateComponent,
     ],
-    exports: [ ...sharedComponents, PerfectScrollbarModule, MaterialModule, SafePipe ],
+    exports: [
+        ...sharedComponents,
+        PerfectScrollbarModule,
+        MaterialModule,
+        SafePipe,
+        XMinutesAgoPipe,
+        DeviceIconPipe,
+    ],
     providers: [
         {
             provide: PERFECT_SCROLLBAR_CONFIG,

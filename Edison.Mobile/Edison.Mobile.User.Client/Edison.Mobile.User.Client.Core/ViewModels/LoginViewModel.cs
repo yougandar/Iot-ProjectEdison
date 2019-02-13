@@ -9,19 +9,25 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
 {
     public class LoginViewModel : BaseViewModel
     {
-        readonly AuthService authService;
+
+        public AuthService AuthService { get; private set; }
+
+
         readonly INotificationService notificationService;
         readonly ILocationService locationService;
 
         bool isInitialAppearance = true;
 
         public event ViewNotification OnDisplayLogin;
+        public event ViewNotification OnLoginFailed;
+        public event ViewNotification LoginSucceed;
+        public event ViewNotification ClearLoginMessages;
         public event ViewNotification OnNavigateToMainViewModel;
         public event ViewNotification OnAppPermissionsFailed;
 
         public LoginViewModel(AuthService authService, ILocationService locationService, INotificationService notificationService)
         {
-            this.authService = authService;
+            this.AuthService = authService;
             this.locationService = locationService;
             this.notificationService = notificationService;
         }
@@ -33,6 +39,11 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
             //await locationService.RequestLocationPrivileges();
             //await notificationService.RequestNotificationPrivileges();
         }
+        public override void ViewCreated()
+        {
+            base.ViewCreated();
+            LoginSucceed += OnLoginSucceeded;
+        }
 
         public override async void ViewAppeared()
         {
@@ -41,14 +52,17 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
             if (isInitialAppearance)
             {
                 isInitialAppearance = false;
-                var hasToken = await authService.AcquireTokenSilently();
+                // Attenpt to authenticate silently - with a previously stored token
+                var hasToken = await AuthService.AcquireTokenSilently();
                 if (hasToken)
-                {
+                    // Authenticated, so check for required permisions
                     await HandleAppPermissions();
-                }
                 else
                 {
-                    authService.OnAuthChanged += HandleOnAuthChanged;
+                    // Hasn't authenticated
+                    // Subscribe to the Authentication OnAuthChanged event (fired when authentiction succeeds)
+                    AuthService.OnAuthChanged += HandleOnAuthChanged;
+                    // Trigger login screen
                     OnDisplayLogin?.Invoke();
                 }
             }
@@ -56,40 +70,66 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
 
         public override void ViewDestroyed()
         {
+            // Unsubscribe from the Authentication OnAuthChanged event
+            AuthService.OnAuthChanged -= HandleOnAuthChanged;
+            LoginSucceed += OnLoginSucceeded;
             base.ViewDestroyed();
-            authService.OnAuthChanged -= HandleOnAuthChanged;
+
         }
 
+        //iOS sign in
         public async Task SignIn()
         {
-            await authService.AcquireToken();
+            await AuthService.AcquireToken();
         }
 
+        // Android sign in
+        public async Task Login()
+        {
+            var hasToken = await AuthService.AcquireToken();
+            // Trigger clear any messages on login screen
+            ClearLoginMessages?.Invoke();
+            if (!hasToken)
+                // Authenication failed - trigger updates to login screen
+                OnLoginFailed?.Invoke();
+ //         else Login success handled by permisions service which is called as a result of auth changed event which calls HandleOnAuthChanged
+
+        }
+
+
+        // Called when the Authentication OnAuthChanged event fires - when authentication with credentials succeeds
         async void HandleOnAuthChanged(object sender, AuthChangedEventArgs e)
         {
             if (e.IsLoggedIn)
-            {
+                // Authenticated, so check for required permisions
                 await HandleAppPermissions();
-            }
             else
-            {
+                // Not authenticated, so update login screen
                 OnDisplayLogin?.Invoke();
-            }
         }
 
+        // Manages required in-app permissions
         async Task HandleAppPermissions()
         {
+            // Check and get app permissions
             var gotPermissions = await GetAppPermissions();
+            // If permissions have been granted
             if (gotPermissions)
             {
+                // Start location service
                 await locationService.StartLocationUpdates();
+                // Trigger clear any messages from login screen
+                ClearLoginMessages?.Invoke();
+                // Trigger navigation
                 OnNavigateToMainViewModel?.Invoke();
             }
             else
-            {
+                // Permissions not granted - trigger updated to login screen
                 OnAppPermissionsFailed?.Invoke();
-            }
         }
+
+        public 
+
 
         async Task<bool> GetAppPermissions()
         {
@@ -99,16 +139,24 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
             var notificationSuccess = hasNotificationPrivileges;
             
             if (!locationSuccess)
-            {
                 locationSuccess = await locationService.RequestLocationPrivileges();            
-            }
 
             if (!hasNotificationPrivileges)
-            {
                 notificationSuccess = await notificationService.RequestNotificationPrivileges();
-            }
             
             return notificationSuccess && locationSuccess;
+        }
+
+
+        private async void OnLoginSucceeded()
+        {
+            // Start location service
+            await locationService.StartLocationUpdates();
+        }
+
+        public void InvokeLoginSucceed()
+        {
+            LoginSucceed?.Invoke();
         }
     }
 }

@@ -1,156 +1,150 @@
-import { Subscription } from 'rxjs';
 import uuid from 'uuid/v4';
 
 import {
-    Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
 } from '@angular/core';
-import { Actions, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
 
-import { AppState } from '../../../../reducers';
 import {
-    ActionChangeType, ActionPlanAction, ActionPlanNotificationAction, ActionPlanType, AddEditAction
+  ActionChangeType,
+  ActionPlanAction,
+  ActionPlanNotificationAction,
+  ActionPlanType,
+  ActionStatus,
+  AddEditAction,
 } from '../../../../reducers/action-plan/action-plan.model';
-import {
-    ResponseActionTypes, UpdateResponseActions
-} from '../../../../reducers/response/response.actions';
 import { Response } from '../../../../reducers/response/response.model';
 
 @Component({
-    selector: 'app-update-response',
-    templateUrl: './update-response.component.html',
-    styleUrls: [ './update-response.component.scss' ],
+  selector: 'app-update-response',
+  templateUrl: './update-response.component.html',
+  styleUrls: ['./update-response.component.scss'],
 })
-export class UpdateResponseComponent implements OnInit, OnDestroy, OnChanges {
-    @Input()
-    activeResponse: Response
+export class UpdateResponseComponent implements OnInit, OnChanges {
+  @Input() activeResponse: Response;
 
-    @Output()
-    cancel = new EventEmitter()
+  @Output() onCancel = new EventEmitter();
+  @Output() onActionsUpdated = new EventEmitter<{
+    response: Response;
+    actions: AddEditAction[];
+  }>();
 
-    @Output()
-    change = new EventEmitter<AddEditAction>();
+  modified = false;
+  showSuccessMessage = false;
+  updating = false;
+  actionPlanActions: ActionPlanAction[];
 
-    successSub$: Subscription;
+  private _addEditActions = new Map<string, AddEditAction>();
+  private _actionPlanActions: ActionPlanAction[];
 
-    updateSucceeded = false
-    modified = false
-    addEditActions = new Map<string, AddEditAction>();
-    _openActions: ActionPlanAction[];
+  ngOnInit() {
+    this._updateActions(false);
+  }
 
-    constructor (private store: Store<AppState>, private updates$: Actions) { }
+  ngOnChanges() {
+    this._updateActions(true);
+  }
 
-    ngOnInit(): void {
-        this.updateActions();
+  onCancelClick() {
+    this.modified = false;
+    this.actionPlanActions = this._actionPlanActions; // revert to original array
+    this._addEditActions.clear(); // clear any modifications
+    this.onCancel.emit();
+  }
 
-        this.successSub$ = this.updates$
-            .pipe(ofType(ResponseActionTypes.UpdateResponseActionsSuccess))
-            .subscribe(() => this.updateSucceeded = true)
+  addEditAction(action: AddEditAction) {
+    this._addEditActions.set(action.action.actionId, action);
+    this.modified = true;
+  }
+
+  removeAction(action: AddEditAction) {
+    this._addEditActions.delete(action.action.actionId);
+    this.modified = true;
+  }
+
+  sendUpdates() {
+    if (!this.modified) {
+      return;
     }
 
-    ngOnDestroy(): void {
-        this.successSub$.unsubscribe();
-    }
+    this.modified = false;
+    this.updating = true;
 
-    ngOnChanges() {
-        this.updateActions();
-    }
-
-    updateActions() {
-        if (this.activeResponse && this.activeResponse.actionPlan) {
-            this._openActions = [ ...this.activeResponse.actionPlan.openActions ];
+    if (this._addEditActions.size > 0) {
+      const actions = Array.from(this._addEditActions.values()).map(
+        addEditAction => {
+          if (addEditAction.actionChangedString === ActionChangeType.Add) {
+            return {
+              ...addEditAction,
+              action: {
+                ...addEditAction.action,
+                actionId: '00000000-0000-0000-0000-000000000000', // must be null to add a new action, but needs a local ID to use Map object
+              },
+            };
+          }
+          return addEditAction;
         }
+      );
+      this.onActionsUpdated.emit({ actions, response: this.activeResponse });
+      this._addEditActions.clear();
     }
+  }
 
-    onCancel() {
-        this.cancel.emit()
-        this.removeEmptyopenActions();
-    }
+  addNotification() {
+    const tempActionId = uuid();
+    const notification: ActionPlanNotificationAction = {
+      actionId: tempActionId,
+      actionType: ActionPlanType.Notification,
+      isActive: true,
+      description: 'Mobile App Notification will be sent',
+      parameters: {
+        message: '',
+        editing: true,
+      },
+    };
 
-    removeEmptyopenActions() {
-        const actionsToRemove = this._openActions.filter(ca => !ca.parameters.message || ca.parameters.message.trim() === '')
+    this.actionPlanActions.push(notification);
+  }
 
-        // remove from local arr
-        this._openActions = this._openActions.filter(ca => !actionsToRemove.some(atr => atr.actionId === ca.actionId));
-
-        actionsToRemove.forEach(actionToRemove => {
-            const addEditAction = this.addEditActions.get(actionToRemove.actionId);
-            if (addEditAction) {
-                switch (addEditAction.actionChangedString) {
-                    case ActionChangeType.Add: {
-                        // someone cancelled out of adding a new notification
-                        this.addEditActions.delete(actionToRemove.actionId);
-                        break;
-                    }
-                    case ActionChangeType.Edit: {
-                        // a pre-existing notification was blanked out (aka removed)
-                        this.addEditActions.set(actionToRemove.actionId, {
-                            actionChangedString: ActionChangeType.Delete,
-                            isCloseAction: false,
-                            action: actionToRemove
-                        })
-                        break;
-                    }
-                }
-            }
-        })
-    }
-
-    onUpdate() {
-        if (!this.modified) {
-            return
+  private _getEditableActions() {
+    if (
+      this.activeResponse &&
+      this.activeResponse.actionPlan &&
+      this.activeResponse.actionPlan.openActions
+    ) {
+      return this.activeResponse.actionPlan.openActions.filter(action => {
+        switch (action.actionType) {
+          case ActionPlanType.Notification:
+          case ActionPlanType.Twilio:
+            return action.status !== ActionStatus.Success;
+          case ActionPlanType.LightSensor:
+            return true;
+          case ActionPlanType.EmergencyCall:
+          case ActionPlanType.Email:
+          case ActionPlanType.None:
+          default:
+            return false;
         }
-
-        this.modified = false
-        this.updateSucceeded = false;
-
-        if (this.addEditActions.size > 0) {
-            this.updateResponseActions(Array.from(this.addEditActions.values()));
-            this.addEditActions.clear();
-        } else {
-            this.updateSucceeded = true
-        }
+      });
     }
+    return [];
+  }
 
-    updated({ addEditAction, actionId }: { addEditAction: AddEditAction, actionId: string }) {
-        if (addEditAction && !addEditAction.isRemoveAction) {
-            this.updateAddEditActions(addEditAction, actionId);
-            this.modified = true
-        } else {
-            this.addEditActions.delete(actionId);
-            this._openActions = this._openActions.filter(oa => oa.actionId !== actionId);
-        }
+  private _updateActions(updateStatus: boolean) {
+    if (this.activeResponse && this.activeResponse.actionPlan) {
+      this.actionPlanActions = [...this._getEditableActions()];
+      this._actionPlanActions = [...this._getEditableActions()];
+      if (updateStatus) {
+        this.showSuccessMessage =
+          this.updating &&
+          !this.actionPlanActions.some(
+            action => action.status !== ActionStatus.Success
+          );
+      }
     }
-
-    updateAddEditActions(addEditAction: AddEditAction, actionId) {
-        this.addEditActions.set(actionId, addEditAction);
-    }
-
-    updateResponseActions(actions: AddEditAction[]) {
-        this.store.dispatch(new UpdateResponseActions({
-            response: this.activeResponse,
-            actions
-        }))
-    }
-
-    addNotification() {
-        const tempActionId = uuid();
-        const notification: ActionPlanNotificationAction = {
-            actionId: tempActionId,
-            actionType: ActionPlanType.Notification,
-            isActive: true,
-            description: 'Mobile App Notification will be sent',
-            parameters: {
-                message: '',
-                editing: true
-            }
-        }
-
-        this._openActions.push(notification);
-        this.updateAddEditActions({
-            actionChangedString: ActionChangeType.Add,
-            isCloseAction: false,
-            action: notification
-        }, tempActionId);
-    }
+  }
 }

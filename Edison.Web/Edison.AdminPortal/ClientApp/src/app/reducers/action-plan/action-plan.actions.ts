@@ -1,5 +1,6 @@
-import { Action } from '@ngrx/store';
 import { Update } from '@ngrx/entity';
+import { Action } from '@ngrx/store';
+
 import { ActionPlan } from './action-plan.model';
 
 export enum ActionPlanActionTypes {
@@ -18,7 +19,6 @@ export enum ActionPlanActionTypes {
     GetActionPlansError = '[ActionPlan] Get Action Plans Error',
     GetActionPlan = '[ActionPlan] Get Action Plan',
     GetActionPlanError = '[ActionPlan] Get Action Plan Error',
-    SetSelectingActionPlan = '[ActionPlan] Set Selecting Action Plan',
     PutActionPlan = '[ActionPlan] Put Action Plan',
     PutActionPlanSuccess = '[ActionPlan] Put Action Plan Success',
     PutActionPlanError = '[ActionPlan] Put Action Plan Error',
@@ -32,16 +32,14 @@ export class PutActionPlan implements Action {
 
 export class PutActionPlanSuccess implements Action {
     readonly type = ActionPlanActionTypes.PutActionPlanSuccess;
+
+    constructor (public payload: { actionPlan: ActionPlan }) { }
 }
 
 export class PutActionPlanError implements Action {
     readonly type = ActionPlanActionTypes.PutActionPlanError;
-}
 
-export class SetSelectingActionPlan implements Action {
-    readonly type = ActionPlanActionTypes.SetSelectingActionPlan;
-
-    constructor (public payload: { isSelecting: boolean }) { }
+    constructor (public payload: { actionPlan: ActionPlan }) { }
 }
 
 export class GetActionPlan implements Action {
@@ -138,4 +136,6 @@ export type ActionPlanActions =
     | DeleteActionPlans
     | ClearActionPlans
     | SelectActionPlan
-    | SetSelectingActionPlan;
+    | PutActionPlan
+    | PutActionPlanSuccess
+    | PutActionPlanError;

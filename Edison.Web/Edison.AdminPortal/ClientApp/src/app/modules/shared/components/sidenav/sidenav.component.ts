@@ -2,7 +2,7 @@ import { Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NavigationStart, Router } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 
 import { AppState } from '../../../../reducers';
@@ -30,11 +30,11 @@ export class SidenavComponent implements OnInit, OnDestroy {
         this.setupNavLinks()
         this.pathSub$ = this.router.events
             .pipe(
-                filter(event => event instanceof NavigationStart),
-                map((event: NavigationStart) => event.url)
+                filter(event => event instanceof NavigationEnd),
+                map((event: NavigationEnd) => event.url)
             )
             .subscribe(path => {
-                this.activeRoute = path
+                this.activeRoute = path;
             })
     }
 
@@ -48,35 +48,35 @@ export class SidenavComponent implements OnInit, OnDestroy {
                 title: 'Right Now',
                 route: '/dashboard',
                 sidebar: true,
-                icon: 'app-icon now',
+                icon: 'now',
                 onClick: this.activateNavLink,
             },
             {
                 title: 'Devices',
                 route: '/dashboard/devices',
                 sidebar: false,
-                icon: 'app-icon sensors',
+                icon: 'sensors',
                 onClick: this.activateNavLink,
             },
             {
                 title: 'Messaging',
                 route: '/dashboard/messaging',
                 sidebar: true,
-                icon: 'app-icon chat',
+                icon: 'chat',
                 onClick: this.activateNavLink,
             },
             {
                 title: 'History',
                 route: '/dashboard/history',
                 sidebar: true,
-                icon: 'app-icon history',
+                icon: 'history',
                 onClick: this.activateNavLink,
             },
             {
                 title: 'Settings',
-                route: '/configuration',
+                route: '/settings',
                 sidebar: false,
-                icon: 'app-icon gear',
+                icon: 'gear',
                 onClick: this.activateNavLink,
             },
         ]

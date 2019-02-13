@@ -23,6 +23,7 @@ namespace Edison.Devices.Onboarding
         public async Task Run()
         {
             DebugHelper.LogInformation("Onboarding starting");
+            DebugHelper.LogInformation($"Device Provisioning State: {(SimulatedDevice.IsProvisioned ? "Provisioned" : "Not provisioned")}");
 
             //Init Portal Api and turn on access point
             if (!InitializePortalAPI())
@@ -39,7 +40,9 @@ namespace Edison.Devices.Onboarding
             //Start Stream Socker Service
             _DeviceApiServer = new WebDeviceApiServer();
             _DeviceApiServer.CommandReceived += CommandReceived;
-            await _DeviceApiServer.Start();
+            _DeviceApiServer.Start();
+
+            DebugHelper.LogInformation("Onboarding started");
 
             //Wait for AP Timeout
             _LastAccess = DateTime.UtcNow;
@@ -49,7 +52,6 @@ namespace Edison.Devices.Onboarding
                     DateTime.UtcNow.AddMinutes(-(APTimeoutMinutes)) > _LastAccess)
                 {
                     AccessPointHelper.StopAccessPoint();
-                    break;
                 }
                 await Task.Delay(500);
             }
@@ -193,7 +195,7 @@ namespace Edison.Devices.Onboarding
             commandArgs.OutputCommand = new Command()
             {
                 BaseCommand = commandArgs.InputCommand.BaseCommand + 100,
-                Data = resultCommand != null ? JsonConvert.SerializeObject(resultCommand) : null
+                Data = resultCommand != null ? resultCommand : null
             };
         }
 
@@ -203,7 +205,7 @@ namespace Edison.Devices.Onboarding
             commandArgs.OutputCommand = new Command()
             {
                 BaseCommand = commandArgs.InputCommand.BaseCommand + 100,
-                Data = resultCommand != null ? JsonConvert.SerializeObject(resultCommand) : null
+                Data = resultCommand != null ? resultCommand : null
             };
         }
 
@@ -211,14 +213,15 @@ namespace Edison.Devices.Onboarding
         {
             T requestCommand = null;
             ResultCommand resultCommand = null;
-            if (!string.IsNullOrEmpty(commandArgs.InputCommand.Data))
-                requestCommand = JsonConvert.DeserializeObject<T>(commandArgs.InputCommand.Data);
+            string data = commandArgs.InputCommand.Data.ToString();
+            if (!string.IsNullOrEmpty(data))
+                requestCommand = JsonConvert.DeserializeObject<T>(data);
             if(requestCommand != null)
                 resultCommand = await commandProcess(requestCommand);
             commandArgs.OutputCommand = new Command()
             {
                 BaseCommand = commandArgs.InputCommand.BaseCommand + 100,
-                Data = resultCommand != null ? JsonConvert.SerializeObject(resultCommand) : null
+                Data = resultCommand != null ? resultCommand : null
             };
         }
         #endregion

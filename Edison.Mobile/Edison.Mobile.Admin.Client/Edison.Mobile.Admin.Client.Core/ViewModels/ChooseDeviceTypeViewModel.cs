@@ -5,19 +5,17 @@ using Edison.Mobile.Common.ViewModels;
 
 namespace Edison.Mobile.Admin.Client.Core.ViewModels
 {
-    public class ChooseDeviceTypeViewModel : BaseViewModel
+    public class ChooseDeviceTypeViewModel : DeviceSetupBaseViewModel
     {
-        readonly DeviceSetupService deviceSetupService;
-
         public ChooseDeviceTypeViewModel(DeviceSetupService deviceSetupService)
+            : base(deviceSetupService)
         {
-            this.deviceSetupService = deviceSetupService;
         }
 
         public void SetDeviceType(DeviceType deviceType)
         {
             deviceSetupService.ClearDevice();
-            deviceSetupService.SetDeviceType(deviceType);
+            deviceSetupService.CurrentDeviceModel.DeviceType = DeviceSetupService.DeviceTypeToString(deviceType);
         }
     }
 }

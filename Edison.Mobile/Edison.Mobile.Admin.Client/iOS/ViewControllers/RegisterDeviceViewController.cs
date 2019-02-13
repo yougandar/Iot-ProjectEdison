@@ -3,8 +3,10 @@ using CoreGraphics;
 using Edison.Mobile.Admin.Client.Core.Services;
 using Edison.Mobile.Admin.Client.Core.Shared;
 using Edison.Mobile.Admin.Client.Core.ViewModels;
+using Edison.Mobile.Admin.Client.iOS.Extensions;
 using Edison.Mobile.Admin.Client.iOS.Shared;
 using Edison.Mobile.Admin.Client.iOS.Views;
+using Edison.Mobile.Common.WiFi;
 using Edison.Mobile.iOS.Common.Views;
 using Foundation;
 using UIKit;
@@ -15,6 +17,8 @@ namespace Edison.Mobile.Admin.Client.iOS.ViewControllers
     {
         CameraView cameraView;
         UIButton noQRCodeButton;
+        UILabel pairingLabel;
+        bool isShowingAlert;
 
         public override void ViewDidLoad()
         {
@@ -99,12 +103,7 @@ namespace Edison.Mobile.Admin.Client.iOS.ViewControllers
                 ForegroundColor = Constants.Color.White,
             }), UIControlState.Normal);
 
-
-            noQRCodeButton.Layer.ShadowColor = Constants.Color.DarkGray.CGColor;
-            noQRCodeButton.Layer.ShadowRadius = 3;
-            noQRCodeButton.Layer.ShadowOffset = new CGSize(1, 1);
-            noQRCodeButton.Layer.ShadowOpacity = 0.4f;
-            noQRCodeButton.Layer.MasksToBounds = false;
+            noQRCodeButton.AddStandardShadow();
 
             View.AddSubview(noQRCodeButton);
 
@@ -112,6 +111,25 @@ namespace Edison.Mobile.Admin.Client.iOS.ViewControllers
             noQRCodeButton.HeightAnchor.ConstraintEqualTo(44).Active = true;
             noQRCodeButton.CenterXAnchor.ConstraintEqualTo(View.CenterXAnchor).Active = true;
             noQRCodeButton.CenterYAnchor.ConstraintEqualTo(bottomLayoutGuide.CenterYAnchor).Active = true;
+
+            pairingLabel = new UILabel
+            {
+                TranslatesAutoresizingMaskIntoConstraints = false,
+                TextColor = Constants.Color.DarkBlue,
+                Font = Constants.Fonts.RubikOfSize(Constants.Fonts.Size.Eighteen),
+                Text = "Pairing devices...",
+                Alpha = 0,
+                Lines = 0,
+                TextAlignment = UITextAlignment.Center,
+                LineBreakMode = UILineBreakMode.WordWrap,
+            };
+
+            View.AddSubview(pairingLabel);
+
+            pairingLabel.CenterXAnchor.ConstraintEqualTo(noQRCodeButton.CenterXAnchor).Active = true;
+            pairingLabel.CenterYAnchor.ConstraintEqualTo(noQRCodeButton.CenterYAnchor).Active = true;
+            pairingLabel.LeftAnchor.ConstraintEqualTo(View.LeftAnchor, constant: padding).Active = true;
+            pairingLabel.RightAnchor.ConstraintEqualTo(View.RightAnchor, constant: -padding).Active = true;
         }
 
         public override void ViewDidAppear(bool animated)
@@ -120,7 +138,7 @@ namespace Edison.Mobile.Admin.Client.iOS.ViewControllers
 
             if (!cameraView.IsRunning)
             {
-                cameraView.Start();            
+                cameraView.Start();
             }
         }
 
@@ -128,19 +146,90 @@ namespace Edison.Mobile.Admin.Client.iOS.ViewControllers
         {
             base.BindEventHandlers();
             noQRCodeButton.TouchUpInside += HandleNoQRCodeButtonTouchUpInside;
+            ViewModel.OnBeginDevicePairing += HandleOnBeginDevicePairing;
+            ViewModel.OnFinishDevicePairing += HandleOnFinishDevicePairing;
+            ViewModel.OnPairingStatusTextChanged += HandleOnPairingStatusTextChanged;
+
+            cameraView.OnQRCodeScanned += HandleOnQRCodeScanned;
         }
 
         protected override void UnBindEventHandlers()
         {
             base.UnBindEventHandlers();
             noQRCodeButton.TouchUpInside -= HandleNoQRCodeButtonTouchUpInside;
+            ViewModel.OnBeginDevicePairing -= HandleOnBeginDevicePairing;
+            ViewModel.OnFinishDevicePairing -= HandleOnFinishDevicePairing;
+            ViewModel.OnPairingStatusTextChanged -= HandleOnPairingStatusTextChanged;
+
+            cameraView.OnQRCodeScanned -= HandleOnQRCodeScanned;
+        }
+
+        void HandleOnBeginDevicePairing()
+        {
+            noQRCodeButton.Alpha = 0;
+            pairingLabel.Alpha = 1;
+        }
+
+        void HandleOnPairingStatusTextChanged(object sender, string text)
+        {
+            InvokeOnMainThread(() =>
+            {
+                pairingLabel.Text = text;
+            });
+        }
+
+        void HandleOnFinishDevicePairing(object sender, RegisterDeviceViewModel.OnFinishDevicePairingEventArgs e)
+        {
+            pairingLabel.Text = e.IsSuccess ? "Pairing Successful!" : "Pairing Failed.";
+        }
+
+        void HandleOnQRCodeScanned(object sender, string ssid)
+        {
+            InvokeOnMainThread(() => ShowNetworkAlert(ssid));
         }
 
         void HandleNoQRCodeButtonTouchUpInside(object sender, EventArgs e)
         {
-            var manualConnectViewController = new ManualConnectViewController();
-            var navController = new UINavigationController(manualConnectViewController);
-            PresentViewController(navController, true, null);
+            InvokeOnMainThread(() => ShowNetworkAlert());
+        }
+
+        void ShowNetworkAlert(string ssid = null)
+        {
+            if (isShowingAlert) return;
+
+            isShowingAlert = true;
+
+            var alertController = UIAlertController.Create(
+                ssid == null ? $"Enter your {ViewModel.DeviceTypeAsString}'s wifi network manually below." : null,
+                $"Your {ViewModel.DeviceTypeAsString} should be emitting a wifi network of the format EDISON_{{ID}}.",
+                UIAlertControllerStyle.Alert
+            );
+
+            alertController.AddTextField(textField =>
+            {
+                textField.Text = ssid;
+            });
+
+            alertController.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Default, async action =>
+            {
+                var success = await ViewModel.ProvisionDevice(new WifiNetwork
+                {
+                    SSID = alertController.TextFields[0]?.Text,
+                });
+
+                if (!success)
+                {
+                    isShowingAlert = false;
+                }
+                else if (NavigationController != null)
+                {
+                    NavigationController.PushViewController(new SelectWifiViewController(), true);
+                }
+            }));
+
+            alertController.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, null));
+
+            PresentViewController(alertController, true, null);
         }
     }
 }

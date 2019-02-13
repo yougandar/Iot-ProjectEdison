@@ -12,12 +12,7 @@
     <PackageReference Include="NUnit3TestAdapter" Version="3.11.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
   </ItemGroup>
-<PropertyGroup>
-  <!-- other properties here -->
-  <DebugType>Full</DebugType>
-  <!-- SonarQube needs this -->
-  <ProjectGuid>{4fdbc759-f5e4-4c8a-865c-9f617a5c06b0}</ProjectGuid>
-  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\Edison.Common.MassTransit\Edison.Common.MassTransit.csproj" />
     <ProjectReference Include="..\..\Edison.Microservices.DeviceSynchronizationService\Edison.DeviceSynchronizationService.csproj" />

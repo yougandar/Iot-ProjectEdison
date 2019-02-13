@@ -373,16 +373,8 @@ namespace Edison.Api.Helpers
             return _mapper.Map<ResponseModel>(response);
         }
 
-        /// <summary>
-        /// Update actions on the response DAO object
-        /// </summary>
-        /// <param name="response">ResponseDAO</param>
-        /// <param name="responseChangeAction">ResponseChangeActionPlanModel</param>
-        /// <returns>ResponseDAO</returns>
         private ResponseDAO UpdateActionsOnResponseModel(ResponseDAO response, ResponseChangeActionPlanModel responseChangeAction)
         {
-            InstantiateResponseActions(responseChangeAction.Actions);
-
             var openAddActions = responseChangeAction.Actions.Where(x => !x.IsCloseAction && x.ActionChangedString == "add");
             var openEditActions = responseChangeAction.Actions.Where(x => !x.IsCloseAction && x.ActionChangedString == "edit");
             var openDeleteActions = responseChangeAction.Actions.Where(x => !x.IsCloseAction && x.ActionChangedString == "delete");
@@ -393,13 +385,11 @@ namespace Edison.Api.Helpers
             var closeList = response.ActionPlan.CloseActions.ToList();
 
             if (openEditActions.Any() || openDeleteActions.Any())
-                for(int i = 0; i < openList.Count(); i++)
+                for (int i = 0; i < openList.Count(); i++)
                 {
                     //Edit Open
                     if (openEditActions.Select(a => a.Action.ActionId).Contains(openList[i].ActionId))
-                    {
                         openList[i] = _mapper.Map<ResponseActionDAOObject>(openEditActions.First(a => a.Action.ActionId == openList[i].ActionId).Action);
-                    }
                     //Delete Open
                     else if (openDeleteActions.Select(a => a.Action.ActionId).Contains(openList[i].ActionId))
                         openList.RemoveAt(i);
@@ -417,11 +407,11 @@ namespace Edison.Api.Helpers
                 }
 
             //Add Close
-            if(closeAddActions.Any())
-                closeList.AddRange(_mapper.Map<IEnumerable<ResponseActionDAOObject>>(closeAddActions));
+            if (closeAddActions.Any())
+                closeList.AddRange(_mapper.Map<IEnumerable<ResponseActionDAOObject>>(closeAddActions.Select(a => { a.Action.ActionId = Guid.NewGuid(); return a.Action; })));
             //Add Open
-            if(openAddActions.Any())
-                openList.AddRange(_mapper.Map<IEnumerable<ResponseActionDAOObject>>(openAddActions));
+            if (openAddActions.Any())
+                openList.AddRange(_mapper.Map<IEnumerable<ResponseActionDAOObject>>(openAddActions.Select(a => { a.Action.ActionId = Guid.NewGuid(); return a.Action; })));
 
             response.ActionPlan.OpenActions = openList.AsEnumerable();
             response.ActionPlan.CloseActions = closeList.AsEnumerable();

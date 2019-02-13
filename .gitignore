@@ -304,3 +304,5 @@ Edison\.Web/Edison\.AdminPortal/ProjectEdison\.code-workspace
 Edison\.Web/Edison\.AdminPortal/ClientApp/Projects/three-psa-ui-lib copy/
 
 Edison\.Web/Edison\.AdminPortal/ClientApp/yarn\.lock
+/Edison.Mobile/Edison.Mobile.User.Client/Droid/google-services.json
+/Edison.Mobile/Edison.Mobile.User.Client/Droid/Resources/values/secrets.xml

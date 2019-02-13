@@ -10,9 +10,20 @@ namespace Edison.Mobile.Android.Common
         {
             get
             {
-                if (Density == -1)
+                if (_density == -1)
                     _density = Resources.System.DisplayMetrics.Density;
                 return _density;
+            }
+        }
+
+        private static float _scaledDensity = -1f;
+        public static float ScaledDensity
+        {
+            get
+            {
+                if (_scaledDensity == -1)
+                    _scaledDensity = Resources.System.DisplayMetrics.ScaledDensity;
+                return _scaledDensity;
             }
         }
 
@@ -24,9 +35,15 @@ namespace Edison.Mobile.Android.Common
         {
             return px / Density;
         }
+        public static int SpToPx(float sp)
+        {
+            return (int) (sp * ScaledDensity);
+        }
 
-
-
+        public static float PxToSp(float px)
+        {
+            return px / ScaledDensity;
+        }
 
     }
 }

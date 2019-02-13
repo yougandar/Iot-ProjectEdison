@@ -7,12 +7,17 @@ namespace Edison.Mobile.Android.Common.WiFi
 {
     public class PlatformWifiService : IWifiService
     {
-        public Task<bool> ConnectToSecuredNetwork(string ssid, string passphrase)
+        public Task<bool> ConnectToWifiNetwork(string ssid, string passphrase = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<WifiNetwork>> GetWifiNetworks()
+        public Task DisconnectFromWifiNetwork(WifiNetwork wifiNetwork)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<WifiNetwork> GetCurrentlyConnectedWifiNetwork()
         {
             throw new NotImplementedException();
         }

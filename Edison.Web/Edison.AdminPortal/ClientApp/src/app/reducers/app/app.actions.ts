@@ -5,11 +5,13 @@ export enum AppPage {
     Devices = 'DEVICES',
     Messaging = 'MESSAGING',
     History = 'HISTORY',
+    Settings = 'SETTINGS',
 }
 
 export enum AppActionTypes {
     FocusAllPins = '[App] Focus All Pins',
     UpdatePageData = '[App] Update Page Data',
+    ToggleOverlay = '[App] Show Overlay'
 }
 
 export class FocusAllPins implements Action {
@@ -19,7 +21,13 @@ export class FocusAllPins implements Action {
 export class SetPageData implements Action {
     readonly type = AppActionTypes.UpdatePageData
 
-    constructor (public payload: { title: AppPage, sidebar?: boolean }) { }
+    constructor (public payload: { title: AppPage, showDownArrow?: boolean, showReloadButton?: boolean }) { }
+}
+
+export class ToggleOverlay implements Action {
+    readonly type = AppActionTypes.ToggleOverlay;
+
+    constructor(public payload: { state?: boolean }) {}
 }
 
 export type AppActions = FocusAllPins | SetPageData

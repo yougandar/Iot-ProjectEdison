@@ -1,18 +1,9 @@
-import { Subscription } from 'rxjs';
-
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { select, Store } from '@ngrx/store';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 
 import { fadeInOut } from '../../../../core/animations/fadeInOut';
 import { SearchListItem } from '../../../../core/models/searchListItem';
-import { AppState } from '../../../../reducers';
-import { SetSelectingActionPlan } from '../../../../reducers/action-plan/action-plan.actions';
-import { ActionStatus } from '../../../../reducers/action-plan/action-plan.model';
-import { GetResponse, SelectActiveResponse } from '../../../../reducers/response/response.actions';
+import { AddEditAction } from '../../../../reducers/action-plan/action-plan.model';
 import { Response, ResponseState } from '../../../../reducers/response/response.model';
-import {
-    activeResponseSelector, activeResponsesSelector, responsesSelector
-} from '../../../../reducers/response/response.selectors';
 
 enum ActiveView {
     Default,
@@ -27,79 +18,37 @@ enum ActiveView {
     styleUrls: [ './active-responses.component.scss' ],
     animations: [ fadeInOut ],
 })
-export class ActiveResponsesComponent implements OnInit, OnDestroy {
-    active = false;
+export class ActiveResponsesComponent implements OnChanges {
+    @Input() activeResponse: Response;
+    @Input() activeResponses: Response[] = [];
+    @Input() responses: Response[] = [];
+
+    @Output() onSelectActiveResponse = new EventEmitter<Response>();
+    @Output() onGetFullResponse = new EventEmitter<string>();
+    @Output() onToggleOverlay = new EventEmitter<boolean>();
+    @Output() onDeactivateResponse = new EventEmitter<string>();
+    @Output() onRetryResponseActions = new EventEmitter<string>();
+    @Output() onResponseActionsUpdated = new EventEmitter<{ response: Response, actions: AddEditAction[], isCloseAction: boolean }>();
+    
     items: SearchListItem[];
-    responses: Response[];
-    activeResponses: Response[];
-    activeResponse: Response;
-    activeId = null;
+    active = false;
     activeView = ActiveView.Default;
-    scrollConfig = { suppressScrollX: true, suppressScrollY: false, useBothWheelAxes: true, scrollIndicators: true };
     loadingFullResponse = false;
+    scrollConfig = { suppressScrollX: true, suppressScrollY: false, useBothWheelAxes: true, scrollIndicators: true };
 
-    private activeResponsesSub$: Subscription;
-    private activeResponseSub$: Subscription;
-    private responsesSub$: Subscription;
-
-    constructor (private store: Store<AppState>) { }
-
-    ngOnInit() {
-        this.activeResponsesSub$ = this.store
-            .pipe(select(activeResponsesSelector))
-            .subscribe(responses => {
-                this.activeResponses = [ ...responses ]
-
-                let responsesToShow = [ ...responses ]
-                if (this.activeResponse) {
-                    const activeResponse = responsesToShow.find(
-                        response => response.responseId === this.activeResponse.responseId
-                    )
-                    if (!activeResponse) {
-                        // we want to let this response still show until the active responses window closes
-                        responsesToShow = [
-                            ...responses,
-                            {
-                                ...this.activeResponse,
-                                responseState: ResponseState.Inactive,
-                            },
-                        ].filter(resp => resp.name).sort((a, b) => a.name.localeCompare(b.name))
-                    } else {
-                        this.activeResponse = activeResponse;
-                        this.activeId = activeResponse.responseId;
-
-                        this.getFullResponse();
-                    }
-                }
-
-                this.refreshResponses(responsesToShow)
-            })
-
-        this.activeResponseSub$ = this.store
-            .pipe(select(activeResponseSelector))
-            .subscribe(({ activeResponse, openManageResponse }) => {
-                if (activeResponse && openManageResponse) {
-                    this.openResponse(activeResponse)
-                }
-            })
-
-        this.responsesSub$ = this.store
-            .pipe(select(responsesSelector))
-            .subscribe(responses => {
-                if (this.activeResponse) {
-                    this.activeResponse = responses.find(resp => resp.responseId === this.activeResponse.responseId);
-                }
-            })
+    ngOnChanges() {
+        this._updateActiveResponses();
+        this._getFullResponse();
     }
 
-    ngOnDestroy() {
-        this.activeResponsesSub$.unsubscribe()
-        this.activeResponseSub$.unsubscribe()
-        this.responsesSub$.unsubscribe();
-    }
+    deactivateResponse(responseId: string) { this.onDeactivateResponse.emit(responseId); }
 
-    responseUpdated() {
-
+    onActionsUpdated(payload: { actions: AddEditAction[], response: Response }, isCloseAction: boolean) {
+        this.onResponseActionsUpdated.emit({
+            actions: payload.actions,
+            response: payload.response,
+            isCloseAction,
+        });
     }
 
     getIconStyle(index: number) {
@@ -113,75 +62,94 @@ export class ActiveResponsesComponent implements OnInit, OnDestroy {
         return style;
     }
 
-    refreshResponses(responses: Response[]) {
+    selectActiveResponse(item: SearchListItem) {
+        if (item) {
+            const activeResponse = this.activeResponses.find(r => r.responseId === item.id);
+            this.onSelectActiveResponse.emit(activeResponse);
+            this._getFullResponse();
+        } else {
+            this.onSelectActiveResponse.emit(null);
+        }
+        this._showView(ActiveView.Default);
+    }
+
+    openResponse(response: Response) {
+        this.active = true;
+        this.onSelectActiveResponse.emit(response);
+        this._showView(ActiveView.Default);
+
+        this._getFullResponse()
+        this.onToggleOverlay.emit(true);
+    }
+
+    showDeactivateView() { this._showView(ActiveView.Deactivate); }
+
+    showUpdateView() { this._showView(ActiveView.Update); }
+
+    backClicked() { this._showView(ActiveView.Default); }
+
+    toggle(active: boolean) {
+        this.active = active;
+        this.onToggleOverlay.emit(this.active);
+
+        if (active) {
+            this._showView(ActiveView.Default);
+            this._getFullResponse();
+        }
+    }
+
+    toggleResponses() {
+        this.active = !this.active
+
+        if (!this.active) { this.onSelectActiveResponse.emit(null); }
+
+        if (!this.active) {
+            this._refreshResponses(this.activeResponses) // clear out any resolved responses on close
+        }
+
+        this.onToggleOverlay.emit(this.active);
+    }
+
+    retryResponseActions(responseId: string) { this.onRetryResponseActions.emit(responseId); }
+
+    private _updateActiveResponses() {
+        let responsesToShow = [ ...this.activeResponses ]
+        if (this.activeResponse) {
+            const activeResponse = this.responses.find(response => response.responseId === this.activeResponse.responseId)
+            if (!activeResponse) {
+                // we want to let this response still show until the active responses window closes
+                const currentlyActiveResponse = {
+                    ...this.activeResponse,
+                    responseState: ResponseState.Inactive,
+                };
+
+                responsesToShow = [ ...this.activeResponses, currentlyActiveResponse ]
+                    .filter(resp => resp.name).sort((a, b) => a.name.localeCompare(b.name))
+            } else {
+                this._getFullResponse();
+            }
+        }
+
+        this._refreshResponses(responsesToShow)
+    }
+
+    private _refreshResponses(responses: Response[]) {
         this.items = responses.map(r => ({
             id: r.responseId,
             name: r.name,
             icon: r.icon,
             color: r.color,
         }));
-        this.responses = responses;
     }
 
-    selectActiveResponse(item: SearchListItem) {
-        if (item) {
-            this.activeResponse = { ...this.responses.find(r => r.responseId === item.id) }
-            this.getFullResponse()
-        } else {
-            this.deactivateActiveResponse()
-        }
-        this.activeView = ActiveView.Default
-    }
+    private _showView(activeView: ActiveView) { this.activeView = activeView; }
 
-    openResponse(response: Response) {
-        this.active = true
-        this.activeResponse = { ...response }
-        this.activeId = this.activeResponse.responseId
-        this.activeView = ActiveView.Default
-
-        this.getFullResponse()
-        this.store.dispatch(new SetSelectingActionPlan({ isSelecting: true }))
-    }
-
-    getFullResponse() {
-        if (!this.activeResponse.actionPlan && !this.loadingFullResponse) {
+    private _getFullResponse() {
+        if (this.activeResponse && !this.loadingFullResponse && !this.activeResponse.actionPlan) {
             this.loadingFullResponse = true;
-            this.store.dispatch(new GetResponse({ responseId: this.activeResponse.responseId }));
-        } else {
+            this.onGetFullResponse.emit(this.activeResponse.responseId);
+        } else if (this.activeResponse && this.activeResponse.actionPlan) {
             this.loadingFullResponse = false;
         }
-    }
-
-    showDeactivateView() {
-        this.activeView = ActiveView.Deactivate
-    }
-
-    showUpdateView() {
-        this.activeView = ActiveView.Update
-    }
-
-    backClicked() {
-        this.activeView = ActiveView.Default
-    }
-
-    toggleResponses() {
-        if (this.active) {
-            this.deactivateActiveResponse()
-        }
-        this.active = !this.active
-
-        if (!this.active) {
-            this.refreshResponses(this.activeResponses) // clear out any resolved responses on close
-        }
-
-        this.store.dispatch(
-            new SetSelectingActionPlan({ isSelecting: this.active })
-        )
-    }
-
-    deactivateActiveResponse() {
-        this.activeId = null
-        this.activeResponse = null
-        this.store.dispatch(new SelectActiveResponse({ response: null }))
     }
 }

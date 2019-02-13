@@ -1,70 +1,103 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Android.App;
 using Android.OS;
 using Android.Content;
 using Android.Views;
 using Android.Widget;
+using Android.Graphics;
+using Android.Support.Design.Widget;
 using Android.Support.V4.Widget;
-using Android.Support.V7.App;
 using Android.Support.V4.View;
+using Android.Support.V4.Content;
+using Android.Support.V7.App;
+using Android.Support.V7.Widget;
+using Android.Provider;
+using Android.Content.PM;
+using Android.Runtime;
+using Android.Support.V7.View.Menu;
+using static Android.Widget.SeekBar;
 
 using Java.Lang;
 
 using Edison.Mobile.Android.Common;
+using Edison.Mobile.Android.Common.Controls;
+using Edison.Mobile.Android.Common.Utilities;
 using Edison.Mobile.User.Client.Core.ViewModels;
 using Edison.Mobile.User.Client.Droid.Adapters;
 using Edison.Mobile.User.Client.Droid.Fragments;
-using Edison.Mobile.User.Client.Droid.Ioc;
-using Edison.Mobile.User.Client.Core.Ioc;
-using Edison.Mobile.Android.Common.Ioc;
-using Edison.Mobile.Common.Ioc;
+
 
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using Fragment = Android.Support.V4.App.Fragment;
-using Android.Graphics;
-using Android.Support.V7.Widget;
-using Android.Support.Design.Widget;
-using Android.Support.V4.Content;
+using Math = System.Math;
+
+
+
+
+
+
+
+
+
 
 namespace Edison.Mobile.User.Client.Droid.Activities
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar")]
-//    [Activity(Label = "@string/app_name", MainLauncher = true, NoHistory = true, Exported = true, ScreenOrientation = global::Android.Content.PM.ScreenOrientation.Portrait, Theme = "@style/AppTheme.NoActionBar")]
-    public class MainActivity : BaseActivity<MainViewModel>
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", ScreenOrientation = global::Android.Content.PM.ScreenOrientation.Portrait, WindowSoftInputMode = SoftInput.AdjustResize )]
+//  [Activity(Label = "@string/app_name", MainLauncher = true, Exported = true, ScreenOrientation = global::Android.Content.PM.ScreenOrientation.Portrait, Theme = "@style/AppTheme.NoActionBar")]
+    public class MainActivity : BaseActivity<MenuViewModel>
     {
 
         private const string StateKey_ActionbarTitle = "actionBarTitle";
-        private const int TransitionDelayMs = 80;
+        private const int DeafultTransitionDelayMs = 80;
+
+        private const int RequestNotificationPermissionId = 0;
+        private const int RequestLocationPermissionId = 1;
+        private const int RequestWriteSettingsPermissionId = 2;
 
         private Context _context;
+        private CoordinatorLayout _coordinatorLayout;
         private Toolbar _toolbar;
         private AppCompatTextView _customToolbarTitle;
         private AppCompatTextView _customToolbarSubtitle;
         private LinearLayout _customToolbarTitleWrapper;
         private DrawerLayout _drawer;
-        private LinearLayout _bottomSheet;
-        private BottomSheetBehavior _bottomSheetBehaviour;
-//        private BottomSheet4StateBehaviour _bottomSheetBehaviour;
-        private Fragment _fragment;
+        private CircularProfileView _profileView;
+        private AppCompatTextView _profileNameView;
+        private FrameLayout _page_container;
+
+        private LinearLayout _brightnessControlContainer;
+        private AppCompatSeekBar _brightnessControl;
+
+
+        private Fragment _pageFragment;
+        private Fragment _chatFragment;
+
+        private SimpleModalAlertDialogFragment _dialog;
+
         private NavMenuExpandableListAdapter _navDrawerListAdapter;
         private ExpandableListView _navDrawerListview;
         private List<TextImageResourcePair> _listDataGroups;
         private Dictionary<string, List<TextImageResourcePair>> _listDataItems;
         private int _previousGroup = -1;
 
+        public LinearLayout BottomSheet { get; private set; }
+        public Edison.Mobile.Android.Common.Behaviors.BottomSheetBehavior BottomSheetBehaviour { get; private set; }
 
-        private List<AppCompatImageButton> _imageButtons = new List<AppCompatImageButton>();
+
+        public static string Name { get; private set; }
+
 
 
         // Navigation Drawer Group Data
         private static readonly List<ResourcePair> NAV_DRAWER_GROUP_RESOURCES = new List<ResourcePair>
         {
-            new ResourcePair(Resource.String.home, Resource.Drawable.abc_ic_menu_copy_mtrl_am_alpha),
-            new ResourcePair(Resource.String.my_info, Resource.Drawable.abc_ic_menu_copy_mtrl_am_alpha),
-            new ResourcePair(Resource.String.notifications, Resource.Drawable.abc_ic_menu_copy_mtrl_am_alpha),
-            new ResourcePair(Resource.String.settings, Resource.Drawable.abc_ic_menu_copy_mtrl_am_alpha),
+            new ResourcePair(Resource.String.home, Resource.Drawable.ic_home_24),
+            new ResourcePair(Resource.String.my_info, Resource.Drawable.user),
+            new ResourcePair(Resource.String.notifications, Resource.Drawable.notification),
+            new ResourcePair(Resource.String.settings, Resource.Drawable.settings),
         };
 
 
@@ -97,13 +130,31 @@ namespace Edison.Mobile.User.Client.Droid.Activities
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
- //           Container.Initialize(new CoreContainerRegistrar(), new PlatformCommonContainerRegistrar(this), new PlatformContainerRegistrar());
 
             base.OnCreate(savedInstanceState);
+
+            //Initialization now done in MainApplication
+            //Container.Initialize(new CoreContainerRegistrar(), new PlatformCommonContainerRegistrar(this), new PlatformContainerRegistrar());
+
+#if DEBUG
+            // Used when testing UI without having to login each time
+            if (!LoginActivity.UsingLogon)
+            {
+                Task.Run(async () => {
+                    await Constants.CalculateUIDimensionsAsync(this);
+                });
+            }
+# endif
+
             SetContentView(Resource.Layout.main_activity);
+
+/*            Task.Run(async () => {
+                await Constants.UpdateBarDimensionsAsync(this);
+            }); */
+            Constants.UpdateBarDimensions(this);
+
             Initialize(savedInstanceState);
-  //          Window.SetStatusBarColor(Resources.GetColor(Resource.Color.app_background));
-            Window.SetStatusBarColor(new Color(ContextCompat.GetColor(this, Resource.Color.app_blue)));
+            Window.SetStatusBarColor(new Color(ContextCompat.GetColor(this, Resource.Color.app_background)));
         }
 
 
@@ -113,7 +164,10 @@ namespace Edison.Mobile.User.Client.Droid.Activities
             BindResources();
             SetUpToolbar();
             SetUpDrawer();
+            BindProfileData();
             SetUpBottomSheet();
+            BindEvents();
+            AdjustViewPositions();
             RestoreState(savedInstanceState);
             Window.ClearFlags(WindowManagerFlags.TranslucentStatus);
             Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
@@ -122,38 +176,107 @@ namespace Edison.Mobile.User.Client.Droid.Activities
 
         private void BindResources()
         {
-            _context = this;
+            _coordinatorLayout = FindViewById<CoordinatorLayout>(Resource.Id.nav_coordinator_content);
             _drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             _toolbar = FindViewById<Toolbar>(Resource.Id.nav_toolbar);
             _customToolbarTitleWrapper = FindViewById<LinearLayout>(Resource.Id.toolbar_title_wrapper);
             _customToolbarTitle = FindViewById<AppCompatTextView>(Resource.Id.toolbar_title);
             _customToolbarSubtitle = FindViewById<AppCompatTextView>(Resource.Id.toolbar_subtitle);
-            _bottomSheet = FindViewById<LinearLayout>(Resource.Id.bottom_sheet);
-            _bottomSheetBehaviour = BottomSheetBehavior.From(_bottomSheet);
+            _profileView = FindViewById<CircularProfileView>(Resource.Id.img_profile);
+            _profileNameView = FindViewById<AppCompatTextView>(Resource.Id.profile_name);
+            _page_container = FindViewById<FrameLayout>(Resource.Id.page_container);
+            BottomSheet = FindViewById<LinearLayout>(Resource.Id.bottom_sheet);
+            //BottomSheetBehaviour = Edison.Mobile.Android.Common.Behaviors.BottomSheetBehavior.From(_bottomSheet);
             //            _bottomSheetBehaviour = BottomSheet4StateBehaviour.From(_bottomSheet);
+            BottomSheetBehaviour = new Edison.Mobile.Android.Common.Behaviors.BottomSheetBehavior();
+            CoordinatorLayout.LayoutParams lp = BottomSheet.LayoutParameters as CoordinatorLayout.LayoutParams;
+            lp.Behavior = BottomSheetBehaviour;
+            BottomSheet.LayoutParameters = lp;
 
 
-            _imageButtons.Add(FindViewById<AppCompatImageButton>(Resource.Id.qc_emergency));
-            _imageButtons.Add(FindViewById<AppCompatImageButton>(Resource.Id.qc_activity));
-            _imageButtons.Add(FindViewById<AppCompatImageButton>(Resource.Id.qc_safe));
-            foreach (var button in _imageButtons)
-            {
-                button.Click += OnButtonClick;
-            }
+
+
+            _brightnessControlContainer = FindViewById<LinearLayout>(Resource.Id.brightness_slider_container);
+            _brightnessControl = FindViewById<AppCompatSeekBar>(Resource.Id.brightness_slider);
+
+
+
 
 
         }
 
+
+        private void AdjustViewPositions()
+        {
+            // Set the Bottom Sheet parameters - dependent on screen dimensions
+            if (Constants.BottomSheetPeekHeightPx > -1)
+                BottomSheetBehaviour.PeekHeight = Constants.BottomSheetPeekHeightPx;
+            if (Constants.BottomSheetHeightPx > -1)
+                BottomSheet.LayoutParameters.Height = Constants.BottomSheetHeightPx;
+
+            var pageContainer = FindViewById<FrameLayout>(Resource.Id.page_container);
+            pageContainer.SetPadding(0, 0, 0, Constants.BottomSheetPeekHeightPx);
+
+            _brightnessControl.LayoutParameters.Width = Constants.EventGaugeAreaHeightPx;  // Transposed 90deg so Width actually Height
+  //          var mode = ScreenUtilities.GetScreenBrightnessMode(this);
+  //          var brightness = ScreenUtilities.GetScreenBrightnessWithMode(this, mode);
+ //           // Get the Current Brightness level and adjust brightness slider if necessary
+ //           GetAndSetBrightnessBrightness();
+        }
+        
+
+        private void BindProfileData()
+        {
+            //Get data from MenuViewModel
+            Name = ViewModel.ProfileName;
+            var initials = ViewModel.Initials;
+            var profileImageUri = ViewModel.ProfileImageUri;
+
+            // Allocate Data to views
+            _profileNameView.Text = Name;
+#if DEBUG
+            if (string.IsNullOrWhiteSpace(Name))
+                _profileNameView.Text = "ALISON SUMMERFIELD";
+
+            // for Testing
+//_profileView.ProfileInitials.SetTypeface(ResourcesCompat.GetFont(this, Resource.Font.rubik_blackitalic), TypefaceStyle.BoldItalic);
+if (ViewModel.Email == null || ViewModel.Email.Contains("bluemetal.com"))
+            _profileView.SetProfileResource(Resource.Drawable.greyhound_kimmie);
+//            _profileView.SetInitials("ALISON SUMMERFIELD");
+
+#endif
+            if (profileImageUri == null)  // Currently will always be null
+            {
+                
+                _profileView.SetText(initials);
+#if DEBUG
+                if (string.IsNullOrWhiteSpace(initials))
+                    _profileView.SetInitials("ALISON SUMMERFIELD");
+#endif
+
+            }
+            else
+            {
+                // TODO - Fetch Image -  actually probably pre-fetch as a part of login and store as local file - or allocate field name if selected form file system
+                // Will require Data service to be added to MenuViewModel - prob to return an object which we can cast to a Drawable/Bitmap. etc
+                _profileView.SetProfileUri(profileImageUri);
+            }
+
+        }
+
+/*
         private void OnButtonClick(object sender, EventArgs e)
         {
             if (sender is AppCompatImageButton imgButton)
                 Toast.MakeText(this, (string)imgButton.Tag, ToastLength.Short).Show();
 
         }
+*/
+
 
         private void SetUpToolbar()
         {
-            // Not having reaised AppBar area, so dont set SupportActionBar
+            // Not having raised AppBar area, so don't set SupportActionBar
             //SetSupportActionBar(_toolbar);
 
             // Set the page Title - Required because of the way that Android sets up app asset names
@@ -163,17 +286,16 @@ namespace Edison.Mobile.User.Client.Droid.Activities
 //            SetToolbarCustomSubtitle("Subtitle");
 //            _toolbar.Subtitle = "Subtitle";
 
-            //Set tolbar title colors
-//            Color col = Resources.GetColor(Resource.Color.app_blue);
+            //Set toolbar title colors
             Color col = new Color(ContextCompat.GetColor(this, Resource.Color.app_blue));
             _toolbar.SetTitleTextColor(col);
             _toolbar.SetSubtitleTextColor(col);
+            SetToolbarCustomTitleColor(col);
+            SetToolbarCustomSubtitleColor(col);
 
             // Manually add the menu to the toolbar and set the menu item click event(not done automatically because not setting SupportActionBar)
             OnCreateOptionsMenu(_toolbar.Menu);
-            _toolbar.MenuItemClick += OnMenuItemClicked;
 
-            _toolbar.ViewTreeObserver.GlobalLayout += OnToolbarLayout;
         }
 
         private void SetUpDrawer()
@@ -183,7 +305,6 @@ namespace Edison.Mobile.User.Client.Droid.Activities
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, _drawer, _toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
             _drawer.AddDrawerListener(toggle);
             toggle.SyncState();
-          //  toggle.DrawerArrowDrawable.Color = Resources.GetColor(Resource.Color.app_blue);
             toggle.DrawerArrowDrawable.Color = new Color(ContextCompat.GetColor(this, Resource.Color.app_blue));
 
             _navDrawerListview = FindViewById<global::Android.Widget.ExpandableListView>(Resource.Id.nav_list);
@@ -192,129 +313,180 @@ namespace Edison.Mobile.User.Client.Droid.Activities
             _listDataItems = navMenuData.Item2;
             _navDrawerListAdapter = new NavMenuExpandableListAdapter(this, _listDataGroups, _listDataItems);
             _navDrawerListview.SetAdapter(_navDrawerListAdapter);
-            _navDrawerListview.GroupExpand += OnGroupExpand;
-            _navDrawerListview.GroupCollapse += OnGroupCollapse;
-            _navDrawerListview.ChildClick += OnChildClicked;
-            _navDrawerListview.GroupClick += OnGroupClicked;
+
         }
 
         private void SetUpBottomSheet()
         {
-//            _bottomSheetBehaviour.SetBottomSheetCallback(new IntelligentBottomSheetCallback());
+            //            _bottomSheetBehaviour.SetBottomSheetCallback(new IntelligentBottomSheetCallback());
+            LoadChatFragment();
+        }
+
+        private void BindEvents()
+        {
+            _toolbar.MenuItemClick += OnMenuItemClicked;
+            _toolbar.ViewTreeObserver.GlobalLayout += OnToolbarLayout;
+
+            _navDrawerListview.GroupExpand += OnGroupExpand;
+            _navDrawerListview.GroupCollapse += OnGroupCollapse;
+            _navDrawerListview.ChildClick += OnChildClicked;
+            _navDrawerListview.GroupClick += OnGroupClicked;
+
+            _brightnessControl.ProgressChanged += OnBrightnessChanged;
+
+            FragmentPoppedOnBack += OnFragmentPopped;
+
+            BottomSheetBehaviour.Slide += OnBottomSheetSlide;
+        }
+
+        private void UnbindEvents()
+        {
+            _toolbar.MenuItemClick -= OnMenuItemClicked;
+            _toolbar.ViewTreeObserver.GlobalLayout -= OnToolbarLayout;
+
+            _navDrawerListview.GroupExpand -= OnGroupExpand;
+            _navDrawerListview.GroupCollapse -= OnGroupCollapse;
+            _navDrawerListview.ChildClick -= OnChildClicked;
+            _navDrawerListview.GroupClick -= OnGroupClicked;
+
+            _brightnessControl.ProgressChanged -= OnBrightnessChanged;
+
+            BottomSheetBehaviour.Slide -= OnBottomSheetSlide;
+
+
+            _brightnessControl.ProgressChanged -= OnBrightnessChanged;
+
+            FragmentPoppedOnBack -= OnFragmentPopped;
+        }
+
+        private void OnFragmentPopped(object s, Fragment fragment)
+        {
+            _pageFragment = fragment;
         }
 
 
-/*
-        private enum BottomSheetSettledState
-        {
-            Closed,
-            Intermediate,
-            Open
-        }
-        private static BottomSheetSettledState _currentBottomDrawerState = BottomSheetSettledState.Closed;
-        private class IntelligentBottomSheetCallback : BottomSheetBehavior.BottomSheetCallback
-        {
-            private int _lastState;
 
-            public override void OnStateChanged(View bottomSheet, int newState)
-            {
-                var behaviour = BottomSheetBehavior.From(bottomSheet);
-                if (behaviour != null)
-                { 
-                    //if hidden set to collapsed, peek height = 10dp
-                    if (newState == BottomSheetBehavior.StateCollapsed || newState == BottomSheetBehavior.StateExpanded || newState == BottomSheetBehavior.StateHidden)
-                        _lastState = newState;
+        /*
+                private enum BottomSheetSettledState
+                {
+                    Closed,
+                    Intermediate,
+                    Open
+                }
+                private static BottomSheetSettledState _currentBottomDrawerState = BottomSheetSettledState.Closed;
+                private class IntelligentBottomSheetCallback : BottomSheetBehavior.BottomSheetCallback
+                {
+                    private int _lastState;
 
-                    switch (_currentBottomDrawerState)
+                    public override void OnStateChanged(View bottomSheet, int newState)
                     {
+                        var behaviour = BottomSheetBehavior.From(bottomSheet);
+                        if (behaviour != null)
+                        { 
+                            //if hidden set to collapsed, peek height = 10dp
+                            if (newState == BottomSheetBehavior.StateCollapsed || newState == BottomSheetBehavior.StateExpanded || newState == BottomSheetBehavior.StateHidden)
+                                _lastState = newState;
 
-                        case BottomSheetSettledState.Closed:
-                            if (newState == BottomSheetBehavior.StateExpanded)
-                            {
-                                behaviour.PeekHeight = PixelSizeConverter.DpToPx(180);
-                                behaviour.Hideable = true;
-                                _currentBottomDrawerState = BottomSheetSettledState.Intermediate;
-                                bottomSheet.LayoutParameters.Height = ViewGroup.LayoutParams.MatchParent;
-                                bottomSheet.Invalidate();
-                                bool test = true;
-                            }
-                            break;
-
-                        case BottomSheetSettledState.Intermediate:
-                            if (newState == BottomSheetBehavior.StateExpanded)
-                            {
-//                                bottomSheet.LayoutParameters.Height = ViewGroup.LayoutParams.MatchParent;
-//                                behaviour.PeekHeight = PixelSizeConverter.DpToPx(180);
-                                behaviour.Hideable = true;
- //                               behaviour.State = BottomSheetBehavior.StateCollapsed;
-                                _currentBottomDrawerState = BottomSheetSettledState.Open;
-                                bool test = true;
-                            }
-                            else if (newState == BottomSheetBehavior.StateHidden)
-                            {
-                                behaviour.PeekHeight = PixelSizeConverter.DpToPx(20);
-                                behaviour.Hideable = false;
-                                behaviour.State = BottomSheetBehavior.StateCollapsed;
-                                _currentBottomDrawerState = BottomSheetSettledState.Closed;
-                                bottomSheet.LayoutParameters.Height = PixelSizeConverter.DpToPx(180);
-                                bottomSheet.Invalidate();
-                                bool test = true;
-
-                            }
-
-
-
-                            break;
-
-
-                        case BottomSheetSettledState.Open:
-                            if (newState == BottomSheetBehavior.StateCollapsed)
-                            {
- //                               bottomSheet.LayoutParameters.Height = ViewGroup.LayoutParams.MatchParent;
- //                               behaviour.PeekHeight = PixelSizeConverter.DpToPx(180);
-                                behaviour.Hideable = true;
-                                behaviour.State = BottomSheetBehavior.StateCollapsed;
-                                _currentBottomDrawerState = BottomSheetSettledState.Intermediate;
-                                bool test = true;
-                            }
-                            else if (newState == BottomSheetBehavior.StateHidden)
+                            switch (_currentBottomDrawerState)
                             {
 
-                                behaviour.PeekHeight = PixelSizeConverter.DpToPx(20);
-                                behaviour.Hideable = false;
-                                behaviour.State = BottomSheetBehavior.StateCollapsed;
-                                _currentBottomDrawerState = BottomSheetSettledState.Closed;
-                                bottomSheet.LayoutParameters.Height = PixelSizeConverter.DpToPx(180);
-                                bottomSheet.Invalidate();
-                                bool test = true;
+                                case BottomSheetSettledState.Closed:
+                                    if (newState == BottomSheetBehavior.StateExpanded)
+                                    {
+                                        behaviour.PeekHeight = PixelSizeConverter.DpToPx(180);
+                                        behaviour.Hideable = true;
+                                        _currentBottomDrawerState = BottomSheetSettledState.Intermediate;
+                                        bottomSheet.LayoutParameters.Height = ViewGroup.LayoutParams.MatchParent;
+                                        bottomSheet.Invalidate();
+                                        bool test = true;
+                                    }
+                                    break;
+
+                                case BottomSheetSettledState.Intermediate:
+                                    if (newState == BottomSheetBehavior.StateExpanded)
+                                    {
+        //                                bottomSheet.LayoutParameters.Height = ViewGroup.LayoutParams.MatchParent;
+        //                                behaviour.PeekHeight = PixelSizeConverter.DpToPx(180);
+                                        behaviour.Hideable = true;
+         //                               behaviour.State = BottomSheetBehavior.StateCollapsed;
+                                        _currentBottomDrawerState = BottomSheetSettledState.Open;
+                                        bool test = true;
+                                    }
+                                    else if (newState == BottomSheetBehavior.StateHidden)
+                                    {
+                                        behaviour.PeekHeight = PixelSizeConverter.DpToPx(20);
+                                        behaviour.Hideable = false;
+                                        behaviour.State = BottomSheetBehavior.StateCollapsed;
+                                        _currentBottomDrawerState = BottomSheetSettledState.Closed;
+                                        bottomSheet.LayoutParameters.Height = PixelSizeConverter.DpToPx(180);
+                                        bottomSheet.Invalidate();
+                                        bool test = true;
+
+                                    }
+
+
+
+                                    break;
+
+
+                                case BottomSheetSettledState.Open:
+                                    if (newState == BottomSheetBehavior.StateCollapsed)
+                                    {
+         //                               bottomSheet.LayoutParameters.Height = ViewGroup.LayoutParams.MatchParent;
+         //                               behaviour.PeekHeight = PixelSizeConverter.DpToPx(180);
+                                        behaviour.Hideable = true;
+                                        behaviour.State = BottomSheetBehavior.StateCollapsed;
+                                        _currentBottomDrawerState = BottomSheetSettledState.Intermediate;
+                                        bool test = true;
+                                    }
+                                    else if (newState == BottomSheetBehavior.StateHidden)
+                                    {
+
+                                        behaviour.PeekHeight = PixelSizeConverter.DpToPx(20);
+                                        behaviour.Hideable = false;
+                                        behaviour.State = BottomSheetBehavior.StateCollapsed;
+                                        _currentBottomDrawerState = BottomSheetSettledState.Closed;
+                                        bottomSheet.LayoutParameters.Height = PixelSizeConverter.DpToPx(180);
+                                        bottomSheet.Invalidate();
+                                        bool test = true;
+                                    }
+
+                                    break;
+
                             }
 
-                            break;
+
+                        }
 
                     }
 
+                    public override void OnSlide(View bottomSheet, float slideOffset)
+                    {
+                        var offset = slideOffset;
+                    }
+
+
 
                 }
-
-            }
-
-            public override void OnSlide(View bottomSheet, float slideOffset)
-            {
-                var offset = slideOffset;
-            }
-
-
-
-        }
-*/
+        */
 
         private void ShowDefaultFragment()
         {
             // Assign initial Fragment
-            _fragment = new HomePageFragment();
-            SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content_container, _fragment, null).Commit();
+            _pageFragment = new HomePageFragment();
+            ReplaceFragment(_pageFragment, Resource.Id.content_container, true, Resource.String.home.ToString());
+ //           SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content_container, _pageFragment, null).Commit();
 //            ReplaceFragmentWithDelay(_fragment);
         }
+
+        private void LoadChatFragment()
+        {
+            _chatFragment = new ChatFragment(Resource.Layout.main_activity);
+            ReplaceFragment(_chatFragment, Resource.Id.bottom_sheet_fragment_container, false);
+ //           SupportFragmentManager.BeginTransaction().Replace(Resource.Id.bottom_sheet_fragment_container, _chatFragment, null).Commit();
+        }
+
+
 
         // Handle any title changes that come with Fragments, if OnCreate has been called due to a change in screen orientation
         private void RestoreState(Bundle savedInstanceState)
@@ -323,7 +495,10 @@ namespace Edison.Mobile.User.Client.Droid.Activities
             if (savedInstanceState == null)
                 ShowDefaultFragment();
             else
-                SupportActionBar.Title = savedInstanceState.GetCharSequence(StateKey_ActionbarTitle);
+            {
+                _customToolbarTitle.Text = savedInstanceState.GetCharSequence(StateKey_ActionbarTitle);
+                //                _customToolbarSubtitle.Text = savedInstanceState.GetCharSequence(StateKey_ActionbarSubtitle);
+            }
         }
 
 
@@ -335,7 +510,7 @@ namespace Edison.Mobile.User.Client.Droid.Activities
             if (_drawer.IsDrawerOpen(GravityCompat.Start))
                 _drawer.CloseDrawer(GravityCompat.Start);
             else
-                base.OnBackPressed();
+                base.OnBackPressWithFragmentManagement();
         }
 
 
@@ -420,40 +595,48 @@ namespace Edison.Mobile.User.Client.Droid.Activities
                 switch (groupResource)
                 {
                     case Resource.String.home:
-                        if (!(_fragment is HomePageFragment))
+                        if (!(_pageFragment is HomePageFragment))
                         {
-                            _fragment = new HomePageFragment();
-                            ReplaceFragmentWithDelay(_fragment);
+                            _pageFragment = GetFragmentFromBackstack(Resource.String.home.ToString());
+                            if (_pageFragment ==  null)
+                                _pageFragment = new HomePageFragment();
+                            ReplaceFragmentWithDelay(_pageFragment, Resource.Id.content_container, true, Resource.String.home.ToString());
                         }
                         // Close the drawer
                         drawer.CloseDrawer(GravityCompat.Start);
                         break;
 
                     case Resource.String.my_info:
-                        if (!(_fragment is ProfilePageFragment))
+                        if (!(_pageFragment is ProfilePageFragment))
                         {
-                            _fragment = new ProfilePageFragment();
-                            ReplaceFragmentWithDelay(_fragment);
+                            _pageFragment = GetFragmentFromBackstack(Resource.String.my_info.ToString());
+                            if (_pageFragment == null)
+                                _pageFragment = new ProfilePageFragment();
+                            ReplaceFragmentWithDelay(_pageFragment, Resource.Id.content_container, true, Resource.String.my_info.ToString());
                         }
                         // Close the drawer
                         drawer.CloseDrawer(GravityCompat.Start);
                         break;
 
                     case Resource.String.notifications:
-                        if (!(_fragment is NotificationsPageFragment))
+                        if (!(_pageFragment is NotificationsPageFragment))
                         {
-                            _fragment = new NotificationsPageFragment();
-                            ReplaceFragmentWithDelay(_fragment);
+                            _pageFragment = GetFragmentFromBackstack(Resource.String.notifications.ToString());
+                            if (_pageFragment == null)
+                                _pageFragment = new NotificationsPageFragment();
+                            ReplaceFragmentWithDelay(_pageFragment, Resource.Id.content_container, true, Resource.String.notifications.ToString());
                         }
                         // Close the drawer
                         drawer.CloseDrawer(GravityCompat.Start);
                         break;
 
                     case Resource.String.settings:
-                        if (!(_fragment is SettingsPageFragment))
+                        if (!(_pageFragment is SettingsPageFragment))
                         {
-                            _fragment = new SettingsPageFragment();
-                            ReplaceFragmentWithDelay(_fragment);
+                            _pageFragment = GetFragmentFromBackstack(Resource.String.settings.ToString());
+                            if (_pageFragment == null)
+                                _pageFragment = new SettingsPageFragment();
+                            ReplaceFragmentWithDelay(_pageFragment, Resource.Id.content_container, true, Resource.String.settings.ToString());
                         }
                         // Close the drawer
                         drawer.CloseDrawer(GravityCompat.Start);
@@ -480,36 +663,15 @@ namespace Edison.Mobile.User.Client.Droid.Activities
 
         }
 
-
-
-        // Start Fragment transaction with delay to avoid any graphics issues while closing the drawer
-        private void ReplaceFragmentWithDelay(Fragment fragment, string tag = null)
-        {
-            new Handler().PostDelayed(() =>
-            {
-                SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content_container, fragment, tag).Commit();
-            }, TransitionDelayMs);
-        }
-
-
-        // Start this activity with delay to avoid any graphics issues while closing the drawer
-        private void StartActivityWithDelay(Class activity)
-        {
-            new Handler().PostDelayed(() =>
-            {
-                StartActivity(new Intent(_context, activity));
-
-            }, TransitionDelayMs);
-        }
-
-
-
         private void OnMenuItemClicked(object sender, Toolbar.MenuItemClickEventArgs e)
         {
             OnOptionsItemSelected(e.Item);
         }
+
+
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
+
             switch (item.ItemId)
             {
                 case global::Android.Resource.Id.Home:
@@ -518,7 +680,16 @@ namespace Edison.Mobile.User.Client.Droid.Activities
 
 
                 case Resource.Id.action_brightness:
-                    Toast.MakeText(this, "Brightness clicked", ToastLength.Short).Show();
+                    // Need to adjust the Brightness control position here as can guarantee the toolbar has been laid out
+                    UpdateBightnessPosition();
+                    // Update the control visibility
+                    if (_brightnessControlContainer.Visibility == ViewStates.Visible)
+                        _brightnessControlContainer.Visibility = ViewStates.Invisible;
+                    else
+                    {
+                        if (EnsureWriteSettingsPrivilege())
+                            HandleBrightnessPermissionGranted();
+                    }
                     return true;
 
 
@@ -528,13 +699,58 @@ namespace Edison.Mobile.User.Client.Droid.Activities
             return base.OnOptionsItemSelected(item);
         }
 
+        private void HandleBrightnessPermissionGranted()
+        {
+             GetAndSetBrightnessBrightness();
+            _brightnessControlContainer.Visibility = ViewStates.Visible;
+        }
+
+        private void GetAndSetBrightnessBrightness()
+        {
+            // get current brightness mode
+            var mode = ScreenUtilities.GetScreenBrightnessMode(this);
+            var brightness = ScreenUtilities.GetScreenBrightnessWithMode(this, mode);
+            var brightnessInt = (int)Math.Round(brightness * 100);
+            // set the level on the control if different from current position (user or system may have altered the brightness outside the app)
+            // <0 check done in case auto value returned
+            if (brightnessInt >= 0 && brightnessInt != _brightnessControl.Progress)
+                _brightnessControl.Progress = brightnessInt;
+            else if (brightnessInt < 0 && _brightnessControl.Progress != 100)  // Done for initialization purposed - especially on emulators
+                _brightnessControl.Progress = 100;
+        }
+
 
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater.Inflate(Resource.Menu.actionBarMenu, menu);
-            _toolbar.UpdateMenuItemTint(Resources.GetColor(Resource.Color.app_blue));
+            _toolbar.UpdateMenuItemTint(new Color(ContextCompat.GetColor(this, Resource.Color.app_blue)));
 
             return base.OnCreateOptionsMenu(menu);
+        }
+
+        private void UpdateBightnessPosition()
+        {
+            // Only update position if not previously updated
+            if (Constants.BrightnessContainerWidth == -1)
+
+            {
+                Constants.UpdateBrightnessControlDimensions(_toolbar, FindViewById<ActionMenuItemView>(Resource.Id.action_brightness));
+                // Set the brightness control container width
+                _brightnessControlContainer.LayoutParameters.Width = Constants.BrightnessContainerWidth;
+                // Set the layout margin for the brightness control container to bring it just under the menu item icon
+                var lp = (ViewGroup.MarginLayoutParams)_brightnessControlContainer.LayoutParameters;
+                lp.SetMargins(0, -Constants.BrightnessToolbarItemIconBottomPadding, 0, 0);
+                _brightnessControlContainer.LayoutParameters = lp;
+                _brightnessControlContainer.Invalidate();
+            }
+        }
+
+        private void OnBrightnessChanged(object sender, ProgressChangedEventArgs e)
+        {
+            var prog = e.Progress;
+            // change brightness
+            float brightness = (float)(e.Progress) / 100f;
+            ScreenUtilities.SetManualScreenBrightnessLevel(this, brightness);
         }
 
 
@@ -561,10 +777,115 @@ namespace Edison.Mobile.User.Client.Droid.Activities
             return true;
         }
 
+        public void SetToolbarCustomTitleColor(Color color)
+        {
+            _customToolbarTitle?.SetTextColor(color);
+        }
+        public void SetToolbarCustomSubtitleColor(Color color)
+        {
+            _customToolbarSubtitle?.SetTextColor(color);
+        }
+
+        public bool EnsureWriteSettingsPrivilege()
+        {
+            var permission = global::Android.Manifest.Permission.WriteSettings;
+            if (ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted || Settings.System.CanWrite(this))
+                return true;
+            // Ask for permission - causes OnRequestPermissionsResult to be called with the result
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            {
+                // Need to open up the system permissions settings page.to give permissions (Android requirement for 6.0 onwards)
+                // Display a dialog to warn the user otherwise the will be confused
+                _dialog = new SimpleModalAlertDialogFragment
+                {
+                    DialogTitle = Resources.GetString(Resource.String.permission_required),
+                    DialogMessage = Resources.GetString(Resource.String.screen_brightness_dialog_message),
+                    DialogPositiveText = Resources.GetString(Resource.String.yes),
+                    DialogNegitiveText = Resources.GetString(Resource.String.no)
+                };
+                _dialog.DialogResponse += OnPerimissionDialogResponse;
+                DisplayDialogFragment(_dialog, "dialog");
+            }
+            else
+                global::Android.Support.V4.App.ActivityCompat.RequestPermissions(this, new string[] { permission }, RequestWriteSettingsPermissionId);
+            return false;
+        }
+
+
+        private void OnPerimissionDialogResponse(object sender, DialogClickEventArgs e)
+        {
+            if (e.Which == -1) // Yes
+            {
+                // Open up the system permissions settings page.to give permission (Android requirement for 6.0 onwards)
+                Intent intent = new Intent(Settings.ActionManageWriteSettings);
+                intent.SetData(global::Android.Net.Uri.Parse("package:" + this.PackageName));
+                this.StartActivityForResult(intent, RequestWriteSettingsPermissionId);
+            }
+            // Dismiss & cleanup the DialogFragement
+            _dialog.DialogResponse -= OnPerimissionDialogResponse;
+            _dialog.Dismiss();
+            _dialog.Dispose();
+        }
+
+        // Called when user responds to in app permissions request
+        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+            switch (requestCode)
+            {
+                case RequestWriteSettingsPermissionId:
+                    if (Settings.System.CanWrite(this))
+                        //Permission granted
+                        HandleBrightnessPermissionGranted();
+                    else
+                    {
+                        //Permission Denied
+                        var snack = Snackbar.Make(_coordinatorLayout, Resources.GetString(Resource.String.app_permissions_error2), Snackbar.LengthShort);
+                        snack.View.Elevation = Resources.GetDimensionPixelSize(Resource.Dimension.snack_bar_elevation);
+                        snack.Show();
+                    }
+                    break;
+
+            }
+        }
+        // Called when user responds to in app permissions request
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
+        {
+            switch (requestCode)
+            {
+                case RequestWriteSettingsPermissionId:
+                    {
+                        var len = grantResults.Length;
+                        if (len > 0 && grantResults[0] == Permission.Granted)
+                        {
+                            //Permission granted
+                            HandleBrightnessPermissionGranted();
+                        }
+                        else
+                        {
+                            //Permission Denied
+                            var snack = Snackbar.Make(_coordinatorLayout, Resources.GetString(Resource.String.app_permissions_error2), Snackbar.LengthShort);
+                            snack.View.Elevation = Resources.GetDimensionPixelSize(Resource.Dimension.snack_bar_elevation);
+                            snack.Show();
+                        }
+                    }
+                    break;
+            }
+        }
+
+
+
+        public void OnBottomSheetSlide(object s, float slideOffset)
+        {
+            if (slideOffset >= 0 && slideOffset <= 1)
+                _page_container.Alpha = 1 - slideOffset * 0.8f;
+        }
+
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
-            outState.PutCharSequence(StateKey_ActionbarTitle, SupportActionBar.Title);
+            outState.PutCharSequence(StateKey_ActionbarTitle, _customToolbarTitle.Text);
+            //            outState.PutCharSequence(StateKey_ActionbarSubtitle, _customToolbarSubtitle.Text);
             base.OnSaveInstanceState(outState);
         }
 
@@ -582,19 +903,7 @@ namespace Edison.Mobile.User.Client.Droid.Activities
 
         protected override void OnDestroy()
         {
-            _toolbar.MenuItemClick -= OnMenuItemClicked;
-            _navDrawerListview.GroupExpand -= OnGroupExpand;
-            _navDrawerListview.GroupCollapse -= OnGroupCollapse;
-            _navDrawerListview.ChildClick -= OnChildClicked;
-            _navDrawerListview.GroupClick -= OnGroupClicked;
-
-            foreach (var button in _imageButtons)
-            {
-                button.Click -= OnButtonClick;
-            }
-
-            _toolbar.ViewTreeObserver.GlobalLayout -= OnToolbarLayout;
-
+            UnbindEvents();
             base.OnDestroy();
         }
 

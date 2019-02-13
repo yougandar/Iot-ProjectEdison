@@ -5,21 +5,12 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
     {
-        path: 'configuration',
+        path: 'settings',
         loadChildren:
-            './modules/configuration/configuration.module#ConfigurationModule',
+            './modules/settings/settings.module#SettingsModule',
         canLoad: [ AuthenticationGuard ],
         data: {
-            title: 'CONFIGURATION',
-        },
-    },
-    {
-        path: 'history',
-        loadChildren:
-            './modules/history/history.module#HistoryModule',
-        canLoad: [ AuthenticationGuard ],
-        data: {
-            title: 'HISTORY',
+            title: 'SETTINGS',
         },
     }
 ]

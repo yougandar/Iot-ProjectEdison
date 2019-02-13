@@ -1,9 +1,9 @@
 import { Subscription } from 'rxjs';
 
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatCard } from '@angular/material';
 import { select, Store } from '@ngrx/store';
 
+import { getEventColor } from '../../../../core/colorRank';
 import { spinnerColors } from '../../../../core/spinnerColors';
 import { AppState } from '../../../../reducers';
 import { ToggleUserChatWindow } from '../../../../reducers/chat/chat.actions';
@@ -130,7 +130,7 @@ export class EventCardComponent implements OnInit, OnDestroy {
     }
 
     getResponseColor() {
-        return this.response ? this.response.responseState === ResponseState.Inactive ? this._isExpired() ? 'grey' : 'green' : this.response.color.toLowerCase() : ''
+        return getEventColor(this.event, this.response);
     }
 
     ngOnDestroy() {
@@ -181,6 +181,6 @@ export class EventCardComponent implements OnInit, OnDestroy {
     }
 
     private _isExpired = () => {
-        return new Date().getTime() > new Date(this.event.endDate).getTime();
+        return new Date().getTime() > new Date(this.event.closureDate).getTime();
     }
 }

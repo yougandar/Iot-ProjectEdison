@@ -18,7 +18,7 @@
     <DefineConstants>DEBUG;ENABLE_TEST_CLOUD;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodesignKey>iPhone Developer: Alexander Katz (469N9XNS2W)</CodesignKey>
+    <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
     <MtouchFastDev>true</MtouchFastDev>
@@ -28,7 +28,8 @@
     <MtouchArch>x86_64</MtouchArch>
     <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
     <PlatformTarget>x86</PlatformTarget>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignProvision>
+    </CodesignProvision>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
@@ -157,7 +158,52 @@
     </MtouchVerbosity>
     <CodesignProvision>VS: WildCard Development</CodesignProvision>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Android User %28Release%29|iPhoneSimulator'">
+    <OutputPath>bin\iPhoneSimulator\Android User %28Release%29\</OutputPath>
+    <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Android User %28Release%29|iPhone'">
+    <OutputPath>bin\iPhone\Android User %28Release%29\</OutputPath>
+    <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Android User %28Release%29|AnyCPU'">
+    <OutputPath>bin\Android User %28Release%29\</OutputPath>
+    <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Android Admin|iPhoneSimulator'">
+    <OutputPath>bin\iPhoneSimulator\Android Admin\</OutputPath>
+    <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Android Admin|iPhone'">
+    <OutputPath>bin\iPhone\Android Admin\</OutputPath>
+    <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Android Admin|AnyCPU'">
+    <OutputPath>bin\Android Admin\</OutputPath>
+    <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="RestSharp, Version=106.6.7.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\..\Edison.Mobile.Common\packages\RestSharp.106.6.7\lib\netstandard2.0\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -171,9 +217,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Xamarin.Azure.NotificationHubs.iOS">
       <HintPath>..\..\Edison.Mobile.Common\packages\Xamarin.Azure.NotificationHubs.iOS.1.2.5.2\lib\Xamarin.iOS10\Xamarin.Azure.NotificationHubs.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="RestSharp">
-      <HintPath>..\..\Edison.Mobile.Common\packages\RestSharp.106.5.4\lib\netstandard2.0\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.IdentityModel.Logging">
       <HintPath>..\..\Edison.Mobile.Common\packages\Microsoft.IdentityModel.Logging.5.3.0\lib\netstandard2.0\Microsoft.IdentityModel.Logging.dll</HintPath>
@@ -651,53 +694,46 @@
     </ImageAsset>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\" />
-    <Folder Include="ViewControllers\" />
-    <Folder Include="Ioc\" />
-    <Folder Include="Shared\" />
-    <Folder Include="Views\" />
-    <Folder Include="DataSources\" />
-    <Folder Include="Assets.xcassets\Menu.imageset\" />
     <Folder Include="Assets.xcassets\Brightness.imageset\" />
-    <Folder Include="Assets.xcassets\Logo.imageset\" />
-    <Folder Include="Extensions\" />
-    <Folder Include="Assets.xcassets\Menu.imageset\" />
-    <Folder Include="Assets.xcassets\Location.imageset\" />
-    <Folder Include="Assets.xcassets\ChatWhite.imageset\" />
-    <Folder Include="Assets.xcassets\EmergencyWhite.imageset\" />
-    <Folder Include="Assets.xcassets\EmergencyRed.imageset\" />
+    <Folder Include="Assets.xcassets\BrightnessMoon.imageset\" />
     <Folder Include="Assets.xcassets\ChatBlue.imageset\" />
-    <Folder Include="Assets.xcassets\PersonWhite.imageset\" />
-    <Folder Include="Assets.xcassets\PersonBlue.imageset\" />
+    <Folder Include="Assets.xcassets\ChatWhite.imageset\" />
     <Folder Include="Assets.xcassets\CloseX.imageset\" />
-    <Folder Include="Assets.xcassets\NotificationBell.imageset\" />
-    <Folder Include="Navigation\" />
-    <Folder Include="Assets.xcassets\GunWhite.imageset\" />
-    <Folder Include="Assets.xcassets\GunRed.imageset\" />
-    <Folder Include="Assets.xcassets\FireWhite.imageset\" />
+    <Folder Include="Assets.xcassets\EmergencyRed.imageset\" />
+    <Folder Include="Assets.xcassets\EmergencyWhite.imageset\" />
     <Folder Include="Assets.xcassets\FireRed.imageset\" />
-    <Folder Include="Assets.xcassets\SpamWhite.imageset\" />
-    <Folder Include="Assets.xcassets\SpamYellow.imageset\" />
-    <Folder Include="Assets.xcassets\SafetyCheckWhite.imageset\" />
-    <Folder Include="Assets.xcassets\SafetyCheckBlue.imageset\" />
+    <Folder Include="Assets.xcassets\FireWhite.imageset\" />
+    <Folder Include="Assets.xcassets\GunRed.imageset\" />
+    <Folder Include="Assets.xcassets\GunWhite.imageset\" />
     <Folder Include="Assets.xcassets\HealthBlue.imageset\" />
     <Folder Include="Assets.xcassets\HealthWhite.imageset\" />
+    <Folder Include="Assets.xcassets\Location.imageset\" />
     <Folder Include="Assets.xcassets\LocationSent.imageset\" />
-    <Folder Include="Assets.xcassets\ProtestWhite.imageset\" />
-    <Folder Include="Assets.xcassets\ProtestBlue.imageset\" />
-    <Folder Include="Assets.xcassets\BrightnessMoon.imageset\" />
-    <Folder Include="Assets.xcassets\TornadoYellow.imageset\" />
-    <Folder Include="Assets.xcassets\TornadoWhite.imageset\" />
-    <Folder Include="Assets.xcassets\PackageWhite.imageset\" />
+    <Folder Include="Assets.xcassets\Logo.imageset\" />
+    <Folder Include="Assets.xcassets\Menu.imageset\" />
+    <Folder Include="Assets.xcassets\NotificationBell.imageset\" />
     <Folder Include="Assets.xcassets\PackageRed.imageset\" />
+    <Folder Include="Assets.xcassets\PackageWhite.imageset\" />
+    <Folder Include="Assets.xcassets\PersonBlue.imageset\" />
+    <Folder Include="Assets.xcassets\PersonCheck.imageset\" />
+    <Folder Include="Assets.xcassets\PersonWhite.imageset\" />
+    <Folder Include="Assets.xcassets\ProtestBlue.imageset\" />
+    <Folder Include="Assets.xcassets\ProtestWhite.imageset\" />
+    <Folder Include="Assets.xcassets\SafetyCheckBlue.imageset\" />
+    <Folder Include="Assets.xcassets\SafetyCheckWhite.imageset\" />
+    <Folder Include="Assets.xcassets\SpamWhite.imageset\" />
+    <Folder Include="Assets.xcassets\SpamYellow.imageset\" />
+    <Folder Include="Assets.xcassets\TornadoWhite.imageset\" />
+    <Folder Include="Assets.xcassets\TornadoYellow.imageset\" />
     <Folder Include="Assets.xcassets\VIPBlue.imageset\" />
     <Folder Include="Assets.xcassets\VIPWhite.imageset\" />
-    <Folder Include="Assets.xcassets\PersonCheck.imageset\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="LaunchScreen.storyboard" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
     <None Include="packages.config" />
