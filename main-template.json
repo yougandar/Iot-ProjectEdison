@@ -441,10 +441,7 @@
         "siteHost1": "edisonapi",
         "botId1": "[concat('edisonbot', variables('suffix'))]",
         "botEndpointConfig": {
-            "bot": "[concat('https://', variables('siteHost1'), '/api/messages')]",
-            "sdk": "[concat('https://', variables('siteHost1'), '/api/messages')]",
-            "designer": "[concat('https://', variables('siteHost1'), '/api/messages')]",
-            "function": "[concat('https://', variables('siteHost1'), '/api/messages?code=', 'NYI')]"
+            "bot": "[concat('https://', variables('siteHost1'), '/api/messages')]"
         },
         "applicationGatewaySubnetName1": "appgwsubnet",
         "kubernetesVnetName1": "[concat('kubeVnet' , variables('suffix'))]",
