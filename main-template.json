@@ -253,7 +253,7 @@
         },
         "kubernetesSettings": {
             "servicename": "[concat('kubernetes', variables('suffix'))]",
-            "kubernetesVersion": "1.11.5",
+            "kubernetesVersion": "1.12.4",
             "location": "[parameters('location')]",
             "enableRBAC": false,
             "dnsPrefix": "clusterdns",
