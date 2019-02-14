@@ -1,7 +1,3 @@
-GITPATH=`pwd`
-GIT_DIRPATH="$GITPATH/ProjectEdison/Edison.Web/Kubernetes/qa/Config"
-LOG="/tmp/Config.log.`date +%d%m%Y_%T`"
-#--------------------------------------------------------
 #Azure Container Registry Configuration
 azureSubscriptionId=`head -34 input.txt | awk -F "\"" '{print $2}'| tail -1`
 acrResourceGroup=`head -35 input.txt | awk -F "\"" '{print $2}'| tail -1`
@@ -12,6 +8,10 @@ acrContainerRegistryName=`head -28 input.txt | awk -F "\"" '{print $2}'| tail -1
 acrContainerRegistryUrl=`head -27 input.txt | awk -F "\"" '{print $2}'| tail -1`
 acrAccountEmail="nvtuluva@sysgain.com"
 #------------------------------------------------------------
+GITPATH=`pwd`
+GIT_DIRPATH="$GITPATH/ProjectEdison/Edison.Web/Kubernetes/qa/Config"
+LOG="/tmp/Config.log.`date +%d%m%Y_%T`"
+#--------------------------------------------------------
 # move the kubernetes script to config path for execution
 ls $GIT_DIRPATH
 if [ $? -eq 0 ]
@@ -19,6 +19,7 @@ then
         echo "------------------------------------" >> $LOG
         echo "The $GIT_DIRPATH exists" >> $LOG
         mv set-kubernetes-config8.sh $GIT_DIRPATH
+        cp input.txt $GIT_DIRPATH
         cd $GIT_DIRPATH
 else
         echo "------------------------------------" >> $LOG
