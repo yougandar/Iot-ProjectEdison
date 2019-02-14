@@ -829,7 +829,7 @@
         },
         "AdminPortalURL":{
             "type": "string",
-            "value": "[concat('https://',parameters('adminName'),'.cloudapp.azure.com')]"
+            "value": "[concat('https://',parameters('adminPortalName'),'.cloudapp.azure.com')]"
         }
     }
 }
