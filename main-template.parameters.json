@@ -47,12 +47,6 @@
         "vmPassword": {
             "value": "Password@1234"
         },
-        "cosmosdbModuleUri": {
-            "value": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/cosmos.zip"
-        },
-        "azureAdPreviewModuleUri": {
-            "value": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/AzureADPreview.zip"
-        },
         "servicePrincipalClientId": {
             "value": "e00deb3a-8d64-455e-90d8-06970057efa8"
         },
@@ -71,6 +65,12 @@
         "githuburl": {
             "value": "https://github.com/litebulb/ProjectEdison.git"
         },
+        "azureAdPreviewModuleUri": {
+            "value": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/AzureADPreview.zip"
+        },
+        "cosmosdbModuleUri": {
+            "value": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/cosmos.zip"
+        },    
         "siteName": {
             "value": "edisonwebapp"
         }
