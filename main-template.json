@@ -206,11 +206,17 @@
         },
         "cosmosdbModuleUri": {
             "type": "string",
-            "defaultValue": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/cosmos.zip"
+            "defaultValue": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/cosmos.zip",
+             "metadata": {   
+                "description": "Provide the url to install azure active directory preview module in azure automation from the github"
+            }
         },
         "siteName": {
             "type": "string",
-            "defaultValue": "edisonwebapp"
+            "defaultValue": "edisonwebapp",
+             "metadata": {   
+                "description": "Provide the siteName of direct Line "
+            }
         }
     },
     "variables": {
