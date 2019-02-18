@@ -35,7 +35,7 @@
         "azurePassword": {
             "value": "Srivinayaka@123"
         },
-        "adminName": {
+        "adminPortalName": {
             "value": "edisonadm"
         },
         "sessionId": {
