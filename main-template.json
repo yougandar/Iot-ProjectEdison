@@ -174,10 +174,6 @@
                 "description": "Object ID of the service principal."
             }
         },
-        "webAdminPackageUri": {
-            "type": "string",
-            "defaultValue": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/Edison.AdminPortal.zip"
-        },
         "signalrCapacity": {
             "type": "int",
             "defaultValue": 1,
