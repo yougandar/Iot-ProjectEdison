@@ -11,7 +11,7 @@
         },
         "geo-paired-region": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "CentralUS",
             "allowedValues": [
                 "EastUS2",
                 "CentralUS",
@@ -36,7 +36,7 @@
                 "description": "For Basic solution select the geopaired region as deployment region.If solution type is choosen as standard and premium, enter location for geo-paired-region, for more information about the geo-paired-region navigate to section 4 in the Getting Started Document(https://github.com/sysgain/MSIotDeviceManagement/blob/master/MSIotDeviceManagement-wiki/GettingStarted.md)"
             }
         },
-        "kuberneteslocation":{
+        "kuberneteslocation": {
             "type": "string",
             "defaultValue": "EastUS2",
             "allowedValues": [
@@ -84,7 +84,7 @@
                 "southeastasia",
                 "westeurope",
                 "norteurope",
-                "eastasia"              
+                "eastasia"
             ],
             "metadata": {
                 "description": "Choose location for dps to deploy."
@@ -243,6 +243,17 @@
             }
         },
         "dockerVM": {
+            "type": "string",
+            "defaultValue": "",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Choose Yes/No to add Docker VM as part of Solution deployment"
+            }
+        },
+        "dockerVMR1": {
             "type": "string",
             "defaultValue": "",
             "allowedValues": [
@@ -448,7 +459,6 @@
             "subnetRefDr": "[concat(variables('vnetIdDr'), '/subnets/', concat(variables('subnetName1'), 'Dr'))]",
             "vmNameDr": "edisonVmPremium",
             "nicNameDr": "edison-nic-Dr"
-
         },
         "trafficManagerSettings": {
             "trafficManagerName": "[concat('appgatewaytm', variables('suffix'))]",
@@ -561,7 +571,7 @@
         "AustraliaEast": "AustraliaSouthEast",
         "EastAsia": "SouthEastAsia",
         "WestUS2": "West Central US",
-        "WestCentralUS": "WestUS2",    
+        "WestCentralUS": "WestUS2",
         "CentralIndia": "SouthIndia",
         "SouthIndia": "CentralIndia",
         "JapanWest": "JapanEast",
@@ -569,7 +579,7 @@
         "KoreaCentral": "KoreaSouth",
         "KoreaSouth": "KoreaCentral",
         "locationDr": "[variables(parameters('geo-paired-region'))]",
-        "kuberneteslocationDr":"[variables(parameters('kuberneteslocation'))]"
+        "kuberneteslocationDr": "[variables(parameters('kuberneteslocation'))]"
     },
     "resources": [
         {
@@ -785,7 +795,7 @@
             "name": "DockerVMR1",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
-            "condition": "[equals(parameters('dockerVM'), 'Yes')]",
+            "condition": "[equals(parameters('dockerVMR1'), 'Yes')]",
             "dependsOn": [
                 "AzureContainerRegistry",
                 "StorageBlob"
