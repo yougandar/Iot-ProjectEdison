@@ -451,6 +451,12 @@
             "nicNameDr": "edison-nic-Dr"
 
         },
+        "trafficManagerSettings": {
+            "trafficManagerName": "[concat('appgatewaytm', variables('suffix'))]",
+            "trafficManagerName1": "[concat('apitm', variables('suffix'))]",
+            "trafficRoutingMethod": "Priority",
+            "solutionType": "[parameters('solutionType')]"
+        },
         "serviceBusProperties": {
             "solutionType": "[parameters('solutionType')]",
             "serviceBusNamespaceName": "[variables('serviceBusNamespaceName1')]",
@@ -793,6 +799,48 @@
                 "parameters": {
                     "vm": {
                         "value": "[variables('vm')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "TrafficManager-apgw",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "Kubernetes",
+                "KubernetesR1"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/apgw-trafficmanager.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "trafficManagerSettings": {
+                        "value": "[variables('trafficManagerSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "TrafficManager-api",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "Kubernetes",
+                "KubernetesR1"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/apitrafficmanager.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "trafficManagerSettings": {
+                        "value": "[variables('trafficManagerSettings')]"
                     }
                 }
             }
