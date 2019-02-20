@@ -106,7 +106,7 @@
                     "vmSize": "[parameters('vm').vmSize]"
                 },
                 "osProfile": {
-                    "computerName": "[parameters('vm').vmName]",
+                    "computerName": "[parameters('vm').vmNameDr]",
                     "adminUsername": "[parameters('vm').vmUsername]",
                     "adminPassword": "[parameters('vm').vmPassword]"
                 },
@@ -139,7 +139,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('vm').vmName,'/Extensions')]",
+            "name": "[concat(parameters('vm').vmNameDr,'/Extensions')]",
             "location": "[parameters('vm').locationDr]",
             "apiVersion": "2017-03-30",
             "dependsOn": [
