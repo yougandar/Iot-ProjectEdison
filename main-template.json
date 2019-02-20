@@ -21,7 +21,8 @@
                 "southeastasia",
                 "uksouth",
                 "westeurope",
-                "westus"
+                "westus",
+                "westus2"
             ]
         },
         "signalRlocation": {
