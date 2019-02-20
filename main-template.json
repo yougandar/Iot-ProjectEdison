@@ -36,6 +36,25 @@
                 "description": "For Basic solution select the geopaired region as deployment region.If solution type is choosen as standard and premium, enter location for geo-paired-region, for more information about the geo-paired-region navigate to section 4 in the Getting Started Document(https://github.com/sysgain/MSIotDeviceManagement/blob/master/MSIotDeviceManagement-wiki/GettingStarted.md)"
             }
         },
+        "kuberneteslocation":{
+            "type": "string",
+            "defaultValue": "EastUS2",
+            "allowedValues": [
+                "EastUS2",
+                "CentralUS",
+                "CanadaCentral",
+                "SouthEastAsia",
+                "AustraliaSouthEast",
+                "UKSouth",
+                "UKWest",
+                "CanadaEast",
+                "AustraliaEast",
+                "EastAsia"
+            ],
+            "metadata": {
+                "description": "Choose location for signalR to deploy."
+            }
+        },
         "signalRlocation": {
             "type": "string",
             "defaultValue": "eastus",
@@ -54,6 +73,21 @@
             ],
             "metadata": {
                 "description": "Choose location for signalR to deploy."
+            }
+        },
+        "iotdpslocation": {
+            "type": "string",
+            "defaultValue": "eastus",
+            "allowedValues": [
+                "eastus",
+                "westus",
+                "southeastasia",
+                "westeurope",
+                "norteurope",
+                "eastasia"              
+            ],
+            "metadata": {
+                "description": "Choose location for dps to deploy."
             }
         },
         "omsWorkspaceRegion": {
@@ -309,7 +343,7 @@
             "solutionType": "[parameters('solutionType')]",
             "identityName": "[variables('identityName1')]",
             "identityNameDr": "[concat(variables('identityName1'),'Dr')]",
-            "location": "[parameters('geo-paired-region')]",
+            "location": "[parameters('kuberneteslocation')]",
             "kubernetesVnetName": "[variables('kubernetesVnetName1')]",
             "kubernetesVnetNameDr": "[concat(variables('kubernetesVnetName1'),'Dr')]",
             "virtualNetworkAddressPrefix": "15.0.0.0/8",
@@ -370,7 +404,7 @@
             "aksDockerBridgeCIDRDr": "192.168.0.1/16",
             "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterName1'))]",
             "aksClusterIdDr": "[resourceId('Microsoft.ContainerService/managedClusters', concat(variables('aksClusterName1'), 'Dr'))]",
-            "locationDr": "[variables('locationDr')]"
+            "locationDr": "[variables('kuberneteslocationDr')]"
         },
         "acrSettings": {
             "solutionType": "[parameters('solutionType')]",
@@ -406,7 +440,7 @@
             "fileUri": "[concat(variables('baseUrl'),'scripts/scripts-download.sh')]",
             "pipNameDr": "[concat('edisonpip',variables('suffix'), 'Dr')]",
             "locationDr": "[variables('locationDr')]",
-            "dnsLabelPrefixDr": "[concat('edisondns',variables('suffix'), 'Dr')]",
+            "dnsLabelPrefixDr": "[concat('edisondns',variables('suffix'), 'dr')]",
             "virtualNetworkNameDr": "[concat(variables('virtualNetworkName1'), 'Dr')]",
             "addressPrefixDr": "13.0.0.0/16",
             "subnetNameDr": "[concat(variables('subnetName1'), 'Dr')]",
@@ -442,7 +476,7 @@
         "iotDpsSettings": {
             "solutionType": "[parameters('solutionType')]",
             "iotDpsName": "[concat('dps',variables('suffix'))]",
-            "location": "[parameters('geo-paired-region')]"
+            "location": "[parameters('iotdpslocation')]"
         },
         "keyVaultSettings": {
             "solutionType": "[parameters('solutionType')]",
@@ -511,23 +545,24 @@
         "aksClusterName1": "[concat('aks' , variables('suffix'))]",
         "EastUS2": "CentralUS",
         "CentralUS": "EastUS2",
-        "WestUS2": "West Central US",
-        "WestCentralUS": "WestUS2",
         "CanadaCentral": "CanadaEast",
+        "SouthEastAsia": "EastAsia",
+        "AustraliaSouthEast": "AustraliaEast",
+        "UKSouth": "UKWest",
+        "UKWest": "UKSouth",
         "CanadaEast": "CanadaCentral",
         "AustraliaEast": "AustraliaSouthEast",
-        "AustraliaSouthEast": "AustraliaEast",
+        "EastAsia": "SouthEastAsia",
+        "WestUS2": "West Central US",
+        "WestCentralUS": "WestUS2",    
         "CentralIndia": "SouthIndia",
         "SouthIndia": "CentralIndia",
-        "EastAsia": "SouthEastAsia",
-        "SouthEastAsia": "EastAsia",
         "JapanWest": "JapanEast",
         "JapanEast": "JapanWest",
         "KoreaCentral": "KoreaSouth",
         "KoreaSouth": "KoreaCentral",
-        "UKSouth": "UKWest",
-        "UKWest": "UKSouth",
-        "locationDr": "[variables(parameters('geo-paired-region'))]"
+        "locationDr": "[variables(parameters('geo-paired-region'))]",
+        "kuberneteslocationDr":"[variables(parameters('kuberneteslocation'))]"
     },
     "resources": [
         {
