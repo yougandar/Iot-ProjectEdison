@@ -82,15 +82,6 @@
             "notificationHubNameDr": "[concat('NotificationHubDr', variables('suffix'))]",
             "solutionType": "[parameters('solutionType')]"
         },
-        "webSiteSettings": {
-            "locationDr": "[variables('locationDr')]",
-            "webAppHostingPlanNameDr": "[concat('edisonwebplanDr', variables('suffix'))]",
-            "webAdminDr":"[concat('edisonWebAdminDr',variables('suffix'))]",
-            "webAppSkuName2": "S1",
-            "webAdminPackageUri": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/Edison.AdminPortal.zip",
-            "solutionType": "[parameters('solutionType')]"
-
-        },
         "signalrSettings": {
             "solutionType": "[parameters('solutionType')]",
             "location": "[parameters('signalRlocation')]",
@@ -136,28 +127,6 @@
                 "parameters": {
                     "notificationHub": {
                         "value": "[variables('notificationHub')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "WebAdminR2",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-02-01",
-            "dependsOn": [
-                "Cosmosdb",
-                "IotHub",
-                "NotificationHub"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/webadmin-r2.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "webSiteSettings": {
-                        "value": "[variables('webSiteSettings')]"
                     }
                 }
             }
