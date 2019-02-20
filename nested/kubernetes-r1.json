@@ -1,0 +1,376 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "kubernetesSettings": {
+            "type": "object"
+        },
+        "omsSettings": {
+            "type": "object"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+            "name": "[parameters('kubernetesSettings').identityNameDr]",
+            "apiVersion": "2015-08-31-PREVIEW",
+            "location": "[parameters('kubernetesSettings').locationDr]"
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('kubernetesSettings').kubernetesVnetNameDr]",
+            "apiVersion": "2018-08-01",
+            "location": "[parameters('kubernetesSettings').locationDr]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('kubernetesSettings').virtualNetworkAddressPrefixDr]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('kubernetesSettings').kubernetesSubnetNameDr]",
+                        "properties": {
+                            "addressPrefix": "[parameters('kubernetesSettings').aksSubnetAddressPrefixDr]"
+                        }
+                    },
+                    {
+                        "name": "[parameters('kubernetesSettings').applicationGatewaySubnetNameDr]",
+                        "properties": {
+                            "addressPrefix": "[parameters('kubernetesSettings').applicationGatewaySubnetAddressPrefixDr]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('kubernetesSettings').applicationGatewayPublicIpNameDr]",
+            "apiVersion": "2018-08-01",
+            "location": "[parameters('kubernetesSettings').locationDr]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            }
+        },
+        {
+            "type": "Microsoft.Network/applicationGateways",
+            "name": "[parameters('kubernetesSettings').applicationGatewayNameDr]",
+            "apiVersion": "2018-08-01",
+            "location": "[parameters('kubernetesSettings').locationDr]",
+            "properties": {
+                "sku": {
+                    "name": "Standard_v2",
+                    "tier": "Standard_v2",
+                    "capacity": 2
+                },
+                "gatewayIPConfigurations": [
+                    {
+                        "name": "appGatewayIpConfig",
+                        "properties": {
+                            "subnet": {
+                                "id": "[parameters('kubernetesSettings').applicationGatewaySubnetIdDr]"
+                            }
+                        }
+                    }
+                ],
+                "frontendIPConfigurations": [
+                    {
+                        "name": "appGatewayFrontendIP",
+                        "properties": {
+                            "PublicIPAddress": {
+                                "id": "[parameters('kubernetesSettings').applicationGatewayPublicIpIdDr]"
+                            }
+                        }
+                    }
+                ],
+                "frontendPorts": [
+                    {
+                        "name": "httpPort",
+                        "properties": {
+                            "Port": 80
+                        }
+                    },
+                    {
+                        "name": "httpsPort",
+                        "properties": {
+                            "Port": 443
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "bepool",
+                        "properties": {
+                            "backendAddresses": []
+                        }
+                    }
+                ],
+                "httpListeners": [
+                    {
+                        "name": "httpListener",
+                        "properties": {
+                            "protocol": "Http",
+                            "frontendPort": {
+                                "id": "[concat(parameters('kubernetesSettings').applicationGatewayIdDr, '/frontendPorts/httpPort')]"
+                            },
+                            "frontendIPConfiguration": {
+                                "id": "[concat(parameters('kubernetesSettings').applicationGatewayIdDr, '/frontendIPConfigurations/appGatewayFrontendIP')]"
+                            }
+                        }
+                    }
+                ],
+                "backendHttpSettingsCollection": [
+                    {
+                        "name": "setting",
+                        "properties": {
+                            "port": 80,
+                            "protocol": "Http"
+                        }
+                    }
+                ],
+                "requestRoutingRules": [
+                    {
+                        "name": "rule1",
+                        "properties": {
+                            "httpListener": {
+                                "id": "[concat(parameters('kubernetesSettings').applicationGatewayIdDr, '/httpListeners/httpListener')]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[concat(parameters('kubernetesSettings').applicationGatewayIdDr, '/backendAddressPools/bepool')]"
+                            },
+                            "backendHttpSettings": {
+                                "id": "[concat(parameters('kubernetesSettings').applicationGatewayIdDr, '/backendHttpSettingsCollection/setting')]"
+                            }
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('kubernetesSettings').kubernetesVnetNameDr)]",
+                "[concat('Microsoft.Network/publicIPAddresses/', parameters('kubernetesSettings').applicationGatewayPublicIpNameDr)]"
+            ]
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "RoleAssignmentDeploymentForKubenetesSp",
+            "apiVersion": "2017-05-10",
+            "subscriptionId": "[parameters('kubernetesSettings').subscriptionId]",
+            "resourceGroup": "[parameters('kubernetesSettings').resourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/virtualNetworks/subnets/providers/roleAssignments",
+                            "apiVersion": "2017-05-01",
+                            "name": "[concat(parameters('kubernetesSettings').kubernetesVnetNameDr, '/', parameters('kubernetesSettings').kubernetesSubnetNameDr,'/Microsoft.Authorization/', guid(resourceGroup().id, 'aksvnetaccess'))]",
+                            "properties": {
+                                "roleDefinitionId": "[parameters('kubernetesSettings').networkContributorRoleDr]",
+                                "principalId": "[parameters('kubernetesSettings').aksServicePrincipalObjectIdDr]",
+                                "scope": "[parameters('kubernetesSettings').kubernetesSubnetIdDr]"
+                            }
+                        },
+                        {
+                            "type": "Microsoft.ManagedIdentity/userAssignedIdentities/providers/roleAssignments",
+                            "apiVersion": "2017-05-01",
+                            "name": "[concat(parameters('kubernetesSettings').identityNameDr, '/Microsoft.Authorization/', guid(resourceGroup().id, 'aksidentityaccess'))]",
+                            "properties": {
+                                "roleDefinitionId": "[parameters('kubernetesSettings').Dr]",
+                                "principalId": "[parameters('kubernetesSettings').aksServicePrincipalObjectIdDr]",
+                                "scope": "[parameters('kubernetesSettings').identityIdDr]",
+                                "principalType": "ServicePrincipal"
+                            }
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('kubernetesSettings').kubernetesVnetNameDr)]",
+                "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('kubernetesSettings').identityNameDr)]"
+            ]
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "RoleAssignmentDeploymentForUserAssignedIdentity",
+            "apiVersion": "2017-05-10",
+            "subscriptionId": "[parameters('kubernetesSettings').subscriptionId]",
+            "resourceGroup": "[parameters('kubernetesSettings').resourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/applicationgateways/providers/roleAssignments",
+                            "apiVersion": "2017-05-01",
+                            "name": "[concat(parameters('kubernetesSettings').applicationGatewayNameDr, '/Microsoft.Authorization/', guid(resourceGroup().id, 'identityappgwaccess'))]",
+                            "properties": {
+                                "roleDefinitionId": "[parameters('kubernetesSettings').contributorRoleDr]",
+                                "principalId": "[reference(parameters('kubernetesSettings').identityIdDr, '2015-08-31-PREVIEW').principalId]",
+                                "scope": "[parameters('kubernetesSettings').applicationGatewayIdDr]"
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "apiVersion": "2017-05-01",
+                            "name": "[guid(resourceGroup().id, 'identityrgaccess')]",
+                            "properties": {
+                                "roleDefinitionId": "[parameters('kubernetesSettings').readerRoleDr]",
+                                "principalId": "[reference(parameters('kubernetesSettings').identityIdDr, '2015-08-31-PREVIEW').principalId]",
+                                "scope": "[resourceGroup().id]"
+                            }
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/applicationgateways/', parameters('kubernetesSettings').applicationGatewayNameDr)]",
+                "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('kubernetesSettings').identityNameDr)]"
+            ]
+        },
+        {
+            "type": "Microsoft.ContainerService/managedClusters",
+            "name": "[parameters('kubernetesSettings').aksClusterNameDr]",
+            "apiVersion": "2018-03-31",
+            "location": "[parameters('kubernetesSettings').locationDr]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('kubernetesSettings').kubernetesVnetNameDr)]",
+                "[concat('Microsoft.Resources/deployments/', 'RoleAssignmentDeploymentForKubenetesSp')]"
+            ],
+            "properties": {
+                "kubernetesVersion": "[parameters('kubernetesSettings').kubernetesVersion]",
+                "enableRBAC": "[parameters('kubernetesSettings').aksEnableRBAC]",
+                "dnsPrefix": "[parameters('kubernetesSettings').aksDnsPrefixDr]",
+                "addonProfiles": {
+                    "httpApplicationRouting": {
+                        "enabled": false
+                    },
+                    "omsagent": {
+                        "enabled": false
+                    }
+                },
+                "agentPoolProfiles": [
+                    {
+                        "name": "agentpool",
+                        "osDiskSizeGB": "[parameters('kubernetesSettings').aksAgentOsDiskSizeGB]",
+                        "count": "[parameters('kubernetesSettings').aksAgentCount]",
+                        "vmSize": "[parameters('kubernetesSettings').aksAgentVMSize]",
+                        "osType": "Linux",
+                        "storageProfile": "ManagedDisks",
+                        "vnetSubnetID": "[parameters('kubernetesSettings').kubernetesSubnetIdDr]",
+                        "dnsPrefix": "agents"
+                    }
+                ],
+                "servicePrincipalProfile": {
+                    "clientId": "[parameters('kubernetesSettings').aksservicePrincipalClientIdDr]",
+                    "secret": "[parameters('kubernetesSettings').aksServicePrincipalClientSecretDr]"
+                },
+                "networkProfile": {
+                    "networkPlugin": "azure",
+                    "serviceCidr": "[parameters('kubernetesSettings').aksServiceCIDRDr]",
+                    "dnsServiceIP": "[parameters('kubernetesSettings').aksDnsServiceIPDr]",
+                    "dockerBridgeCidr": "[parameters('kubernetesSettings').aksDockerBridgeCIDRDr]"
+                }
+            },
+            "resources": [
+                {
+                    "name": "Microsoft.Insights/service",
+                    "type": "providers/diagnosticSettings",
+                    "apiVersion": "2015-07-01",
+                    "dependsOn": [
+                       "[concat('Microsoft.ContainerService/managedClusters/', parameters('kubernetesSettings').aksClusterNameDr)]"
+                    ],
+                    "properties": {
+                        "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsSettings').omsWorkspaceName)]",
+                        "logs": [
+                            {
+                                "category": "kube-apiserver",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "kube-controller-manager",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "kube-scheduler",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "guard",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            }
+                        ],
+                        "metrics": [
+                            {
+                                "timeGrain": "AllMetrics",
+                                "category": "AllMetrics",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": false,
+                                    "days": 0
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]  
+        }
+    ],
+    "outputs": {
+        "subscriptionId": {
+            "type": "string",
+            "value": "[subscription().subscriptionId]"
+        },
+        "resourceGroupName": {
+            "type": "string",
+            "value": "[resourceGroup().name]"
+        },
+        "applicationGatewayName": {
+            "type": "string",
+            "value": "[parameters('kubernetesSettings').applicationGatewayNameDr]"
+        },
+        "identityResourceId": {
+            "type": "string",
+            "value": "[parameters('kubernetesSettings').identityIdDr]"
+        },
+        "identityClientId": {
+            "type": "string",
+            "value": "[reference(parameters('kubernetesSettings').identityIdDr, '2015-08-31-PREVIEW').clientId]"
+        },
+        "aksApiServerAddress": {
+            "type": "string",
+            "value": "[reference(parameters('kubernetesSettings').aksClusterIdDr, '2018-03-31').fqdn]"
+        },
+        "aksClusterName": {
+            "type": "string",
+            "value": "[parameters('kubernetesSettings').aksClusterNameDr]"
+        }
+    }
+}

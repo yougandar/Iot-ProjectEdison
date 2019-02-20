@@ -9,20 +9,32 @@
                 "description": "The type of solution"
             }
         },
-        "location": {
+        "geo-paired-region": {
             "type": "string",
-            "defaultValue": "eastus",
+            "defaultValue": "",
             "allowedValues": [
-                "australiasoutheast",
-                "canadacentral",
-                "centralindia",
-                "eastus",
-                "japaneast",
-                "southeastasia",
-                "uksouth",
-                "westeurope",
-                "westus"
-            ]
+                "EastUS2",
+                "CentralUS",
+                "WestUS2",
+                "WestCentralUS",
+                "CanadaCentral",
+                "CanadaEast",
+                "AustraliaEast",
+                "AustraliaSouthEast",
+                "CentralIndia",
+                "SouthIndia",
+                "EastAsia",
+                "SouthEastAsia",
+                "JapanWest",
+                "JapanEast",
+                "KoreaCentral",
+                "KoreaSouth",
+                "UKSouth",
+                "UKWest"
+            ],
+            "metadata": {
+                "description": "For Basic solution select the geopaired region as deployment region.If solution type is choosen as standard and premium, enter location for geo-paired-region, for more information about the geo-paired-region navigate to section 4 in the Getting Started Document(https://github.com/sysgain/MSIotDeviceManagement/blob/master/MSIotDeviceManagement-wiki/GettingStarted.md)"
+            }
         },
         "signalRlocation": {
             "type": "string",
@@ -144,18 +156,28 @@
                 "description": "Password to login into Virtual Machine"
             }
         },
-        "aksServicePrincipalClientId": {
+        "aksServicePrincipalAppId": {
             "type": "string",
-            "defaultValue": "",
             "metadata": {
-                "description": "Client ID (used by cloudprovider) for kubernetes Service"
+                "description": "Application ID/Client ID  of the service principal. Used by AKS to manage AKS related resources on Azure like vms, subnets."
+            }
+        },
+        "aksServicePrincipalAppIdDr": {
+            "type": "string",
+            "metadata": {
+                "description": "Application ID/Client ID  of the service principal. Used by AKS to manage AKS related resources on Azure like vms, subnets."
             }
         },
         "aksServicePrincipalClientSecret": {
             "type": "securestring",
-            "defaultValue": "",
             "metadata": {
-                "description": "The Service Principal Client Secret for Kubernetes Service."
+                "description": "Secret of the service principal. Used by AKS to manage Azure."
+            }
+        },
+        "aksServicePrincipalClientSecretDr": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Secret of the service principal. Used by AKS to manage Azure."
             }
         },
         "aksServicePrincipalObjectId": {
@@ -164,9 +186,11 @@
                 "description": "Object ID of the service principal."
             }
         },
-        "webAdminPackageUri": {
+        "aksServicePrincipalObjectIdDr": {
             "type": "string",
-            "defaultValue": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/Edison.AdminPortal.zip"
+            "metadata": {
+                "description": "Object ID of the service principal."
+            }
         },
         "signalrCapacity": {
             "type": "int",
@@ -221,7 +245,7 @@
     "variables": {
         "notificationHub": {
             "solutionType": "[parameters('solutionType')]",
-            "location": "[parameters('location')]",
+            "location": "[parameters('geo-paired-region')]",
             "skuName": "free",
             "namespaceType": "NotificationHub",
             "notificationHubNamespaceName": "[concat('NotificationHubNS', variables('suffix'))]",
@@ -230,7 +254,7 @@
         "cosmosDbSettings": {
             "solutionType": "[parameters('solutionType')]",
             "cosmosDbAccountName": "[concat('edisondbacc',variables('suffix'))]",
-            "location": "[parameters('location')]",
+            "location": "[parameters('geo-paired-region')]",
             "offerType": "Standard",
             "cosmosDbName": "Edison",
             "cosmosCollEventCluster": "EventClusters",
@@ -259,13 +283,13 @@
         "storageBlobSettings": {
             "solutionType": "[parameters('solutionType')]",
             "storageAccountName": "[variables('storageAccountName')]",
-            "location": "[parameters('location')]",
+            "location": "[parameters('geo-paired-region')]",
             "containerName": "logs",
             "storageAccountType": "Standard_LRS"
         },
         "iothubSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "location": "[parameters('location')]",
+            "location": "[parameters('geo-paired-region')]",
             "iotHubName": "[concat('edisonhub',variables('suffix'))]",
             "d2cMessageRetentionInDaysPeriod": 1,
             "d2cPartitionCount": 2,
@@ -273,14 +297,6 @@
             "capacityUnits": 1,
             "d2cConsumerGroupName": "cg1",
             "keyName": "iothubowner"
-        },
-        "webSiteSettings": {
-            "solutionType": "[parameters('solutionType')]",
-            "webAppHostingPlanName": "[concat('edisonwebplan',variables('suffix'))]",
-            "location": "WestUS",
-            "webAppSkuName1": "F1",
-            "webAdminPackageUri": "[parameters('webAdminPackageUri')]",
-            "webAdmin": "[concat('edisonWebAdmin',variables('suffix'))]"
         },
         "omsSettings": {
             "solutionType": "[parameters('solutionType')]",
@@ -292,45 +308,75 @@
         "kubernetesSettings": {
             "solutionType": "[parameters('solutionType')]",
             "identityName": "[variables('identityName1')]",
-            "location": "[parameters('location')]",
+            "identityNameDr": "[concat(variables('identityName1'),'Dr')]",
+            "location": "[parameters('geo-paired-region')]",
             "kubernetesVnetName": "[variables('kubernetesVnetName1')]",
+            "kubernetesVnetNameDr": "[concat(variables('kubernetesVnetName1'),'Dr')]",
             "virtualNetworkAddressPrefix": "15.0.0.0/8",
+            "virtualNetworkAddressPrefixDr": "17.0.0.0/8",
             "kubernetesSubnetName": "[variables('kubernetesSubnetName1')]",
+            "kubernetesSubnetNameDr": "[concat(variables('kubernetesSubnetName1'),'Dr')]",
             "aksSubnetAddressPrefix": "15.0.0.0/16",
+            "aksSubnetAddressPrefixDr": "17.0.0.0/16",
             "applicationGatewaySubnetName": "[variables('applicationGatewaySubnetName1')]",
+            "applicationGatewaySubnetNameDr": "[concat(variables('applicationGatewaySubnetName1'),'Dr')]",
             "applicationGatewaySubnetAddressPrefix": "15.1.0.0/16",
+            "applicationGatewaySubnetAddressPrefixDr": "17.1.0.0/16",
             "applicationGatewayPublicIpName": "[variables('applicationGatewayPublicIpName1')]",
+            "applicationGatewayPublicIpNameDr": "[concat(variables('applicationGatewayPublicIpName1'), 'Dr')]",
             "applicationGatewayName": "[variables('applicationGatewayName1')]",
+            "applicationGatewayNameDr": "[concat(variables('applicationGatewayName1'), 'Dr')]",
             "applicationGatewaySubnetId": "[concat(variables('vnetID'),'/subnets/', variables('applicationGatewaySubnetName1'))]",
+            "applicationGatewaySubnetIdDr": "[concat(variables('vnetID'),'/subnets/', variables('applicationGatewaySubnetName1'), 'Dr')]",
             "vnetId": "[variables('kubeVnetId')]",
             "kubernetesSubnetId": "[concat(variables('kubeVnetId'),'/subnets/', variables('kubernetesSubnetName1'))]",
+            "kubernetesSubnetIdDr": "[concat(variables('kubeVnetId'),'/subnets/', variables('kubernetesSubnetName1'), 'Dr')]",
             "applicationGatewayPublicIpId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('applicationGatewayPublicIpName1'))]",
+            "applicationGatewayPublicIpIdDr": "[resourceId('Microsoft.Network/publicIPAddresses',concat(variables('applicationGatewayPublicIpName1'), 'Dr'))]",
             "applicationGatewayId": "[resourceId('Microsoft.Network/applicationGateways', variables('applicationGatewayName1'))]",
+            "applicationGatewayIdDr": "[resourceId('Microsoft.Network/applicationGateways', concat(variables('applicationGatewayName1'), 'Dr'))]",
             "subscriptionId": "[variables('subscriptionid')]",
             "resourceGroup": "[variables('rgName')]",
             "networkContributorRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
+            "networkContributorRoleDr": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', '2d8cdb72-b901-4bb5-b6c8-1fafebed6681')]",
             "managedIdentityOperatorRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'f1a07417-d97a-45cb-824c-7a7467783830')]",
+            "managedIdentityOperatorRoleDr": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', '89280f77-502e-47d7-a1c7-9b514820d2e2')]",
             "readerRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
+            "readerRoleDr": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'b10f6a03-b862-41a1-bd83-28a813cbd1a4')]",
             "contributorRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+            "contributorRoleDr": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'aeff73b1-5316-4329-b0cf-f52ad4f58068')]",
             "aksServicePrincipalObjectId": "[parameters('aksServicePrincipalObjectId')]",
+            "aksServicePrincipalObjectIdDr": "[parameters('aksServicePrincipalObjectIdDr')]",
+            "aksServicePrincipalAppId": "[parameters('aksServicePrincipalAppId')]",
+            "aksServicePrincipalAppIdDr": "[parameters('aksServicePrincipalAppIdDr')]",
+            "aksServicePrincipalClientSecret": "[parameters('aksServicePrincipalClientSecret')]",
+            "aksServicePrincipalClientSecretDr": "[parameters('aksServicePrincipalClientSecretDr')]",
             "identityId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName1'))]",
+            "identityIdDr": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', concat(variables('identityName1'), 'Dr'))]",
             "aksClusterName": "[variables('aksClusterName1')]",
+            "aksClusterNameDr": "[concat(variables('aksClusterName1'), 'Dr')]",
             "kubernetesVersion": "1.12.4",
             "aksEnableRBAC": false,
             "aksDnsPrefix": "aks",
+            "aksDnsPrefixDr": "aksDr",
             "aksAgentOsDiskSizeGB": 30,
             "aksAgentCount": 3,
             "aksAgentVMSize": "Standard_B2s",
             "aksServiceCIDR": "10.0.0.0/16",
+            "aksServiceCIDRDr": "10.0.0.0/24",
             "aksDnsServiceIP": "10.0.0.10",
+            "aksDnsServiceIPDr": "10.1.0.0",
             "aksDockerBridgeCIDR": "172.17.0.1/16",
-            "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterName1'))]"
+            "aksDockerBridgeCIDRDr": "192.168.0.1/16",
+            "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterName1'))]",
+            "aksClusterIdDr": "[resourceId('Microsoft.ContainerService/managedClusters', concat(variables('aksClusterName1'), 'Dr'))]",
+            "locationDr": "[variables('locationDr')]"
         },
         "acrSettings": {
             "solutionType": "[parameters('solutionType')]",
             "acrName": "[variables('acrName1')]",
             "acrAdminUserEnabled": true,
-            "location": "[parameters('location')]",
+            "location": "[parameters('geo-paired-region')]",
             "acrSku": "Basic",
             "acrLoginServer": "[concat(variables('acrName1'),'.azurecr.io')]",
             "acrLoginame": "[variables('acrName1')]"
@@ -338,13 +384,13 @@
         "vm": {
             "solutionType": "[parameters('solutionType')]",
             "pipName": "[concat('edisonpip',variables('suffix'))]",
-            "location": "[parameters('location')]",
+            "location": "[parameters('geo-paired-region')]",
             "publicIpAddressType": "Static",
             "dnsLabelPrefix": "[concat('edisondns',variables('suffix'))]",
             "virtualNetworkName": "[variables('virtualNetworkName1')]",
-            "addressPrefix": "10.0.0.0/16",
+            "addressPrefix": "12.0.0.0/16",
             "subnetName": "[variables('subnetName1')]",
-            "subnetPrefix": "10.0.1.0/24",
+            "subnetPrefix": "12.0.1.0/24",
             "nicName": "edison-nic",
             "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName1'))]",
             "vmName": "edisonVm",
@@ -357,12 +403,24 @@
             "networkSecurityGroupName": "nsg",
             "giturl": "[parameters('githuburl')]",
             "tag": "latest",
-            "fileUri": "[concat(variables('baseUrl'),'scripts/scripts-download.sh')]"
+            "fileUri": "[concat(variables('baseUrl'),'scripts/scripts-download.sh')]",
+            "pipNameDr": "[concat('edisonpip',variables('suffix'), 'Dr')]",
+            "locationDr": "[variables('locationDr')]",
+            "dnsLabelPrefixDr": "[concat('edisondns',variables('suffix'), 'Dr')]",
+            "virtualNetworkNameDr": "[concat(variables('virtualNetworkName1'), 'Dr')]",
+            "addressPrefixDr": "13.0.0.0/16",
+            "subnetNameDr": "[concat(variables('subnetName1'), 'Dr')]",
+            "subnetPrefixDr": "13.0.1.0/24",
+            "networkSecurityGroupNameDr": "nsgDr",
+            "subnetRefDr": "[concat(variables('vnetId'), '/subnets/', concat(variables('subnetName1'), 'Dr'))]",
+            "vmNameDr": "edisonVmPremium",
+            "nicNameDr": "edison-nic-Dr"
+
         },
         "serviceBusProperties": {
             "solutionType": "[parameters('solutionType')]",
             "serviceBusNamespaceName": "[variables('serviceBusNamespaceName1')]",
-            "location": "[parameters('location')]",
+            "location": "[parameters('geo-paired-region')]",
             "serviceBusDefaultSASKeyName": "[variables('serviceBusDefaultSASKeyName1')]",
             "serviceBusAuthRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName1'), variables('serviceBusDefaultSASKeyName1'))]",
             "skuName": "Standard",
@@ -384,7 +442,7 @@
         "iotDpsSettings": {
             "solutionType": "[parameters('solutionType')]",
             "iotDpsName": "[concat('dps',variables('suffix'))]",
-            "location": "[parameters('location')]"
+            "location": "[parameters('geo-paired-region')]"
         },
         "keyVaultSettings": {
             "solutionType": "[parameters('solutionType')]",
@@ -401,11 +459,11 @@
             "enableVaultForDeployment": false,
             "enableVaultForDiskEncryption": false,
             "enabledForTemplateDeployment": false,
-            "location": "[parameters('location')]"
+            "location": "[parameters('geo-paired-region')]"
         },
         "redisSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "location": "[parameters('location')]",
+            "location": "[parameters('geo-paired-region')]",
             "redisCacheName": "[concat('redisCache',variables('suffix'))]",
             "redisCacheCapacity": 1,
             "redisCacheFamily": "C",
@@ -450,7 +508,26 @@
         "kubeVnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('kubernetesVnetName1'))]",
         "kubernetesSubnetName1": "kubesubnet",
         "identityName1": "[concat('appgwContrIdentity' , variables('suffix'))]",
-        "aksClusterName1": "[concat('aks' , variables('suffix'))]"
+        "aksClusterName1": "[concat('aks' , variables('suffix'))]",
+        "EastUS2": "CentralUS",
+        "CentralUS": "EastUS2",
+        "WestUS2": "West Central US",
+        "WestCentralUS": "WestUS2",
+        "CanadaCentral": "CanadaEast",
+        "CanadaEast": "CanadaCentral",
+        "AustraliaEast": "AustraliaSouthEast",
+        "AustraliaSouthEast": "AustraliaEast",
+        "CentralIndia": "SouthIndia",
+        "SouthIndia": "CentralIndia",
+        "EastAsia": "SouthEastAsia",
+        "SouthEastAsia": "EastAsia",
+        "JapanWest": "JapanEast",
+        "JapanEast": "JapanWest",
+        "KoreaCentral": "KoreaSouth",
+        "KoreaSouth": "KoreaCentral",
+        "UKSouth": "UKWest",
+        "UKWest": "UKSouth",
+        "locationDr": "[variables(parameters('geo-paired-region'))]"
     },
     "resources": [
         {
@@ -559,28 +636,6 @@
             }
         },
         {
-            "name": "WebAdmin",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-02-01",
-            "dependsOn": [
-                "Cosmosdb",
-                "IotHub",
-                "NotificationHub"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/webadmin.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "webSiteSettings": {
-                        "value": "[variables('webSiteSettings')]"
-                    }
-                }
-            }
-        },
-        {
             "name": "Kubernetes",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
@@ -591,6 +646,29 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "uri": "[concat(variables('baseUrl'),'nested/kubernetes.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    },
+                    "kubernetesSettings": {
+                        "value": "[variables('kubernetesSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "KubernetesR1",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "dependsOn": [
+                "OmsWorkSpace"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/kubernetes-r1.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -652,6 +730,28 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "uri": "[concat(variables('baseUrl'),'nested/dockerVm.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vm": {
+                        "value": "[variables('vm')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "DockerVMR1",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "condition": "[equals(parameters('dockerVM'), 'Yes')]",
+            "dependsOn": [
+                "AzureContainerRegistry",
+                "StorageBlob"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/dockerVm-r1.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
