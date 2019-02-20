@@ -446,7 +446,7 @@
             "subnetNameDr": "[concat(variables('subnetName1'), 'Dr')]",
             "subnetPrefixDr": "13.0.1.0/24",
             "networkSecurityGroupNameDr": "nsgDr",
-            "subnetRefDr": "[concat(variables('vnetId'), '/subnets/', concat(variables('subnetName1'), 'Dr'))]",
+            "subnetRefDr": "[concat(variables('vnetIdDr'), '/subnets/', concat(variables('subnetName1'), 'Dr'))]",
             "vmNameDr": "edisonVmPremium",
             "nicNameDr": "edison-nic-Dr"
 
@@ -523,6 +523,7 @@
         "virtualNetworkName1": "[concat('edisonVnet', variables('suffix'))]",
         "subnetName1": "edisonSubnet",
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName1'))]",
+        "vnetIdDr": "[resourceId('Microsoft.Network/virtualNetworks', concat(variables('virtualNetworkName1'), 'Dr'))]",
         "serviceBusDefaultSASKeyName1": "RootManageSharedAccessKey",
         "serviceBusNamespaceName1": "[concat('snamespace',variables('suffix'))]",
         "acrName1": "[concat('acr',variables('suffix'))]",
