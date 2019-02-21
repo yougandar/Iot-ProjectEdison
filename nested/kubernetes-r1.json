@@ -273,7 +273,7 @@
                     }
                 ],
                 "servicePrincipalProfile": {
-                    "clientId": "[parameters('kubernetesSettings').aksServicePrincipalAppId]",
+                    "clientId": "[parameters('kubernetesSettings').aksServicePrincipalAppIdDr]",
                     "secret": "[parameters('kubernetesSettings').aksServicePrincipalClientSecretDr]"
                 },
                 "networkProfile": {
