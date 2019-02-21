@@ -246,7 +246,7 @@
             "location": "[parameters('kubernetesSettings').locationDr]",
             "dependsOn": [
                 "[concat('Microsoft.Network/virtualNetworks/', parameters('kubernetesSettings').kubernetesVnetNameDr)]",
-                "[concat('Microsoft.Resources/deployments/', 'RoleAssignmentDeploymentForKubenetesSp')]"
+                "[concat('Microsoft.Resources/deployments/', 'RoleAssignmentDeploymentForKubenetesSpDr')]"
             ],
             "properties": {
                 "kubernetesVersion": "[parameters('kubernetesSettings').kubernetesVersion]",
