@@ -156,7 +156,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "name": "RoleAssignmentDeploymentForKubenetesSp",
+            "name": "RoleAssignmentDeploymentForKubenetesSpDr",
             "apiVersion": "2017-05-10",
             "subscriptionId": "[parameters('kubernetesSettings').subscriptionId]",
             "resourceGroup": "[parameters('kubernetesSettings').resourceGroup]",
@@ -199,7 +199,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "name": "RoleAssignmentDeploymentForUserAssignedIdentity",
+            "name": "RoleAssignmentDeploymentForUserAssignedIdentityDr",
             "apiVersion": "2017-05-10",
             "subscriptionId": "[parameters('kubernetesSettings').subscriptionId]",
             "resourceGroup": "[parameters('kubernetesSettings').resourceGroup]",
@@ -224,7 +224,7 @@
                         {
                             "type": "Microsoft.Authorization/roleAssignments",
                             "apiVersion": "2017-05-01",
-                            "name": "[guid(resourceGroup().id, 'identityrgaccess')]",
+                            "name": "[guid(resourceGroup().id, 'identityrgaccessDr')]",
                             "properties": {
                                 "roleDefinitionId": "[parameters('kubernetesSettings').readerRoleDr]",
                                 "principalId": "[reference(parameters('kubernetesSettings').identityIdDr, '2015-08-31-PREVIEW').principalId]",
