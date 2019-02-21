@@ -171,7 +171,7 @@
                         {
                             "type": "Microsoft.Network/virtualNetworks/subnets/providers/roleAssignments",
                             "apiVersion": "2017-05-01",
-                            "name": "[concat(parameters('kubernetesSettings').kubernetesVnetNameDr, '/', parameters('kubernetesSettings').kubernetesSubnetNameDr,'/Microsoft.Authorization/', guid(resourceGroup().id, 'aksvnetaccess'))]",
+                            "name": "[concat(parameters('kubernetesSettings').kubernetesVnetNameDr, '/', parameters('kubernetesSettings').kubernetesSubnetNameDr,'/Microsoft.Authorization/', guid(resourceGroup().id, 'aksvnetaccessDr'))]",
                             "properties": {
                                 "roleDefinitionId": "[parameters('kubernetesSettings').networkContributorRoleDr]",
                                 "principalId": "[parameters('kubernetesSettings').aksServicePrincipalObjectIdDr]",
@@ -181,7 +181,7 @@
                         {
                             "type": "Microsoft.ManagedIdentity/userAssignedIdentities/providers/roleAssignments",
                             "apiVersion": "2017-05-01",
-                            "name": "[concat(parameters('kubernetesSettings').identityNameDr, '/Microsoft.Authorization/', guid(resourceGroup().id, 'aksidentityaccess'))]",
+                            "name": "[concat(parameters('kubernetesSettings').identityNameDr, '/Microsoft.Authorization/', guid(resourceGroup().id, 'aksidentityaccessDr'))]",
                             "properties": {
                                 "roleDefinitionId": "[parameters('kubernetesSettings').managedIdentityOperatorRoleDr]",
                                 "principalId": "[parameters('kubernetesSettings').aksServicePrincipalObjectIdDr]",
@@ -214,7 +214,7 @@
                         {
                             "type": "Microsoft.Network/applicationgateways/providers/roleAssignments",
                             "apiVersion": "2017-05-01",
-                            "name": "[concat(parameters('kubernetesSettings').applicationGatewayNameDr, '/Microsoft.Authorization/', guid(resourceGroup().id, 'identityappgwaccess'))]",
+                            "name": "[concat(parameters('kubernetesSettings').applicationGatewayNameDr, '/Microsoft.Authorization/', guid(resourceGroup().id, 'identityappgwaccessDr'))]",
                             "properties": {
                                 "roleDefinitionId": "[parameters('kubernetesSettings').contributorRoleDr]",
                                 "principalId": "[reference(parameters('kubernetesSettings').identityIdDr, '2015-08-31-PREVIEW').principalId]",
