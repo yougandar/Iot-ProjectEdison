@@ -183,7 +183,7 @@
                             "apiVersion": "2017-05-01",
                             "name": "[concat(parameters('kubernetesSettings').identityNameDr, '/Microsoft.Authorization/', guid(resourceGroup().id, 'aksidentityaccess'))]",
                             "properties": {
-                                "roleDefinitionId": "[parameters('kubernetesSettings').Dr]",
+                                "roleDefinitionId": "[parameters('kubernetesSettings').managedIdentityOperatorRoleDr]",
                                 "principalId": "[parameters('kubernetesSettings').aksServicePrincipalObjectIdDr]",
                                 "scope": "[parameters('kubernetesSettings').identityIdDr]",
                                 "principalType": "ServicePrincipal"
