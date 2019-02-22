@@ -19,7 +19,7 @@
             "properties": {
                 "trafficRoutingMethod": "[parameters('trafficManagerSettings').trafficRoutingMethod]",
                 "dnsConfig": {
-                    "relativeName": "[parameters('trafficManagerSettings').trafficManagerName]",
+                    "relativeName": "[parameters('trafficManagerSettings').trafficManagerName1]",
                     "ttl": "100"
                 },
                 "monitorConfig": {
