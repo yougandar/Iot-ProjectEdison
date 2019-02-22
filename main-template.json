@@ -409,7 +409,7 @@
             "aksServiceCIDR": "10.0.0.0/16",
             "aksServiceCIDRDr": "10.0.0.0/24",
             "aksDnsServiceIP": "10.0.0.10",
-            "aksDnsServiceIPDr": "10.1.0.0",
+            "aksDnsServiceIPDr": "10.0.0.20",
             "aksDockerBridgeCIDR": "172.17.0.1/16",
             "aksDockerBridgeCIDRDr": "192.168.0.1/16",
             "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterName1'))]",
@@ -818,8 +818,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
             "dependsOn": [
-                "Kubernetes",
-                "KubernetesR1"
+                "TrafficManager-api"
             ],
             "properties": {
                 "mode": "Incremental",
