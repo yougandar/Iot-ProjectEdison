@@ -364,21 +364,36 @@
             "aksSubnetAddressPrefix": "15.0.0.0/16",
             "aksSubnetAddressPrefixDr": "17.0.0.0/16",
             "applicationGatewaySubnetName": "[variables('applicationGatewaySubnetName1')]",
+            "apiApplicationGatewaySubnetName": "[variables('apiapplicationGatewaySubnetName1')]",
+
             "applicationGatewaySubnetNameDr": "[concat(variables('applicationGatewaySubnetName1'),'Dr')]",
             "applicationGatewaySubnetAddressPrefix": "15.1.0.0/16",
+            "apiApplicationGatewaySubnetAddressPrefix": "15.2.0.0/16",
+
             "applicationGatewaySubnetAddressPrefixDr": "17.1.0.0/16",
             "applicationGatewayPublicIpName": "[variables('applicationGatewayPublicIpName1')]",
+            "apiApplicationGatewayPublicIpName": "[variables('apiApplicationGatewayPublicIpName1')]",
+
             "applicationGatewayPublicIpNameDr": "[concat(variables('applicationGatewayPublicIpName1'), 'Dr')]",
             "applicationGatewayName": "[variables('applicationGatewayName1')]",
+            "apiApplicationGatewayName": "[variables('apiApplicationGatewayName1')]",
+
             "applicationGatewayNameDr": "[concat(variables('applicationGatewayName1'), 'Dr')]",
             "applicationGatewaySubnetId": "[concat(variables('kubeVnetId'),'/subnets/', variables('applicationGatewaySubnetName1'))]",
+            "apiApplicationGatewaySubnetId": "[concat(variables('kubeVnetId'),'/subnets/', variables('apiApplicationGatewaySubnetName1'))]",
+
             "applicationGatewaySubnetIdDr": "[concat(variables('kubeVnetIdDr'),'/subnets/', variables('applicationGatewaySubnetName1'), 'Dr')]",
             "kubernetesSubnetId": "[concat(variables('kubeVnetId'),'/subnets/', variables('kubernetesSubnetName1'))]",
             "kubernetesSubnetIdDr": "[concat(variables('kubeVnetIdDr'),'/subnets/', variables('kubernetesSubnetName1'), 'Dr')]",
             "applicationGatewayPublicIpId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('applicationGatewayPublicIpName1'))]",
+            "apiApplicationGatewayPublicIpId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('apiApplicationGatewayPublicIpName1'))]",
+
             "applicationGatewayPublicIpIdDr": "[resourceId('Microsoft.Network/publicIPAddresses',concat(variables('applicationGatewayPublicIpName1'), 'Dr'))]",
             "applicationGatewayId": "[resourceId('Microsoft.Network/applicationGateways', variables('applicationGatewayName1'))]",
+            "apiApplicationGatewayId": "[resourceId('Microsoft.Network/applicationGateways', variables('apiApplicationGatewayName1'))]",
+
             "applicationGatewayIdDr": "[resourceId('Microsoft.Network/applicationGateways', concat(variables('applicationGatewayName1'), 'Dr'))]",
+
             "subscriptionId": "[variables('subscriptionid')]",
             "resourceGroup": "[variables('rgName')]",
             "networkContributorRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
@@ -461,7 +476,7 @@
             "nicNameDr": "edison-nic-Dr"
         },
         "trafficManagerSettings": {
-            "trafficManagerName": "[concat('appgatewaytm', variables('suffix'))]",
+            "trafficManagerName": "[concat('admintm', variables('suffix'))]",
             "trafficManagerName1": "[concat('apitm', variables('suffix'))]",
             "trafficRoutingMethod": "Priority",
             "solutionType": "[parameters('solutionType')]"
@@ -551,10 +566,14 @@
         "botEndpointConfig": {
             "bot": "[concat('https://', variables('siteHost1'), '/api/messages')]"
         },
-        "applicationGatewaySubnetName1": "appgwsubnet",
+        "applicationGatewaySubnetName1": "adminappgwsubnet",
+        "apiApplicationGatewaySubnetName1": "apiappgwsubnet",
         "kubernetesVnetName1": "[concat('kubeVnet' , variables('suffix'))]",
-        "applicationGatewayPublicIpName1": "[concat('appgwpublicip' , variables('suffix'))]",
-        "applicationGatewayName1": "[concat('applicationgateway' , variables('suffix'))]",
+        "applicationGatewayPublicIpName1": "[concat('adminappgwpublicip' , variables('suffix'))]",
+        "apiApplicationGatewayPublicIpName1": "[concat('apiappgwpublicip' , variables('suffix'))]",
+
+        "applicationGatewayName1": "[concat('admingateway' , variables('suffix'))]",
+        "apiApplicationGatewayName1": "[concat('apigateway' , variables('suffix'))]",
         "kubeVnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('kubernetesVnetName1'))]",
         "kubeVnetIdDr": "[resourceId('Microsoft.Network/virtualNetworks', concat(variables('kubernetesVnetName1'), 'Dr'))]",
         "kubernetesSubnetName1": "kubesubnet",

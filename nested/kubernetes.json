@@ -40,6 +40,12 @@
                         "properties": {
                             "addressPrefix": "[parameters('kubernetesSettings').applicationGatewaySubnetAddressPrefix]"
                         }
+                    },
+                    {
+                        "name": "[parameters('kubernetesSettings').apiApplicationGatewaySubnetName]",
+                        "properties": {
+                            "addressPrefix": "[parameters('kubernetesSettings').apiApplicationGatewaySubnetAddressPrefix]"
+                        }
                     }
                 ]
             }
@@ -47,6 +53,18 @@
         {
             "type": "Microsoft.Network/publicIPAddresses",
             "name": "[parameters('kubernetesSettings').applicationGatewayPublicIpName]",
+            "apiVersion": "2018-08-01",
+            "location": "[parameters('kubernetesSettings').location]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('kubernetesSettings').apiApplicationGatewayPublicIpName]",
             "apiVersion": "2018-08-01",
             "location": "[parameters('kubernetesSettings').location]",
             "sku": {
@@ -144,6 +162,104 @@
                             },
                             "backendHttpSettings": {
                                 "id": "[concat(parameters('kubernetesSettings').applicationGatewayId, '/backendHttpSettingsCollection/setting')]"
+                            }
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('kubernetesSettings').kubernetesVnetName)]",
+                "[concat('Microsoft.Network/publicIPAddresses/', parameters('kubernetesSettings').applicationGatewayPublicIpName)]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/applicationGateways",
+            "name": "[parameters('kubernetesSettings').apiApplicationGatewayName]",
+            "apiVersion": "2018-08-01",
+            "location": "[parameters('kubernetesSettings').location]",
+            "properties": {
+                "sku": {
+                    "name": "Standard_v2",
+                    "tier": "Standard_v2",
+                    "capacity": 2
+                },
+                "gatewayIPConfigurations": [
+                    {
+                        "name": "appGatewayIpConfig",
+                        "properties": {
+                            "subnet": {
+                                "id": "[parameters('kubernetesSettings').apiApplicationGatewaySubnetId]"
+                            }
+                        }
+                    }
+                ],
+                "frontendIPConfigurations": [
+                    {
+                        "name": "appGatewayFrontendIP",
+                        "properties": {
+                            "PublicIPAddress": {
+                                "id": "[parameters('kubernetesSettings').apiApplicationGatewayPublicIpId]"
+                            }
+                        }
+                    }
+                ],
+                "frontendPorts": [
+                    {
+                        "name": "httpPort",
+                        "properties": {
+                            "Port": 80
+                        }
+                    },
+                    {
+                        "name": "httpsPort",
+                        "properties": {
+                            "Port": 443
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "bepool",
+                        "properties": {
+                            "backendAddresses": []
+                        }
+                    }
+                ],
+                "httpListeners": [
+                    {
+                        "name": "httpListener",
+                        "properties": {
+                            "protocol": "Http",
+                            "frontendPort": {
+                                "id": "[concat(parameters('kubernetesSettings').apiApplicationGatewayId, '/frontendPorts/httpPort')]"
+                            },
+                            "frontendIPConfiguration": {
+                                "id": "[concat(parameters('kubernetesSettings').apiApplicationGatewayId, '/frontendIPConfigurations/appGatewayFrontendIP')]"
+                            }
+                        }
+                    }
+                ],
+                "backendHttpSettingsCollection": [
+                    {
+                        "name": "setting",
+                        "properties": {
+                            "port": 80,
+                            "protocol": "Http"
+                        }
+                    }
+                ],
+                "requestRoutingRules": [
+                    {
+                        "name": "rule1",
+                        "properties": {
+                            "httpListener": {
+                                "id": "[concat(parameters('kubernetesSettings').apiApplicationGatewayId, '/httpListeners/httpListener')]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[concat(parameters('kubernetesSettings').apiApplicationGatewayId, '/backendAddressPools/bepool')]"
+                            },
+                            "backendHttpSettings": {
+                                "id": "[concat(parameters('kubernetesSettings').appApplicationGatewayId, '/backendHttpSettingsCollection/setting')]"
                             }
                         }
                     }
