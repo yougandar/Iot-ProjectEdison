@@ -18,6 +18,12 @@
             "location": "[parameters('kubernetesSettings').location]"
         },
         {
+            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+            "name": "[parameters('kubernetesSettings').identityNameApi]",
+            "apiVersion": "2015-08-31-PREVIEW",
+            "location": "[parameters('kubernetesSettings').location]"
+        },
+        {
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[parameters('kubernetesSettings').kubernetesVnetName]",
             "apiVersion": "2018-08-01",
@@ -59,7 +65,10 @@
                 "name": "Standard"
             },
             "properties": {
-                "publicIPAllocationMethod": "Static"
+                "publicIPAllocationMethod": "Static",
+                "dnsSettings": {
+                    "domainNameLabel": "[parameters('kubernetesSettings').apidnsLabelPrefix]"
+                  }
             }
         },
         {
@@ -71,7 +80,10 @@
                 "name": "Standard"
             },
             "properties": {
-                "publicIPAllocationMethod": "Static"
+                "publicIPAllocationMethod": "Static",
+                "dnsSettings": {
+                    "domainNameLabel": "[parameters('kubernetesSettings').admindnsLabelPrefix]"
+                  }
             }
         },
         {
