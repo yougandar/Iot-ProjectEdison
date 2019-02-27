@@ -160,10 +160,6 @@
                 "description": "The Service Principal Client Secret for Kubernetes Service."
             }
         },
-        "webAdminPackageUri": {
-            "type": "string",
-            "defaultValue": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/Edison.AdminPortal.zip"
-        },
         "signalrCapacity": {
             "type": "int",
             "defaultValue": 1,
@@ -276,14 +272,6 @@
             "d2cConsumerGroupName": "cg1",
             "keyName": "iothubowner"
         },
-        "webSiteSettings": {
-            "solutionType": "[parameters('solutionType')]",
-            "webAppHostingPlanName": "[concat('edisonwebplan',variables('suffix'))]",
-            "location": "WestUS",
-            "webAppSkuName1": "F1",
-            "webAdminPackageUri": "[parameters('webAdminPackageUri')]",
-            "webAdmin": "[concat('edisonWebAdmin',variables('suffix'))]"
-        },
         "omsSettings": {
             "solutionType": "[parameters('solutionType')]",
             "omsWorkspaceName": "[concat('omsworkspace', variables('suffix'))]",
@@ -361,28 +349,6 @@
             "name": "[concat('signalR',variables('suffix'))]",
             "pricingTier": "Standard_S1",
             "capacity": "[parameters('signalrCapacity')]"
-        },
-        "iotDpsSettings": {
-            "solutionType": "[parameters('solutionType')]",
-            "iotDpsName": "[concat('dps',variables('suffix'))]",
-            "location": "[parameters('location')]"
-        },
-        "keyVaultSettings": {
-            "solutionType": "[parameters('solutionType')]",
-            "keyVaultName": "[concat('keyvault',variables('suffix'))]",
-            "tenantId": "[parameters('tenantId')]",
-            "objectId": "[parameters('adObjectId')]",
-            "keysPermissions": [
-                "list"
-            ],
-            "secretsPermissions": [
-                "list"
-            ],
-            "skuName": "Standard",
-            "enableVaultForDeployment": false,
-            "enableVaultForDiskEncryption": false,
-            "enabledForTemplateDeployment": false,
-            "location": "[parameters('location')]"
         },
         "redisSettings": {
             "solutionType": "[parameters('solutionType')]",
@@ -532,28 +498,6 @@
             }
         },
         {
-            "name": "WebAdmin",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-02-01",
-            "dependsOn": [
-                "Cosmosdb",
-                "IotHub",
-                "NotificationHub"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/webadmin.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "webSiteSettings": {
-                        "value": "[variables('webSiteSettings')]"
-                    }
-                }
-            }
-        },
-        {
             "name": "Kubernetes",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2015-01-01",
@@ -669,47 +613,6 @@
                 "parameters": {
                     "signalrSettings": {
                         "value": "[variables('signalrSettings')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "IotDps",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2015-01-01",
-            "dependsOn": [
-                "IotHub"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/dps.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "iotDpsSettings": {
-                        "value": "[variables('iotDpsSettings')]"
-                    },
-                    "iothubSettings": {
-                        "value": "[variables('iothubSettings')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "keyVault",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-02-01",
-            "dependsOn": [],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/keyVault.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "keyVaultSettings": {
-                        "value": "[variables('keyVaultSettings')]"
                     }
                 }
             }
