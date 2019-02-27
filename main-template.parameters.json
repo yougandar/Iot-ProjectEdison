@@ -18,40 +18,40 @@
             "value": "eastus"
         },
         "tenantId": {
-            "value": "016c0a8a-388e-4fe5-a363-7a3914d2006d"
+            "value": ""
         },
         "botAdClientId": {
-            "value": "51485b9c-7ead-400f-b3d2-10e9d3ebf324"
+            "value": ""
         },
         "adObjectId": {
-            "value": "430886ac-5788-4a13-8bda-05aa4faf81fb"
+            "value": ""
         },
         "adClientSecret": {
-            "value": "YFQaEmKwkfUMVHdWVl6RFC5+YSBoc7tLwXanTX3NmPs="
+            "value": ""
         },
         "azureAccountName": {
-            "value": "aswinib@sysgain.com"
+            "value": ""
         },
         "azurePassword": {
-            "value": "Srivinayaka@123"
+            "value": ""
         },
         "adminPortalName": {
-            "value": "edisonadm"
+            "value": ""
         },
         "sessionId": {
-            "value": "4df6a142-d286-4ab3-a70c-e93d52a9ae76"
+            "value": ""
         },
         "vmUsername": {
-            "value": "adminuser"
+            "value": ""
         },
         "vmPassword": {
-            "value": "Password@1234"
+            "value": ""
         },
         "servicePrincipalClientId": {
-            "value": "ea8cdde1-8e5c-4a1f-a8fa-2915262a74ed"
+            "value": ""
         },
         "servicePrincipalClientSecret": {
-            "value": "a8b0cf3a-692b-45f7-9f2a-f36cbcc56a02"
+            "value": ""
         },
         "webAdminPackageUri": {
             "value": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/Edison.AdminPortal.zip"
