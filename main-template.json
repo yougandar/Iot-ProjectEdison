@@ -121,7 +121,7 @@
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "Name of Admin Portal used as hosts while executing the Ingress_Custom Script"
+                "description": "Name of Admin Portal used as hosts while executing the Ingress_Custom Script and accessing the application. Ex:edisonportal"
 
             }
         },
