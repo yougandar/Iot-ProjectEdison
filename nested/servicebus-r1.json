@@ -19,7 +19,7 @@
                 "IotSuiteType": "[parameters('serviceBusProperties').solutionType]"
             },
             "sku": {
-                "name": "[parameters('serviceBusProperties').skuName]"
+                "name": "[parameters('serviceBusProperties').skuName1]"
             },
             "properties": {},
             "resources": [

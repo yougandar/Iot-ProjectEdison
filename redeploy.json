@@ -38,18 +38,9 @@
         },
         "signalRlocation": {
             "type": "string",
-            "defaultValue": "eastus",
+            "defaultValue": "eastus2",
             "allowedValues": [
-                "eastus",
-                "westus",
-                "japaneast",
-                "southeastasia",
-                "westeurope",
-                "westus2",
-                " eastus2",
-                "northeurope",
-                "australiaeast",
-                "canadaeast",
+                "eastus2",
                 "centralus"
             ],
             "metadata": {
@@ -84,9 +75,8 @@
         },
         "signalrSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "location": "[parameters('signalRlocation')]",
-            "signalrName": "[concat('signalR',variables('suffix'))]",
-            "pricingTier1": "Free_F1",
+            "locationDr": "[variables('locationDr')]",
+            "signalrNameDr": "[concat('signalR',variables('suffix'),'Dr')]",
             "pricingTier2": "Standard_S1",
             "capacity": "[parameters('signalrCapacity')]"
         },
@@ -110,7 +100,8 @@
         "KoreaSouth": "KoreaCentral",
         "UKSouth": "UKWest",
         "UKWest": "UKSouth",
-        "locationDr": "[variables(parameters('geo-paired-region'))]"
+        "locationDr": "[variables(parameters('geo-paired-region'))]",
+        "signalRlocationDr": "[variables(parameters('signalRlocation'))]"
     },
     "resources": [
         {

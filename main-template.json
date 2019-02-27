@@ -50,18 +50,9 @@
         },
         "signalRlocation": {
             "type": "string",
-            "defaultValue": "eastus",
+            "defaultValue": "eastus2",
             "allowedValues": [
-                "eastus",
-                "westus",
-                "japaneast",
-                "southeastasia",
-                "westeurope",
-                "westus2",
-                " eastus2",
-                "northeurope",
-                "australiaeast",
-                "canadaeast",
+                "eastus2",
                 "centralus"
             ],
             "metadata": {
@@ -383,32 +374,12 @@
         "signalrSettings": {
             "solutionType": "[parameters('solutionType')]",
             "location": "[parameters('signalRlocation')]",
+            "locationDr": "[variables('locationDr')]",
             "signalrName": "[concat('signalR',variables('suffix'))]",
+            "signalrNameDr": "[concat('signalR',variables('suffix'),'Dr')]",
             "pricingTier1": "Free_F1",
             "pricingTier2": "Standard_S1",
             "capacity": "[parameters('signalrCapacity')]"
-        },
-        "iotDpsSettings": {
-            "solutionType": "[parameters('solutionType')]",
-            "iotDpsName": "[concat('dps',variables('suffix'))]",
-            "location": "[parameters('geo-paired-region')]"
-        },
-        "keyVaultSettings": {
-            "solutionType": "[parameters('solutionType')]",
-            "keyVaultName": "[concat('keyvault',variables('suffix'))]",
-            "location": "[parameters('geo-paired-region')]",
-            "tenantId": "[parameters('tenantId')]",
-            "objectId": "[parameters('adObjectId')]",
-            "keysPermissions": [
-                "list"
-            ],
-            "secretsPermissions": [
-                "list"
-            ],
-            "skuName": "Standard",
-            "enableVaultForDeployment": false,
-            "enableVaultForDiskEncryption": false,
-            "enabledForTemplateDeployment": false
         },
         "redisSettings": {
             "solutionType": "[parameters('solutionType')]",
@@ -482,8 +453,9 @@
         "UKSouth": "UKWest",
         "UKWest": "UKSouth",
         "locationDr": "[variables(parameters('geo-paired-region'))]",
-        "readRegionLocation": "[variables('locationDr')]"
-    },
+        "readRegionLocation": "[variables('locationDr')]",
+        "signalRlocationDr": "[variables(parameters('signalRlocation'))]"
+      },
     "resources": [
         {
             "name": "NotificationHub",
@@ -949,67 +921,20 @@
             }
         },
         {
-            "name": "IotDps",
+            "name": "SignalRPremium",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
+            "condition": "[equals(parameters('deployment Type'),'Premium')]",
             "apiVersion": "2015-01-01",
-            "dependsOn": [
-                "IotHub"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/dps.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "iotDpsSettings": {
-                        "value": "[variables('iotDpsSettings')]"
-                    },
-                    "iothubSettings": {
-                        "value": "[variables('iothubSettings')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "IotDpsR1",
-            "type": "Microsoft.Resources/deployments",
-            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
-            "apiVersion": "2015-01-01",
-            "dependsOn": [
-                "IotHubR1"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/dps.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "iotDpsSettings": {
-                        "value": "[variables('iotDpsSettings')]"
-                    },
-                    "iothubSettings": {
-                        "value": "[variables('iothubSettings')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "keyVault",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/keyVault.json')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/signalR-r2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "keyVaultSettings": {
-                        "value": "[variables('keyVaultSettings')]"
+                    "signalrSettings": {
+                        "value": "[variables('signalrSettings')]"
                     }
                 }
             }
