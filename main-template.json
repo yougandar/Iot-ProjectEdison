@@ -212,7 +212,10 @@
         },
         "siteName": {
             "type": "string",
-            "defaultValue": "edisonwebapp"
+            "defaultValue": "edisonwebapp",
+            "metadata": {
+                "description": "The name of channel site"
+            }
         }
     },
     "variables": {
@@ -231,6 +234,7 @@
             "solutionType": "[parameters('solutionType')]",
             "cosmosDbAccountName": "[concat('edisondbacc',variables('suffix'))]",
             "location": "[parameters('geo-paired-region')]",
+            "readRegionLocation": "[variables('readRegionLocation')]",
             "offerType": "Standard",
             "cosmosDbName": "Edison",
             "cosmosCollEventCluster": "EventClusters",
@@ -322,9 +326,12 @@
         "acrSettings": {
             "solutionType": "[parameters('solutionType')]",
             "acrName": "[variables('acrName1')]",
+            "replicationName":"[concat('acrReplication',variables('suffix'))]",
             "acrAdminUserEnabled": true,
             "location": "[parameters('geo-paired-region')]",
+            "locationDr": "[variables('locationDr')]",
             "acrSku": "Basic",
+            "acrSku1": "Premium",
             "acrLoginServer": "[concat(variables('acrName1'),'.azurecr.io')]",
             "acrLoginame": "[variables('acrName1')]"
         },
@@ -374,7 +381,7 @@
         "signalrSettings": {
             "solutionType": "[parameters('solutionType')]",
             "location": "[parameters('signalRlocation')]",
-            "locationDr": "[variables('locationDr')]",
+            "locationDr":"[variables('signalRlocationDr')]", 
             "signalrName": "[concat('signalR',variables('suffix'))]",
             "signalrNameDr": "[concat('signalR',variables('suffix'),'Dr')]",
             "pricingTier1": "Free_F1",
@@ -496,7 +503,7 @@
             }
         },
         {
-            "name": "NotificationHubHot",
+            "name": "NotificationHubR2",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
             "condition": "[equals(parameters('deployment Type'),'Premium')]",
@@ -757,12 +764,32 @@
         {
             "name": "AzureContainerRegistry",
             "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2015-01-01",
             "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
                     "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "acrSettings": {
+                        "value": "[variables('acrSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "AzureContainerRegistryR1",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry-r1.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -921,7 +948,7 @@
             }
         },
         {
-            "name": "SignalRPremium",
+            "name": "SignalRR2",
             "type": "Microsoft.Resources/deployments",
             "condition": "[equals(parameters('deployment Type'),'Premium')]",
             "apiVersion": "2015-01-01",
@@ -961,7 +988,7 @@
             }
         },
         {
-            "name": "RediscacheR1",
+            "name": "RediscacheStandard",
             "type": "Microsoft.Resources/deployments",
             "condition": "[equals(parameters('deployment Type'),'Standard')]",
             "apiVersion": "2016-02-01",
@@ -982,7 +1009,7 @@
             }
         },
         {
-            "name": "RediscacheHot",
+            "name": "RediscachePremium",
             "type": "Microsoft.Resources/deployments",
             "condition": "[equals(parameters('deployment Type'),'Premium')]",
             "apiVersion": "2016-02-01",
@@ -992,7 +1019,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-            "uri": "[concat(variables('baseUrl'), 'nested/redisCache-r2 .json')]",
+            "uri": "[concat(variables('baseUrl'), 'nested/redisCache.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -1076,7 +1103,7 @@
         },
         "IoTHubConnString": {
             "type": "string",
-            "value": "[reference('IotHub').outputs.iotHubConnectionString.value]"
+            "value": "[reference('IotHubBasic').outputs.iotHubConnectionString.value]"
         },
         "SignalRConnString": {
             "type": "string",

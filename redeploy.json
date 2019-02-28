@@ -47,6 +47,19 @@
                 "description": "Choose location for signalR to deploy."
             }
         },
+        "appInsightsLocation": {
+            "type": "string",
+            "defaultValue": "eastus",
+            "allowedValues": [
+                "southcentralus",
+                "westeurope",
+                "eastus",
+                "North Europe"
+            ],
+            "metadata": {
+                "description": "Location for the instance of App Insights."
+            }
+        },
         "signalrCapacity": {
             "type": "int",
             "defaultValue": 1,
@@ -61,6 +74,20 @@
             ],
             "metadata": {
                 "description": "The number of SignalR Unit."
+            }
+        },
+        "siteName": {
+            "type": "string",
+            "defaultValue": "edisonwebapp",
+            "metadata": {
+                "description": "The name of channel site"
+            }
+        },
+        "botAdClientId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Client Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets.Used for Bot deployment"
             }
         }
     },
@@ -79,6 +106,19 @@
             "signalrNameDr": "[concat('signalR',variables('suffix'),'Dr')]",
             "pricingTier2": "Standard_S1",
             "capacity": "[parameters('signalrCapacity')]"
+        },
+        "botSettings": {
+            "solutionType": "[parameters('solutionType')]",
+            "insightsName": "[concat(variables('botId1'),  variables('suffix'))]",
+            "appInsightsLocation": "[parameters('appInsightsLocation')]",
+            "botId": "[variables('botId1')]",
+            "botEndpoint": "[variables('botEndpointConfig').bot]",
+            "sku": "F0",
+            "sku1": "S1",
+            "kind": "bot",
+            "siteName": "[parameters('siteName')]",
+            "botAppId": "[parameters('botAdClientId')]",
+            "siteHost": "[variables('siteHost1')]"
         },
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 5)]",
         "baseUrl": "https://raw.githubusercontent.com/sysgain/MSIotDeviceManagement/master",
@@ -101,7 +141,12 @@
         "UKSouth": "UKWest",
         "UKWest": "UKSouth",
         "locationDr": "[variables(parameters('geo-paired-region'))]",
-        "signalRlocationDr": "[variables(parameters('signalRlocation'))]"
+        "signalRlocationDr": "[variables(parameters('signalRlocation'))]",
+        "botId1": "[concat('edisonbot', variables('suffix'))]",
+        "botEndpointConfig": {
+            "bot": "[concat('https://', variables('siteHost1'), '/api/messages')]"
+        },
+        "siteHost1": "edisonapi"
     },
     "resources": [
         {
@@ -136,6 +181,24 @@
                 "parameters": {
                     "signalrSettings": {
                         "value": "[variables('signalrSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "BotR2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/bot-r1.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "botSettings": {
+                        "value": "[variables('botSettings')]"
                     }
                 }
             }
