@@ -346,12 +346,9 @@
         "acrSettings": {
             "solutionType": "[parameters('solutionType')]",
             "acrName": "[variables('acrName1')]",
-            "replicationName":"[concat('acrReplication',variables('suffix'))]",
             "acrAdminUserEnabled": true,
             "location": "[parameters('acrDeploymentLocation')]",
-            "locationDr": "[variables('acrDeploymentLocationDr')]",
             "acrSku": "Basic",
-            "acrSku1": "Premium",
             "acrLoginServer": "[concat(variables('acrName1'),'.azurecr.io')]",
             "acrLoginame": "[variables('acrName1')]"
         },
@@ -810,7 +807,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry-r1.json')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
