@@ -59,6 +59,26 @@
                 "description": "Choose location for signalR to deploy."
             }
         },
+        "acrDeploymentLocation":{
+            "type":"string",
+            "defaultValue":"",
+            "allowedValues":[
+                "JapanEast",
+                 "JapanWest",
+                "AustraliaSouthEast",
+                 "AustraliaEast",
+                "CanadaCentral",
+                 "CanadaEast",
+                "CentralIndia",
+             "SouthIndia",
+                "CentralUS",
+                 "EastUS2",
+                "SouthEastAsia",
+                 "EastAsia",
+                "WestCentralUS",
+                "WestUS2"
+            ]
+        },
         "omsWorkspaceRegion": {
             "type": "string",
             "defaultValue": "southeastasia",
@@ -328,8 +348,8 @@
             "acrName": "[variables('acrName1')]",
             "replicationName":"[concat('acrReplication',variables('suffix'))]",
             "acrAdminUserEnabled": true,
-            "location": "[parameters('geo-paired-region')]",
-            "locationDr": "[variables('locationDr')]",
+            "location": "[parameters('acrDeploymentLocation')]",
+            "locationDr": "[variables('acrDeploymentLocationDr')]",
             "acrSku": "Basic",
             "acrSku1": "Premium",
             "acrLoginServer": "[concat(variables('acrName1'),'.azurecr.io')]",
@@ -461,8 +481,9 @@
         "UKWest": "UKSouth",
         "locationDr": "[variables(parameters('geo-paired-region'))]",
         "readRegionLocation": "[variables('locationDr')]",
-        "signalRlocationDr": "[variables(parameters('signalRlocation'))]"
-      },
+        "signalRlocationDr": "[variables(parameters('signalRlocation'))]",
+        "acrDeploymentLocationDr":"[variables(parameters('acrDeploymentLocation'))]"
+      },  
     "resources": [
         {
             "name": "NotificationHub",
