@@ -160,14 +160,6 @@
                                 }
                             },
                             {
-                                "category": "E2EDiagnostics",
-                                "enabled": true,
-                                "retentionPolicy": {
-                                    "days": 0,
-                                    "enabled": false
-                                }
-                            },
-                            {
                                 "category": "DeviceTelemetry",
                                 "enabled": true,
                                 "retentionPolicy": {
@@ -185,6 +177,30 @@
                             },
                             {
                                 "category": "DeviceIdentityOperations",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "DistributedTracing",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "Configurations",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "DeviceStreams",
                                 "enabled": true,
                                 "retentionPolicy": {
                                     "days": 0,

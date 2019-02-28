@@ -77,7 +77,10 @@
                  "EastAsia",
                 "WestCentralUS",
                 "WestUS2"
-            ]
+            ],
+            "metadata": {
+                "description": "Choose location for Azure container Registry to deploy."
+            }
         },
         "omsWorkspaceRegion": {
             "type": "string",
@@ -432,7 +435,7 @@
             "botAppId": "[parameters('botAdClientId')]",
             "siteHost": "[variables('siteHost1')]"
         },
-        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev/",
+        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-ha/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
         "virtualNetworkName1": "[concat('edisonVnet', variables('suffix'))]",
         "subnetName1": "edisonSubnet",
@@ -1086,90 +1089,5 @@
             }
         }
     ],
-    "outputs": {
-        "gitHubUrl": {
-            "type": "string",
-            "value": "[parameters('githuburl')]"
-        },
-        "cosmosDBEndpoint": {
-            "type": "string",
-            "value": "[reference('CosmosDB').outputs.cosmosDBAccountEndPoint.value]"
-        },
-        "CosmosDBKey": {
-            "type": "string",
-            "value": "[reference('CosmosDB').outputs.cosmosDBAccountKey.value]"
-        },
-        "NotificationHubName": {
-            "type": "string",
-            "value": "[variables('notificationHub').notificationHubName]"
-        },
-        "NotificationHubConnectionString": {
-            "type": "string",
-            "value": "[reference('NotificationHub').outputs.notificationHubConnectionString.value]"
-        },
-        "serviceBusQueueConnectionString": {
-            "type": "string",
-            "value": "[reference('ServiceBus').outputs.queueConnectionString.value]"
-        },
-        "ServiceBusRabbitMQUSR": {
-            "type": "string",
-            "value": "[variables('serviceBusProperties').serviceBusRabbitMQUsername]"
-        },
-        "ServiceBusRabbitMQPWD": {
-            "type": "string",
-            "value": "[variables('serviceBusProperties').serviceBusRabbitMQPassword]"
-        },
-        "IoTHubConnString": {
-            "type": "string",
-            "value": "[reference('IotHubBasic').outputs.iotHubConnectionString.value]"
-        },
-        "SignalRConnString": {
-            "type": "string",
-            "value": "[reference('Rediscache').outputs.RedisConnString.value]"
-        },
-        "ApplicationInsightsKey": {
-            "type": "string",
-            "value": "[reference('Bot').outputs.botInskey.value]"
-        },
-        "storageaccountEndPoint": {
-            "type": "string",
-            "value": "[reference('StorageBlob').outputs.storageAccountEndpoint.value]"
-        },
-        "acrLoginServer": {
-            "type": "string",
-            "value": "[reference('AzureContainerRegistry').outputs.acrLogin.value]"
-        },
-        "acrUsername": {
-            "type": "string",
-            "value": "[reference('AzureContainerRegistry').outputs.acrUsername.value]"
-        },
-        "acrPassword": {
-            "type": "string",
-            "value": "[reference('AzureContainerRegistry').outputs.acrPassword.value]"
-        },
-        "SubscriptionId": {
-            "type": "string",
-            "value": "[variables('subscriptionid')]"
-        },
-        "ResourceGroupName": {
-            "type": "string",
-            "value": "[variables('rgName')]"
-        },
-        "KubernetesServiceName": {
-            "type": "string",
-            "value": "[variables('kubernetesSettings').aksClusterName]"
-        },
-        "MSAppID": {
-            "type": "string",
-            "value": "[parameters('botAdClientId')]"
-        },
-        "AdSecret": {
-            "type": "string",
-            "value": "[parameters('adClientSecret')]"
-        },
-        "AdminPortalURL": {
-            "type": "string",
-            "value": "[concat('https://',parameters('adminName'),'.cloudapp.azure.com')]"
-        }
-    }
+    "outputs": {}
 }
