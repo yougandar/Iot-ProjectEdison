@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "geo-paired-region": {
+            "value":"EastUS2"
+        },
+        "solutionType": {
+            "value":"Project-Edison"
+        },
+        "signalRlocation": {
+            " value": "eastus"
+        },
+        "appInsightsLocation":{
+            " value": "eastus"
+        },
+        "signalrCapacity": {
+            " value": 1
+        },
+        "siteName": {
+            " value": "edisonwebapp"
+        },
+        "botAdClientId": {
+            " value": ""
+        }
+    }
+}

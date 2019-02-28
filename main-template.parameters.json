@@ -1,12 +1,21 @@
-l{
+{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "location": {
-            " value": "eastus"
+        "solutionType": {
+            "value":"Project-Edison"
+        },
+        "deployment type": {
+            "value":""
+        },
+        "geo-paired-region": {
+            "value":"EastUS2"
         },
         "signalRlocation": {
             " value": "eastus"
+        },
+        "acrDeploymentLocation":{
+            "value":"CanadaCentral"
         },
         "omsWorkspaceRegion": {
             " value": "southeastasia"
@@ -14,11 +23,8 @@ l{
         "appInsightsLocation":{
             " value": "eastus"
         },
-        "tenantId": {
+        "botAdClientId": {
             " value": ""
-        },
-        "adClientId":{
-            "value": ""
         },
         "adObjectId": {
             " value": ""
@@ -32,6 +38,9 @@ l{
         "azurePassword": {
             " value": ""
         },
+        "adminName": {
+            " value": ""
+        },
         "sessionId": {
             " value": ""
         },
@@ -41,29 +50,23 @@ l{
         "vmPassword": {
             " value": "Password@1234"
         },
-        "cosmosdbModuleUri": {
-            " value": "https://github.com/ChaitanyaGeddam/edison/raw/master/scripts/cosmos.zip"
+        "aksServicePrincipalObjectId": {
+            " value": ""
         },
-        "servicePrincipalClientId": {
-            " value": "e00deb3a-8d64-455e-90d8-06970057efa8"
-        },
-        "servicePrincipalClientSecret": {
-            " value": "3bf06532-ac69-4166-8a16-3b6677e82c8f"
-        },
-        "webAdminPackageUri": {
-            " value": "https://github.com/ChaitanyaGeddam/edison/raw/master/code/Edison.AdminPortal.zip"
-        },
-        "signalrCapacity": {
-            " value": 1
-        },
-        "dockerVM":{
-            "value": "Yes"
+        "dockerVM": {
+            " value": ""
         },
         "githuburl": {
-            " value": "https://github.com/litebulb/ProjectEdison.git"
+            " value":  "https://github.com/litebulb/ProjectEdison.git"
         },
-        "siteName":{
-            "value": "edisonwebapp"
+        "azureAdPreviewModuleUri": {
+            " value": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/AzureADPreview.zip"
+        },
+        "cosmosdbModuleUri": {
+            " value": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/cosmos.zip"
+        },
+        "siteName": {
+            " value": "edisonwebapp"
         }
     }
 }
