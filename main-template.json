@@ -312,6 +312,7 @@
         "kubernetesSettings": {
             "solutionType": "[parameters('solutionType')]",
             "identityName": "[variables('identityName1')]",
+            "enableHttpApplicationRouting": true,
             "location": "[parameters('geo-paired-region')]",
             "kubernetesVnetName": "[variables('kubernetesVnetName1')]",
             "virtualNetworkAddressPrefix": "15.0.0.0/8",
@@ -752,6 +753,30 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "uri": "[concat(variables('baseUrl'),'nested/kubernetes.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    },
+                    "kubernetesSettings": {
+                        "value": "[variables('kubernetesSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "KubernetesR1",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
+            "apiVersion": "2017-05-10",
+            "dependsOn": [
+                "OmsWorkSpace"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/kubernetes-ha.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
