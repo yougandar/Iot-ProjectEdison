@@ -20,7 +20,7 @@
         },
             "properties": {
                 "kubernetesVersion": "[parameters('kubernetesSettings').kubernetesVersion]",
-               "enableRBAC": "[parameters('kubernetesSettings').enableRBAC]",
+               "enableRBAC": "[parameters('kubernetesSettings').aksEnableRBAC]",
                 "dnsPrefix": "[parameters('kubernetesSettings').aksDnsPrefix]",
                 "addonProfiles": {
                     "httpApplicationRouting": {
