@@ -346,7 +346,7 @@
             "readerRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
             "contributorRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
             "aksServicePrincipalObjectId": "[parameters('aksServicePrincipalObjectId')]",
-            "servicePrincipalClientId":"[parameters('aksServicePrincipalClientId')]",
+            "aksServicePrincipalClientId":"[parameters('aksServicePrincipalClientId')]",
             "aksServicePrincipalClientSecret":"[parameters('aksServicePrincipalClientSecret')]",
             "identityId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName1'))]",
             "aksClusterName": "[variables('aksClusterName1')]",

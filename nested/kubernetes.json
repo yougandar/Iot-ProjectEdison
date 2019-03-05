@@ -43,6 +43,7 @@
                 },
                 "networkProfile": {
                     "networkPlugin": "azure",
+                    "podCidr": "10.244.0.0/16",
                     "serviceCidr": "[parameters('kubernetesSettings').aksServiceCIDR]",
                     "dnsServiceIP": "[parameters('kubernetesSettings').aksDnsServiceIP]",
                     "dockerBridgeCidr": "[parameters('kubernetesSettings').aksDockerBridgeCIDR]"
