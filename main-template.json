@@ -188,6 +188,18 @@
                 "description": "Object ID of the service principal."
             }
         },
+        "aksServicePrincipalClientId": {
+            "type": "string",
+            "metadata": {
+                "description": "Client ID of the service principal."
+            }
+        },
+        "aksServicePrincipalClientSecret": {
+            "type": "string",
+            "metadata": {
+                "description": "ClientSecret of the service principal."
+            }
+        },
         "signalrCapacity": {
             "type": "int",
             "defaultValue": 1,
@@ -334,9 +346,11 @@
             "readerRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
             "contributorRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
             "aksServicePrincipalObjectId": "[parameters('aksServicePrincipalObjectId')]",
+            "servicePrincipalClientId":"[parameters('aksServicePrincipalClientId')]",
+            "aksServicePrincipalClientSecret":"[parameters('aksServicePrincipalClientSecret')]",
             "identityId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName1'))]",
             "aksClusterName": "[variables('aksClusterName1')]",
-            "kubernetesVersion": "1.12.4",
+            "kubernetesVersion": "1.12.5",
             "aksEnableRBAC": false,
             "aksDnsPrefix": "aks",
             "aksAgentOsDiskSizeGB": 30,
