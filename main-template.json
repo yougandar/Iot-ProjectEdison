@@ -336,7 +336,7 @@
             "aksServicePrincipalObjectId": "[parameters('aksServicePrincipalObjectId')]",
             "identityId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName1'))]",
             "aksClusterName": "[variables('aksClusterName1')]",
-            "kubernetesVersion": "1.12.4",
+            "kubernetesVersion": "1.13.0",
             "aksEnableRBAC": false,
             "aksDnsPrefix": "aks",
             "aksAgentOsDiskSizeGB": 30,
