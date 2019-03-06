@@ -31,7 +31,7 @@
                     {
                         "name": "agentpool",
                         "osDiskSizeGB": "[parameters('kubernetesSettings').aksAgentOsDiskSizeGB]",
-                       "count": "[parameters('kubernetesSettings').aksAgentCount]",
+                        "count": "[parameters('kubernetesSettings').aksAgentCount]",
                         "vmSize": "[parameters('kubernetesSettings').aksAgentVMSize]",
                         "osType": "Linux",
                         "storageProfile": "ManagedDisks"
@@ -42,7 +42,8 @@
                     "Secret":"[parameters('kubernetesSettings').aksServicePrincipalClientSecret]"
                 },
                 "networkProfile": {
-                    "networkPlugin": "azure",
+                    "networkPlugin": "[parameters('kubernetesSettings').networkPlugin]",
+                    "podCidr": "[parameters('kubernetesSettings').podCIDR]",
                     "serviceCidr": "[parameters('kubernetesSettings').aksServiceCIDR]",
                     "dnsServiceIP": "[parameters('kubernetesSettings').aksDnsServiceIP]",
                     "dockerBridgeCidr": "[parameters('kubernetesSettings').aksDockerBridgeCIDR]"
