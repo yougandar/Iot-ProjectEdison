@@ -33,7 +33,7 @@
                         "osDiskSizeGB": "[parameters('kubernetesSettings').aksAgentOsDiskSizeGB]",
                         "count": "[parameters('kubernetesSettings').aksAgentCount]",
                         "vmSize": "[parameters('kubernetesSettings').aksAgentVMSize]",
-                        "osType": "Linux",
+                        "osType": "[parameters('kubernetesSettings').osType]",
                         "storageProfile": "ManagedDisks"
                     }
                 ],
