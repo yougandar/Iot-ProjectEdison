@@ -358,6 +358,7 @@
             "aksAgentVMSize": "Standard_B2s",
             "osType": "Linux",
             "networkPlugin":"azure",
+            "networkPlugin1":"kubenet",
             "podCIDR":"10.244.0.0/16",
             "aksServiceCIDR": "10.0.0.0/16",
             "aksDnsServiceIP": "10.0.0.10",
