@@ -993,7 +993,7 @@
             }
         },
         {
-            "name": "SignalR1",
+            "name": "SignalRR1",
             "type": "Microsoft.Resources/deployments",
             "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
             "apiVersion": "2015-01-01",
