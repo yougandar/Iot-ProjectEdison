@@ -461,7 +461,7 @@
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName1'))]",
         "serviceBusDefaultSASKeyName1": "RootManageSharedAccessKey",
         "serviceBusNamespaceName1": "[concat('snamespace',variables('suffix'))]",
-        "serviceBusNamespaceNameDr1": "[concat('snamespace','Dr',variables('suffix'))]",
+        "serviceBusNamespaceNameDr1": "[concat('snamespace',variables('suffix'),'Dr')]",
         "acrName1": "[concat('acr',variables('suffix'))]",
         "rgName": "[resourceGroup().name]",
         "subscriptionid": "[subscription().subscriptionId]",

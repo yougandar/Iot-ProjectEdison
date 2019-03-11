@@ -85,13 +85,21 @@
                                 }
                             },
                             {
-                                "category": "guard",
+                                "category": "cluster-autoscaler",
                                 "enabled": true,
                                 "retentionPolicy": {
                                     "days": 0,
                                     "enabled": false
                                 }
-                            }
+                            },
+                            {
+                                "category": "kube-audit",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            }        
                         ],
                         "metrics": [
                             {

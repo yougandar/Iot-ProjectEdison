@@ -3,70 +3,82 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "solutionType": {
-            "value":"Project-Edison"
+            "value": "Project-Edison"
         },
         "deployment type": {
-            "value":""
+            "value": ""
         },
         "geo-paired-region": {
-            "value":"EastUS2"
+            "value": "EastUS2"
         },
         "signalRlocation": {
-            " value": "eastus"
+            "value": "eastus"
         },
-        "acrDeploymentLocation":{
-            "value":"CanadaCentral"
+        "acrDeploymentLocation": {
+            "value": "CanadaCentral"
         },
         "omsWorkspaceRegion": {
-            " value": "southeastasia"
+            "value": "southeastasia"
         },
-        "appInsightsLocation":{
-            " value": "eastus"
+        "appInsightsLocation": {
+            "value": "eastus"
+        },
+        "tenantId": {
+            "value": ""
         },
         "botAdClientId": {
-            " value": ""
+            "value": ""
         },
         "adObjectId": {
-            " value": ""
+            "value": ""
         },
         "adClientSecret": {
-            " value": ""
+            "value": ""
         },
         "azureAccountName": {
-            " value": ""
+            "value": ""
         },
         "azurePassword": {
-            " value": ""
+            "value": ""
         },
         "adminName": {
-            " value": ""
+            "value": ""
         },
         "sessionId": {
-            " value": ""
+            "value": ""
         },
         "vmUsername": {
-            " value": "sysgainadmin"
+            "value": "sysgainadmin"
         },
         "vmPassword": {
-            " value": "Password@1234"
+            "value": "Password@1234"
         },
         "aksServicePrincipalObjectId": {
-            " value": ""
+            "value": ""
+        },
+        "aksServicePrincipalClientId": {
+            "value": ""
+        },
+        "aksServicePrincipalClientSecret": {
+            "value": ""
+        },
+        "signalrCapacity":  {
+            "value": 1
         },
         "dockerVM": {
-            " value": ""
+            "value": ""
         },
         "githuburl": {
-            " value":  "https://github.com/litebulb/ProjectEdison.git"
+            "value": "https://github.com/litebulb/ProjectEdison.git"
         },
         "azureAdPreviewModuleUri": {
-            " value": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/AzureADPreview.zip"
+            "value": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/AzureADPreview.zip"
         },
         "cosmosdbModuleUri": {
-            " value": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/cosmos.zip"
+            "value": "https://github.com/sysgain/Iot-ProjectEdison/raw/dev/code/cosmos.zip"
         },
         "siteName": {
-            " value": "edisonwebapp"
+            "value": "edisonwebapp"
         }
     }
 }
