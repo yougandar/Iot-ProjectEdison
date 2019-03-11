@@ -277,7 +277,7 @@
                     "secret": "[parameters('kubernetesSettings').aksServicePrincipalClientSecret]"
                 },
                 "networkProfile": {
-                    "networkPlugin": "azure",
+                    "networkPlugin": "[parameters('kubernetesSettings').networkPlugin]",
                     "serviceCidr": "[parameters('kubernetesSettings').aksServiceCIDR]",
                     "dnsServiceIP": "[parameters('kubernetesSettings').aksDnsServiceIP]",
                     "dockerBridgeCidr": "[parameters('kubernetesSettings').aksDockerBridgeCIDR]"

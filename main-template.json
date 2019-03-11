@@ -334,7 +334,7 @@
             "applicationGatewaySubnetAddressPrefix": "15.1.0.0/16",
             "applicationGatewayPublicIpName": "[variables('applicationGatewayPublicIpName1')]",
             "applicationGatewayName": "[variables('applicationGatewayName1')]",
-            "applicationGatewaySubnetId": "[concat(variables('vnetID'),'/subnets/', variables('applicationGatewaySubnetName1'))]",
+            "applicationGatewaySubnetId": "[concat(variables('kubeVnetId'),'/subnets/', variables('applicationGatewaySubnetName1'))]",
             "vnetId": "[variables('kubeVnetId')]",
             "kubernetesSubnetId": "[concat(variables('kubeVnetId'),'/subnets/', variables('kubernetesSubnetName1'))]",
             "applicationGatewayPublicIpId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('applicationGatewayPublicIpName1'))]",
