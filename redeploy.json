@@ -36,6 +36,23 @@
                 "description": "The type of the solution"
             }
         },
+        "omsWorkspaceRegion": {
+            "type": "string",
+            "defaultValue": "southeastasia",
+            "allowedValues": [
+                "australiasoutheast",
+                "canadacentral",
+                "centralindia",
+                "eastus",
+                "japaneast",
+                "southeastasia",
+                "uksouth",
+                "westeurope"
+            ],
+            "metadata": {
+                "description": "Choose location for OMS Log Analytics to deploy. For more information, see https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-overview"
+            }
+        },
         "signalRlocation": {
             "type": "string",
             "defaultValue": "eastus2",
@@ -47,7 +64,7 @@
                 "description": "Choose location for signalR to deploy."
             }
         },
-        "appInsightsLocation": {
+        "appInsightsLocationDr": {
             "type": "string",
             "defaultValue": "eastus",
             "allowedValues": [
@@ -92,6 +109,13 @@
         }
     },
     "variables": {
+        "omsSettings": {
+            "solutionType": "[parameters('solutionType')]",
+            "omsWorkspaceName": "[concat('omsworkspace', variables('suffix'))]",
+            "omsWorkspaceRegion": "[parameters('omsWorkspaceRegion')]",
+            "omsLogAnalyticsSku": "standalone",
+            "dataRetention": 7
+        },
         "notificationHub": {
             "locationDr": "[variables('locationDr')]",
             "skuName": "free",
@@ -102,18 +126,17 @@
         },
         "signalrSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "locationDr": "[variables('locationDr')]",
+            "locationDr":"[variables('signalRlocationDr')]", 
             "signalrNameDr": "[concat('signalR',variables('suffix'),'Dr')]",
             "pricingTier2": "Standard_S1",
             "capacity": "[parameters('signalrCapacity')]"
         },
         "botSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "insightsName": "[concat(variables('botId1'),  variables('suffix'))]",
-            "appInsightsLocation": "[parameters('appInsightsLocation')]",
+            "insightsNameDr": "[concat(variables('botId1'),'Dr')]",
+            "appInsightsLocationDr": "[parameters('appInsightsLocationDr')]",
             "botId": "[variables('botId1')]",
             "botEndpoint": "[variables('botEndpointConfig').bot]",
-            "sku": "F0",
             "sku1": "S1",
             "kind": "bot",
             "siteName": "[parameters('siteName')]",
@@ -144,11 +167,29 @@
         "signalRlocationDr": "[variables(parameters('signalRlocation'))]",
         "botId1": "[concat('edisonbot', variables('suffix'))]",
         "botEndpointConfig": {
-            "bot": "[concat('https://', variables('siteHost1'), '/api/messages')]"
+            "bot": "[concat('https://', variables('siteHost1'), '/chat/messages')]"
         },
         "siteHost1": "edisonapi"
     },
     "resources": [
+        {
+            "name": "OmsWorkSpace",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/omsWorkspace.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    }
+                }
+            }
+        },
         {
             "name": "NotificationHubR2",
             "type": "Microsoft.Resources/deployments",
@@ -193,7 +234,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/bot-r1.json')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/bot-r2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {

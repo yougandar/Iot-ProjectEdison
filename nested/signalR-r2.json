@@ -11,7 +11,7 @@
         "name": "[parameters('signalrSettings').signalrNameDr]",
         "apiVersion": "2018-03-01-preview",
         "type": "Microsoft.SignalRService/SignalR",
-        "location": "[parameters('signalrSettings').signalRlocationDr]",
+        "location": "[parameters('signalrSettings').locationDr]",
         "tags": {
           "IotSuiteType": "[parameters('signalrSettings').solutionType]"
       },
