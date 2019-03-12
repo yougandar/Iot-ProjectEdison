@@ -144,7 +144,7 @@
             "siteHost": "[variables('siteHost1')]"
         },
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 5)]",
-        "baseUrl": "https://raw.githubusercontent.com/sysgain/MSIotDeviceManagement/master",
+        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-ha/",
         "EastUS2": "CentralUS",
         "CentralUS": "EastUS2",
         "WestUS2": "West Central US",
@@ -172,24 +172,6 @@
         "siteHost1": "edisonapi"
     },
     "resources": [
-        {
-            "name": "OmsWorkSpace",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2015-01-01",
-            "dependsOn": [],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/omsWorkspace.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "omsSettings": {
-                        "value": "[variables('omsSettings')]"
-                    }
-                }
-            }
-        },
         {
             "name": "NotificationHubR2",
             "type": "Microsoft.Resources/deployments",
