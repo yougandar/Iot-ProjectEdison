@@ -19,6 +19,7 @@ then
         sleep 10s
         echo "--------------------kubernetes pods-----------------------"
         kubectl get pods
+        sleep 10s
         echo "--------------------kubernetes services-----------------------"
         kubectl get svc
         sleep 10s
