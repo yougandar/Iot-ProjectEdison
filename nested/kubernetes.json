@@ -59,7 +59,7 @@
                     ],
                     "properties": {
                         "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsSettings').omsWorkspaceName)]",
-                        "logs": [
+                       "logs": [
                             {
                                 "category": "kube-apiserver",
                                 "enabled": true,
@@ -85,13 +85,21 @@
                                 }
                             },
                             {
-                                "category": "guard",
+                                "category": "cluster-autoscaler",
                                 "enabled": true,
                                 "retentionPolicy": {
                                     "days": 0,
                                     "enabled": false
                                 }
-                            }
+                            },
+                            {
+                                "category": "kube-audit",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            }        
                         ],
                         "metrics": [
                             {
