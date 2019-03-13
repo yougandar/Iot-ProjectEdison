@@ -9,7 +9,7 @@
                 "description": "The type of solution"
             }
         },
-        "deployment type": {
+        "deploymenttype": {
             "type": "string",
             "defaultValue": "",
             "allowedValues": [
