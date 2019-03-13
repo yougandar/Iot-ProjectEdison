@@ -207,7 +207,26 @@
                     }
                 }
             }
-        }
+        },
+        {
+            "name": "Bot",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deployment Type'),'Basic')]",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/bot-r2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "botSettings": {
+                        "value": "[variables('botSettings')]"
+                    }
+                }
+            }
+        },
     ],
     "outputs": {
     }
