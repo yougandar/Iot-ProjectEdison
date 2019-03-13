@@ -74,7 +74,7 @@
                 "North Europe"
             ],
             "metadata": {
-                "description": "Location for the instance of App Insights."
+                "description": "Enter location for application insights for disaster recovery"
             }
         },
         "signalrCapacity": {
@@ -226,7 +226,7 @@
                     }
                 }
             }
-        },
+        }
     ],
     "outputs": {
     }
