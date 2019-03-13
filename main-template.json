@@ -18,7 +18,7 @@
                 "Premium"
             ],
             "metadata": {
-                "description": "choose your deployment type to deploy"
+                "description": "choose your deploymenttype to deploy"
             }
         },
         "geo-paired-region": {
@@ -522,7 +522,7 @@
         {
             "name": "NotificationHub",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
+            "condition": "[equals(parameters('deploymenttype'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {
@@ -542,7 +542,7 @@
             "name": "NotificationHubR1",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
-            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
+            "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
             "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
@@ -561,7 +561,7 @@
             "name": "NotificationHubR2",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
-            "condition": "[equals(parameters('deployment Type'),'Premium')]",
+            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
             "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
@@ -579,7 +579,7 @@
         {
             "name": "CosmosDB",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
+            "condition": "[equals(parameters('deploymenttype'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "OmsWorkSpace",
@@ -604,7 +604,7 @@
         {
             "name": "CosmosDBR1",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
+            "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "OmsWorkSpace",
@@ -629,7 +629,7 @@
         {
             "name": "AutomationAccount",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
+            "condition": "[equals(parameters('deploymenttype'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "CosmosDB"
@@ -656,7 +656,7 @@
         {
             "name": "AutomationAccountR1",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
+            "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "CosmosDBR1"
@@ -683,7 +683,7 @@
         {
             "name": "StorageBlob",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
+            "condition": "[equals(parameters('deploymenttype'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {
@@ -702,7 +702,7 @@
         {
             "name": "StorageBlobR1",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
+            "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
             "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {
@@ -721,7 +721,7 @@
         {
             "name": "IotHubBasic",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
+            "condition": "[equals(parameters('deploymenttype'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "OMSWorkSpace",
@@ -749,7 +749,7 @@
         {
             "name": "IotHubR1",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
+            "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "OMSWorkSpace",
@@ -777,7 +777,7 @@
         {
             "name": "Kubernetes",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
+            "condition": "[equals(parameters('deploymenttype'),'Basic')]",
             "apiVersion": "2015-01-01",
             "dependsOn": [
                 "OmsWorkSpace"
@@ -801,7 +801,7 @@
         {
             "name": "KubernetesR1",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
+            "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
             "apiVersion": "2017-05-10",
             "dependsOn": [
                 "OmsWorkSpace"
@@ -843,7 +843,7 @@
         {
             "name": "AzureContainerRegistry",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
+            "condition": "[equals(parameters('deploymenttype'),'Basic')]",
             "apiVersion": "2015-01-01",
             "dependsOn": [],
             "properties": {
@@ -862,7 +862,7 @@
         {
             "name": "AzureContainerRegistryR1",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
+            "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
             "apiVersion": "2015-01-01",
             "dependsOn": [],
             "properties": {
@@ -881,7 +881,7 @@
         {
             "name": "DockerVMBasic",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[and(equals(parameters('deployment Type'),'Basic'),equals(parameters('dockerVM'),'Yes'))]",
+            "condition": "[and(equals(parameters('deploymenttype'),'Basic'),equals(parameters('dockerVM'),'Yes'))]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "AzureContainerRegistry",
@@ -903,7 +903,7 @@
         {
             "name": "DockerVMStandard",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[and(equals(parameters('deployment Type'),'Standard'),equals(parameters('dockerVM'),'Yes'))]",
+            "condition": "[and(equals(parameters('deploymenttype'),'Standard'),equals(parameters('dockerVM'),'Yes'))]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "AzureContainerRegistry",
@@ -925,7 +925,7 @@
         {
             "name": "DockerVMPremium",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[and(equals(parameters('deployment Type'),'Premium'),equals(parameters('dockerVM'),'Yes'))]",
+            "condition": "[and(equals(parameters('deploymenttype'),'Premium'),equals(parameters('dockerVM'),'Yes'))]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "AzureContainerRegistry",
@@ -947,7 +947,7 @@
         {
             "name": "ServiceBus",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
+            "condition": "[equals(parameters('deploymenttype'),'Basic')]",
             "apiVersion": "2015-01-01",
             "dependsOn": [],
             "properties": {
@@ -969,7 +969,7 @@
         {
             "name": "ServiceBusR1",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
+            "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
             "apiVersion": "2015-01-01",
             "dependsOn": [],
             "properties": {
@@ -991,7 +991,7 @@
         {
             "name": "SignalR",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
+            "condition": "[equals(parameters('deploymenttype'),'Basic')]",
             "apiVersion": "2015-01-01",
             "dependsOn": [],
             "properties": {
@@ -1010,7 +1010,7 @@
         {
             "name": "SignalRR1",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
+            "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
             "apiVersion": "2015-01-01",
             "dependsOn": [],
             "properties": {
@@ -1029,7 +1029,7 @@
         {
             "name": "SignalRR2",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Premium')]",
+            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
             "apiVersion": "2015-01-01",
             "dependsOn": [],
             "properties": {
@@ -1049,7 +1049,7 @@
             "name": "Rediscache",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
+            "condition": "[equals(parameters('deploymenttype'),'Basic')]",
             "dependsOn": [
                 "StorageBlob"
             ],
@@ -1069,7 +1069,7 @@
         {
             "name": "RediscacheStandard",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Standard')]",
+            "condition": "[equals(parameters('deploymenttype'),'Standard')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "StorageBlobR1"
@@ -1090,7 +1090,7 @@
         {
             "name": "RediscachePremium",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Premium')]",
+            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "StorageBlobR1"
@@ -1111,7 +1111,7 @@
         {
             "name": "Bot",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
+            "condition": "[equals(parameters('deploymenttype'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {
@@ -1130,7 +1130,7 @@
         {
             "name": "BotR1",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[or(equals(parameters('deployment Type'),'Standard'), equals(parameters('deployment Type'),'Premium'))]",
+            "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
             "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {
@@ -1149,7 +1149,7 @@
         {
             "name": "BotR2",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Premium')]",
+            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {
