@@ -112,6 +112,19 @@
                 "description": "Location for the instance of App Insights."
             }
         },
+        "appInsightsLocationDr": {
+            "type": "string",
+            "defaultValue": "eastus",
+            "allowedValues": [
+                "southcentralus",
+                "westeurope",
+                "eastus",
+                "North Europe"
+            ],
+            "metadata": {
+                "description": "Enter location for application insights for disaster recovery"
+            }
+        },
         "tenantId": {
             "type": "string",
             "defaultValue": "",
@@ -452,7 +465,9 @@
             "kind": "bot",
             "siteName": "[parameters('siteName')]",
             "botAppId": "[parameters('botAdClientId')]",
-            "siteHost": "[variables('siteHost1')]"
+            "siteHost": "[variables('siteHost1')]",
+            "insightsNameDr": "[concat(variables('botId1'),'Dr')]",
+            "appInsightsLocationDr": "[parameters('appInsightsLocationDr')]"
         },
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-ha/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
