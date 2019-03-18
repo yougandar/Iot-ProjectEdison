@@ -1,8 +1,8 @@
 GITPATH=`pwd`
 GIT_DIRPATH="$GITPATH/ProjectEdison/Edison.Web/Kubernetes/qa/Deployment"
 LOG="/tmp/updateyaml.log.`date +%d%m%Y_%T`"
-TAG=`head -30 input.txt | awk -F "\"" '{print $2}'| tail -1`
-ACR_SERVERNAME=`head -27 input.txt | awk -F "\"" '{print $2}'| tail -1`
+TAG=`head -31 input.txt | awk -F "\"" '{print $2}'| tail -1`
+ACR_SERVERNAME=`head -28 input.txt | awk -F "\"" '{print $2}'| tail -1`
 
 # Change Tags and ACR server name in deploy.yaml files
 ls $GIT_DIRPATH
@@ -19,6 +19,7 @@ then
         sleep 10s
         echo "--------------------kubernetes pods-----------------------"
         kubectl get pods
+        sleep 10s
         echo "--------------------kubernetes services-----------------------"
         kubectl get svc
         sleep 10s
