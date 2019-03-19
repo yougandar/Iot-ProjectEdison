@@ -1,10 +1,10 @@
 #!/bin/bash
 #Comment - Builds the images and pushes Edison images to ACR
 #------------------------------------
-ACR_SERVERNAME=`head -28 input.txt | awk -F "\"" '{print $2}'| tail -1`
-ACR_USERNAME=`head -29 input.txt | awk -F "\"" '{print $2}'| tail -1`
-ACR_PASSWD=`head -30 input.txt | awk -F "\"" '{print $2}'| tail -1`
-TAG=`head -31 input.txt | awk -F "\"" '{print $2}'| tail -1`
+ACR_SERVERNAME=`head -27 input.txt | awk -F "\"" '{print $2}'| tail -1`
+ACR_USERNAME=`head -28 input.txt | awk -F "\"" '{print $2}'| tail -1`
+ACR_PASSWD=`head -29 input.txt | awk -F "\"" '{print $2}'| tail -1`
+TAG=`head -30 input.txt | awk -F "\"" '{print $2}'| tail -1`
 #------------------------------------
 GITPATH=`pwd`
 GIT_DIRPATH="$GITPATH/ProjectEdison"

@@ -3,20 +3,20 @@
 #Author - Vivek
 
 #------------------------------------
-CosmosDbSRT=`head -11 input.txt | awk -F "\"" '{print $2}'| tail -1`
-AzureServiceBusCONN=`head -12 input.txt | awk -F "\"" '{print $2}'| tail -1`
-ServiceBusRabbitMQUSR=`head -13 input.txt | awk -F "\"" '{print $2}'| tail -1`
-ServiceBusRabbitMQPWD=`head -14 input.txt | awk -F "\"" '{print $2}'| tail -1`
-AzureAdSRT=`head -15 input.txt | awk -F "\"" '{print $2}'| tail -1`
-SignalCONN=`head -16 input.txt | awk -F "\"" '{print $2}'| tail -1`
-IoTHubControllerSRT=`head -17 input.txt | awk -F "\"" '{print $2}'| tail -1`
-NotificationHubSRT=`head -18 input.txt | awk -F "\"" '{print $2}'| tail -1`
-ApplicationInsightsKey=`head -19 input.txt | awk -F "\"" '{print $2}'| tail -1`
-BotAppPassword=`head -20 input.txt | awk -F "\"" '{print $2}'| tail -1`
-BotStorageep=`head -21 input.txt | awk -F "\"" '{print $2}'| tail -1`
-TuserName=`head -22 input.txt | awk -F "\"" '{print $2}'| tail -1`
-Tpassword=`head -23 input.txt | awk -F "\"" '{print $2}'| tail -1`
-TauthToken=`head -24 input.txt | awk -F "\"" '{print $2}'| tail -1`
+CosmosDbSRT=`head -10 input.txt | awk -F "\"" '{print $2}'| tail -1`
+AzureServiceBusCONN=`head -11 input.txt | awk -F "\"" '{print $2}'| tail -1`
+ServiceBusRabbitMQUSR=`head -12 input.txt | awk -F "\"" '{print $2}'| tail -1`
+ServiceBusRabbitMQPWD=`head -13 input.txt | awk -F "\"" '{print $2}'| tail -1`
+AzureAdSRT=`head -14 input.txt | awk -F "\"" '{print $2}'| tail -1`
+SignalCONN=`head -15 input.txt | awk -F "\"" '{print $2}'| tail -1`
+IoTHubControllerSRT=`head -16 input.txt | awk -F "\"" '{print $2}'| tail -1`
+NotificationHubSRT=`head -17 input.txt | awk -F "\"" '{print $2}'| tail -1`
+ApplicationInsightsKey=`head -18 input.txt | awk -F "\"" '{print $2}'| tail -1`
+BotAppPassword=`head -19 input.txt | awk -F "\"" '{print $2}'| tail -1`
+BotStorageep=`head -20 input.txt | awk -F "\"" '{print $2}'| tail -1`
+TuserName=`head -21 input.txt | awk -F "\"" '{print $2}'| tail -1`
+Tpassword=`head -22 input.txt | awk -F "\"" '{print $2}'| tail -1`
+TauthToken=`head -23 input.txt | awk -F "\"" '{print $2}'| tail -1`
 
 #------------------------------------
 export CosmosDbSRT

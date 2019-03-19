@@ -1,29 +1,29 @@
 #!/bin/bash
 #Comment - Updates the appsettings file for Edisonweb services code
 #------------------------------------
-COSMOSDBENDPOINT=`head -7 input.txt | awk -F "\"" '{print $2}'| tail -1`
-COSMOSDBKEY=`head -11 input.txt | awk -F "\"" '{print $2}'| tail -1`
-ADCLIENTID=`head -2 input.txt | awk -F "\"" '{print $2}'| tail -1`
-ADSECRET=`head -15 input.txt | awk -F "\"" '{print $2}'| tail -1`
-ADDOMAIN=`head -26 input.txt | awk -F "\"" '{print $2}'| tail -1`
-ADTENANTID=`head -3 input.txt | awk -F "\"" '{print $2}'| tail -1`
-B2CCLIENTID=`head -4 input.txt | awk -F "\"" '{print $2}'| tail -1`
-B2CDOMAIN=`head -5 input.txt | awk -F "\"" '{print $2}'| tail -1`
-B2CSIGNINPOLICY=`head -6 input.txt | awk -F "\"" '{print $2}'| tail -1`
-NOTIFICATIONHUBNAME=`head -8 input.txt | awk -F "\"" '{print $2}'| tail -1`
-NOTIFICATIONCONNSTRING=`head -18 input.txt | awk -F "\"" '{print $2}'| tail -1`
-SIGNALLRCONNSTRING=`head -16 input.txt | awk -F "\"" '{print $2}'| tail -1`
-RABBITMQUSER=`head -13 input.txt | awk -F "\"" '{print $2}'| tail -1`
-RABBITMQPWD=`head -14 input.txt | awk -F "\"" '{print $2}'| tail -1`
-SERVICEBUSCONNSTRING=`head -12 input.txt | awk -F "\"" '{print $2}'| tail -1`
-TWILIOUSER=`head -22 input.txt | awk -F "\"" '{print $2}'| tail -1`
-TWILIOPWD=`head -23 input.txt | awk -F "\"" '{print $2}'| tail -1`
-TWILIOACCID=`head -9 input.txt | awk -F "\"" '{print $2}'| tail -1`
-TWILIOAUTHTOKEN=`head -24 input.txt | awk -F "\"" '{print $2}'| tail -1`
-MSAPPID=`head -10 input.txt | awk -F "\"" '{print $2}'| tail -1`
-MSAPPPWD=`head -20 input.txt | awk -F "\"" '{print $2}'| tail -1`
-IOTHUBCONN=`head -17 input.txt | awk -F "\"" '{print $2}'| tail -1`
-BOTSECRETTOKEN=`head -27 input.txt | awk -F "\"" '{print $2}'| tail -1`
+COSMOSDBENDPOINT=`head -6 input.txt | awk -F "\"" '{print $2}'| tail -1`
+COSMOSDBKEY=`head -10 input.txt | awk -F "\"" '{print $2}'| tail -1`
+ADCLIENTID=`head -1 input.txt | awk -F "\"" '{print $2}'| tail -1`
+ADSECRET=`head -14 input.txt | awk -F "\"" '{print $2}'| tail -1`
+ADDOMAIN=`head -25 input.txt | awk -F "\"" '{print $2}'| tail -1`
+ADTENANTID=`head -2 input.txt | awk -F "\"" '{print $2}'| tail -1`
+B2CCLIENTID=`head -3 input.txt | awk -F "\"" '{print $2}'| tail -1`
+B2CDOMAIN=`head -4 input.txt | awk -F "\"" '{print $2}'| tail -1`
+B2CSIGNINPOLICY=`head -5 input.txt | awk -F "\"" '{print $2}'| tail -1`
+NOTIFICATIONHUBNAME=`head -7 input.txt | awk -F "\"" '{print $2}'| tail -1`
+NOTIFICATIONCONNSTRING=`head -17 input.txt | awk -F "\"" '{print $2}'| tail -1`
+SIGNALLRCONNSTRING=`head -15 input.txt | awk -F "\"" '{print $2}'| tail -1`
+RABBITMQUSER=`head -12 input.txt | awk -F "\"" '{print $2}'| tail -1`
+RABBITMQPWD=`head -13 input.txt | awk -F "\"" '{print $2}'| tail -1`
+SERVICEBUSCONNSTRING=`head -11 input.txt | awk -F "\"" '{print $2}'| tail -1`
+TWILIOUSER=`head -21 input.txt | awk -F "\"" '{print $2}'| tail -1`
+TWILIOPWD=`head -22 input.txt | awk -F "\"" '{print $2}'| tail -1`
+TWILIOACCID=`head -8 input.txt | awk -F "\"" '{print $2}'| tail -1`
+TWILIOAUTHTOKEN=`head -23 input.txt | awk -F "\"" '{print $2}'| tail -1`
+MSAPPID=`head -9 input.txt | awk -F "\"" '{print $2}'| tail -1`
+MSAPPPWD=`head -19 input.txt | awk -F "\"" '{print $2}'| tail -1`
+IOTHUBCONN=`head -16 input.txt | awk -F "\"" '{print $2}'| tail -1`
+BOTSECRETTOKEN=`head -26 input.txt | awk -F "\"" '{print $2}'| tail -1`
 #------------------------------------
 GITPATH=`pwd`
 GIT_DIRPATH="$GITPATH/ProjectEdison"
