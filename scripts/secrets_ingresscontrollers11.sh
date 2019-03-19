@@ -19,13 +19,13 @@ LOG="/tmp/deployhelm.log.`date +%d%m%Y_%T`"
 
 #2-  Create the secret in the cluster
 
+    cd /var/lib/waagent/custom-script/download/0
     kubectl create secret tls $ADMINSECRET --cert /home/adminuser/qloudable-npr.com.chained.crt --key /home/adminuser/qloudable-npr.key 
     kubectl create secret tls $APISECRET --cert /home/adminuser/qloudable-npr.com.chained.crt --key /home/adminuser/qloudable-npr.key
     kubectl get secrets
 
 #3-update name of hosts and secrets
-
-    cd /var/lib/waagent/custom-script/download/0
+    
     sed -i -e 's/edisonadminportal.eastus.cloudapp.azure.com/'$ADMINURL'/g' ProjectEdison/Edison.Web/Kubernetes/qa/Deployment/Ingress_Custom/nginx-config-adminportal.yaml
     sed -i -e 's/tls-secret-adminportal/'$ADMINSECRET'/g' ProjectEdison/Edison.Web/Kubernetes/qa/Deployment/Ingress_Custom/nginx-config-adminportal.yaml
     sed -i -e 's/edisonapi.eastus.cloudapp.azure.com/'$BASEURL_VALUE'/g' ProjectEdison/Edison.Web/Kubernetes/qa/Deployment/Ingress_Custom/nginx-config-api.yaml
