@@ -14,9 +14,9 @@ then
         sed -i -e 's/latest/'$TAG'/g' edison.kubernetes.deploy.yaml
         sed -i -e 's/edisoncontainerregistry.azurecr.io/'$ACR_SERVERNAME'/g' edison.kubernetes.deploy.yaml
         kubectl create -f edison.kubernetes.deploy.yaml
-        sleep 10s
+        sleep 20s
         kubectl create -f edison.kubernetes.services.yaml
-        sleep 10s
+        sleep 20s
         echo "--------------------kubernetes pods-----------------------"
         kubectl get pods
         sleep 10s
