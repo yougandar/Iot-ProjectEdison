@@ -19,9 +19,10 @@ then
 #  Install Helm
 
     curl https://raw.githubusercontent.com/helm/helm/master/scripts/get > get_helm.sh
+    sleep 10
     chmod +x get_helm.sh
     ./get_helm.sh
-    sleep 10 
+    sleep 20 
 
 # Run helm init for first time on your cluster
 

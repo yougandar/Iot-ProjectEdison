@@ -16,13 +16,13 @@ then
         kubectl create -f edison.kubernetes.deploy.yaml
         sleep 20s
         kubectl create -f edison.kubernetes.services.yaml
-        sleep 20s
+        sleep 40s
         echo "--------------------kubernetes pods-----------------------"
         kubectl get pods
-        sleep 10s
+        sleep 20s
         echo "--------------------kubernetes services-----------------------"
         kubectl get svc
-        sleep 10s
+        sleep 20s
         kubectl get svc -n kube-system >> services.txt
         sleep 10s
        
