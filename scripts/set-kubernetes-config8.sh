@@ -10,7 +10,7 @@ acrSPClientId=`head -28 input.txt | awk -F "\"" '{print $2}'| tail -1`
 acrSPPassword=`head -29 input.txt | awk -F "\"" '{print $2}'| tail -1`
 acrContainerRegistryName=`head -28 input.txt | awk -F "\"" '{print $2}'| tail -1`
 acrContainerRegistryUrl=`head -27 input.txt | awk -F "\"" '{print $2}'| tail -1`
-acrAccountEmail="nvtuluva@sysgain.com"
+acrAccountEmail=`head -32 input.txt | awk -F "\"" '{print $2}'| tail -1`
 #------------------------------------------------------------
 # move the kubernetes script to config path for execution
 ls $GIT_DIRPATH
