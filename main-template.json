@@ -445,7 +445,7 @@
             "insightsNameDr": "[concat(variables('botId1'),'Dr')]",
             "appInsightsLocationDr": "[parameters('appInsightsLocationDr')]"
         },
-        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-ha/",
+        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-kub-ha/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
         "virtualNetworkName1": "[concat('edisonVnet', variables('suffix'))]",
         "subnetName1": "edisonSubnet",
@@ -777,7 +777,31 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/kubernetes-ha.json')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/kubernetes.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    },
+                    "kubernetesSettings": {
+                        "value": "[variables('kubernetesSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "KubernetesR2",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
+            "apiVersion": "2017-05-10",
+            "dependsOn": [
+                "OmsWorkSpace"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/kubernetes-r2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {

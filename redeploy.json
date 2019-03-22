@@ -112,8 +112,6 @@
         "omsSettings": {
             "solutionType": "[parameters('solutionType')]",
             "omsWorkspaceName": "[concat('omsworkspace', variables('suffix'))]",
-            "omsWorkspaceRegion": "[parameters('omsWorkspaceRegion')]",
-            "omsLogAnalyticsSku": "standalone",
             "dataRetention": 7
         },
         "notificationHub": {
@@ -223,6 +221,30 @@
                 "parameters": {
                     "botSettings": {
                         "value": "[variables('botSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "KubernetesR2",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
+            "apiVersion": "2017-05-10",
+            "dependsOn": [
+                "OmsWorkSpace"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/kubernetes-r2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    },
+                    "kubernetesSettings": {
+                        "value": "[variables('kubernetesSettings')]"
                     }
                 }
             }
