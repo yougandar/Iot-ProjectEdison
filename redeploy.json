@@ -31,26 +31,9 @@
         },
         "solutionType": {
             "type": "string",
-            "defaultValue": "DeviceManagement",
+            "defaultValue": "Project-Edison",
             "metadata": {
                 "description": "The type of the solution"
-            }
-        },
-        "omsWorkspaceRegion": {
-            "type": "string",
-            "defaultValue": "southeastasia",
-            "allowedValues": [
-                "australiasoutheast",
-                "canadacentral",
-                "centralindia",
-                "eastus",
-                "japaneast",
-                "southeastasia",
-                "uksouth",
-                "westeurope"
-            ],
-            "metadata": {
-                "description": "Choose location for OMS Log Analytics to deploy. For more information, see https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-overview"
             }
         },
         "signalRlocation": {
@@ -77,6 +60,18 @@
                 "description": "Enter location for application insights for disaster recovery"
             }
         },
+        "aksServicePrincipalClientId": {
+            "type": "string",
+            "metadata": {
+                "description": "Client ID of the service principal."
+            }
+        },
+        "aksServicePrincipalClientSecret": {
+            "type": "string",
+            "metadata": {
+                "description": "ClientSecret of the service principal."
+            }
+            },
         "signalrCapacity": {
             "type": "int",
             "defaultValue": 1,
@@ -92,20 +87,6 @@
             "metadata": {
                 "description": "The number of SignalR Unit."
             }
-        },
-        "siteName": {
-            "type": "string",
-            "defaultValue": "edisonwebapp",
-            "metadata": {
-                "description": "The name of channel site"
-            }
-        },
-        "botAdClientId": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Client Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets.Used for Bot deployment"
-            }
         }
     },
     "variables": {
@@ -118,8 +99,8 @@
             "locationDr": "[variables('locationDr')]",
             "skuName": "free",
             "namespaceType": "NotificationHub",
-            "notificationHubNamespaceNameDr": "[concat('NotificationHubNSDr', variables('suffix'))]",
-            "notificationHubNameDr": "[concat('NotificationHubDr', variables('suffix'))]",
+            "notificationHubNamespaceNameDr": "[concat('NotificationHubNS', variables('suffix'),'Dr')]",
+            "notificationHubNameDr": "[concat('NotificationHub', variables('suffix'), 'Dr')]",
             "solutionType": "[parameters('solutionType')]"
         },
         "signalrSettings": {
@@ -129,20 +110,28 @@
             "pricingTier2": "Standard_S1",
             "capacity": "[parameters('signalrCapacity')]"
         },
-        "botSettings": {
-            "solutionType": "[parameters('solutionType')]",
-            "insightsNameDr": "[concat(variables('botId1'),'Dr')]",
-            "appInsightsLocationDr": "[parameters('appInsightsLocationDr')]",
-            "botId": "[variables('botId1')]",
-            "botEndpoint": "[variables('botEndpointConfig').bot]",
-            "sku1": "S1",
-            "kind": "bot",
-            "siteName": "[parameters('siteName')]",
-            "botAppId": "[parameters('botAdClientId')]",
-            "siteHost": "[variables('siteHost1')]"
-        },
+        "kubernetesSettings": {
+            "enableHttpApplicationRouting": true,
+            "locationDr": "[variables('locationDr')]",
+            "aksServicePrincipalClientId": "[parameters('aksServicePrincipalClientId')]",
+            "aksServicePrincipalClientSecret": "[parameters('aksServicePrincipalClientSecret')]",
+            "aksClusterNameDr": "[variables('aksClusterNameDr')]",
+            "kubernetesVersion": "1.12.5",
+            "aksEnableRBAC": false,
+            "aksDnsPrefixDr": "clusterdnsDr",
+            "aksAgentOsDiskSizeGB": 30,
+            "aksAgentCount": 3,
+            "aksAgentVMSize": "Standard_B2s",
+            "osType": "Linux",
+            "networkPlugin": "kubenet",
+            "podCIDR": "10.244.0.0/16",
+            "aksServiceCIDRDr": "10.0.0.0/24",
+            "aksDnsServiceIPDr": "10.0.0.20",
+            "aksDockerBridgeCIDRDr": "172.18.0.1/16",
+            "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterNameDr'))]"
+       },
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 5)]",
-        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-ha/",
+        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-kub-ha/",
         "EastUS2": "CentralUS",
         "CentralUS": "EastUS2",
         "WestUS2": "West Central US",
@@ -163,11 +152,7 @@
         "UKWest": "UKSouth",
         "locationDr": "[variables(parameters('geo-paired-region'))]",
         "signalRlocationDr": "[variables(parameters('signalRlocation'))]",
-        "botId1": "[concat('edisonbot', variables('suffix'))]",
-        "botEndpointConfig": {
-            "bot": "[concat('https://', variables('siteHost1'), '/chat/messages')]"
-        },
-        "siteHost1": "edisonapi"
+        "aksClusterNameDr": "[concat('aks' , variables('suffix'), 'Dr')]"
     },
     "resources": [
         {
@@ -207,32 +192,10 @@
             }
         },
         {
-            "name": "Bot",
-            "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
-            "apiVersion": "2016-02-01",
-            "dependsOn": [],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/bot-r2.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "botSettings": {
-                        "value": "[variables('botSettings')]"
-                    }
-                }
-            }
-        },
-        {
             "name": "KubernetesR2",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
             "apiVersion": "2017-05-10",
-            "dependsOn": [
-                "OmsWorkSpace"
-            ],
+            "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {

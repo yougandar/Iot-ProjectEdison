@@ -353,7 +353,7 @@
             "aksDnsServiceIPDr": "10.0.0.20",
             "aksDockerBridgeCIDR": "172.17.0.1/16",
             "aksDockerBridgeCIDRDr": "172.18.0.1/16",
-            "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterName1'))]"
+            "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterNameDr'))]"
         },
         "acrSettings": {
             "solutionType": "[parameters('solutionType')]",
