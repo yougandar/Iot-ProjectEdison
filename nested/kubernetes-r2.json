@@ -47,7 +47,7 @@
                     "networkPlugin": "[parameters('kubernetesSettings').networkPlugin]",
                     "serviceCidr": "[parameters('kubernetesSettings').aksServiceCIDRDr]",
                     "dnsServiceIP": "[parameters('kubernetesSettings').aksDnsServiceIPDr]",
-                    "dockerBridgeCidr": "[parameters('kubernetesSettings').aksDockerBridgeCIDR]"
+                    "dockerBridgeCidr": "[parameters('kubernetesSettings').aksDockerBridgeCIDRDr]"
                 }
             },
             "resources": [

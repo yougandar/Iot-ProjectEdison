@@ -111,6 +111,7 @@
             "capacity": "[parameters('signalrCapacity')]"
         },
         "kubernetesSettings": {
+            "solutionType": "[parameters('solutionType')]",
             "enableHttpApplicationRouting": true,
             "locationDr": "[variables('locationDr')]",
             "aksServicePrincipalClientId": "[parameters('aksServicePrincipalClientId')]",
