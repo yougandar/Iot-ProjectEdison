@@ -11,7 +11,7 @@ LOG="/tmp/deployhelm.log.`date +%d%m%Y_%T`"
     su adminuser
     cd ~
     sudo apt install unzip
-    sleep 10
+    sleep 20
     unzip Kubernetes_certs.zip
     ls
     cat 2289f3206db82816.crt gd_bundle-g2-g1.crt > qloudable-npr.com.chained.crt

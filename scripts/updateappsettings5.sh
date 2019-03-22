@@ -3,7 +3,7 @@
 #------------------------------------
 COSMOSDBENDPOINT=`head -6 input.txt | awk -F "\"" '{print $2}'| tail -1`
 COSMOSDBKEY=`head -10 input.txt | awk -F "\"" '{print $2}'| tail -1`
-ADCLIENTID=`head -1 input.txt | awk -F "\"" '{print $2}'| tail -1`
+ADCLIENTID=`head -1 input.txt | awk -F "\"" '{print $2}'`
 ADSECRET=`head -14 input.txt | awk -F "\"" '{print $2}'| tail -1`
 ADDOMAIN=`head -25 input.txt | awk -F "\"" '{print $2}'| tail -1`
 ADTENANTID=`head -2 input.txt | awk -F "\"" '{print $2}'| tail -1`

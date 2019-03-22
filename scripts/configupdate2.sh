@@ -4,7 +4,7 @@
 
 
 #------------------------------------
-ADCLIENTID=`head -1 input.txt | awk -F "\"" '{print $2}'| tail -1`
+ADCLIENTID=`head -1 input.txt | awk -F "\"" '{print $2}'`
 TENANTID=`head -2 input.txt | awk -F "\"" '{print $2}'| tail -1`
 B2CCLIENTID=`head -3 input.txt | awk -F "\"" '{print $2}'| tail -1`
 DOMAIN=`head -4 input.txt | awk -F "\"" '{print $2}'| tail -1`

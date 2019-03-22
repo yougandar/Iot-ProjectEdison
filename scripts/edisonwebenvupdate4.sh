@@ -3,7 +3,7 @@
 #Author - Vivek
 #------------------------------------
 TENANT_VALUE=`head -2 input.txt | awk -F "\"" '{print $2}'| tail -1`
-CLIENTID_VALUE=`head -1 input.txt | awk -F "\"" '{print $2}'| tail -1`
+CLIENTID_VALUE=`head -1 input.txt | awk -F "\"" '{print $2}'`
 BASEURL_VALUE=`head -24 input.txt | awk -F "\"" '{print $2}'| tail -1`
 LOCALHOST_VALUE="localhost:26000"
 #------------------------------------
