@@ -119,14 +119,6 @@
         }
     ],
     "outputs": {
-        "subscriptionId": {
-            "type": "string",
-            "value": "[subscription().subscriptionId]"
-        },
-        "resourceGroupName": {
-            "type": "string",
-            "value": "[resourceGroup().name]"
-        },
         "aksApiServerAddress": {
             "type": "string",
             "value": "[reference(parameters('kubernetesSettings').aksClusterId, '2018-03-31').fqdn]"

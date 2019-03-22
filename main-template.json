@@ -59,22 +59,22 @@
                 "description": "Choose location for signalR to deploy."
             }
         },
-        "acrDeploymentLocation":{
-            "type":"string",
-            "defaultValue":"",
-            "allowedValues":[
+        "acrDeploymentLocation": {
+            "type": "string",
+            "defaultValue": "",
+            "allowedValues": [
                 "JapanEast",
-                 "JapanWest",
+                "JapanWest",
                 "AustraliaSouthEast",
-                 "AustraliaEast",
+                "AustraliaEast",
                 "CanadaCentral",
-                 "CanadaEast",
+                "CanadaEast",
                 "CentralIndia",
-             "SouthIndia",
+                "SouthIndia",
                 "CentralUS",
-                 "EastUS2",
+                "EastUS2",
                 "SouthEastAsia",
-                 "EastAsia",
+                "EastAsia",
                 "WestCentralUS",
                 "WestUS2"
             ],
@@ -308,7 +308,7 @@
             "location": "[parameters('geo-paired-region')]",
             "containerName": "logs",
             "storageAccountType": "Standard_LRS",
-            "storageAccountType1":"Standard_GRS"
+            "storageAccountType1": "Standard_GRS"
         },
         "iothubSettings": {
             "solutionType": "[parameters('solutionType')]",
@@ -332,22 +332,18 @@
             "solutionType": "[parameters('solutionType')]",
             "enableHttpApplicationRouting": true,
             "location": "[parameters('geo-paired-region')]",
-        
-            "resourceGroup": "[variables('rgName')]",
-          
-          
-            "aksServicePrincipalClientId":"[parameters('aksServicePrincipalClientId')]",
-            "aksServicePrincipalClientSecret":"[parameters('aksServicePrincipalClientSecret')]",
+            "aksServicePrincipalClientId": "[parameters('aksServicePrincipalClientId')]",
+            "aksServicePrincipalClientSecret": "[parameters('aksServicePrincipalClientSecret')]",
             "aksClusterName": "[variables('aksClusterName1')]",
             "kubernetesVersion": "1.12.5",
             "aksEnableRBAC": false,
             "aksDnsPrefix": "clusterdns",
             "aksAgentOsDiskSizeGB": 30,
             "aksAgentCount": 3,
-           "aksAgentVMSize": "Standard_B2s",
+            "aksAgentVMSize": "Standard_B2s",
             "osType": "Linux",
-            "networkPlugin":"kubenet",
-            "podCIDR":"10.244.0.0/16",
+            "networkPlugin": "kubenet",
+            "podCIDR": "10.244.0.0/16",
             "aksServiceCIDR": "10.0.0.0/16",
             "aksDnsServiceIP": "10.0.0.10",
             "aksDockerBridgeCIDR": "172.17.0.1/16",
@@ -408,7 +404,7 @@
         "signalrSettings": {
             "solutionType": "[parameters('solutionType')]",
             "location": "[parameters('signalRlocation')]",
-            "locationDr":"[variables('signalRlocationDr')]", 
+            "locationDr": "[variables('signalRlocationDr')]",
             "signalrName": "[concat('signalR',variables('suffix'))]",
             "signalrNameDr": "[concat('signalR',variables('suffix'),'Dr')]",
             "pricingTier1": "Free_F1",
@@ -420,11 +416,11 @@
             "location": "[parameters('geo-paired-region')]",
             "redisCacheName": "[concat('redisCache',variables('suffix'))]",
             "redisCacheCapacity": 1,
-            "rediscacheCapacity1":0,
+            "rediscacheCapacity1": 0,
             "redisCacheFamily": "C",
             "redisCacheFamily1": "P",
             "redisCacheSku": "Basic",
-            "redisCacheSku1":"Premium",
+            "redisCacheSku1": "Premium",
             "enableNonSslPort": false,
             "diagnosticsEnabled": true,
             "existingDiagnosticsStorageAccountId": "[variables('existingDiagnosticsStorageAccountId')]"
@@ -453,16 +449,14 @@
         "serviceBusNamespaceName1": "[concat('snamespace',variables('suffix'))]",
         "serviceBusNamespaceNameDr1": "[concat('snamespace',variables('suffix'),'Dr')]",
         "acrName1": "[concat('acr',variables('suffix'))]",
-        "rgName": "[resourceGroup().name]",
-        "subscriptionid": "[subscription().subscriptionId]",
         "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
         "existingDiagnosticsStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
         "siteHost1": "edisonapi",
         "botId1": "[concat('edisonbot', variables('suffix'))]",
         "botEndpointConfig": {
             "bot": "[concat('https://', variables('siteHost1'), '/chat/messages')]"
-        },   
-       "aksClusterName1": "[concat('aks' , variables('suffix'))]",
+        },
+        "aksClusterName1": "[concat('aks' , variables('suffix'))]",
         "EastUS2": "CentralUS",
         "CentralUS": "EastUS2",
         "WestUS2": "West Central US",
@@ -484,8 +478,8 @@
         "locationDr": "[variables(parameters('geo-paired-region'))]",
         "readRegionLocation": "[variables('locationDr')]",
         "signalRlocationDr": "[variables(parameters('signalRlocation'))]",
-        "acrDeploymentLocationDr":"[variables(parameters('acrDeploymentLocation'))]"
-      },  
+        "acrDeploymentLocationDr": "[variables(parameters('acrDeploymentLocation'))]"
+    },
     "resources": [
         {
             "name": "NotificationHub",
@@ -1066,7 +1060,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-            "uri": "[concat(variables('baseUrl'), 'nested/redisCache.json')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/redisCache.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
