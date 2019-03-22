@@ -195,12 +195,6 @@
                 "description": "Password to login into Virtual Machine"
             }
         },
-        "aksServicePrincipalObjectId": {
-            "type": "string",
-            "metadata": {
-                "description": "Object ID of the service principal."
-            }
-        },
         "aksServicePrincipalClientId": {
             "type": "string",
             "metadata": {
@@ -336,42 +330,23 @@
         },
         "kubernetesSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "identityName": "[variables('identityName1')]",
             "enableHttpApplicationRouting": true,
             "location": "[parameters('geo-paired-region')]",
-            "kubernetesVnetName": "[variables('kubernetesVnetName1')]",
-            "virtualNetworkAddressPrefix": "15.0.0.0/8",
-            "kubernetesSubnetName": "[variables('kubernetesSubnetName1')]",
-            "aksSubnetAddressPrefix": "15.0.0.0/16",
-            "applicationGatewaySubnetName": "[variables('applicationGatewaySubnetName1')]",
-            "applicationGatewaySubnetAddressPrefix": "15.1.0.0/16",
-            "applicationGatewayPublicIpName": "[variables('applicationGatewayPublicIpName1')]",
-            "applicationGatewayName": "[variables('applicationGatewayName1')]",
-            "applicationGatewaySubnetId": "[concat(variables('kubeVnetId'),'/subnets/', variables('applicationGatewaySubnetName1'))]",
-            "vnetId": "[variables('kubeVnetId')]",
-            "kubernetesSubnetId": "[concat(variables('kubeVnetId'),'/subnets/', variables('kubernetesSubnetName1'))]",
-            "applicationGatewayPublicIpId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('applicationGatewayPublicIpName1'))]",
-            "applicationGatewayId": "[resourceId('Microsoft.Network/applicationGateways', variables('applicationGatewayName1'))]",
-            "subscriptionId": "[variables('subscriptionid')]",
+        
             "resourceGroup": "[variables('rgName')]",
-            "networkContributorRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
-            "managedIdentityOperatorRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'f1a07417-d97a-45cb-824c-7a7467783830')]",
-            "readerRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
-            "contributorRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
-            "aksServicePrincipalObjectId": "[parameters('aksServicePrincipalObjectId')]",
+          
+          
             "aksServicePrincipalClientId":"[parameters('aksServicePrincipalClientId')]",
             "aksServicePrincipalClientSecret":"[parameters('aksServicePrincipalClientSecret')]",
-            "identityId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName1'))]",
             "aksClusterName": "[variables('aksClusterName1')]",
             "kubernetesVersion": "1.12.5",
             "aksEnableRBAC": false,
             "aksDnsPrefix": "clusterdns",
             "aksAgentOsDiskSizeGB": 30,
             "aksAgentCount": 3,
-            "aksAgentVMSize": "Standard_B2s",
+           "aksAgentVMSize": "Standard_B2s",
             "osType": "Linux",
-            "networkPlugin":"azure",
-            "networkPlugin1":"kubenet",
+            "networkPlugin":"kubenet",
             "podCIDR":"10.244.0.0/16",
             "aksServiceCIDR": "10.0.0.0/16",
             "aksDnsServiceIP": "10.0.0.10",
@@ -486,15 +461,8 @@
         "botId1": "[concat('edisonbot', variables('suffix'))]",
         "botEndpointConfig": {
             "bot": "[concat('https://', variables('siteHost1'), '/chat/messages')]"
-        },
-        "applicationGatewaySubnetName1": "appgwsubnet",
-        "kubernetesVnetName1": "[concat('kubeVnet' , variables('suffix'))]",
-        "applicationGatewayPublicIpName1": "[concat('appgwpublicip' , variables('suffix'))]",
-        "applicationGatewayName1": "[concat('applicationgateway' , variables('suffix'))]",
-        "kubeVnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('kubernetesVnetName1'))]",
-        "kubernetesSubnetName1": "kubesubnet",
-        "identityName1": "[concat('appgwContrIdentity' , variables('suffix'))]",
-        "aksClusterName1": "[concat('aks' , variables('suffix'))]",
+        },   
+       "aksClusterName1": "[concat('aks' , variables('suffix'))]",
         "EastUS2": "CentralUS",
         "CentralUS": "EastUS2",
         "WestUS2": "West Central US",
