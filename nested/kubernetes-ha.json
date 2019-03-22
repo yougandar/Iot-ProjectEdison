@@ -13,7 +13,7 @@
     "resources": [
         {
             "type": "Microsoft.ContainerService/managedClusters",
-            "name": "[parameters('kubernetesSettings').aksClusterName]",
+            "name": "[parameters('kubernetesSettings').aksClusterNameDr]",
             "apiVersion": "2018-03-31",
             "location": "[parameters('kubernetesSettings').location]",
             "tags": {
@@ -23,7 +23,7 @@
             "properties": {
                 "kubernetesVersion": "[parameters('kubernetesSettings').kubernetesVersion]",
                 "enableRBAC": "[parameters('kubernetesSettings').aksEnableRBAC]",
-                "dnsPrefix": "[parameters('kubernetesSettings').aksDnsPrefix]",
+                "dnsPrefix": "[parameters('kubernetesSettings').aksDnsPrefixDr]",
                 "addonProfiles": {
                     "httpApplicationRouting": {
                         "enabled":  "[parameters('kubernetesSettings').enableHttpApplicationRouting]"
@@ -45,8 +45,8 @@
                 },
                 "networkProfile": {
                     "networkPlugin": "[parameters('kubernetesSettings').networkPlugin]",
-                    "serviceCidr": "[parameters('kubernetesSettings').aksServiceCIDR]",
-                    "dnsServiceIP": "[parameters('kubernetesSettings').aksDnsServiceIP]",
+                    "serviceCidr": "[parameters('kubernetesSettings').aksServiceCIDRDr]",
+                    "dnsServiceIP": "[parameters('kubernetesSettings').aksDnsServiceIPDr]",
                     "dockerBridgeCidr": "[parameters('kubernetesSettings').aksDockerBridgeCIDR]"
                 }
             },
@@ -56,7 +56,7 @@
                     "type": "providers/diagnosticSettings",
                     "apiVersion": "2015-07-01",
                     "dependsOn": [
-                       "[concat('Microsoft.ContainerService/managedClusters/', parameters('kubernetesSettings').aksClusterName)]"
+                       "[concat('Microsoft.ContainerService/managedClusters/', parameters('kubernetesSettings').aksClusterNameDr)]"
                     ],
                     "properties": {
                         "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsSettings').omsWorkspaceName)]",
@@ -125,7 +125,7 @@
         },
         "aksClusterName": {
             "type": "string",
-            "value": "[parameters('kubernetesSettings').aksClusterName]"
+            "value": "[parameters('kubernetesSettings').aksClusterNameDr]"
         }
     }
 }

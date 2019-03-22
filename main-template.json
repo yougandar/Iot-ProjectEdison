@@ -335,9 +335,11 @@
             "aksServicePrincipalClientId": "[parameters('aksServicePrincipalClientId')]",
             "aksServicePrincipalClientSecret": "[parameters('aksServicePrincipalClientSecret')]",
             "aksClusterName": "[variables('aksClusterName1')]",
+            "aksClusterNameDr": "[variables('aksClusterNameDr')]",
             "kubernetesVersion": "1.12.5",
             "aksEnableRBAC": false,
             "aksDnsPrefix": "clusterdns",
+            "aksDnsPrefixDr": "clusterdnsDr",
             "aksAgentOsDiskSizeGB": 30,
             "aksAgentCount": 3,
             "aksAgentVMSize": "Standard_B2s",
@@ -345,8 +347,11 @@
             "networkPlugin": "kubenet",
             "podCIDR": "10.244.0.0/16",
             "aksServiceCIDR": "10.0.0.0/16",
+            "aksServiceCIDRDr": "10.0.0.0/24",
             "aksDnsServiceIP": "10.0.0.10",
+            "aksDnsServiceIPDr": "10.0.0.20",
             "aksDockerBridgeCIDR": "172.17.0.1/16",
+            "aksDockerBridgeCIDRDr": "172.18.0.1/16",
             "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterName1'))]"
         },
         "acrSettings": {
@@ -457,6 +462,7 @@
             "bot": "[concat('https://', variables('siteHost1'), '/chat/messages')]"
         },
         "aksClusterName1": "[concat('aks' , variables('suffix'))]",
+        "aksClusterNameDr": "[concat('aks' , variables('suffix'), 'Dr')]",
         "EastUS2": "CentralUS",
         "CentralUS": "EastUS2",
         "WestUS2": "West Central US",
