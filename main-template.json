@@ -332,6 +332,7 @@
             "solutionType": "[parameters('solutionType')]",
             "enableHttpApplicationRouting": true,
             "location": "[parameters('geo-paired-region')]",
+            "locationDr": "[variables('locationDr')]",
             "aksServicePrincipalClientId": "[parameters('aksServicePrincipalClientId')]",
             "aksServicePrincipalClientSecret": "[parameters('aksServicePrincipalClientSecret')]",
             "aksClusterName": "[variables('aksClusterName1')]",

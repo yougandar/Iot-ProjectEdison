@@ -15,7 +15,7 @@
             "type": "Microsoft.ContainerService/managedClusters",
             "name": "[parameters('kubernetesSettings').aksClusterNameDr]",
             "apiVersion": "2018-03-31",
-            "location": "[parameters('kubernetesSettings').location]",
+            "location": "[parameters('kubernetesSettings').locationDr]",
             "tags": {
                 "IotSuiteType": "[parameters('kubernetesSettings').solutionType]"
             },
