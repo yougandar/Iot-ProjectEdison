@@ -189,7 +189,7 @@
         },
         "githuburl": {
             "type": "string",
-            "defaultValue": "https://github.com/litebulb/ProjectEdison.git",
+            "defaultValue": "",
             "metadata": {
                 "description": "GitHub url used to clone the repository"
             }
