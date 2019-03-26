@@ -41,11 +41,11 @@ export NOTIFICATIONHUBPATH
 export TWILIOACCID
 export MSAPPID
 #------------------------------------
+        sudo apt-get install apt-transport-https lsb-release ca-certificates curl software-properties-common gnupg2 pass jq -y
+        sleep 20
 ls $GIT_DIRPATH
 if [ $? -eq 0 ]
 then
-        sudo apt-get install apt-transport-https lsb-release ca-certificates curl software-properties-common gnupg2 pass jq -y
-        sleep 20
         echo "------------------------------------" >> $LOG
         echo "The $GIT_DIRPATH exists" >> $LOG
         cd $GIT_DIRCONFIGPATH
