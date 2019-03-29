@@ -148,7 +148,7 @@
         {
             
             "type": "Microsoft.ServiceBus/namespaces/disasterRecoveryConfigs",
-            "name": "[concat(parameters('serviceBusProperties').serviceBusNamespaceName,'/', parameters('serviceBusProperties').aliasName)]",
+            "name": "[parameters('serviceBusProperties').aliasName)]",
             "apiVersion": "2017-04-01",
             "scale": null,
             "properties": {
