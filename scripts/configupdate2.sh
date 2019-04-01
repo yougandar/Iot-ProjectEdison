@@ -30,6 +30,8 @@ CONFIGSIGNALRSERVICE="config-edisonsignalrservice.json"
 CONFIGWORKFLOWS="config-edisonworkflows.json"
 CONFIGDEVICESYNCHRONIZATIONSERVICE="config-edisondevicesynchronizationservice.json"
 LOG="/tmp/config.log.`date +%d%m%Y_%T`"
+
+apt install jq -y
 #------------------------------------
 export ADCLIENTID
 export TENANTID
