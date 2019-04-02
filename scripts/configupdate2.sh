@@ -13,7 +13,7 @@ COSMOSDBEP=`head -6 input.txt | awk -F "\"" '{print $2}'| tail -1`
 NOTIFICATIONHUBPATH=`head -7 input.txt | awk -F "\"" '{print $2}'| tail -1`
 TWILIOACCID=`head -8 input.txt | awk -F "\"" '{print $2}'| tail -1`
 MSAPPID=`head -9 input.txt | awk -F "\"" '{print $2}'| tail -1`
-
+sudo apt install jq -y
 #------------------------------------
 GITPATH=`pwd`
 GIT_DIRPATH="$GITPATH/ProjectEdison"
@@ -41,8 +41,6 @@ export NOTIFICATIONHUBPATH
 export TWILIOACCID
 export MSAPPID
 #------------------------------------
-        sudo apt-get install apt-transport-https lsb-release ca-certificates curl software-properties-common gnupg2 pass jq -y
-        sleep 20
 ls $GIT_DIRPATH
 if [ $? -eq 0 ]
 then
