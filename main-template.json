@@ -1108,7 +1108,7 @@
             }
         },
         {
-            "name": "RediscacheStandard",
+            "name": "RediscacheR1",
             "type": "Microsoft.Resources/deployments",
             "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
             "apiVersion": "2016-02-01",

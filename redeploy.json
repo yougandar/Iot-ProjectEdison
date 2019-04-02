@@ -131,6 +131,19 @@
             "aksDockerBridgeCIDRDr": "172.18.0.1/16",
             "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterNameDr'))]"
        },
+       "botSettings": {
+        "solutionType": "[parameters('solutionType')]",      
+        "botId": "[variables('botId1')]",
+        "botEndpoint": "[variables('botEndpointConfig').bot]",
+        "sku": "F0",
+        "sku1": "S1",
+        "kind": "bot",
+        "siteName": "[parameters('siteName')]",
+        "botAppId": "[parameters('botAdClientId')]",
+        "siteHost": "[variables('siteHost1')]",
+        "insightsNameDr": "[concat(variables('botId1'),'Dr')]",
+        "appInsightsLocationDr": "[parameters('appInsightsLocationDr')]"
+    },
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 5)]",
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-kub-ha/",
         "EastUS2": "CentralUS",
@@ -153,7 +166,12 @@
         "UKWest": "UKSouth",
         "locationDr": "[variables(parameters('geo-paired-region'))]",
         "signalRlocationDr": "[variables(parameters('signalRlocation'))]",
-        "aksClusterNameDr": "[concat('aks' , variables('suffix'), 'Dr')]"
+        "aksClusterNameDr": "[concat('aks' , variables('suffix'), 'Dr')]",
+        "siteHost1": "edisonapi",
+        "botId1": "[concat('edisonbot', variables('suffix'))]",
+        "botEndpointConfig": {
+            "bot": "[concat('https://', variables('siteHost1'), '/chat/messages')]"
+        }
     },
     "resources": [
         {
@@ -188,6 +206,24 @@
                 "parameters": {
                     "signalrSettings": {
                         "value": "[variables('signalrSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "BotR2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/bot-r2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "botSettings": {
+                        "value": "[variables('botSettings')]"
                     }
                 }
             }
