@@ -42,7 +42,27 @@
                         "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
                         "enablePartitioning": "false",
                         "enableExpress": "false"
-                    }
+                    },
+                    "resources": [
+                        {
+                            "apiVersion": "2015-08-01",
+                            "name": "[concat(parameters('servicebusProperties').serviceBusQueueName1,'send')]",
+                            "type": "AuthorizationRules",
+                            "dependsOn": [
+                                "[parameters('servicebusProperties').serviceBusQueueName1]"
+                            ],
+                            "properties": {
+                                "keyName": "[concat(parameters('servicebusProperties').serviceBusQueueName1,'send')]",
+                                "claimType": "SharedAccessKey",
+                                "claimValue": "None",
+                                "rights": [
+                                    "Send",
+                                    "Listen"
+                                ],
+                                "revision": -1
+                            }
+                        }
+                    ]
                 },
                 {
                     "name": "Microsoft.Insights/service",
@@ -126,23 +146,6 @@
             ]
         },
         {
-            "apiVersion": "2017-04-01",
-            "name": "[concat(parameters('servicebusProperties').serviceBusQueueName1,'send')]",
-            "type": "AuthorizationRules",
-            "dependsOn": [
-                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusProperties').serviceBusNamespaceName)]"
-            ],
-            "properties": {
-                "keyName": "[concat(parameters('servicebusProperties').serviceBusQueueName1,'send')]",
-                "claimType": "SharedAccessKey",
-                "claimValue": "None",
-                "rights": [
-                    "Send",
-                    "Listen"
-                ]
-            }
-        },
-        {
             
             "type": "Microsoft.ServiceBus/namespaces/disasterRecoveryConfigs",
             "name": "[concat(parameters('serviceBusProperties').serviceBusNamespaceName,'/', parameters('serviceBusProperties').aliasName)]",
@@ -152,7 +155,9 @@
                 "partnerNamespace": "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusProperties').serviceBusNamespaceNameDr)]"
             },
             "dependsOn": [
-                "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusProperties').serviceBusNamespaceName)]"
+                "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusProperties').serviceBusNamespaceName)]",
+                "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusProperties').serviceBusNamespaceNameDr)]"
+                
             ]
         }
     ],
