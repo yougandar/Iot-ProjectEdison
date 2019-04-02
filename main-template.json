@@ -256,7 +256,7 @@
             "type": "string",
             "defaultValue": "edisonwebapp",
             "metadata": {
-                "description": "The name of channel site"
+                "description": "The name of Bot Direct line channel site"
             }
         }
     },

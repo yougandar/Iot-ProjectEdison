@@ -31,9 +31,26 @@
         },
         "solutionType": {
             "type": "string",
-            "defaultValue": "Project-Edison",
+            "defaultValue": "DeviceManagement",
             "metadata": {
                 "description": "The type of the solution"
+            }
+        },
+        "omsWorkspaceRegion": {
+            "type": "string",
+            "defaultValue": "southeastasia",
+            "allowedValues": [
+                "australiasoutheast",
+                "canadacentral",
+                "centralindia",
+                "eastus",
+                "japaneast",
+                "southeastasia",
+                "uksouth",
+                "westeurope"
+            ],
+            "metadata": {
+                "description": "Choose location for OMS Log Analytics to deploy. For more information, see https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-overview"
             }
         },
         "signalRlocation": {
@@ -60,18 +77,6 @@
                 "description": "Enter location for application insights for disaster recovery"
             }
         },
-        "aksServicePrincipalClientId": {
-            "type": "string",
-            "metadata": {
-                "description": "Client ID of the service principal."
-            }
-        },
-        "aksServicePrincipalClientSecret": {
-            "type": "string",
-            "metadata": {
-                "description": "ClientSecret of the service principal."
-            }
-            },
         "signalrCapacity": {
             "type": "int",
             "defaultValue": 1,
@@ -87,12 +92,28 @@
             "metadata": {
                 "description": "The number of SignalR Unit."
             }
+        },
+        "siteName": {
+            "type": "string",
+            "defaultValue": "edisonwebapp",
+            "metadata": {
+                "description": "The name of channel site"
+            }
+        },
+        "botAdClientId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Client Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets.Used for Bot deployment"
+            }
         }
     },
     "variables": {
         "omsSettings": {
             "solutionType": "[parameters('solutionType')]",
             "omsWorkspaceName": "[concat('omsworkspace', variables('suffix'))]",
+            "omsWorkspaceRegion": "[parameters('omsWorkspaceRegion')]",
+            "omsLogAnalyticsSku": "standalone",
             "dataRetention": 7
         },
         "notificationHub": {
@@ -132,17 +153,16 @@
             "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterNameDr'))]"
        },
        "botSettings": {
-        "solutionType": "[parameters('solutionType')]",      
+        "solutionType": "[parameters('solutionType')]",
+        "insightsNameDr": "[concat(variables('botId1'),'Dr')]",
+        "appInsightsLocationDr": "[parameters('appInsightsLocationDr')]",
         "botId": "[variables('botId1')]",
         "botEndpoint": "[variables('botEndpointConfig').bot]",
-        "sku": "F0",
         "sku1": "S1",
         "kind": "bot",
         "siteName": "[parameters('siteName')]",
         "botAppId": "[parameters('botAdClientId')]",
-        "siteHost": "[variables('siteHost1')]",
-        "insightsNameDr": "[concat(variables('botId1'),'Dr')]",
-        "appInsightsLocationDr": "[parameters('appInsightsLocationDr')]"
+        "siteHost": "[variables('siteHost1')]"
     },
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 5)]",
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-kub-ha/",
