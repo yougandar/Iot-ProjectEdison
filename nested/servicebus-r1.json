@@ -127,8 +127,8 @@
         },
         {
             "apiVersion": "2017-04-01",
-            "name": "edison_inputsend",
-            "type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
+            "name": "[concat(parameters('servicebusProperties').serviceBusQueueName1,'send')]",
+            "type": "AuthorizationRules",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusProperties').serviceBusNamespaceName)]"
             ],
