@@ -388,7 +388,7 @@
         "siteHost1": "edisonapi",
         "botId1": "[concat('edisonbot', variables('suffix'))]",
         "botEndpointConfig": {
-            "bot": "[concat('https://', variables('siteHost1'), '/api/messages')]"
+            "bot": "[concat('https://', variables('siteHost1'), '/chat/messages')]"
         }
     },
     "resources": [
