@@ -36,6 +36,29 @@
                 "description": "The type of the solution"
             }
         },
+        "acrDeploymentLocation": {
+            "type": "string",
+            "defaultValue": "",
+            "allowedValues": [
+                "JapanEast",
+                "JapanWest",
+                "AustraliaSouthEast",
+                "AustraliaEast",
+                "CanadaCentral",
+                "CanadaEast",
+                "CentralIndia",
+                "SouthIndia",
+                "CentralUS",
+                "EastUS2",
+                "SouthEastAsia",
+                "EastAsia",
+                "WestCentralUS",
+                "WestUS2"
+            ],
+            "metadata": {
+                "description": "Choose location for Azure container Registry to deploy."
+            }
+        },
         "signalRlocation": {
             "type": "string",
             "defaultValue": "eastus2",
@@ -144,9 +167,10 @@
         },
         "acrSettings": {
             "solutionType": "[parameters('solutionType')]",
+            "location": "[parameters('acrDeploymentLocation')]",
+            "locationDr": "[variables('acrDeploymentLocationDr')]",
             "acrNameDr": "[variables('acrName2')]",
             "acrAdminUserEnabled": true,
-            "locationDr": "[variables('acrDeploymentLocationDr')]",
             "acrSku": "Basic",
             "acrSku1": "Standard"
         },

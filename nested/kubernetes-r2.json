@@ -26,7 +26,7 @@
                 "dnsPrefix": "[parameters('kubernetesSettings').aksDnsPrefixDr]",
                 "addonProfiles": {
                     "httpApplicationRouting": {
-                        "enabled":  "[parameters('kubernetesSettings').enableHttpApplicationRouting]"
+                        "enabled": "[parameters('kubernetesSettings').enableHttpApplicationRouting]"
                     }
                 },
                 "agentPoolProfiles": [
@@ -49,73 +49,71 @@
                     "dnsServiceIP": "[parameters('kubernetesSettings').aksDnsServiceIPDr]",
                     "dockerBridgeCidr": "[parameters('kubernetesSettings').aksDockerBridgeCIDRDr]"
                 }
-            },
-            "resources": [
-                {
-                    "name": "Microsoft.Insights/service",
-                    "type": "providers/diagnosticSettings",
-                    "apiVersion": "2015-07-01",
-                    "dependsOn": [
-                       "[concat('Microsoft.ContainerService/managedClusters/', parameters('kubernetesSettings').aksClusterNameDr)]"
-                    ],
-                    "properties": {
-                        "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsSettings').omsWorkspaceName)]",
-                        "logs": [
-                            {
-                                "category": "kube-apiserver",
-                                "enabled": true,
-                                "retentionPolicy": {
-                                    "days": 0,
-                                    "enabled": false
-                                }
-                            },
-                            {
-                                "category": "kube-controller-manager",
-                                "enabled": true,
-                                "retentionPolicy": {
-                                    "days": 0,
-                                    "enabled": false
-                                }
-                            },
-                            {
-                                "category": "kube-scheduler",
-                                "enabled": true,
-                                "retentionPolicy": {
-                                    "days": 0,
-                                    "enabled": false
-                                }
-                            },
-                            {
-                                "category": "cluster-autoscaler",
-                                "enabled": true,
-                                "retentionPolicy": {
-                                    "days": 0,
-                                    "enabled": false
-                                }
-                            },
-                            {
-                                "category": "kube-audit",
-                                "enabled": true,
-                                "retentionPolicy": {
-                                    "days": 0,
-                                    "enabled": false
-                                }
-                            }                            
-                        ],
-                        "metrics": [
-                            {
-                                "timeGrain": "AllMetrics",
-                                "category": "AllMetrics",
-                                "enabled": true,
-                                "retentionPolicy": {
-                                    "enabled": false,
-                                    "days": 0
-                                }
-                            }
-                        ]
+            }
+        },
+        {
+            "name": "Microsoft.Insights/service",
+            "type": "providers/diagnosticSettings",
+            "apiVersion": "2015-07-01",
+            "dependsOn": [
+                "[concat('Microsoft.ContainerService/managedClusters/', parameters('kubernetesSettings').aksClusterNameDr)]"
+            ],
+            "properties": {
+                "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsSettings').omsWorkspaceName)]",
+                "logs": [
+                    {
+                        "category": "kube-apiserver",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "days": 0,
+                            "enabled": false
+                        }
+                    },
+                    {
+                        "category": "kube-controller-manager",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "days": 0,
+                            "enabled": false
+                        }
+                    },
+                    {
+                        "category": "kube-scheduler",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "days": 0,
+                            "enabled": false
+                        }
+                    },
+                    {
+                        "category": "cluster-autoscaler",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "days": 0,
+                            "enabled": false
+                        }
+                    },
+                    {
+                        "category": "kube-audit",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "days": 0,
+                            "enabled": false
+                        }
                     }
-                }
-            ]  
+                ],
+                "metrics": [
+                    {
+                        "timeGrain": "AllMetrics",
+                        "category": "AllMetrics",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "enabled": false,
+                            "days": 0
+                        }
+                    }
+                ]
+            }
         }
     ],
     "outputs": {

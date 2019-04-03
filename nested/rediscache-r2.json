@@ -28,7 +28,7 @@
                     "apiVersion": "2017-05-01-preview",
                     "type": "Microsoft.Cache/redis/providers/diagnosticsettings",
                     "name": "[concat(parameters('redisSettings').redisCacheNameDr, '/Microsoft.Insights/', parameters('redisSettings').redisCacheNameDr)]",
-                    "location": "[parameters('redisSettings').location]",
+                    "location": "[parameters('redisSettings').locationDr]",
                     "dependsOn": [
                         "[concat('Microsoft.Cache/Redis/', parameters('redisSettings').redisCacheNameDr)]"
                     ],
