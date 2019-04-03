@@ -95,6 +95,12 @@
                 "description": "ClientSecret of the service principal."
             }
         },
+        "rgname": {
+            "type": "string",
+            "metadata": {
+                "description": "ClientSecret of the service principal."
+            }
+        },
         "signalrCapacity": {
             "type": "int",
             "defaultValue": 1,
@@ -110,6 +116,10 @@
             "metadata": {
                 "description": "The number of SignalR Unit."
             }
+        },
+        "rgname":{
+            "type": "string",
+            "defaultvalue":""
         }
     },
     "variables": {
@@ -203,7 +213,7 @@
         "locationDr": "[variables(parameters('geo-paired-region'))]",
         "signalRlocationDr": "[variables(parameters('signalRlocation'))]",
         "aksClusterNameDr": "[concat('aks' , variables('suffix'), 'Dr')]",
-        "existingDiagnosticsStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+        "existingDiagnosticsStorageAccountId": "/subscriptions/subscription().subscriptionId/resourceGroups/parameters('rgname')/providers/Microsoft.Storage/storageAccounts/variables('storageAccountName')",
         "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
         "acrName2": "[concat('acr',variables('suffix'), 'Dr')]",
         "acrDeploymentLocationDr": "[variables(parameters('acrDeploymentLocation'))]",
