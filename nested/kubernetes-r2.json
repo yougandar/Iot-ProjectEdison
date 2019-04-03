@@ -59,7 +59,7 @@
                        "[concat('Microsoft.ContainerService/managedClusters/', parameters('kubernetesSettings').aksClusterNameDr)]"
                     ],
                     "properties": {
-                        "workspaceId": "[parameters('omsSettings').workspaceId]",
+                        "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('omsSettings').omsWorkspaceName)]",
                         "logs": [
                             {
                                 "category": "kube-apiserver",
