@@ -358,11 +358,12 @@
         "acrSettings": {
             "solutionType": "[parameters('solutionType')]",
             "acrName": "[variables('acrName1')]",
+            "acrNameDr": "[variables('acrName2')]",
             "acrAdminUserEnabled": true,
             "location": "[parameters('acrDeploymentLocation')]",
+            "locationDr": "[variables('acrDeploymentLocationDr')]",
             "acrSku": "Basic",
-            "acrLoginServer": "[concat(variables('acrName1'),'.azurecr.io')]",
-            "acrLoginame": "[variables('acrName1')]"
+            "acrSku1": "Standard"
         },
         "vm": {
             "solutionType": "[parameters('solutionType')]",
@@ -420,7 +421,9 @@
         "redisSettings": {
             "solutionType": "[parameters('solutionType')]",
             "location": "[parameters('geo-paired-region')]",
+            "locationDr": "[variables('signalRlocationDr')]",
             "redisCacheName": "[concat('redisCache',variables('suffix'))]",
+            "redisCacheNameDr": "[concat('redisCache',variables('suffix'),'Dr')]",
             "redisCacheCapacity": 1,
             "rediscacheCapacity1": 0,
             "redisCacheFamily": "C",
@@ -461,6 +464,7 @@
         "serviceBusNamespaceName1": "[concat('snamespace',variables('suffix'))]",
         "serviceBusNamespaceNameDr1": "[concat('snamespace',variables('suffix'),'Dr')]",
         "acrName1": "[concat('acr',variables('suffix'))]",
+        "acrName2": "[concat('acr',variables('suffix'), 'Dr')]",
         "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
         "existingDiagnosticsStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
         "siteHost1": "edisonapi",
