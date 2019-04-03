@@ -71,7 +71,7 @@
             "metadata": {
                 "description": "ClientSecret of the service principal."
             }
-            },
+        },
         "signalrCapacity": {
             "type": "int",
             "defaultValue": 1,
@@ -105,7 +105,7 @@
         },
         "signalrSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "locationDr":"[variables('signalRlocationDr')]", 
+            "locationDr": "[variables('signalRlocationDr')]",
             "signalrNameDr": "[concat('signalR',variables('suffix'),'Dr')]",
             "pricingTier2": "Standard_S1",
             "capacity": "[parameters('signalrCapacity')]"
@@ -130,26 +130,32 @@
             "aksDnsServiceIPDr": "10.0.0.20",
             "aksDockerBridgeCIDRDr": "172.18.0.1/16",
             "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterNameDr'))]"
-       },      
-       "redisSettings": {
-        "solutionType": "[parameters('solutionType')]",
-        "location": "[parameters('geo-paired-region')]",
-        "redisCacheNameDr": "[concat('redisCache',variables('suffix'),'Dr')]",
-        "redisCacheCapacity": 1,
-        "redisCacheFamily": "C",
-        "redisCacheSku": "Basic",
-        "enableNonSslPort": false,
-        "diagnosticsEnabled": true,
-        "existingDiagnosticsStorageAccountId": "[variables('existingDiagnosticsStorageAccountId')]"
-    },
-    "acrSettings": {
-        "solutionType": "[parameters('solutionType')]",
-        "acrNameDr": "[variables('acrName2')]",
-        "acrAdminUserEnabled": true,
-        "locationDr": "[variables('acrDeploymentLocationDr')]",
-        "acrSku": "Basic",
-        "acrSku1": "Standard"
-    },
+        },
+        "redisSettings": {
+            "solutionType": "[parameters('solutionType')]",
+            "locationDr": "[variables('locationDr')]",
+            "redisCacheNameDr": "[concat('redisCache',variables('suffix'),'Dr')]",
+            "redisCacheCapacity": 1,
+            "redisCacheFamily": "C",
+            "redisCacheSku": "Basic",
+            "enableNonSslPort": false,
+            "diagnosticsEnabled": true,
+            "existingDiagnosticsStorageAccountId": "[variables('existingDiagnosticsStorageAccountId')]"
+        },
+        "acrSettings": {
+            "solutionType": "[parameters('solutionType')]",
+            "acrNameDr": "[variables('acrName2')]",
+            "acrAdminUserEnabled": true,
+            "locationDr": "[variables('acrDeploymentLocationDr')]",
+            "acrSku": "Basic",
+            "acrSku1": "Standard"
+        },
+        "botSettings": {
+            "solutionType": "[parameters('solutionType')]",
+            "insightsNameDr": "[variables('botId2')]",
+            "botIdDr": "[variables('botId2')]",
+            "appInsightsLocationDr": "[parameters('appInsightsLocationDr')]"
+        },
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 5)]",
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-kub-ha/",
         "EastUS2": "CentralUS",
@@ -176,7 +182,8 @@
         "existingDiagnosticsStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
         "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
         "acrName2": "[concat('acr',variables('suffix'), 'Dr')]",
-        "acrDeploymentLocationDr": "[variables(parameters('acrDeploymentLocation'))]"
+        "acrDeploymentLocationDr": "[variables(parameters('acrDeploymentLocation'))]",
+        "botId2": "[concat('edisonbot', variables('suffix'),'Dr')]"
     },
     "resources": [
         {
@@ -271,8 +278,25 @@
                     }
                 }
             }
+        },
+        {
+            "name": "AppInsights",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/app-insights.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "botSettings": {
+                        "value": "[variables('botSettings')]"
+                    }
+                }
+            }
         }
     ],
-    "outputs": {
-    }
+    "outputs": {}
 }

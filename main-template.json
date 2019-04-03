@@ -421,7 +421,6 @@
         "redisSettings": {
             "solutionType": "[parameters('solutionType')]",
             "location": "[parameters('geo-paired-region')]",
-            "locationDr": "[variables('signalRlocationDr')]",
             "redisCacheName": "[concat('redisCache',variables('suffix'))]",
             "redisCacheNameDr": "[concat('redisCache',variables('suffix'),'Dr')]",
             "redisCacheCapacity": 1,
@@ -436,9 +435,11 @@
         },
         "botSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "insightsName": "[concat(variables('botId1'))]",
+            "insightsName": "[variables('botId1')",
+            "insightsNameDr": "[variables('botId2')]",
             "appInsightsLocation": "[parameters('appInsightsLocation')]",
             "botId": "[variables('botId1')]",
+            "botIdDr": "[variables('botId2')]",
             "botEndpoint": "[variables('botEndpointConfig').bot]",
             "sku": "F0",
             "sku1": "S1",
@@ -446,7 +447,6 @@
             "siteName": "[parameters('siteName')]",
             "botAppId": "[parameters('botAdClientId')]",
             "siteHost": "[variables('siteHost1')]",
-            "insightsNameDr": "[concat(variables('botId1'),'Dr')]",
             "appInsightsLocationDr": "[parameters('appInsightsLocationDr')]"
         },
         "trafficManagerSettings": {
@@ -469,6 +469,7 @@
         "existingDiagnosticsStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
         "siteHost1": "edisonapi",
         "botId1": "[concat('edisonbot', variables('suffix'))]",
+        "botId2": "[concat('edisonbot', variables('suffix'),'Dr')]",
         "botEndpointConfig": {
             "bot": "[concat('https://', variables('siteHost1'), '/chat/messages')]"
         },
