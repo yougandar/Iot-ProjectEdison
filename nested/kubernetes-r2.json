@@ -27,9 +27,6 @@
                 "addonProfiles": {
                     "httpApplicationRouting": {
                         "enabled": "[parameters('kubernetesSettings').enableHttpApplicationRouting]"
-                    },
-                    "omsagent": {
-                        "enabled": false
                     }
                 },
                 "agentPoolProfiles": [
@@ -39,8 +36,7 @@
                         "count": "[parameters('kubernetesSettings').aksAgentCount]",
                         "vmSize": "[parameters('kubernetesSettings').aksAgentVMSize]",
                         "osType": "Linux",
-                        "storageProfile": "ManagedDisks",
-                        "dnsPrefix": "agents"
+                        "storageProfile": "ManagedDisks"
                     }
                 ],
                 "servicePrincipalProfile": {

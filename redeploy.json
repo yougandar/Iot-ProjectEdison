@@ -83,13 +83,30 @@
                 "description": "Enter location for application insights for disaster recovery"
             }
         },
-        "aksServicePrincipalClientId": {
+        "omsWorkspaceRegion": {
+            "type": "string",
+            "defaultValue": "southeastasia",
+            "allowedValues": [
+                "australiasoutheast",
+                "canadacentral",
+                "centralindia",
+                "eastus",
+                "japaneast",
+                "southeastasia",
+                "uksouth",
+                "westeurope"
+            ],
+            "metadata": {
+                "description": "Choose location for OMS Log Analytics to deploy. For more information, see https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-overview"
+            }
+        },
+        "aksServicePrincipalClientIdDr": {
             "type": "string",
             "metadata": {
                 "description": "Client ID of the service principal."
             }
         },
-        "aksServicePrincipalClientSecret": {
+        "aksServicePrincipalClientSecretDr": {
             "type": "string",
             "metadata": {
                 "description": "ClientSecret of the service principal."
@@ -115,9 +132,17 @@
     "variables": {
         "omsSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "omsWorkspaceName": "[variables('omsWorkspaceName1')]",
-            "dataRetention": 7,
-            "workspaceId": "[variables('workspaceId')]"
+            "omsWorkspaceNameDr": "[concat('omsworkspace', variables('suffix'),'Dr')]",
+            "omsWorkspaceRegion": "[parameters('omsWorkspaceRegion')]",
+            "omsLogAnalyticsSku": "standalone",
+            "dataRetention": 7
+        },
+         "storageBlobSettings": {
+            "solutionType": "[parameters('solutionType')]",
+            "storageAccountNameDr": "[variables('storageAccountNameDr')]",
+            "location": "[parameters('geo-paired-region')]",
+            "containerName": "logsdr",
+            "storageAccountType": "Standard_LRS"
         },
         "notificationHub": {
             "locationDr": "[variables('locationDr')]",
@@ -136,10 +161,10 @@
         },
         "kubernetesSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "enableHttpApplicationRouting": true,
             "locationDr": "[variables('locationDr')]",
-            "aksServicePrincipalClientId": "[parameters('aksServicePrincipalClientId')]",
-            "aksServicePrincipalClientSecret": "[parameters('aksServicePrincipalClientSecret')]",
+            "enableHttpApplicationRouting": true,
+           "aksServicePrincipalClientIdDr": "[parameters('aksServicePrincipalClientIdDr')]",
+          "aksServicePrincipalClientSecretDr": "[parameters('aksServicePrincipalClientSecretDr')]",
             "aksClusterNameDr": "[variables('aksClusterNameDr')]",
             "kubernetesVersion": "1.12.5",
             "aksEnableRBAC": false,
@@ -149,7 +174,6 @@
             "aksAgentVMSize": "Standard_B2s",
             "osType": "Linux",
             "networkPlugin": "kubenet",
-            "podCIDR": "10.245.0.0/16",
             "aksServiceCIDRDr": "10.0.0.0/24",
             "aksDnsServiceIPDr": "10.0.0.20",
             "aksDockerBridgeCIDRDr": "172.18.0.1/16",
@@ -164,8 +188,7 @@
             "redisCacheFamily": "C",
             "redisCacheSku": "Basic",
             "enableNonSslPort": false,
-            "diagnosticsEnabled": true,
-            "existingDiagnosticsStorageAccountId": "[variables('existingDiagnosticsStorageAccountId')]"
+            "diagnosticsEnabled": true
         },
         "acrSettings": {
             "solutionType": "[parameters('solutionType')]",
@@ -205,14 +228,49 @@
         "locationDr": "[variables(parameters('geo-paired-region'))]",
         "signalRlocationDr": "[variables(parameters('signalRlocation'))]",
         "aksClusterNameDr": "[concat('aks' , variables('suffix'), 'Dr')]",
-        "existingDiagnosticsStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
-        "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
+        "storageAccountNameDr": "[concat('edisonstrgeacc',variables('suffix'),'Dr')]",
         "acrName2": "[concat('acr',variables('suffix'), 'Dr')]",
         "acrDeploymentLocationDr": "[variables(parameters('acrDeploymentLocation'))]",
-        "botId2": "[concat('edisonbot', variables('suffix'),'Dr')]",
-        "omsWorkspaceName1": "[concat('omsworkspace', variables('suffix'))]"
+        "botId2": "[concat('edisonbot', variables('suffix'),'Dr')]"
     },
     "resources": [
+        {
+            "name": "OmsWorkSpaceR2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/oms-dr.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "StorageBlobR2",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deploymenttype'),'Basic')]",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/storageblob.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageBlobSettings": {
+                        "value": "[variables('storageBlobSettings')]"
+                    }
+                }
+            }
+        },
         {
             "name": "NotificationHubR2",
             "type": "Microsoft.Resources/deployments",
@@ -253,7 +311,9 @@
             "name": "RediscacheR2",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
-            "dependsOn": [],
+            "dependsOn": [
+                "StorageBlobR2"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -263,6 +323,9 @@
                 "parameters": {
                     "redisSettings": {
                         "value": "[variables('redisSettings')]"
+                    },
+                    "storageAccountName":{
+                        "value": "[variables('storageAccountName')]"
                     }
                 }
             }
@@ -289,7 +352,9 @@
             "name": "KubernetesR2",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
-            "dependsOn": [],
+            "dependsOn": [
+                "OmsWorkSpaceR2"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
