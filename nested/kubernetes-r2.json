@@ -29,10 +29,7 @@
                         "enabled": "[parameters('kubernetesSettings').enableHttpApplicationRouting]"
                     },
                     "omsagent": {
-                        "enabled": true,
-                        "config": {
-                            "logAnalyticsWorkspaceResourceID": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsSettings').omsWorkspaceName)]"
-                          }
+                        "enabled": false
                     }
                 },
                 "agentPoolProfiles": [
