@@ -26,7 +26,10 @@
                 "dnsPrefix": "[parameters('kubernetesSettings').aksDnsPrefixDr]",
                 "addonProfiles": {
                     "httpApplicationRouting": {
-                        "enabled":  "[parameters('kubernetesSettings').enableHttpApplicationRouting]"
+                        "enabled": "[parameters('kubernetesSettings').enableHttpApplicationRouting]"
+                    },
+                    "omsagent": {
+                        "enabled": true
                     }
                 },
                 "agentPoolProfiles": [
@@ -40,8 +43,8 @@
                     }
                 ],
                 "servicePrincipalProfile": {
-                    "clientId": "[parameters('kubernetesSettings').aksServicePrincipalClientId]",
-                    "secret": "[parameters('kubernetesSettings').aksServicePrincipalClientSecret]"
+                    "clientId": "[parameters('kubernetesSettings').aksServicePrincipalClientIdDr]",
+                    "secret": "[parameters('kubernetesSettings').aksServicePrincipalClientSecretDr]"
                 },
                 "networkProfile": {
                     "networkPlugin": "[parameters('kubernetesSettings').networkPlugin]",
@@ -56,7 +59,7 @@
                     "type": "providers/diagnosticSettings",
                     "apiVersion": "2015-07-01",
                     "dependsOn": [
-                       "[concat('Microsoft.ContainerService/managedClusters/', parameters('kubernetesSettings').aksClusterNameDr)]"
+                        "[concat('Microsoft.ContainerService/managedClusters/', parameters('kubernetesSettings').aksClusterNameDr)]"
                     ],
                     "properties": {
                         "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsSettings').omsWorkspaceName)]",
@@ -100,7 +103,7 @@
                                     "days": 0,
                                     "enabled": false
                                 }
-                            }                            
+                            }
                         ],
                         "metrics": [
                             {
@@ -115,17 +118,8 @@
                         ]
                     }
                 }
-            ]  
+            ]
         }
     ],
-    "outputs": {
-        "aksApiServerAddress": {
-            "type": "string",
-            "value": "[reference(parameters('kubernetesSettings').aksClusterId, '2018-03-31').fqdn]"
-        },
-        "aksClusterName": {
-            "type": "string",
-            "value": "[parameters('kubernetesSettings').aksClusterNameDr]"
-        }
-    }
+    "outputs": {}
 }
