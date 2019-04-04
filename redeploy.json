@@ -4,7 +4,7 @@
     "parameters": {
         "geo-paired-region": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "EastUS2",
             "allowedValues": [
                 "EastUS2",
                 "CentralUS",
@@ -38,7 +38,7 @@
         },
         "acrDeploymentLocation": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "CentralUS",
             "allowedValues": [
                 "JapanEast",
                 "JapanWest",
@@ -95,12 +95,6 @@
                 "description": "ClientSecret of the service principal."
             }
         },
-        "rgname": {
-            "type": "string",
-            "metadata": {
-                "description": "ClientSecret of the service principal."
-            }
-        },
         "signalrCapacity": {
             "type": "int",
             "defaultValue": 1,
@@ -116,17 +110,14 @@
             "metadata": {
                 "description": "The number of SignalR Unit."
             }
-        },
-        "rgname":{
-            "type": "string",
-            "defaultvalue":""
         }
     },
     "variables": {
         "omsSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "omsWorkspaceName": "[concat('omsworkspace', variables('suffix'))]",
-            "dataRetention": 7
+            "omsWorkspaceName": "[variables('omsWorkspaceName1')]",
+            "dataRetention": 7,
+            "workspaceId": "[variables('workspaceId')]"
         },
         "notificationHub": {
             "locationDr": "[variables('locationDr')]",
@@ -158,7 +149,7 @@
             "aksAgentVMSize": "Standard_B2s",
             "osType": "Linux",
             "networkPlugin": "kubenet",
-            "podCIDR": "10.244.0.0/16",
+            "podCIDR": "10.245.0.0/16",
             "aksServiceCIDRDr": "10.0.0.0/24",
             "aksDnsServiceIPDr": "10.0.0.20",
             "aksDockerBridgeCIDRDr": "172.18.0.1/16",
@@ -166,6 +157,7 @@
         },
         "redisSettings": {
             "solutionType": "[parameters('solutionType')]",
+            "location": "[parameters('geo-paired-region')]",
             "locationDr": "[variables('locationDr')]",
             "redisCacheNameDr": "[concat('redisCache',variables('suffix'),'Dr')]",
             "redisCacheCapacity": 1,
@@ -213,11 +205,12 @@
         "locationDr": "[variables(parameters('geo-paired-region'))]",
         "signalRlocationDr": "[variables(parameters('signalRlocation'))]",
         "aksClusterNameDr": "[concat('aks' , variables('suffix'), 'Dr')]",
-        "existingDiagnosticsStorageAccountId": "/subscriptions/subscription().subscriptionId/resourceGroups/parameters('rgname')/providers/Microsoft.Storage/storageAccounts/variables('storageAccountName')",
+        "existingDiagnosticsStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
         "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
         "acrName2": "[concat('acr',variables('suffix'), 'Dr')]",
         "acrDeploymentLocationDr": "[variables(parameters('acrDeploymentLocation'))]",
-        "botId2": "[concat('edisonbot', variables('suffix'),'Dr')]"
+        "botId2": "[concat('edisonbot', variables('suffix'),'Dr')]",
+        "omsWorkspaceName1": "[concat('omsworkspace', variables('suffix'))]"
     },
     "resources": [
         {

@@ -4,6 +4,9 @@
     "parameters": {
         "redisSettings": {
             "type": "object"
+        },
+        "storageAccountName":{
+            "type": "string"
         }
     },
     "resources": [
@@ -33,7 +36,7 @@
                         "[concat('Microsoft.Cache/Redis/', parameters('redisSettings').redisCacheNameDr)]"
                     ],
                     "properties": {
-                        "storageAccountId": "[parameters('redisSettings').existingDiagnosticsStorageAccountId]",
+                        "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
                         "logs": [],
                         "metrics": [
                             {
