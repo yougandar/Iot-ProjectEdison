@@ -39,7 +39,8 @@
                         "count": "[parameters('kubernetesSettings').aksAgentCount]",
                         "vmSize": "[parameters('kubernetesSettings').aksAgentVMSize]",
                         "osType": "Linux",
-                        "storageProfile": "ManagedDisks"
+                        "storageProfile": "ManagedDisks",
+                        "dnsPrefix": "agents"
                     }
                 ],
                 "servicePrincipalProfile": {
