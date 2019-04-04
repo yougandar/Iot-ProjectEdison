@@ -11,7 +11,7 @@
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[parameters('storageBlobSettings').storageAccountNameDr]",
             "apiVersion": "2018-07-01",
-            "location": "[parameters('storageBlobSettings').location]",
+            "location": "[parameters('storageBlobSettings').locationDr]",
             "tags": {
                 "IotSuiteType": "[parameters('storageBlobSettings').solutionType]"
             },
