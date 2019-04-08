@@ -140,7 +140,7 @@
          "storageBlobSettings": {
             "solutionType": "[parameters('solutionType')]",
             "storageAccountNameDr": "[variables('storageAccountNameDr')]",
-            "location": "[parameters('geo-paired-region')]",
+            "locationDr": "[variables('locationDr')]",
             "containerName": "logsdr",
             "storageAccountType": "Standard_LRS"
         },
@@ -228,7 +228,7 @@
         "locationDr": "[variables(parameters('geo-paired-region'))]",
         "signalRlocationDr": "[variables(parameters('signalRlocation'))]",
         "aksClusterNameDr": "[concat('aks' , variables('suffix'), 'Dr')]",
-        "storageAccountNameDr": "[concat('edisonstrgeacc',variables('suffix'),'Dr')]",
+        "storageAccountNameDr": "[concat('edisonstrgeacc',variables('suffix'),'dr')]",
         "acrName2": "[concat('acr',variables('suffix'), 'Dr')]",
         "acrDeploymentLocationDr": "[variables(parameters('acrDeploymentLocation'))]",
         "botId2": "[concat('edisonbot', variables('suffix'),'Dr')]"
@@ -255,13 +255,12 @@
         {
             "name": "StorageBlobR2",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deploymenttype'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/storageblob.json')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/storage-dr.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -325,7 +324,7 @@
                         "value": "[variables('redisSettings')]"
                     },
                     "storageAccountName":{
-                        "value": "[variables('storageAccountName')]"
+                        "value": "[variables('storageAccountNameDr')]"
                     }
                 }
             }
