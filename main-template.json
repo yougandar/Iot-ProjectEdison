@@ -337,7 +337,7 @@
             "aksServicePrincipalClientSecret": "[parameters('aksServicePrincipalClientSecret')]",
             "aksClusterName": "[variables('aksClusterName1')]",
             "aksClusterNameDr": "[variables('aksClusterNameDr')]",
-            "kubernetesVersion": "1.12.5",
+            "kubernetesVersion": "1.12.7",
             "aksEnableRBAC": false,
             "aksDnsPrefix": "clusterdns",
             "aksDnsPrefixDr": "clusterdnsDr",
