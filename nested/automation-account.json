@@ -80,7 +80,7 @@
                 },
                 {
                     "name": "[concat(parameters('automationSettings').automationAccountName,'/', parameters('automationSettings').sessionId)]",
-                    "type": "jobs",
+                    "type": "Microsoft.Automation/automationAccounts/jobs",
                     "apiVersion":"2015-10-31",
                     "location": "[parameters('automationSettings').automationLocation]",
                     "properties": {
