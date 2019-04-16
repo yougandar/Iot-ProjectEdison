@@ -308,7 +308,10 @@
             "location": "[parameters('geo-paired-region')]",
             "containerName": "logs",
             "storageAccountType": "Standard_LRS",
-            "storageAccountType1": "Standard_GRS"
+            "storageAccountType1": "Standard_GRS",
+            "storageAccountNameDr": "[variables('storageAccountNameDr')]",
+            "locationDr": "[variables('locationDr')]",
+            "containerNameDr": "logsdr"
         },
         "iothubSettings": {
             "solutionType": "[parameters('solutionType')]",
@@ -499,6 +502,44 @@
         "acrDeploymentLocationDr": "[variables(parameters('acrDeploymentLocation'))]"
     },
     "resources": [
+        {
+            "name": "OmsWorkSpace",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/omsWorkspace.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "OmsWorkSpaceR2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
+
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/oms-r2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    }
+                }
+            }
+        },
         {
             "name": "NotificationHub",
             "type": "Microsoft.Resources/deployments",
@@ -699,6 +740,25 @@
             }
         },
         {
+            "name": "StorageBlobR2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/storageblob-r2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageBlobSettings": {
+                        "value": "[variables('storageBlobSettings')]"
+                    }
+                }
+            }
+        },
+        {
             "name": "IotHubBasic",
             "type": "Microsoft.Resources/deployments",
             "condition": "[equals(parameters('deploymenttype'),'Basic')]",
@@ -808,7 +868,7 @@
             "condition": "[equals(parameters('deploymenttype'),'Premium')]",
             "apiVersion": "2017-05-10",
             "dependsOn": [
-                "OmsWorkSpace"
+                "OmsWorkSpaceR2"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -831,9 +891,7 @@
             "type": "Microsoft.Resources/deployments",
             "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
             "apiVersion": "2016-02-01",
-            "dependsOn": [
-                "KubernetesR1"
-            ],
+            "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -852,9 +910,7 @@
             "type": "Microsoft.Resources/deployments",
             "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
             "apiVersion": "2016-02-01",
-            "dependsOn": [
-                "KubernetesR1"
-            ],
+            "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -864,24 +920,6 @@
                 "parameters": {
                     "trafficManagerSettings": {
                         "value": "[variables('trafficManagerSettings')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "OmsWorkSpace",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2015-01-01",
-            "dependsOn": [],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/omsWorkspace.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "omsSettings": {
-                        "value": "[variables('omsSettings')]"
                     }
                 }
             }
@@ -915,6 +953,25 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "acrSettings": {
+                        "value": "[variables('acrSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "AzureContainerRegistryR2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/acr-r2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -1134,6 +1191,30 @@
             }
         },
         {
+            "name": "RediscacheR2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
+            "dependsOn": [
+                "StorageBlobR2"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/redisCache-r2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "redisSettings": {
+                        "value": "[variables('redisSettings')]"
+                    },
+                    "storageBlobSettings":{
+                        "value": "[variables('storageAccountNameDr')]"
+                    }
+                }
+            }
+        },
+        {
             "name": "Bot",
             "type": "Microsoft.Resources/deployments",
             "condition": "[equals(parameters('deploymenttype'),'Basic')]",
@@ -1162,6 +1243,25 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "uri": "[concat(variables('baseUrl'), 'nested/bot-r1.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "botSettings": {
+                        "value": "[variables('botSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "AppInsights",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/app-insights-r2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {

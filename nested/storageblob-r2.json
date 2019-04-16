@@ -23,7 +23,7 @@
             },
             "resources": [
                 {
-                    "name": "[concat('default/', parameters('storageBlobSettings').containerName)]",
+                    "name": "[concat('default/', parameters('storageBlobSettings').containerNameDr)]",
                     "type": "blobServices/containers",
                     "apiVersion": "2018-03-01-preview",
                     "dependsOn": [

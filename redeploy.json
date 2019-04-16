@@ -141,7 +141,7 @@
             "solutionType": "[parameters('solutionType')]",
             "storageAccountNameDr": "[variables('storageAccountNameDr')]",
             "locationDr": "[variables('locationDr')]",
-            "containerName": "logsdr",
+            "containerNameDr": "logsdr",
             "storageAccountType": "Standard_LRS"
         },
         "notificationHub": {
@@ -242,7 +242,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/oms-dr.json')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/oms-r2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -260,7 +260,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/storage-dr.json')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/storageblob-r2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
