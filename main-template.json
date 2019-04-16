@@ -114,7 +114,7 @@
         },
         "appInsightsLocationDr": {
             "type": "string",
-            "defaultValue": "eastus",
+            "defaultValue": "southcentralus",
             "allowedValues": [
                 "southcentralus",
                 "westeurope",
