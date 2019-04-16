@@ -61,7 +61,7 @@
         },
         "signalRlocation": {
             "type": "string",
-            "defaultValue": "eastus2",
+            "defaultValue": "centralus",
             "allowedValues": [
                 "eastus2",
                 "centralus"
