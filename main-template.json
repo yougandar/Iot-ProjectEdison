@@ -324,6 +324,7 @@
         "omsSettings": {
             "solutionType": "[parameters('solutionType')]",
             "omsWorkspaceName": "[concat('omsworkspace', variables('suffix'))]",
+            "omsWorkspaceNameDr": "[concat('omsworkspace', variables('suffix'),'Dr')]",
             "omsWorkspaceRegion": "[parameters('omsWorkspaceRegion')]",
             "omsLogAnalyticsSku": "standalone",
             "dataRetention": 7
@@ -335,6 +336,8 @@
             "locationDr": "[variables('locationDr')]",
             "aksServicePrincipalClientId": "[parameters('aksServicePrincipalClientId')]",
             "aksServicePrincipalClientSecret": "[parameters('aksServicePrincipalClientSecret')]",
+            "aksServicePrincipalClientIdDr": "[parameters('aksServicePrincipalClientIdDr')]",
+            "aksServicePrincipalClientSecretDr": "[parameters('aksServicePrincipalClientSecretDr')]",
             "aksClusterName": "[variables('aksClusterName1')]",
             "aksClusterNameDr": "[variables('aksClusterNameDr')]",
             "kubernetesVersion": "1.12.7",
@@ -877,6 +880,25 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "uri": "[concat(variables('baseUrl'),'nested/omsWorkspace.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "OmsWorkSpaceR2",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/oms-dr.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
