@@ -327,6 +327,7 @@
         "omsSettings": {
             "solutionType": "[parameters('solutionType')]",
             "omsWorkspaceName": "[concat('omsworkspace', variables('suffix'))]",
+            "omsWorkspaceNameDr": "[concat('omsworkspace', variables('suffix'),'Dr')]",
             "omsWorkspaceRegion": "[parameters('omsWorkspaceRegion')]",
             "omsLogAnalyticsSku": "standalone",
             "dataRetention": 7
@@ -458,7 +459,7 @@
             "trafficRoutingMethod": "Priority",
             "solutionType": "[parameters('solutionType')]"
         },
-        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-kub-ha/",
+        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/premiumtest/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
         "virtualNetworkName1": "[concat('edisonVnet', variables('suffix'))]",
         "subnetName1": "edisonSubnet",
@@ -469,6 +470,7 @@
         "acrName1": "[concat('acr',variables('suffix'))]",
         "acrName2": "[concat('acr',variables('suffix'), 'Dr')]",
         "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
+        "storageAccountNameDr": "[concat('edisonstrgeacc',variables('suffix'),'dr')]",
         "existingDiagnosticsStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
         "siteHost1": "edisonapi",
         "botId1": "[concat('edisonbot', variables('suffix'))]",
@@ -1209,7 +1211,7 @@
                         "value": "[variables('redisSettings')]"
                     },
                     "storageBlobSettings":{
-                        "value": "[variables('storageAccountNameDr')]"
+                        "value": "[variables('storageBlobSettings')]"
                     }
                 }
             }
