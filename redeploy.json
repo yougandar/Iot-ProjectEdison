@@ -166,7 +166,7 @@
             "aksServicePrincipalClientIdDr": "[parameters('aksServicePrincipalClientIdDr')]",
             "aksServicePrincipalClientSecretDr": "[parameters('aksServicePrincipalClientSecretDr')]",
             "aksClusterNameDr": "[variables('aksClusterNameDr')]",
-            "kubernetesVersion": "1.12.5",
+            "kubernetesVersion": "1.12.7",
             "aksEnableRBAC": false,
             "aksDnsPrefixDr": "clusterdnsDr",
             "aksAgentOsDiskSizeGB": 30,
