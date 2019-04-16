@@ -12,22 +12,22 @@
             "value":"CentralUS"
         },
         "signalRlocation": {
-            " value": "centralus"
+            "value": "centralus"
         },
         "appInsightsLocationDr":{
-            " value": "eastus"
+            "value": "eastus"
         },
         "omsWorkspaceRegion": {
-            " value": "southeastasia"
+            "value": "southeastasia"
         },
         "aksServicePrincipalClientIdDr": {
-            " value": ""
+            "value": ""
         },
         "aksServicePrincipalClientSecretDr":{
-            " value": ""
+            "value": ""
         },
         "signalrCapacity": {
-            " value": 1
+            "value": 1
         }
     }
 }
