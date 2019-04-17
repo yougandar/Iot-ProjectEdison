@@ -144,7 +144,7 @@
         "omsSettings": {
             "solutionType": "[parameters('solutionType')]",
             "omsWorkspaceNameDr": "[concat('omsworkspace', variables('suffix'),'Dr')]",
-            "omsWorkspaceRegion": "[parameters('omsWorkspaceRegionDr')]",
+            "omsWorkspaceRegionDr": "[parameters('omsWorkspaceRegionDr')]",
             "omsLogAnalyticsSku": "standalone",
             "dataRetention": 7
         },
@@ -217,7 +217,7 @@
             "appInsightsLocationDr": "[parameters('appInsightsLocationDr')]"
         },
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 5)]",
-        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-kub-ha/",
+        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/premiumtest/",
         "EastUS2": "CentralUS",
         "CentralUS": "EastUS2",
         "WestUS2": "West Central US",
@@ -333,8 +333,8 @@
                     "redisSettings": {
                         "value": "[variables('redisSettings')]"
                     },
-                    "storageAccountName":{
-                        "value": "[variables('storageAccountNameDr')]"
+                    "storageBlobSettings": {
+                        "value": "[variables('storageBlobSettings')]"
                     }
                 }
             }

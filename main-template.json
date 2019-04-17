@@ -491,8 +491,8 @@
         },
         "botSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "insightsName": "[variables('botId1')]",
-            "insightsNameDr": "[variables('botId2')]",
+            "insightsName": "[concat('botinsights', variables('suffix'))]",
+            "insightsNameDr": "[concat('botinsights', variables('suffix'),'Dr')]",
             "appInsightsLocation": "[parameters('appInsightsLocation')]",
             "botId": "[variables('botId1')]",
             "botIdDr": "[variables('botId2')]",
