@@ -20,13 +20,40 @@ namespace Edison.Mobile.User.Client.Droid
         public const string ClientId = "19cb746c-3066-4cd8-8cd2-e0ce1176ae33"; //"64531b8c-3d22-4c2a-8d72-bf37c8609fbe";
 
         // Response summary Map values
-        public const int UserLocationJitterThreshold = 3; //meters
-        public const int SingleLocationRefocusMapThreshold = 5000; // meters
-        public const float LocationThresholdPercent = 0.1f; // % as fraction
+        internal const int UserLocationJitterThreshold = 3; //meters
+        internal const int SingleLocationRefocusMapThreshold = 5000; // meters
+        internal const float LocationThresholdPercent = 0.1f; // % as fraction
 
+        internal const string EVENT_CHANNEL_ID = "edison_notification_channel";
+        internal const string NotificationTagLabel = "NotificationTag";
+        internal const string NotificationIdLabel = "NotificationId";
+        internal const string NotificationTag = "Edison";
+        internal const int NotificationId = 100;
 
-        internal const string CHANNEL_ID = "my_notification_channel";
-        internal const int NOTIFICATION_ID = 100;
+        internal const string IntentSourceLabel = "Source";
+        internal const string IntentActionLabel = "Action";
+        internal const string IntentAuthenticatedLabel = "Authenticated";
+        internal const string IntentDataResponseLabel= "Response";
+        internal const string IntentDataUserLatLabel= "UserLat";
+        internal const string IntentDataUserLongLabel= "UserLong";
+        internal const string IntentSourceLogout = "Logout";
+        internal const string IntentSourceBackgroundNotification = "BackgroundNotification";
+        internal const string IntentSourceNotRunningNotification = "NotRunningNotification";
+        internal const string IntentSourceForegroundNotification = "ForegrounddNotification";
+        internal const string IntentSourceNotForegroundNotification = "NotForegrounddNotification";
+        internal const string IntentAuthenticated = "True";
+        internal const string IntentNotAuthenticated = "False";
+
+        internal const string ActionEmergency = "Emergency";
+        internal const string ActionActivity = "Activity";
+        internal const string ActionSafe = "Safe";
+
+        internal const string MessageTypeSilent = "silent";
+        internal const string MessageDataAction = "action";
+        internal const string MessageDataMessage = "message";
+
+        internal const string CurrentResponseColorKey = "CurrentColor";
+
 
         public static int StatusBarHeightPx { get; private set; } = PixelSizeConverter.DpToPx(24);
 
@@ -63,7 +90,6 @@ namespace Edison.Mobile.User.Client.Droid
         public static int EventResponseCardWidthPx { get; private set; } = -1;
         public static int EventResponseCardSeperatorWidthPx { get; private set; } = -1;
 
-
         public static int BrightnessContainerWidth { get; private set; } = -1;
         public static int BrightnessToolbarItemIconBottomPadding { get; private set; } = -1;
 
@@ -72,9 +98,6 @@ namespace Edison.Mobile.User.Client.Droid
         public readonly static Color DefaultResponseColor = Color.Argb(255, 34, 240, 255);
 
         public const float DefaultResponseMapZoom = 5f;
-
-
-
 
 
         public static async Task CalculateUIDimensionsAsync(Activity act)
@@ -134,7 +157,6 @@ namespace Edison.Mobile.User.Client.Droid
 
             EventResponseCardWidthPx = (int)(displayWidthPx * 0.65);
             EventResponseCardSeperatorWidthPx = (int)((displayWidthPx - EventResponseCardWidthPx) / 2);
-
 
         }
 
@@ -219,18 +241,26 @@ namespace Edison.Mobile.User.Client.Droid
             { "fire", Core.Shared.Constants.ColorName.Red},
             { "gun", Core.Shared.Constants.ColorName.Red},
             { "Gun", Core.Shared.Constants.ColorName.Red},
+            { "shooter", Core.Shared.Constants.ColorName.Red},
+            { "Shooter", Core.Shared.Constants.ColorName.Red},
             { "Active Shooter", Core.Shared.Constants.ColorName.Red},
+            { "active shooter", Core.Shared.Constants.ColorName.Red},
             { "health", Core.Shared.Constants.ColorName.Blue},
             { "Health", Core.Shared.Constants.ColorName.Blue},
             { "Health Check", Core.Shared.Constants.ColorName.Blue},
-            { "pollution", Core.Shared.Constants.ColorName.Blue},
-            { "Pollution", Core.Shared.Constants.ColorName.Blue},
-            { "Air Quality", Core.Shared.Constants.ColorName.Blue},
+            { "health check", Core.Shared.Constants.ColorName.Blue},
+            { "pollution", Core.Shared.Constants.ColorName.Yellow},
+            { "Pollution", Core.Shared.Constants.ColorName.Yellow},
+            { "Air Quality", Core.Shared.Constants.ColorName.Yellow},
+            { "air quality", Core.Shared.Constants.ColorName.Yellow},
             { "protest", Core.Shared.Constants.ColorName.Blue},
             { "Protest", Core.Shared.Constants.ColorName.Blue},
             { "package", Core.Shared.Constants.ColorName.Red},
             { "Package", Core.Shared.Constants.ColorName.Red},
+            { "suspicious package", Core.Shared.Constants.ColorName.Red},
             { "Suspicious Package", Core.Shared.Constants.ColorName.Red},
+            { "Bomb", Core.Shared.Constants.ColorName.Red},
+            { "bomb", Core.Shared.Constants.ColorName.Red},
             { "tornado", Core.Shared.Constants.ColorName.Yellow},
             { "Tornado", Core.Shared.Constants.ColorName.Yellow},
             { "vip", Core.Shared.Constants.ColorName.Blue},
@@ -246,18 +276,26 @@ namespace Edison.Mobile.User.Client.Droid
             { "fire", "fire"},
             { "gun", "gun"},
             { "Gun", "gun"},
+            { "shooter", "gun"},
+            { "Shooter", "gun"},
             { "Active Shooter", "gun"},
+            { "active shooter", "gun"},
             { "health", "health_check"},
             { "Health", "health_check"},
             { "Health Check", "health_check"},
+            { "health check", "health_check"},
             { "pollution", "air_quality"},
             { "Pollution", "air_quality"},
             { "Air Quality", "air_quality"},
+            { "air quality", "air_quality"},
             { "protest", "protest"},
             { "Protest", "protest"},
             { "package", "suspicious_package"},
             { "Package", "suspicious_package"},
             { "Suspicious Package", "suspicious_package"},
+            { "suspicious package", "suspicious_package"},
+            { "Bomb", "suspicious_package"},
+            { "bomb", "suspicious_package"},
             { "tornado", "tornado"},
             { "Tornado", "tornado"},
             { "vip", "vip"},
@@ -287,6 +325,41 @@ namespace Edison.Mobile.User.Client.Droid
             }
             return new Tuple<string, Color>(iconName, GetEventTypeColor(ctx, colorName));
         }
+
+
+        public static Tuple<string, Color> GetIconSettingsFromTitle(Context ctx, string title)
+        {
+            var name = InferNameFromTitle(ctx, title);
+            return GetChatMessageButtonSettings(ctx, name);
+        }
+
+        public static string InferNameFromTitle(Context ctx, string title)
+        {
+            var _title = title.ToLowerInvariant();
+            if (_title.Contains(ctx.Resources.GetString(Resource.String.shooter)) || _title.Contains(ctx.Resources.GetString(Resource.String.gun)))
+                return "Active Shooter";
+            if (_title.Contains(ctx.Resources.GetString(Resource.String.suspicious)) || _title.Contains(ctx.Resources.GetString(Resource.String.pckg)) || _title.Contains(ctx.Resources.GetString(Resource.String.bomb)))
+                return "Suspicious Package";
+            if (_title.Contains(ctx.Resources.GetString(Resource.String.fire_)))
+                return "Fire";
+            if (_title.Contains(ctx.Resources.GetString(Resource.String.protest_)) || _title.Contains(ctx.Resources.GetString(Resource.String.demonstration)) ||
+                _title.Contains(ctx.Resources.GetString(Resource.String.disturbance)) || _title.Contains(ctx.Resources.GetString(Resource.String.riot)) ||
+                _title.Contains(ctx.Resources.GetString(Resource.String.violence)) || _title.Contains(ctx.Resources.GetString(Resource.String.barricade)))
+                return "Protest";
+            if (_title.Contains(ctx.Resources.GetString(Resource.String.health)) || _title.Contains(ctx.Resources.GetString(Resource.String.virus)) ||
+                _title.Contains(ctx.Resources.GetString(Resource.String.infection)) || _title.Contains(ctx.Resources.GetString(Resource.String.illness)))
+                return "Health Check";
+            if (_title.Contains(ctx.Resources.GetString(Resource.String.air)) || _title.Contains(ctx.Resources.GetString(Resource.String.pollution)) || _title.Contains(ctx.Resources.GetString(Resource.String.pollen)))
+                return "Air Quality";
+            if (_title.Contains(ctx.Resources.GetString(Resource.String.tornado_)) || _title.Contains(ctx.Resources.GetString(Resource.String.wind)))
+                return "Tornado";
+            if (_title.Contains(ctx.Resources.GetString(Resource.String.vip_)) || _title.Contains(ctx.Resources.GetString(Resource.String.celebrity)) || _title.Contains(ctx.Resources.GetString(Resource.String.famous)))
+                return "VIP";
+            return "Emergency";
+        }
+
+
+
 
     }
 }

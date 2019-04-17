@@ -14,6 +14,8 @@ using Edison.Mobile.Admin.Client.Droid.Ioc;
 using Edison.Mobile.Android.Common.Ioc;
 using Edison.Mobile.Common.Ioc;
 using Edison.Mobile.Admin.Client.Core.Ioc;
+using Android.Net.Wifi;
+using Android.Net;
 
 namespace Edison.Mobile.Admin.Client.Droid
 {
@@ -34,6 +36,10 @@ namespace Edison.Mobile.Admin.Client.Droid
         {
             base.OnCreate();
             Container.Initialize(new CoreContainerRegistrar(), new PlatformCommonContainerRegistrar(), new PlatformContainerRegistrar());
+
+
+            IntentFilter mIntentFilter = new IntentFilter(ConnectivityManager.ConnectivityAction);
+            RegisterReceiver(new Edison.Mobile.Android.Common.WiFi.WifiReciever(), mIntentFilter);
         }
 
 

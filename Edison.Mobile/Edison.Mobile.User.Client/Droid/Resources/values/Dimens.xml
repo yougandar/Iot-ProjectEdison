@@ -9,9 +9,6 @@
   <dimen name="login_msg_toppadding">20dp</dimen>
   
   <dimen name="item_decoration">5dp</dimen>
-  
-  <dimen name="nav_header_vertical_spacing">16dp</dimen>
-  <dimen name="nav_header_height">200dp</dimen>
 
   <!-- Default screen margins, per the Android Design guidelines. -->
   <dimen name="activity_horizontal_margin">16dp</dimen>
@@ -28,12 +25,24 @@
   <dimen name="snack_bar_elevation">12dp</dimen>
   <dimen name="nav_drawer_elevation">21dp</dimen>
   <dimen name="card_elevation">4dp</dimen>
-  
+
+  <dimen name="nav_header_vertical_spacing">16dp</dimen>
+  <dimen name="nav_header_height">200dp</dimen>
+  <dimen name="nav_list_text_size">17sp</dimen>
+  <dimen name="nav_list_group_padding">8dp</dimen>
+  <dimen name="nav_list_icon_size">32dp</dimen>
+  <dimen name="nav_list_icon_padding">4dp</dimen>
+  <dimen name="nav_list_icon_margin_right">16dp</dimen>
   <dimen name="nav_drawer_top_margin">8dp</dimen>
   <dimen name="nav_drawer_bottom_margin">18dp</dimen>
   <dimen name="nav_drawer_menu_left_padding">10dp</dimen>
   <dimen name="profile_name_text_size">24sp</dimen>
   <dimen name="profile_image_border_width">2dp</dimen>
+  <dimen name="nav_drawer_item_vert_padding">8dp</dimen>
+  <dimen name="nav_drawer_logout_vert_padding">16dp</dimen>
+  <dimen name="nav_drawer_item_right_padding">8dp</dimen>
+  <dimen name="nav_drawer_item_icon_padding">16dp</dimen>
+  <dimen name="nav_drawer_signout_padding">20dp</dimen>
   
   <dimen name="bottom_sheet_thumb_width">100dp</dimen>
   <dimen name="bottom_sheet_thumb_height">4dp</dimen>
@@ -101,4 +110,20 @@
   <dimen name="chat_item_spacing">10dp</dimen>
 
   <item name="detailed_map_height_percent" type="dimen" format="float">0.55</item>
+  
+<!--  Note:  The large icon size provided by the support libraries is incorrect - it is still the large size from pre-android 6 (64dp) -->
+  <dimen name="notification_large_icon_size">36dp</dimen>
+  <dimen name="notification_small_icon_size">18dp</dimen>
+  <dimen name="notification_internal_margin">5dp</dimen>
+  <dimen name="notification_circular_button_size">48dp</dimen>
+  <dimen name="notification_small_circular_button_size">32dp</dimen>
+  <dimen name="notification_circular_button_padding">8dp</dimen>
+  <dimen name="notification_button_area_top_margin">10dp</dimen>
+  <dimen name="remote_message_title_size">16sp</dimen>
+  <dimen name="remote_message_title_top_padding">8dp</dimen>
+  <dimen name="remote_message_title_horiz_padding">12dp</dimen>
+  
+  <dimen name="circular_detail_icon_size">65dp</dimen> 
+  <dimen name="circular_detail_icon_padding">16dp</dimen>
+  <dimen name="event_message_text_padding">12dp</dimen>
 </resources>

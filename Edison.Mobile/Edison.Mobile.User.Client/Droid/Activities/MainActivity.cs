@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 using Android.App;
 using Android.OS;
@@ -66,11 +67,12 @@ namespace Edison.Mobile.User.Client.Droid.Activities
         private DrawerLayout _drawer;
         private CircularProfileView _profileView;
         private AppCompatTextView _profileNameView;
+        private AppCompatTextView _logoutButton;
         private FrameLayout _page_container;
 
         private LinearLayout _brightnessControlContainer;
         private AppCompatSeekBar _brightnessControl;
-
+        private AppCompatImageView _moon;
 
         private Fragment _pageFragment;
         private Fragment _chatFragment;
@@ -82,6 +84,9 @@ namespace Edison.Mobile.User.Client.Droid.Activities
         private List<TextImageResourcePair> _listDataGroups;
         private Dictionary<string, List<TextImageResourcePair>> _listDataItems;
         private int _previousGroup = -1;
+
+
+        private string _chatFragmentLoadAction = null;
 
         public LinearLayout BottomSheet { get; private set; }
         public Edison.Mobile.Android.Common.Behaviors.BottomSheetBehavior BottomSheetBehaviour { get; private set; }
@@ -144,7 +149,25 @@ namespace Edison.Mobile.User.Client.Droid.Activities
                     await Constants.CalculateUIDimensionsAsync(this);
                 });
             }
-# endif
+#endif
+            if (Intent.Extras != null)
+            {
+                var source = Intent.GetStringExtra(Constants.IntentSourceLabel);
+                if (source == Constants.IntentSourceBackgroundNotification)
+                {
+                    var act = Intent.GetStringExtra(Constants.IntentActionLabel);
+                    _chatFragmentLoadAction = act;
+                }
+                var notificationId = Intent.GetIntExtra(Constants.NotificationIdLabel, 0);
+                var notificationTag = Intent.GetStringExtra(Constants.NotificationTagLabel);
+                var notificationManager = NotificationManager.FromContext(ApplicationContext);
+                if (string.IsNullOrWhiteSpace(notificationTag))
+                    notificationManager.Cancel(notificationId);
+                else
+                    notificationManager.Cancel(notificationTag, notificationId);
+            }
+
+            CreateNotificationChannels();
 
             SetContentView(Resource.Layout.main_activity);
 
@@ -155,8 +178,20 @@ namespace Edison.Mobile.User.Client.Droid.Activities
 
             Initialize(savedInstanceState);
             Window.SetStatusBarColor(new Color(ContextCompat.GetColor(this, Resource.Color.app_background)));
+
         }
 
+
+        private void CreateNotificationChannels()
+        {
+
+            Edison.Mobile.Android.Common.Notifications.NotificationService.CreateNotificationChannel(this,
+                                                                                                     Constants.EVENT_CHANNEL_ID,
+                                                                                                     Resources.GetString(Resource.String.event_channel_name, Constants.EVENT_CHANNEL_ID),
+                                                                                                     Resources.GetString(Resource.String.event_channel_description),
+                                                                                                     NotificationImportance.Max);
+
+        }
 
 
         private void Initialize(Bundle savedInstanceState)
@@ -184,6 +219,7 @@ namespace Edison.Mobile.User.Client.Droid.Activities
             _customToolbarSubtitle = FindViewById<AppCompatTextView>(Resource.Id.toolbar_subtitle);
             _profileView = FindViewById<CircularProfileView>(Resource.Id.img_profile);
             _profileNameView = FindViewById<AppCompatTextView>(Resource.Id.profile_name);
+            _logoutButton = FindViewById<AppCompatTextView>(Resource.Id.logout_button);
             _page_container = FindViewById<FrameLayout>(Resource.Id.page_container);
             BottomSheet = FindViewById<LinearLayout>(Resource.Id.bottom_sheet);
             //BottomSheetBehaviour = Edison.Mobile.Android.Common.Behaviors.BottomSheetBehavior.From(_bottomSheet);
@@ -193,16 +229,9 @@ namespace Edison.Mobile.User.Client.Droid.Activities
             lp.Behavior = BottomSheetBehaviour;
             BottomSheet.LayoutParameters = lp;
 
-
-
-
             _brightnessControlContainer = FindViewById<LinearLayout>(Resource.Id.brightness_slider_container);
             _brightnessControl = FindViewById<AppCompatSeekBar>(Resource.Id.brightness_slider);
-
-
-
-
-
+            _moon = FindViewById<AppCompatImageView>(Resource.Id.moon);
         }
 
 
@@ -218,6 +247,7 @@ namespace Edison.Mobile.User.Client.Droid.Activities
             pageContainer.SetPadding(0, 0, 0, Constants.BottomSheetPeekHeightPx);
 
             _brightnessControl.LayoutParameters.Width = Constants.EventGaugeAreaHeightPx;  // Transposed 90deg so Width actually Height
+
   //          var mode = ScreenUtilities.GetScreenBrightnessMode(this);
   //          var brightness = ScreenUtilities.GetScreenBrightnessWithMode(this, mode);
  //           // Get the Current Brightness level and adjust brightness slider if necessary
@@ -331,6 +361,7 @@ if (ViewModel.Email == null || ViewModel.Email.Contains("bluemetal.com"))
             _navDrawerListview.GroupCollapse += OnGroupCollapse;
             _navDrawerListview.ChildClick += OnChildClicked;
             _navDrawerListview.GroupClick += OnGroupClicked;
+            _logoutButton.Click += OnLogout;
 
             _brightnessControl.ProgressChanged += OnBrightnessChanged;
 
@@ -348,6 +379,7 @@ if (ViewModel.Email == null || ViewModel.Email.Contains("bluemetal.com"))
             _navDrawerListview.GroupCollapse -= OnGroupCollapse;
             _navDrawerListview.ChildClick -= OnChildClicked;
             _navDrawerListview.GroupClick -= OnGroupClicked;
+            _logoutButton.Click += OnLogout;
 
             _brightnessControl.ProgressChanged -= OnBrightnessChanged;
 
@@ -481,7 +513,7 @@ if (ViewModel.Email == null || ViewModel.Email.Contains("bluemetal.com"))
 
         private void LoadChatFragment()
         {
-            _chatFragment = new ChatFragment(Resource.Layout.main_activity);
+            _chatFragment = new ChatFragment(Resource.Layout.main_activity, _chatFragmentLoadAction);
             ReplaceFragment(_chatFragment, Resource.Id.bottom_sheet_fragment_container, false);
  //           SupportFragmentManager.BeginTransaction().Replace(Resource.Id.bottom_sheet_fragment_container, _chatFragment, null).Commit();
         }
@@ -523,7 +555,7 @@ if (ViewModel.Email == null || ViewModel.Email.Contains("bluemetal.com"))
         public void OnGroupCollapse(object sender, global::Android.Widget.ExpandableListView.GroupCollapseEventArgs e)
         {
 #if DEBUG
-            bool test = true;
+            bool test = true;  // for use as breakpoint during testing
 #endif
         }
         public void OnGroupClicked(object sender, global::Android.Widget.ExpandableListView.GroupClickEventArgs e)
@@ -663,6 +695,51 @@ if (ViewModel.Email == null || ViewModel.Email.Contains("bluemetal.com"))
 
         }
 
+        private async void OnLogout(object s, EventArgs e)
+        {
+            // Need to open up the system permissions settings page.to give permissions (Android requirement for 6.0 onwards)
+            // Display a dialog to warn the user otherwise the will be confused
+            _dialog = new SimpleModalAlertDialogFragment
+            {
+                DialogTitle = Resources.GetString(Resource.String.signout_dialog_heading),
+                DialogMessage = Resources.GetString(Resource.String.signout_dialog_message),
+                DialogPositiveText = Resources.GetString(Resource.String.yes),
+                DialogNegitiveText = Resources.GetString(Resource.String.no)
+            };
+            _dialog.DialogResponse += OnSignoutDialogResponse;
+            DisplayDialogFragment(_dialog, "dialog");
+        }
+        private async void OnSignoutDialogResponse(object sender, DialogClickEventArgs e)
+        {
+            if (e.Which == -1) // Yes
+            {
+                var intent = new Intent(this, typeof(LoginActivity));
+                intent.PutExtra(Constants.IntentSourceLabel, Constants.IntentSourceLogout);
+                StartActivity(intent);
+
+                await ViewModel.SignOut();
+
+                // Give the main activity a chance to render before killing this one
+                // TODO replace with cool transition
+                await Task.Run(async () =>
+                {
+                    await Task.Delay(2000);
+                    Finish();
+                }).ConfigureAwait(false);
+            }
+            // Dismiss & cleanup the DialogFragement
+            _dialog.DialogResponse -= OnSignoutDialogResponse;
+            _dialog.Dismiss();
+            _dialog.Dispose();
+            if (_drawer.IsDrawerOpen(GravityCompat.Start))
+                _drawer.CloseDrawer(GravityCompat.Start);
+        }
+
+
+
+
+
+
         private void OnMenuItemClicked(object sender, Toolbar.MenuItemClickEventArgs e)
         {
             OnOptionsItemSelected(e.Item);
@@ -732,7 +809,6 @@ if (ViewModel.Email == null || ViewModel.Email.Contains("bluemetal.com"))
         {
             // Only update position if not previously updated
             if (Constants.BrightnessContainerWidth == -1)
-
             {
                 Constants.UpdateBrightnessControlDimensions(_toolbar, FindViewById<ActionMenuItemView>(Resource.Id.action_brightness));
                 // Set the brightness control container width
@@ -741,6 +817,11 @@ if (ViewModel.Email == null || ViewModel.Email.Contains("bluemetal.com"))
                 var lp = (ViewGroup.MarginLayoutParams)_brightnessControlContainer.LayoutParameters;
                 lp.SetMargins(0, -Constants.BrightnessToolbarItemIconBottomPadding, 0, 0);
                 _brightnessControlContainer.LayoutParameters = lp;
+
+                var lp1 = _brightnessControl.LayoutParameters;
+                lp1.Width = Constants.EventGaugeAreaHeightPx - _moon.Height + Resources.GetDimensionPixelSize(Resource.Dimension.response_carousel_area_padding_top);
+                _brightnessControl.LayoutParameters = lp1;
+
                 _brightnessControlContainer.Invalidate();
             }
         }
@@ -930,6 +1011,37 @@ if (ViewModel.Email == null || ViewModel.Email.Contains("bluemetal.com"))
 
         }
 
+/*
+        protected override void OnNewIntent(Intent intent)
+        {
+            base.OnNewIntent(intent);
+
+            // uncomment  when start notification added
+            var myextravalue1 = intent.GetStringExtra("Source");
+            var myextravalue2 = intent.GetStringExtra("Action");
+            bool test = true;
+        }
+
+        protected override void OnRestart()
+        {
+            base.OnRestart();
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+        }
+
+        protected override void OnPostResume()
+        {
+            base.OnPostResume();
+        }
+
+        protected override void OnStart()
+        {
+            base.OnStart();
+        }
+*/
 
     }
 }

@@ -2,20 +2,31 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Edison.Core.Common.Models;
+using Edison.Mobile.Admin.Client.Core.Ioc;
 using Edison.Mobile.Admin.Client.Core.Network;
+using Edison.Mobile.Admin.Client.Core.Services;
+using Edison.Mobile.Common.Auth;
 using Edison.Mobile.Common.ViewModels;
+using Edison.Mobile.Common.WiFi;
 
 namespace Edison.Mobile.Admin.Client.Core.ViewModels
 {
-    public class MainViewModel : BaseViewModel
+    public class MainViewModel : DeviceSetupBaseViewModel
     {
-        readonly DeviceRestService deviceRestService;
+        readonly IDeviceRestService deviceRestService;
+        readonly AuthService authService;
 
         public ObservableRangeCollection<DeviceModel> NearDevices { get; private set; } = new ObservableRangeCollection<DeviceModel>();
 
-        public MainViewModel(DeviceRestService deviceRestService)
+        public MainViewModel(DeviceSetupService deviceSetupService, 
+            IDeviceRestService deviceRestService, AuthService authService,
+            DeviceProvisioningRestService deviceProvisioningRestService,
+            IOnboardingRestService onboardingRestService,
+            IWifiService wifiService
+        ) : base(deviceSetupService, deviceProvisioningRestService, onboardingRestService, wifiService)
         {
             this.deviceRestService = deviceRestService;
+            this.authService = authService;
         }
 
         public override async void ViewAppeared()
@@ -32,6 +43,11 @@ namespace Edison.Mobile.Admin.Client.Core.ViewModels
             {
                 NearDevices.ReplaceRange(devices);
             }
+        }
+        
+        public async Task SignOut()
+        {
+            await authService.SignOut();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Edison.Mobile.Admin.Client.Core.Ioc
     public class CoreContainerRegistrar : IContainerRegistrar
     {
         public void Register(ContainerBuilder builder)
-        {
+       {
             builder.RegisterType<LoginViewModel>();
             builder.RegisterType<ChooseDeviceTypeViewModel>();
             builder.RegisterType<SelectWifiViewModel>();
@@ -26,14 +26,22 @@ namespace Edison.Mobile.Admin.Client.Core.Ioc
             builder.RegisterType<AppAuthService>()
                    .As<IAppAuthService>();
 
-            builder.Register((c, p) => new DeviceRestService(c.Resolve<AuthService>(), c.Resolve<ILogger>(), Constants.BaseUrl));
-            builder.Register((c, p) => new OnboardingRestService(c.Resolve<AuthService>(), c.Resolve<ILogger>(), DeviceConfig.BaseUrl));
+            builder.Register<IDeviceRestService>((c, p) => new DeviceRestService(c.Resolve<AuthService>(), c.Resolve<ILogger>(), Constants.BaseUrl));
+
+            builder.Register<IOnboardingRestService>((c, p) => new OnboardingRestService(c.Resolve<AuthService>(), c.Resolve<ILogger>(), DeviceConfig.BaseUrl));
+
             builder.Register((c, p) => new DeviceProvisioningRestService(c.Resolve<AuthService>(), c.Resolve<ILogger>(), DeviceConfig.ProvisioningBaseUrl));
 
             builder.RegisterType<DeviceSetupService>()
                    .SingleInstance();
 
             builder.RegisterType<MainViewModel>();
+
+
+#if ANDROIDADMINNOPI
+            ServiceMocks.Setup(builder);
+#endif
+
         }
     }
 }

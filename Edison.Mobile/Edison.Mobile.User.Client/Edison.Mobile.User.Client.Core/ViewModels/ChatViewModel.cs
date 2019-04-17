@@ -141,6 +141,16 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
 
         public async Task<bool> SendMessage(string message, bool isPromptedFromActionPlanButton = false)
         {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("***************************************************");
+            System.Diagnostics.Debug.WriteLine("***********  Entered Send Message Method  *********");
+            System.Diagnostics.Debug.WriteLine("***************************************************");
+
+            if (chatClientConfig == null)
+                System.Diagnostics.Debug.WriteLine("***********  ChatClientConfig = NULL *********");
+            else
+                System.Diagnostics.Debug.WriteLine("***********  ChatClientConfig OK *********");
+#endif
             var newActivity = new Activity
             {
                 From = new ChannelAccount(chatClientConfig.UserId, chatClientConfig.Username),
@@ -148,26 +158,162 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
                 Text = message,
             };
 
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("***********  Chat 'Activity' created  *********");
+#endif
+            ActionPlanListModel messageActionPlan = null;
             if (isPromptedFromActionPlanButton)
-                newActivity.Properties["reportType"] = CurrentActionPlan?.ActionPlanId ?? GetEmergencyActionPlan().ActionPlanId;
+            {
+                messageActionPlan = CurrentActionPlan ?? GetEmergencyActionPlan();
+                newActivity.Properties["reportType"] = CurrentActionPlan?.ActionPlanId ?? GetEmergencyActionPlan()?.ActionPlanId;
+            }
 
-            newActivity.Properties["deviceId"] = chatClientConfig.DeviceId;
+            newActivity.Properties["deviceId"] = chatClientConfig?.DeviceId;
+
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("*************************************************");
+            System.Diagnostics.Debug.WriteLine("*********  ChatViewModel - SendMessage  *********");
+            System.Diagnostics.Debug.WriteLine("*********  Message = " + message);
+            System.Diagnostics.Debug.WriteLine("*********  Chat UserId = " + chatClientConfig.UserId);
+            System.Diagnostics.Debug.WriteLine("*********  Chat UserName = " + chatClientConfig.Username);
+            System.Diagnostics.Debug.WriteLine("*********  Chat DeviceId = " + chatClientConfig.DeviceId.ToString());
+            if (conversation == null)
+                System.Diagnostics.Debug.WriteLine("*********  NO CONVERSATION OBJECT  *********");
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("*********  CONVERSATION OBJECT EXISTS  *********");
+                if (conversation.ConversationId == null)
+                    System.Diagnostics.Debug.WriteLine("*********  NO CONVERSATION ID  *********");
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("*********  CONVERSATION ID EXISTS  *********");
+                    System.Diagnostics.Debug.WriteLine("*********  ConversationId = " + conversation.ConversationId);
+                }
+            }
+            if (ChatTokenContext == null)
+                System.Diagnostics.Debug.WriteLine("*********  NO CHAT TOKEN CONTEXT  *********");
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("*********  CHAT TOKEN CONTEXT EXISTS  *********");
+                if (ChatTokenContext.Token == null)
+                    System.Diagnostics.Debug.WriteLine("*********  NO TOKEN  *********");
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("*********  TOKEN EXSISTS  *********");
+                    System.Diagnostics.Debug.WriteLine("*********  ChatTokenContext Token = " + ChatTokenContext.Token);
+                }
+                if (ChatTokenContext.ConversationId == null)
+                    System.Diagnostics.Debug.WriteLine("*********  NO CONVERSATION ID  *********");
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("*********  CONVERSATION ID EXISTS  *********");
+                    System.Diagnostics.Debug.WriteLine("*********  ChatTokenContext ConversationId = " + ChatTokenContext.ConversationId);
+                }
+            }
+            System.Diagnostics.Debug.WriteLine("*************************************************");
+#endif
+
+            // Mark and display message
+            newActivity.Properties[Constants.ChatActivityMessageType] = Constants.ChatActivityClientTextMessage;
+            var messageId = Guid.NewGuid().ToString();
+            newActivity.Properties[Constants.ChatActivityMessageId] = messageId;
+            var clientMessage = new ChatMessage
+            {
+                Text = newActivity.Text,
+                UserModel = ChatTokenContext.UserContext,
+                ActionPlan = messageActionPlan,
+                IsNewActionPlan = messageActionPlan != CurrentActionPlan,
+                Id = messageId
+            };
+            ChatMessages.Add(clientMessage);
+            var index = ChatMessages.Count - 1;
+            newActivity.Properties[Constants.ChatActivityMessageIndex] = index;
 
             ResourceResponse response = null;
             try
             {
                 response = await client.Conversations.PostActivityAsync(conversation.ConversationId, newActivity);
             }
-            catch { }
+            catch (Exception ex)
+            {
+#if DEBUG
+                System.Diagnostics.Debug.WriteLine("****************************************************");
+                System.Diagnostics.Debug.WriteLine("*********  ChatViewModel - Send Exception  *********");
+                System.Diagnostics.Debug.WriteLine("*********  Exception: " + ex.ToString());
+                System.Diagnostics.Debug.WriteLine("****************************************************");
+#endif
+            }
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("***************************************************");
+            System.Diagnostics.Debug.WriteLine("*********  ChatViewModel - Message Sent  *********");
+            if (response == null)
+                System.Diagnostics.Debug.WriteLine("*********  FAILED");
+            else
+                System.Diagnostics.Debug.WriteLine("*********  SUCCESS");
+            System.Diagnostics.Debug.WriteLine("***************************************************");
+#endif
+
+            if (response == null && ChatMessages.Count > index)
+                // remove message
+                ChatMessages.RemoveAt(index);
+
             return response != null;
         }
 
         public async Task ActivateChatPrompt(ChatPromptType chatPromptType) 
         {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("********************************************************");
+            System.Diagnostics.Debug.WriteLine("*********  ChatViewModel - ActivateChatPrompt  *********");
+            System.Diagnostics.Debug.WriteLine("*********  ChatPromptType = " + chatPromptType.ToString());
+            System.Diagnostics.Debug.WriteLine("********************************************************");
+#endif
+
             OnChatPromptActivated?.Invoke(this, chatPromptType);
             switch (chatPromptType)
             {
                 case ChatPromptType.Emergency:
+#if DEBUG
+                    System.Diagnostics.Debug.WriteLine("********************************************************************");
+                    System.Diagnostics.Debug.WriteLine("*********  ChatViewModel - Calling GetEmergencyActionPlan  *********");
+                    if (ActionPlans == null)
+                        System.Diagnostics.Debug.WriteLine("*********  ActionPlans = null");
+                    else if (ActionPlans.Count == 0)
+                        System.Diagnostics.Debug.WriteLine("*********  ActionPlans = 0");
+                    else
+                        System.Diagnostics.Debug.WriteLine("*********  ActionPlans exist");
+                    System.Diagnostics.Debug.WriteLine("********************************************************************");
+#endif
+                    ActionPlanListModel actionPlan = null;
+                    try
+                    {
+                        actionPlan = GetEmergencyActionPlan();
+                    }
+                    catch (Exception ex)
+                    {
+#if DEBUG
+                        System.Diagnostics.Debug.WriteLine("*************************************************************");
+                        System.Diagnostics.Debug.WriteLine("********* Exception calling GetEmergencyActionPlan  *********");
+                        System.Diagnostics.Debug.WriteLine("*************************************************************");
+#endif
+                    }
+
+#if DEBUG
+                    System.Diagnostics.Debug.WriteLine("***************************************");
+                    if (actionPlan == null)
+                        System.Diagnostics.Debug.WriteLine("*********  ActionPlan = null  *********");
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("*********   ActionPlan Exist  *********");
+                        System.Diagnostics.Debug.WriteLine("*********   ActionPlan id= " + actionPlan.ActionPlanId.ToString());
+                    }
+                    System.Diagnostics.Debug.WriteLine("***************************************");
+#endif
+#if DEBUG
+                    System.Diagnostics.Debug.WriteLine("*****************************************************************************");
+                    System.Diagnostics.Debug.WriteLine("*********  ChatViewModel - Calling BeginConversationWithActionPlan  *********");
+                    System.Diagnostics.Debug.WriteLine("*****************************************************************************");
+#endif
                     BeginConversationWithActionPlan(GetEmergencyActionPlan());
                     break;
                 case ChatPromptType.SafetyCheck:
@@ -180,6 +326,87 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
                     break;
             }
         }
+
+
+        public async Task ActivateChatPromptAsync(ChatPromptType chatPromptType)
+        {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("********************************************************");
+            System.Diagnostics.Debug.WriteLine("*********  ChatViewModel - ActivateChatPrompt  *********");
+            System.Diagnostics.Debug.WriteLine("*********  ChatPromptType = " + chatPromptType.ToString());
+            System.Diagnostics.Debug.WriteLine("********************************************************");
+#endif
+
+            OnChatPromptActivated?.Invoke(this, chatPromptType);
+            switch (chatPromptType)
+            {
+                case ChatPromptType.Emergency:
+#if DEBUG
+                    System.Diagnostics.Debug.WriteLine("********************************************************************");
+                    System.Diagnostics.Debug.WriteLine("*********  ChatViewModel - Calling GetEmergencyActionPlan  *********");
+                    if (ActionPlans == null)
+                        System.Diagnostics.Debug.WriteLine("*********  ActionPlans = null");
+                    else if (ActionPlans.Count == 0)
+                        System.Diagnostics.Debug.WriteLine("*********  ActionPlans = 0");
+                    else
+                        System.Diagnostics.Debug.WriteLine("*********  ActionPlans exist");
+                    System.Diagnostics.Debug.WriteLine("********************************************************************");
+#endif
+
+                    ActionPlanListModel actionPlan = null;
+                    try
+                    {
+                        actionPlan = GetEmergencyActionPlan();
+                    }
+                    catch (Exception ex)
+                    {
+#if DEBUG
+                        System.Diagnostics.Debug.WriteLine("*************************************************************");
+                        System.Diagnostics.Debug.WriteLine("********* Exception calling GetEmergencyActionPlan  *********");
+                        System.Diagnostics.Debug.WriteLine("*************************************************************");
+#endif
+                    }
+
+#if DEBUG
+                    System.Diagnostics.Debug.WriteLine("***************************************");
+                    if (actionPlan == null)
+                        System.Diagnostics.Debug.WriteLine("*********  ActionPlan = null  *********");
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("*********   ActionPlan Exist  *********");
+                        System.Diagnostics.Debug.WriteLine("*********   ActionPlan id= " + actionPlan.ActionPlanId.ToString());
+                    }
+                    System.Diagnostics.Debug.WriteLine("***************************************");
+#endif
+#if DEBUG
+                    System.Diagnostics.Debug.WriteLine("*****************************************************************************");
+                    System.Diagnostics.Debug.WriteLine("*********  ChatViewModel - Calling BeginConversationWithActionPlan  *********");
+                    System.Diagnostics.Debug.WriteLine("*****************************************************************************");
+#endif
+
+                    await BeginConversationWithActionPlanAsync(GetEmergencyActionPlan());
+                    break;
+                case ChatPromptType.SafetyCheck:
+                    IsSafe = !IsSafe;
+                    var success = await responseRestService.SendIsSafe(IsSafe);
+#if DEBUG
+                    System.Diagnostics.Debug.WriteLine("*****************************************************************************");
+                    if (success)
+                        System.Diagnostics.Debug.WriteLine("*********  Safe Sent: SUCCESS  *********");
+                    else
+                        System.Diagnostics.Debug.WriteLine("*********  Safe Sent: FAILED  *********");
+                    System.Diagnostics.Debug.WriteLine("*****************************************************************************");
+#endif
+                    break;
+                case ChatPromptType.ReportActivity:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+
 
         public void ChatSummoned()
         {
@@ -194,32 +421,84 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
 
         public void BeginConversationWithActionPlan(ActionPlanListModel actionPlanListModel = null)
         {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("*********************************************************************");
+            System.Diagnostics.Debug.WriteLine("*********  ChatViewModel - BeginConversationWithActionPlan  *********");
+            System.Diagnostics.Debug.WriteLine("*********************************************************************");
+#endif
+
             var actionPlan = actionPlanListModel ?? GetEmergencyActionPlan();
             CurrentActionPlan = actionPlan;
 
             Task.Run(async () => 
             {
-                await locationRestService.UpdateDeviceLocation(new Geolocation 
+#if DEBUG
+                System.Diagnostics.Debug.WriteLine("***************************************************");
+                System.Diagnostics.Debug.WriteLine("***********  Calling UpdateDeviceLocation  *********");
+                System.Diagnostics.Debug.WriteLine("***************************************************");
+#endif
+
+#if DEBUG
+                System.Diagnostics.Debug.WriteLine("**************************************************************************");
+                System.Diagnostics.Debug.WriteLine("*********  ChatViewModel - BeginConversationWithActionPlanAsync  *********");
+                if (locationService?.LastKnownLocation == null)
+                    System.Diagnostics.Debug.WriteLine("*********  LastKnowLocation = NULL");
+                else
+                    System.Diagnostics.Debug.WriteLine("*********  lastKnowLocation = Lat: " + locationService.LastKnownLocation.Latitude + "    Long: " + locationService.LastKnownLocation.Longitude);
+                System.Diagnostics.Debug.WriteLine("**************************************************************************");
+#endif
+                var location = await locationService.GetLastKnownLocationAsync();
+#if DEBUG
+                System.Diagnostics.Debug.WriteLine("**************************************************************************");
+                System.Diagnostics.Debug.WriteLine("*********  ChatViewModel - BeginConversationWithActionPlanAsync  *********");
+                System.Diagnostics.Debug.WriteLine("*********  Location = Lat: " + location.Latitude + "    Long: " + location.Longitude);
+                System.Diagnostics.Debug.WriteLine("**************************************************************************");
+#endif
+
+                await locationRestService.UpdateDeviceLocation(new Geolocation
                 {
-                    Latitude = locationService.LastKnownLocation.Latitude,
-                    Longitude = locationService.LastKnownLocation.Longitude,
+                    //                Latitude = locationService.LastKnownLocation.Latitude,
+                    //                Longitude = locationService.LastKnownLocation.Longitude,
+                    Latitude = location.Latitude,
+                    Longitude = location.Longitude,
                 });
 
+#if DEBUG
+                System.Diagnostics.Debug.WriteLine("***************************************************");
+                System.Diagnostics.Debug.WriteLine("***********  Calling Send Message Method  *********");
+                System.Diagnostics.Debug.WriteLine("***************************************************");
+#endif
                 await SendMessage(CurrentActionPlan.Name, true);
             });
         }
 
         public async Task BeginConversationWithActionPlanAsync(ActionPlanListModel actionPlanListModel = null)
         {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("**************************************************************************");
+            System.Diagnostics.Debug.WriteLine("*********  ChatViewModel - BeginConversationWithActionPlanAsync  *********");
+            System.Diagnostics.Debug.WriteLine("**************************************************************************");
+#endif
             var actionPlan = actionPlanListModel ?? GetEmergencyActionPlan();
             CurrentActionPlan = actionPlan;
+
+            var location = await locationService.GetLastKnownLocationAsync();
+
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("**************************************************************************");
+            System.Diagnostics.Debug.WriteLine("*********  ChatViewModel - BeginConversationWithActionPlanAsync  *********");
+            System.Diagnostics.Debug.WriteLine("*********  Location = Lat: " + location.Latitude + "    Long: " + location.Longitude);
+            System.Diagnostics.Debug.WriteLine("**************************************************************************");
+#endif
+
             await locationRestService.UpdateDeviceLocation(new Geolocation 
             {
-                Latitude = locationService.LastKnownLocation.Latitude,
-                Longitude = locationService.LastKnownLocation.Longitude,
+                Latitude = location.Latitude,
+                Longitude = location.Longitude,
             });
 
-            await SendMessage(CurrentActionPlan.Name, true);
+            var name = CurrentActionPlan == null ? "Emergency" : CurrentActionPlan.Name;
+            await SendMessage(name, true);
         }
 
 
@@ -229,11 +508,27 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
             await UpdateDeviceLocation();
         }
 
-        async Task UpdateDeviceLocation() => await locationRestService.UpdateDeviceLocation(new Geolocation
+        async Task UpdateDeviceLocation()
         {
-            Latitude = locationService.LastKnownLocation.Latitude,
-            Longitude = locationService.LastKnownLocation.Longitude,
-        });
+            if (locationService.LastKnownLocation != null)
+            {
+                await locationRestService.UpdateDeviceLocation(new Geolocation
+                {
+                    Latitude = locationService.LastKnownLocation.Latitude,
+                    Longitude = locationService.LastKnownLocation.Longitude,
+                });
+            }
+            else
+            {
+                var location = await locationService.GetLastKnownLocationAsync();
+                await locationRestService.UpdateDeviceLocation(new Geolocation
+                {
+                    Latitude = location.Latitude,
+                    Longitude = location.Longitude
+                });
+            }
+        }
+
 
         async Task GetChatTranscript()
         {
@@ -248,7 +543,9 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
             };
 
             var response = await client.Conversations.PostActivityAsync(conversation.ConversationId, transcriptActivity);
+#if DEBUG
             Console.WriteLine(response);
+#endif
         }
 
         async Task ReadBotMessagesAsync(DirectLineClient directLineClient, string conversationId)
@@ -277,9 +574,7 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
                                 var isMyChatId = IsMyChatId(sendMessageProperties.From.Id);
 
                                 if (isMyChatId && actionPlan != null)
-                                {
                                     CurrentActionPlan = actionPlan;
-                                }
 
                                 chatMessages.Add(new ChatMessage
                                 {
@@ -295,7 +590,7 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
                             var previouslySentMessage = ChatMessages.LastOrDefault(m => IsMyChatId(m.UserModel.Id));
                             var isNewActionPlan = previouslySentMessage == null || previouslySentMessage.ActionPlan != CurrentActionPlan;
 
-                            chatMessages.Add(new ChatMessage
+                            var message = new ChatMessage
                             {
                                 Text = activity.Text,
                                 UserModel = new ChatUserModel
@@ -306,7 +601,51 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
                                 },
                                 ActionPlan = CurrentActionPlan,
                                 IsNewActionPlan = isNewActionPlan,
-                            });
+                            };
+
+                            // Check to see if the message was a client sent message that is already in ChatMessage collection
+                            bool alreadyDisplayed = false;
+                            int index = -1;
+                            string id = null;
+                            activity.Properties.TryGetValue(Constants.ChatActivityMessageType, out JToken token1);
+                            activity.Properties.TryGetValue(Constants.ChatActivityMessageId, out JToken token2);
+                            if (token1 != null && token1.ToObject<string>() == Constants.ChatActivityClientTextMessage && token2 != null)
+                            {
+                                // Is a message that was sent by the client and reflected back by chat bot service
+                                alreadyDisplayed = true;
+                                id = token2.ToObject<string>();
+                                activity.Properties.TryGetValue(Constants.ChatActivityMessageIndex, out JToken token3);
+                                if (token3 != null)
+                                    index = token3.ToObject<int>();
+                            }
+
+                            if (alreadyDisplayed)
+                            {
+                                // try to locate message in ChatMessages and replace with the one reflected back
+                                if (ChatMessages.Count > index)
+                                {
+                                    // iterate from index to end of chat message just in case messages have somehow been added - normally index will be last item
+                                    for (int i = index; i < ChatMessages.Count; i++)
+                                    {
+                                        if (ChatMessages[i].Id == id)
+                                        {
+                                            // have found message, so replace
+                                            ChatMessages[i] = message;
+                                            break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    // count is last than index so just the last item
+                                    if (ChatMessages.LastOrDefault()?.Id == id)
+                                            ChatMessages[ChatMessages.Count-1] = message;
+                                }
+
+
+                            }
+                            else
+                                chatMessages.Add(message);
                         }
 
                         isEndingConversation = activity.Type == "endOfConversation";
@@ -317,7 +656,7 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
                     {
                         if (!isInConversation)
                             ChatMessages.Clear();
-
+ 
                         isInConversation = true;
                         ChatMessages.AddRange(chatMessages);
                     }
@@ -339,6 +678,12 @@ namespace Edison.Mobile.User.Client.Core.ViewModels
 
         bool IsMyChatId(string chatId) => chatId.Contains(authService.UserInfo?.Email);
 
-        ActionPlanListModel GetEmergencyActionPlan() => ActionPlans.First(a => a.Name == "Emergency"); // TODO: no magic strings
+        ActionPlanListModel GetEmergencyActionPlan()
+        {
+            if (ActionPlans == null || ActionPlans.Count == 0)
+                return null;
+            return ActionPlans.FirstOrDefault(a => a.Name == "Emergency"); // TODO: no magic strings
+        }
+
     }
 }

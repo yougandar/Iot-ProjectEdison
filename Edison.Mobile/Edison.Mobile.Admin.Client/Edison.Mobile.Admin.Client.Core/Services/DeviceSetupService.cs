@@ -10,6 +10,12 @@ namespace Edison.Mobile.Admin.Client.Core.Services
 {
     public class DeviceSetupService
     {
+        public bool IsNew { get; set; }
+        public DeviceSetupService()
+        {
+            CurrentDeviceHotspotNetwork = new WifiNetwork();
+        }
+
         public static class DeviceTypeValues
         {
             public const string ButtonSensor = "Edison.Devices.ButtonSensor";
@@ -19,10 +25,18 @@ namespace Edison.Mobile.Admin.Client.Core.Services
 
         public DeviceModel CurrentDeviceModel { get; set; } = new DeviceModel();
 
+        public string OriginalSSID { get; set; }
+
         public WifiNetwork CurrentWifiNetwork { get; set; }
         public WifiNetwork CurrentDeviceHotspotNetwork { get; set; }
 
-        public string DefaultPassword => "Edison1234";
+        public string DefaultPassword => "Edison1234";//"Edison1234";
+        public string DefaultPortalPassword => "Edison1234";
+
+        public string ConnectedWifiSSID = "";
+
+        public string WiFiPassword { get; set; }
+        public string PortalPassword { get; set; }
 
         public string DeviceTypeAsString => CurrentDeviceModel?.DeviceType ?? "";
         public string DeviceTypeAsFriendlyString => DeviceTypeToFriendlyString(DeviceTypeAsString);
@@ -30,10 +44,10 @@ namespace Edison.Mobile.Admin.Client.Core.Services
         public void ClearDevice()
         {
             CurrentDeviceModel = new DeviceModel();
-            CurrentDeviceHotspotNetwork = null;
+            CurrentDeviceHotspotNetwork = new WifiNetwork();
         }
          
-        public static bool SSIDIsEdisonDevice(string ssid) => ssid.StartsWith("EDISON_", StringComparison.Ordinal);
+        public static bool SSIDIsEdisonDevice(string ssid) => ssid.Contains("EDISON_"); // android has quotes around it so starts with won't work
 
         public static string DeviceTypeToString(DeviceType deviceType)
         {

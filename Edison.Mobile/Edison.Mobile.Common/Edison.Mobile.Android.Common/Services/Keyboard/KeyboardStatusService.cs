@@ -16,7 +16,7 @@ namespace Edison.Mobile.Android.Common
 
 
         private int _openHeightDelta = -1;
-        private int _closedHeightDelta = -1;
+        private int _closedHeightDelta = 0;
 
         private InputMethodManager __imm = null;
         private InputMethodManager _imm
@@ -34,7 +34,7 @@ namespace Edison.Mobile.Android.Common
 
         public bool Subscribed { get; private set; } = false;
 
-
+        public int Threshold { get; set; } = 144;
 
         public void Subscribe()
         {
@@ -74,12 +74,13 @@ namespace Edison.Mobile.Android.Common
                 Rect r1 = new Rect();
                 rootLayout.GetLocalVisibleRect(r1);
                 var heightDelta = r1.Bottom - r.Bottom;
-                if (_openHeightDelta == -1)
-                    _openHeightDelta = heightDelta;
+
 
                 // Double check (in case we have manually changed layouts in response to the keyboard opening and closing
-                if (heightDelta > _closedHeightDelta + 50)  // may need to add padding here to account for other layout changes
+                if (heightDelta > _closedHeightDelta + Threshold)  // may need to add padding here to account for other layout changes
                 {
+                    if (_openHeightDelta == -1)
+                        _openHeightDelta = heightDelta;
                     Status = KeyboardStatus.Open;
                     // Trigger the event
                     KeyboardStatusChangeEvent?.Invoke(new KeyboardStatusChangeEventArgs(Status, _openHeightDelta));
@@ -104,7 +105,7 @@ namespace Edison.Mobile.Android.Common
                     Rect r1 = new Rect();
                     rootLayout.GetLocalVisibleRect(r1);
                     var heightDelta = r1.Bottom - r.Bottom;
-                    if  (heightDelta < _openHeightDelta - 50)  // may need to add padding here to account for other layout changes
+                    if  (heightDelta < _openHeightDelta - Threshold)  // may need to add padding here to account for other layout changes
                     {
                         _closedHeightDelta = heightDelta;
                         Status = KeyboardStatus.Closed;
@@ -137,7 +138,7 @@ namespace Edison.Mobile.Android.Common
             if (view == null)
                 view = new View(activity);
             InputMethodManager iMM = (InputMethodManager)activity.GetSystemService(Context.InputMethodService);
-            iMM.HideSoftInputFromWindow(view.WindowToken, 0);
+            iMM.HideSoftInputFromWindow(view.WindowToken, HideSoftInputFlags.None);
             view.ClearFocus();
         }
         public static void DismissKeyboard(Context ctx, View view)
@@ -145,42 +146,42 @@ namespace Edison.Mobile.Android.Common
             if (view == null)
                 view = new View(ctx);
             InputMethodManager iMM = (InputMethodManager)ctx.GetSystemService(Context.InputMethodService);
-            iMM.HideSoftInputFromWindow(view.WindowToken, 0);
+            iMM.HideSoftInputFromWindow(view.WindowToken, HideSoftInputFlags.None);
             view.ClearFocus();
         }
         public static void DismissKeyboard(Context ctx, Fragment fragment)
         {
             var view = fragment.View.RootView;
             InputMethodManager iMM = (InputMethodManager)ctx.GetSystemService(Context.InputMethodService);
-            iMM.HideSoftInputFromWindow(view.WindowToken, 0);
+            iMM.HideSoftInputFromWindow(view.WindowToken, HideSoftInputFlags.None);
             view.ClearFocus();
         }
         public static void DismissKeyboard(Context ctx, global::Android.Support.V4.App.Fragment fragment)
         {
             var view = fragment.View.RootView;
             InputMethodManager iMM = (InputMethodManager)ctx.GetSystemService(Context.InputMethodService);
-            iMM.HideSoftInputFromWindow(view.WindowToken, 0);
+            iMM.HideSoftInputFromWindow(view.WindowToken, HideSoftInputFlags.None);
             view.ClearFocus();
         }
         public static void DismissKeyboard(Fragment fragment)
         {
             var view = fragment.View.RootView;
             InputMethodManager iMM = (InputMethodManager)fragment.Activity.GetSystemService(Context.InputMethodService);
-            iMM.HideSoftInputFromWindow(view.WindowToken, 0);
+            iMM.HideSoftInputFromWindow(view.WindowToken, HideSoftInputFlags.None);
             view.ClearFocus();
         }
         public static void DismissKeyboard(global::Android.Support.V4.App.Fragment fragment)
         {
             var view = fragment.View.RootView;
             InputMethodManager iMM = (InputMethodManager)fragment.Activity.GetSystemService(Context.InputMethodService);
-            iMM.HideSoftInputFromWindow(view.WindowToken, 0);
+            iMM.HideSoftInputFromWindow(view.WindowToken, HideSoftInputFlags.None);
             view.ClearFocus();
         }
         public static void DismissKeyboard(Activity activity)
         {
             var view = activity.FindViewById(global::Android.Resource.Id.Content).RootView;
             InputMethodManager iMM = (InputMethodManager)activity.GetSystemService(Context.InputMethodService);
-            iMM.HideSoftInputFromWindow(view.WindowToken, 0);
+            iMM.HideSoftInputFromWindow(view.WindowToken, HideSoftInputFlags.None);
             view.ClearFocus();
         }
 
@@ -190,14 +191,26 @@ namespace Edison.Mobile.Android.Common
             InputMethodManager iMM = (InputMethodManager)activity.GetSystemService(Context.InputMethodService);
             iMM.ToggleSoftInput(ShowFlags.Implicit, HideSoftInputFlags.ImplicitOnly);
         }
-        public static void ShowKeyboard(Activity activity, View view)
+        public static void ShowKeyboard(Activity activity, View view, bool forced = false)
         {
             if (view == null)
                 view = new View(activity);
             InputMethodManager iMM = (InputMethodManager)activity.GetSystemService(Context.InputMethodService);
-            iMM.ShowSoftInput(view, ShowFlags.Implicit);
+            if (forced)
+                iMM.ShowSoftInput(view, ShowFlags.Forced);
+            else
+                iMM.ShowSoftInput(view, ShowFlags.Implicit);
         }
-
+        public static void ShowKeyboard(Context ctx, View view, bool forced = false)
+        {
+            if (view == null)
+                view = new View(ctx);
+            InputMethodManager iMM = (InputMethodManager)ctx.GetSystemService(Context.InputMethodService);
+            if (forced)
+                iMM.ShowSoftInput(view, ShowFlags.Forced);
+            else
+                iMM.ShowSoftInput(view, ShowFlags.Implicit);
+        }
 
     }
 

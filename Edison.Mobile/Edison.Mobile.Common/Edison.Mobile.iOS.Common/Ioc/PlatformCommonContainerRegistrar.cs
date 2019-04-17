@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Autofac;
 using Edison.Mobile.Common.Auth;
 using Edison.Mobile.Common.Geo;
@@ -37,6 +39,42 @@ namespace Edison.Mobile.iOS.Common.Ioc
             builder.RegisterType<PlatformWifiService>()
                    .As<IWifiService>()
                    .SingleInstance();
+
+#if ANDROIDADMINNOPI
+            
+            builder.RegisterInstance<IWifiService>(new WifiServiceMock());
+#endif
+        }
+
+
+        public class WifiServiceMock : IWifiService
+        {
+
+            public event EventHandler<ConnectionFailedEventArgs> ConnectionFailed;
+            public event EventHandler<CheckingConnectionStatusUpdatedEventArgs> CheckingConnectionStatusUpdated;
+
+            public Task<bool> ConnectToWifiNetwork(string ssid)
+            {
+                return Task.FromResult(true);
+            }
+
+            public Task<bool> ConnectToWifiNetwork(string ssid, string passphrase)
+            {
+                return Task.FromResult(true);
+            }
+
+            public Task DisconnectFromWifiNetwork(WifiNetwork wifiNetwork)
+            {
+                return Task.FromResult(true);
+            }
+
+            public Task<WifiNetwork> GetCurrentlyConnectedWifiNetwork()
+            {
+                return Task.FromResult(new WifiNetwork()
+                {
+                    SSID = "SSID 1"
+                });
+            }
         }
     }
 }

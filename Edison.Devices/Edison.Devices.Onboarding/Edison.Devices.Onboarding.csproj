@@ -23,12 +23,13 @@
     <ContainsStartupTask>true</ContainsStartupTask>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-    <AppxPackageDir>D:\Edison\Edison.Devices\AppPackages\</AppxPackageDir>
+    <AppxPackageDir>C:\Users\bkotvis\Desktop\Edison\</AppxPackageDir>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>arm</AppxBundlePlatforms>
     <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
+    <PackageCertificateThumbprint>99EB6ED327C215F2410F35EAA3ADF7C4EB59B04E</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
@@ -105,14 +106,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Helpers\AccessPointHelper.cs" />
+    <Compile Include="Helpers\AdaptersHelper.cs" />
     <Compile Include="Helpers\SecretManager.cs" />
     <Compile Include="Interfaces\IDeviceApiServer.cs" />
     <Compile Include="Models\HttpRequest.cs" />
     <Compile Include="Models\CommandEventArgs.cs" />
     <Compile Include="Helpers\DebugHelper.cs" />
     <Compile Include="Helpers\SimulatedDevice.cs" />
-    <Compile Include="Models\PortalAPI\AvailableNetwork.cs" />
-    <Compile Include="Models\PortalAPI\AvailableNetworksModel.cs" />
     <Compile Include="Models\PortalAPI\HeadlessApp.cs" />
     <Compile Include="Models\PortalAPI\HeadlessModel.cs" />
     <Compile Include="Models\PortalAPI\PackageModel.cs" />
@@ -190,10 +190,6 @@
     <ProjectReference Include="..\Edison.Devices.Onboarding.Common\Edison.Devices.Onboarding.Common.csproj">
       <Project>{ef5ea191-30d7-4dff-8cdf-fe4b3a0e340d}</Project>
       <Name>Edison.Devices.Onboarding.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\IoTOnboardingUtils\IoTOnboardingUtils.vcxproj">
-      <Project>{caf3ef02-b6ae-4dc9-b390-47c342dca8ec}</Project>
-      <Name>IoTOnboardingUtils</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '15.0' ">

@@ -27,6 +27,7 @@ namespace Edison.Api.AutoMapping
             CreateMap<DeviceTwinModel, DeviceDAO>()
                 .ForMember(dto => dto.Id, opts => opts.MapFrom(src => src.DeviceId))
                 .ForMember(dto => dto.DeviceType, opts => opts.MapFrom(src => src.Tags.DeviceType))
+                .ForMember(dto => dto.SSID, opts => opts.MapFrom(src => src.Tags.SSID))
                 .ForMember(dto => dto.Sensor, opts => opts.MapFrom(src => src.Tags.Sensor))
                 .ForMember(dto => dto.Name, opts => opts.MapFrom(src => src.Tags.Name))
                 .ForMember(dto => dto.Location1, opts => opts.MapFrom(src => src.Tags.Location1))
@@ -56,7 +57,9 @@ namespace Edison.Api.AutoMapping
                 .ForMember(dto => dto.Icon, opts => opts.MapFrom(src => src.ActionPlan.Icon))
                 .ForMember(dto => dto.Color, opts => opts.MapFrom(src => src.ActionPlan.Color))
                 .ForMember(dto => dto.StartDate, opts => opts.MapFrom(src => src.CreationDate))
-                .ForMember(dto => dto.EndDate, opts => opts.MapFrom(src => src.EndDate));
+                .ForMember(dto => dto.EndDate, opts => opts.MapFrom(src => src.EndDate))
+                .ForMember(dto => dto.ActionPlan, opts => opts.MapFrom(src => src.ActionPlan));
+                
             CreateMap<ResponseDAO, ResponseLightModel>()
                 .ForMember(dto => dto.ResponseId, opts => opts.MapFrom(src => src.Id))
                 .ForMember(dto => dto.StartDate, opts => opts.MapFrom(src => src.CreationDate))
@@ -64,7 +67,10 @@ namespace Edison.Api.AutoMapping
                 .ForMember(dto => dto.Icon, opts => opts.MapFrom(src => src.ActionPlan.Icon))
                 .ForMember(dto => dto.Color, opts => opts.MapFrom(src => src.ActionPlan.Color))
                 .ForMember(dto => dto.AcceptSafeStatus, opts => opts.MapFrom(src => src.ActionPlan.AcceptSafeStatus))
-                .ForMember(dto => dto.EndDate, opts => opts.MapFrom(src => src.EndDate));
+                .ForMember(dto => dto.EndDate, opts => opts.MapFrom(src => src.EndDate))
+                .ForMember(dto => dto.IsActive, opts => opts.Condition(dao => dao.EndDate < DateTime.UtcNow));
+            CreateMap<ResponseActionPlanDAOObject, ResponseActionPlanModel>();
+            CreateMap<ResponseActionDAOObject, ResponseActionModel>();
             CreateMap<ResponseDAO, ResponseUpdateModel>()
                 .ForMember(dto => dto.ResponseId, opts => opts.MapFrom(src => src.Id));
             CreateMap<ActionPlanUpdateModel, ActionPlanDAO>()

@@ -18,10 +18,6 @@ using Android.Support.Design.Widget;
 
 using Edison.Mobile.Android.Common;
 using Edison.Mobile.User.Client.Core.ViewModels;
-using Edison.Mobile.User.Client.Droid.Ioc;
-using Edison.Mobile.User.Client.Core.Ioc;
-using Edison.Mobile.Android.Common.Ioc;
-using Edison.Mobile.Common.Ioc;
 
 
 
@@ -36,13 +32,16 @@ namespace Edison.Mobile.User.Client.Droid.Activities
     [Activity(Label = "@string/app_name", MainLauncher = true, Icon = "@mipmap/ic_edison_launcher", Exported = true, ScreenOrientation = global::Android.Content.PM.ScreenOrientation.Portrait)]
     public class LoginActivity : BaseActivity<LoginViewModel>
     {
+        private const int RequestNotificationPermissionId = 0;
+        private const int RequestLocationPermissionId = 1;
+
         private ConstraintLayout _loginScreen;
         private AppCompatButton _signInButton;
         private ProgressBar _activityIndicator;
         private AppCompatTextView _splachscreenMessage;
 
-        private const int RequestNotificationPermissionId = 0;
-        private const int RequestLocationPermissionId = 1;
+        private string _source = null;
+        private string _action = null;
 
 #if DEBUG
         public static bool UsingLogon = false;
@@ -54,7 +53,7 @@ namespace Edison.Mobile.User.Client.Droid.Activities
             UsingLogon = true;
 # endif
 
-            //Initializatio done in MainApplication
+            //Initialization done in MainApplication
 //        Container.Initialize(new CoreContainerRegistrar(), new PlatformCommonContainerRegistrar(this), new PlatformContainerRegistrar());
 
             base.OnCreate(bundle);
@@ -62,13 +61,24 @@ namespace Edison.Mobile.User.Client.Droid.Activities
             if (ViewModel != null)
                 ((LoginViewModel)ViewModel).AuthService.UiParent = new UIParent(this);
 
-
+            if (Intent.Extras != null)
+            {
+                _source = Intent.GetStringExtra(Constants.IntentSourceLabel);
+                _action = Intent.GetStringExtra(Constants.IntentActionLabel);
+            }
 
             AppCenter.Start("959d5bd2-9e29-4f17-aed6-68885af8c63d", typeof(Analytics), typeof(Crashes));
+
 
             SetContentView(Resource.Layout.screen_login);
             BindResources();
             BindVMEvents();
+
+            if (_source == Constants.IntentSourceLogout && ViewModel != null)
+            {
+                ViewModel.HaveSignedOut();
+                ShowLogin();
+            }
 
 
 #if DEBUG
@@ -78,8 +88,6 @@ namespace Edison.Mobile.User.Client.Droid.Activities
             Log.Debug("ACTIVITY", "**************************************");
             Log.Debug("ACTIVITY", "**************************************");
 #endif
-
-
 
 
             Task.Run(async () => {
@@ -105,16 +113,19 @@ namespace Edison.Mobile.User.Client.Droid.Activities
         private async void NavigateToMainViewModel()
         {
             var intent = new Intent(this, typeof(MainActivity));
-            //           intent.AddFlags(ActivityFlags.NoAnimation);
- //           intent.AddFlags(ActivityFlags.ClearTop);
- //           intent.AddFlags(ActivityFlags.NewTask);
- //           intent.AddFlags(ActivityFlags.ClearTask);
+            if (!string.IsNullOrWhiteSpace(_source) || !string.IsNullOrWhiteSpace(_action))
+            {
+                intent.PutExtra(Constants.IntentSourceLabel, _source);
+                intent.PutExtra(Constants.IntentActionLabel, _action);
+            }
             StartActivity(intent);
 
             // Give the main activity a chance to render before killing this one
             // TODO replace with cool transition
             await Task.Run(async () =>
             {
+ //               var instanceId = Shared.FirebaseRegistrationService.GetFirebaseInstanceId();
+ //               var token = Shared.FirebaseRegistrationService.GetPushNotificationToken();
                 await Task.Delay(5000);
                 Finish();
             }).ConfigureAwait(false);
@@ -156,14 +167,22 @@ namespace Edison.Mobile.User.Client.Droid.Activities
         // Clears progress bar, sets a login failed message, and shows login button
         private void OnLoginFailed()
         {
-            _activityIndicator.Visibility = ViewStates.Invisible;
+            ShowLogin();
             _splachscreenMessage.Text = Resources.GetString(Resource.String.sign_in_error);
             _splachscreenMessage.Visibility = ViewStates.Visible;
+            _loginScreen.Invalidate();
+        }
+
+        private void ShowLogin()
+        {
+            _activityIndicator.Visibility = ViewStates.Invisible;
             _signInButton.Alpha = 0f;
             _signInButton.Visibility = ViewStates.Visible;
             _signInButton.Animate().Alpha(1).SetDuration(1000).Start();
+            _splachscreenMessage.Visibility = ViewStates.Invisible;
             _loginScreen.Invalidate();
         }
+
 
         // Clears progress bar, sets a permissions denied message, and shows login button
         private void OnAppPermissionsFailed()
@@ -178,6 +197,7 @@ namespace Edison.Mobile.User.Client.Droid.Activities
             ClearMessages();
             await ViewModel.Login();
         }
+
 
         // Called when returns from MSAL authentication
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)

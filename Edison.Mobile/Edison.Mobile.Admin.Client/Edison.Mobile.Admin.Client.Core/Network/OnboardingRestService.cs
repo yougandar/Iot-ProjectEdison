@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Edison.Mobile.Admin.Client.Core.Ioc;
 using Edison.Mobile.Admin.Client.Core.Models;
 using Edison.Mobile.Common.Auth;
 using Edison.Mobile.Common.Logging;
@@ -14,17 +15,21 @@ using RestSharp.Authenticators;
 
 namespace Edison.Mobile.Admin.Client.Core.Network
 {
-    public class OnboardingRestService : BaseRestService
+    public class OnboardingRestService : BaseRestService, IOnboardingRestService
     {
         public OnboardingRestService(AuthService authService, ILogger logger, string baseUrl)
             : base(authService, logger, baseUrl)
         {
-            client.Authenticator = new HttpBasicAuthenticator("Administrator", "Edison1234");
         }
 
         protected override void AddAuthHeader(RestRequest request)
         {
             // no-op
+        }
+
+        public void SetBasicAuthentication(string password)
+        {
+            client.Authenticator = new HttpBasicAuthenticator("Administrator", password);
         }
 
         public async Task<ResultCommandGetDeviceId> GetDeviceId()
@@ -46,6 +51,27 @@ namespace Edison.Mobile.Admin.Client.Core.Network
                 return null;
             }
         }
+
+        public async Task<ResultCommandGetNetworkProfiles> GetNetworkProfiles()
+        {
+            try
+            {
+                var request = PrepareRequest("/GetNetworkProfiles", Method.GET);
+                var result = await client.ExecuteGetTaskAsync<ResultCommandGetNetworkProfiles>(request);
+                if (result.IsSuccessful)
+                {
+                    return result.Data;
+                }
+
+            }
+            catch (Exception e)
+            {
+                logger.Log(e);
+            }
+
+            return default(ResultCommandGetNetworkProfiles);
+        }
+        
 
         public async Task<ResultCommandGenerateCSR> GetGeneratedCSR()
         {
@@ -107,7 +133,7 @@ namespace Edison.Mobile.Admin.Client.Core.Network
             }
         }
 
-        public async Task<IEnumerable<WifiNetwork>> GetAvailableWifiNetworks()
+        public async Task<IEnumerable<AvailableNetwork>> GetAvailableWifiNetworks()
         {
             try
             {
@@ -115,10 +141,7 @@ namespace Edison.Mobile.Admin.Client.Core.Network
                 var queryResult = await client.ExecuteTaskAsync<ResultCommandAvailableNetworks>(request);
                 if (queryResult.IsSuccessful)
                 {
-                    return queryResult.Data.Networks.Select(networkName => new WifiNetwork
-                    {
-                        SSID = networkName,
-                    });
+                    return queryResult.Data.Networks;
                 }
 
                 return null;
@@ -136,6 +159,26 @@ namespace Edison.Mobile.Admin.Client.Core.Network
             {
                 var request = PrepareRequest("/ConnectToNetwork", Method.POST, networkInformationModel);
                 var queryResult = await client.ExecutePostTaskAsync<ResultCommandNetworkStatus>(request);
+                if (queryResult.IsSuccessful)
+                {
+                    return queryResult.Data;
+                }
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                logger.Log(e);
+                return null;
+            }
+        }
+
+        public async Task<ResultCommand> SetDeviceSecretKeys(RequestCommandSetDeviceSecretKeys command)
+        {
+            try
+            {
+                var request = PrepareRequest("/SetDeviceSecretKeys", Method.POST, command);
+                var queryResult = await client.ExecutePostTaskAsync<ResultCommand>(request);
                 if (queryResult.IsSuccessful)
                 {
                     return queryResult.Data;

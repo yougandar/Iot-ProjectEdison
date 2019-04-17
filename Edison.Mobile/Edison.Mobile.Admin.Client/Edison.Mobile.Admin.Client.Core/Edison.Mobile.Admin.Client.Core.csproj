@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Configurations>Debug;Release;Android User (Release);Android Admin</Configurations>
+    <Configurations>Debug;Release;Android User (Release);Android Admin;Android Admin NoPI;AndroidAdminNoPi;iOS Admin NoPi</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " />
@@ -12,7 +12,16 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\iPhoneSimulator\iOS User</OutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='iOS Admin NoPi|AnyCPU'">
+    <DefineConstants>TRACE;ANDROIDADMINNOPI</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='AndroidAdminNoPi|AnyCPU'">
+    <DefineConstants>TRACE;ANDROIDADMINNOPI</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Android Admin NoPI|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Android Admin|AnyCPU'" />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'iOS User|iPhone' ">
     <IntermediateOutputPath>obj\iPhone\iOS User</IntermediateOutputPath>
@@ -62,12 +71,9 @@
     <PackageReference Include="Autofac" Version="4.8.1" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Ioc\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Auth\" />
-    <Folder Include="Network\" />
     <Folder Include="Services\" />
     <Folder Include="Shared\" />
-    <Folder Include="Models\" />
   </ItemGroup>
 </Project>
