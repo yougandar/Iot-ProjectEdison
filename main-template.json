@@ -207,6 +207,18 @@
                 "description": "ClientSecret of the service principal."
             }
         },
+        "aksServicePrincipalClientIdDr": {
+            "type": "string",
+            "metadata": {
+                "description": "Client ID of the service principal."
+            }
+        },
+        "aksServicePrincipalClientSecretDr": {
+            "type": "string",
+            "metadata": {
+                "description": "ClientSecret of the service principal."
+            }
+        },
         "signalrCapacity": {
             "type": "int",
             "defaultValue": 1,
@@ -339,6 +351,8 @@
             "locationDr": "[variables('locationDr')]",
             "aksServicePrincipalClientId": "[parameters('aksServicePrincipalClientId')]",
             "aksServicePrincipalClientSecret": "[parameters('aksServicePrincipalClientSecret')]",
+            "aksServicePrincipalClientIdDr": "[parameters('aksServicePrincipalClientIdDr')]",
+            "aksServicePrincipalClientSecretDr": "[parameters('aksServicePrincipalClientSecretDr')]",
             "aksClusterName": "[variables('aksClusterName1')]",
             "aksClusterNameDr": "[variables('aksClusterNameDr')]",
             "kubernetesVersion": "1.12.7",
@@ -425,6 +439,7 @@
         "redisSettings": {
             "solutionType": "[parameters('solutionType')]",
             "location": "[parameters('geo-paired-region')]",
+            "locationDr": "[variables('locationDr')]",
             "redisCacheName": "[concat('redisCache',variables('suffix'))]",
             "redisCacheNameDr": "[concat('redisCache',variables('suffix'),'Dr')]",
             "redisCacheCapacity": 1,
