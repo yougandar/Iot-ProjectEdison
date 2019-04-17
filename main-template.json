@@ -50,13 +50,46 @@
         },
         "signalRlocation": {
             "type": "string",
-            "defaultValue": "eastus2",
+            "defaultValue": "EastUS2",
             "allowedValues": [
-                "eastus2",
-                "centralus"
+                "AustraliaEast",
+                "CanadaEast",
+                "CentralUS",
+                "EastUS2",
+                "EastUS",
+                "JapanEast",
+                "NorthEurope",
+                "SouthCentralUS",
+                "SoutheastAsia",
+                "UKSouth",
+                "WestEurope",
+                "WestUS2",
+                "WestUS"
             ],
             "metadata": {
                 "description": "Choose location for signalR to deploy."
+            }
+        },
+        "signalRlocationDr": {
+            "type": "string",
+            "defaultValue": "CentralUS",
+            "allowedValues": [
+                "AustraliaEast",
+                "CanadaEast",
+                "CentralUS",
+                "EastUS2",
+                "EastUS",
+                "JapanEast",
+                "NorthEurope",
+                "SouthCentralUS",
+                "SoutheastAsia",
+                "UKSouth",
+                "WestEurope",
+                "WestUS2",
+                "WestUS"
+            ],
+            "metadata": {
+                "description": "If deploymenttype is choosen as premium, enter location for signalRlocationDr for disaster recovery."
             }
         },
         "acrDeploymentLocation": {
@@ -122,7 +155,7 @@
                 "North Europe"
             ],
             "metadata": {
-                "description": "Enter location for application insights for disaster recovery"
+                "description": "If deploymenttype is choosen as premium, enter location for application insights for disaster recovery"
             }
         },
         "tenantId": {
@@ -197,26 +230,30 @@
         },
         "aksServicePrincipalClientId": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
                 "description": "Client ID of the service principal."
             }
         },
         "aksServicePrincipalClientSecret": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
                 "description": "ClientSecret of the service principal."
             }
         },
         "aksServicePrincipalClientIdDr": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
-                "description": "Client ID of the service principal."
+                "description": "If deploymenttype is choosen as premium, enter Client ID of the newly created service principal"
             }
         },
         "aksServicePrincipalClientSecretDr": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
-                "description": "ClientSecret of the service principal."
+                "description": "If deploymenttype is choosen as premium, enter Client secret of the newly created service principal"
             }
         },
         "signalrCapacity": {
@@ -429,7 +466,7 @@
         "signalrSettings": {
             "solutionType": "[parameters('solutionType')]",
             "location": "[parameters('signalRlocation')]",
-            "locationDr": "[variables('signalRlocationDr')]",
+            "locationDr": "[parameters('signalRlocationDr')]",
             "signalrName": "[concat('signalR',variables('suffix'))]",
             "signalrNameDr": "[concat('signalR',variables('suffix'),'Dr')]",
             "pricingTier1": "Free_F1",
@@ -515,7 +552,6 @@
         "UKWest": "UKSouth",
         "locationDr": "[variables(parameters('geo-paired-region'))]",
         "readRegionLocation": "[variables('locationDr')]",
-        "signalRlocationDr": "[variables(parameters('signalRlocation'))]",
         "acrDeploymentLocationDr": "[variables(parameters('acrDeploymentLocation'))]"
     },
     "resources": [
@@ -542,7 +578,6 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2015-01-01",
             "condition": "[equals(parameters('deploymenttype'),'Premium')]",
-
             "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
@@ -1225,7 +1260,7 @@
                     "redisSettings": {
                         "value": "[variables('redisSettings')]"
                     },
-                    "storageBlobSettings":{
+                    "storageBlobSettings": {
                         "value": "[variables('storageBlobSettings')]"
                     }
                 }
