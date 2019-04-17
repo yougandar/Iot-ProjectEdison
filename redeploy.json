@@ -59,15 +59,26 @@
                 "description": "Choose location for Azure container Registry to deploy."
             }
         },
-        "signalRlocation": {
+        "signalRlocationDr": {
             "type": "string",
-            "defaultValue": "centralus",
+            "defaultValue": "CentralUS",
             "allowedValues": [
-                "eastus2",
-                "centralus"
+                "AustraliaEast",
+                "CanadaEast",
+                "CentralUS",
+                "EastUS2",
+                "EastUS",
+                "JapanEast",
+                "NorthEurope",
+                "SouthCentralUS",
+                "SoutheastAsia",
+                "UKSouth",
+                "WestEurope",
+                "WestUS2",
+                "WestUS"
             ],
             "metadata": {
-                "description": "Choose location for signalR to deploy."
+                "description": "Choose location for signalR to deploy for disaster recovery."
             }
         },
         "appInsightsLocationDr": {
@@ -83,7 +94,7 @@
                 "description": "Enter location for application insights for disaster recovery"
             }
         },
-        "omsWorkspaceRegion": {
+        "omsWorkspaceRegionDr": {
             "type": "string",
             "defaultValue": "southeastasia",
             "allowedValues": [
@@ -133,7 +144,7 @@
         "omsSettings": {
             "solutionType": "[parameters('solutionType')]",
             "omsWorkspaceNameDr": "[concat('omsworkspace', variables('suffix'),'Dr')]",
-            "omsWorkspaceRegion": "[parameters('omsWorkspaceRegion')]",
+            "omsWorkspaceRegion": "[parameters('omsWorkspaceRegionDr')]",
             "omsLogAnalyticsSku": "standalone",
             "dataRetention": 7
         },
@@ -154,7 +165,7 @@
         },
         "signalrSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "locationDr": "[variables('signalRlocationDr')]",
+            "locationDr": "[parameters('signalRlocationDr')]",
             "signalrNameDr": "[concat('signalR',variables('suffix'),'Dr')]",
             "pricingTier2": "Standard_S1",
             "capacity": "[parameters('signalrCapacity')]"
@@ -226,7 +237,6 @@
         "UKSouth": "UKWest",
         "UKWest": "UKSouth",
         "locationDr": "[variables(parameters('geo-paired-region'))]",
-        "signalRlocationDr": "[variables(parameters('signalRlocation'))]",
         "aksClusterNameDr": "[concat('aks' , variables('suffix'), 'Dr')]",
         "storageAccountNameDr": "[concat('edisonstrgeacc',variables('suffix'),'dr')]",
         "acrName2": "[concat('acr',variables('suffix'), 'Dr')]",

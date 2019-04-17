@@ -21,7 +21,7 @@
         "apiVersion": "[variables('apiVersion').logAnalytics]",
         "type": "Microsoft.OperationalInsights/workspaces",
         "name": "[parameters('omsSettings').omsWorkspaceNameDr]",
-        "location": "[parameters('omsSettings').omsWorkspaceRegion]",
+        "location": "[parameters('omsSettings').omsWorkspaceRegionDr]",
         "tags": {
           "IotSuiteType": "[parameters('omsSettings').solutionType]"
       },
@@ -34,7 +34,7 @@
         "resources": [
           {
             "apiVersion": "[variables('apiVersion').logAnalyticsSolutions]",
-            "location": "[parameters('omsSettings').omsWorkspaceRegion]",
+            "location": "[parameters('omsSettings').omsWorkspaceRegionDr]",
             "name":"[variables('container').name]",
             "type": "Microsoft.OperationsManagement/solutions",
             "dependsOn": [
