@@ -148,13 +148,6 @@
             "omsLogAnalyticsSku": "standalone",
             "dataRetention": 7
         },
-         "storageBlobSettings": {
-            "solutionType": "[parameters('solutionType')]",
-            "storageAccountNameDr": "[variables('storageAccountNameDr')]",
-            "locationDr": "[variables('locationDr')]",
-            "containerNameDr": "logsdr",
-            "storageAccountType": "Standard_LRS"
-        },
         "notificationHub": {
             "locationDr": "[variables('locationDr')]",
             "skuName": "free",
@@ -263,24 +256,6 @@
             }
         },
         {
-            "name": "StorageBlobR2",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-02-01",
-            "dependsOn": [],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/storageblob-r2.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "storageBlobSettings": {
-                        "value": "[variables('storageBlobSettings')]"
-                    }
-                }
-            }
-        },
-        {
             "name": "NotificationHubR2",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
@@ -320,9 +295,7 @@
             "name": "RediscacheR2",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
-            "dependsOn": [
-                "StorageBlobR2"
-            ],
+            "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {

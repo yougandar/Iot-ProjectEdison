@@ -479,12 +479,10 @@
             "locationDr": "[variables('locationDr')]",
             "redisCacheName": "[concat('redisCache',variables('suffix'))]",
             "redisCacheNameDr": "[concat('redisCache',variables('suffix'),'Dr')]",
-            "redisCacheCapacity": 1,
-            "rediscacheCapacity1": 0,
+            "redisCacheCapacity": 0,
             "redisCacheFamily": "C",
-            "redisCacheFamily1": "P",
             "redisCacheSku": "Basic",
-            "redisCacheSku1": "Premium",
+            "redisCacheSku1": "Standard",
             "enableNonSslPort": false,
             "diagnosticsEnabled": true,
             "existingDiagnosticsStorageAccountId": "[variables('existingDiagnosticsStorageAccountId')]"
@@ -782,25 +780,6 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "uri": "[concat(variables('baseUrl'), 'nested/storageblob-r1.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "storageBlobSettings": {
-                        "value": "[variables('storageBlobSettings')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "StorageBlobR2",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-02-01",
-            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
-            "dependsOn": [],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/storageblob-r2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -1248,7 +1227,7 @@
             "apiVersion": "2016-02-01",
             "condition": "[equals(parameters('deploymenttype'),'Premium')]",
             "dependsOn": [
-                "StorageBlobR2"
+                "StorageBlobR1"
             ],
             "properties": {
                 "mode": "Incremental",
