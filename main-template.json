@@ -89,7 +89,7 @@
                 "WestUS"
             ],
             "metadata": {
-                "description": "If deploymenttype is choosen as premium, enter location for signalRlocationDr for disaster recovery."
+                "description": "If deploymenttype is choosen as Standard or premium, enter location for signalRlocationDr for disaster recovery."
             }
         },
         "acrDeploymentLocation": {
@@ -155,7 +155,7 @@
                 "North Europe"
             ],
             "metadata": {
-                "description": "If deploymenttype is choosen as premium, enter location for application insights for disaster recovery"
+                "description": "If deploymenttype is choosen as standard or premium, enter location for application insights for disaster recovery"
             }
         },
         "tenantId": {
@@ -169,7 +169,7 @@
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "Client Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets.Used for Bot deployment"
+                "description": "...................Used for Bot deployment"
             }
         },
         "adObjectId": {
@@ -183,7 +183,7 @@
             "type": "securestring",
             "defaultValue": "",
             "metadata": {
-                "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
+                "description": "Client Secret of the created Azure active directory application.For instructions, see (https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key)  in the Microsoft documentation."
             }
         },
         "azureAccountName": {
