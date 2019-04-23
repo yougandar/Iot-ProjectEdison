@@ -550,7 +550,9 @@
         "UKWest": "UKSouth",
         "locationDr": "[variables(parameters('geo-paired-region'))]",
         "readRegionLocation": "[variables('locationDr')]",
-        "acrDeploymentLocationDr": "[variables(parameters('acrDeploymentLocation'))]"
+        "acrDeploymentLocationDr": "[variables(parameters('acrDeploymentLocation'))]",
+        "rgName": "[resourceGroup().name]",
+        "subscriptionid": "[subscription().subscriptionId]"
     },
     "resources": [
         {
@@ -1303,5 +1305,42 @@
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "apiTrafficManagerUrl": {
+            "type": "string",
+            "value": "[concat('https://', variables('trafficManagerSettings').trafficManagerName1,'.azurewebsites.net')]"
+        },
+        "adminTrafficManagerUrl": {
+            "type": "string",
+            "value": "[concat('http://', variables('trafficManagerSettings').trafficManagerName,'.trafficmanager.net')]"
+        },
+        "ServiceBusRabbitMQUSR": {
+            "type": "string",
+            "value": "[variables('serviceBusProperties').serviceBusRabbitMQUsername]"
+        },
+        "ServiceBusRabbitMQPWD": {
+            "type": "string",
+            "value": "[variables('serviceBusProperties').serviceBusRabbitMQPassword]"
+        },
+        "SubscriptionId": {
+            "type": "string",
+            "value": "[variables('subscriptionid')]"
+        },
+        "ResourceGroupName": {
+            "type": "string",
+            "value": "[variables('rgName')]"
+        },
+        "MSAppID": {
+            "type": "string",
+            "value": "[parameters('botAdClientId')]"
+        },
+        "AzureAdSRT": {
+            "type": "string",
+            "value": "[parameters('adClientSecret')]"
+        },
+        "adObjectId": {
+            "type": "string",
+            "value": "[parameters('adObjectId')]"
+        },
+    }
 }
