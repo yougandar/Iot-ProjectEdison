@@ -14,6 +14,9 @@
         "signalRlocation": {
             "value": "eastus2"
         },
+        "signalRlocationDr": {
+            "value": "CentralUS"
+        },
         "acrDeploymentLocation": {
             "value": "CanadaCentral"
         },
@@ -60,6 +63,12 @@
             "value": ""
         },
         "aksServicePrincipalClientSecret": {
+            "value": ""
+        },
+        "aksServicePrincipalClientIdDr": {
+            "value": ""
+        },
+        "aksServicePrincipalClientSecretDr": {
             "value": ""
         },
         "signalrCapacity":  {

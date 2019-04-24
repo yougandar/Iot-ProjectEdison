@@ -1341,6 +1341,14 @@
         "adObjectId": {
             "type": "string",
             "value": "[parameters('adObjectId')]"
+        },
+        "TenantID": {
+            "type": "string",
+            "value": "[parameters('tenantID')]"
+        },
+        "COSMOSDBEP": {
+            "type": "string",
+            "value": "[concat('https://', variables('cosmosDbSettings').cosmosDbAccountName,'.documents.azure.com:443/')]"
         }
     }
 }
