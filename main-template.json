@@ -50,31 +50,64 @@
         },
         "signalRlocation": {
             "type": "string",
-            "defaultValue": "eastus2",
+            "defaultValue": "EastUS2",
             "allowedValues": [
-                "eastus2",
-                "centralus"
+                "AustraliaEast",
+                "CanadaEast",
+                "CentralUS",
+                "EastUS2",
+                "EastUS",
+                "JapanEast",
+                "NorthEurope",
+                "SouthCentralUS",
+                "SoutheastAsia",
+                "UKSouth",
+                "WestEurope",
+                "WestUS2",
+                "WestUS"
             ],
             "metadata": {
                 "description": "Choose location for signalR to deploy."
             }
         },
-        "acrDeploymentLocation":{
-            "type":"string",
-            "defaultValue":"",
-            "allowedValues":[
-                "JapanEast",
-                 "JapanWest",
-                "AustraliaSouthEast",
-                 "AustraliaEast",
-                "CanadaCentral",
-                 "CanadaEast",
-                "CentralIndia",
-             "SouthIndia",
+        "signalRlocationDr": {
+            "type": "string",
+            "defaultValue": "CentralUS",
+            "allowedValues": [
+                "AustraliaEast",
+                "CanadaEast",
                 "CentralUS",
-                 "EastUS2",
+                "EastUS2",
+                "EastUS",
+                "JapanEast",
+                "NorthEurope",
+                "SouthCentralUS",
+                "SoutheastAsia",
+                "UKSouth",
+                "WestEurope",
+                "WestUS2",
+                "WestUS"
+            ],
+            "metadata": {
+                "description": "If deploymenttype is choosen as Standard or premium, enter location for signalRlocationDr for disaster recovery."
+            }
+        },
+        "acrDeploymentLocation": {
+            "type": "string",
+            "defaultValue": "",
+            "allowedValues": [
+                "JapanEast",
+                "JapanWest",
+                "AustraliaSouthEast",
+                "AustraliaEast",
+                "CanadaCentral",
+                "CanadaEast",
+                "CentralIndia",
+                "SouthIndia",
+                "CentralUS",
+                "EastUS2",
                 "SouthEastAsia",
-                 "EastAsia",
+                "EastAsia",
                 "WestCentralUS",
                 "WestUS2"
             ],
@@ -114,7 +147,7 @@
         },
         "appInsightsLocationDr": {
             "type": "string",
-            "defaultValue": "eastus",
+            "defaultValue": "southcentralus",
             "allowedValues": [
                 "southcentralus",
                 "westeurope",
@@ -122,7 +155,7 @@
                 "North Europe"
             ],
             "metadata": {
-                "description": "Enter location for application insights for disaster recovery"
+                "description": "If deploymenttype is choosen as standard or premium, enter location for application insights for disaster recovery"
             }
         },
         "tenantId": {
@@ -136,7 +169,7 @@
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "Client Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets.Used for Bot deployment"
+                "description": "...................Used for Bot deployment"
             }
         },
         "adObjectId": {
@@ -150,7 +183,7 @@
             "type": "securestring",
             "defaultValue": "",
             "metadata": {
-                "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
+                "description": "Client Secret of the created Azure active directory application.For instructions, see (https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key)  in the Microsoft documentation."
             }
         },
         "azureAccountName": {
@@ -195,22 +228,32 @@
                 "description": "Password to login into Virtual Machine"
             }
         },
-        "aksServicePrincipalObjectId": {
-            "type": "string",
-            "metadata": {
-                "description": "Object ID of the service principal."
-            }
-        },
         "aksServicePrincipalClientId": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
                 "description": "Client ID of the service principal."
             }
         },
         "aksServicePrincipalClientSecret": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
                 "description": "ClientSecret of the service principal."
+            }
+        },
+        "aksServicePrincipalClientIdDr": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "If deploymenttype is choosen as premium, enter Client ID of the newly created service principal"
+            }
+        },
+        "aksServicePrincipalClientSecretDr": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "If deploymenttype is choosen as premium, enter Client secret of the newly created service principal"
             }
         },
         "signalrCapacity": {
@@ -262,7 +305,7 @@
             "type": "string",
             "defaultValue": "edisonwebapp",
             "metadata": {
-                "description": "The name of channel site"
+                "description": "The name of Bot Direct line channel site"
             }
         }
     },
@@ -314,7 +357,10 @@
             "location": "[parameters('geo-paired-region')]",
             "containerName": "logs",
             "storageAccountType": "Standard_LRS",
-            "storageAccountType1":"Standard_GRS"
+            "storageAccountType1": "Standard_GRS",
+            "storageAccountNameDr": "[variables('storageAccountNameDr')]",
+            "locationDr": "[variables('locationDr')]",
+            "containerNameDr": "logsdr"
         },
         "iothubSettings": {
             "solutionType": "[parameters('solutionType')]",
@@ -330,62 +376,49 @@
         "omsSettings": {
             "solutionType": "[parameters('solutionType')]",
             "omsWorkspaceName": "[concat('omsworkspace', variables('suffix'))]",
+            "omsWorkspaceNameDr": "[concat('omsworkspace', variables('suffix'),'Dr')]",
             "omsWorkspaceRegion": "[parameters('omsWorkspaceRegion')]",
             "omsLogAnalyticsSku": "standalone",
             "dataRetention": 7
         },
         "kubernetesSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "identityName": "[variables('identityName1')]",
             "enableHttpApplicationRouting": true,
             "location": "[parameters('geo-paired-region')]",
-            "kubernetesVnetName": "[variables('kubernetesVnetName1')]",
-            "virtualNetworkAddressPrefix": "15.0.0.0/8",
-            "kubernetesSubnetName": "[variables('kubernetesSubnetName1')]",
-            "aksSubnetAddressPrefix": "15.0.0.0/16",
-            "applicationGatewaySubnetName": "[variables('applicationGatewaySubnetName1')]",
-            "applicationGatewaySubnetAddressPrefix": "15.1.0.0/16",
-            "applicationGatewayPublicIpName": "[variables('applicationGatewayPublicIpName1')]",
-            "applicationGatewayName": "[variables('applicationGatewayName1')]",
-            "applicationGatewaySubnetId": "[concat(variables('kubeVnetId'),'/subnets/', variables('applicationGatewaySubnetName1'))]",
-            "vnetId": "[variables('kubeVnetId')]",
-            "kubernetesSubnetId": "[concat(variables('kubeVnetId'),'/subnets/', variables('kubernetesSubnetName1'))]",
-            "applicationGatewayPublicIpId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('applicationGatewayPublicIpName1'))]",
-            "applicationGatewayId": "[resourceId('Microsoft.Network/applicationGateways', variables('applicationGatewayName1'))]",
-            "subscriptionId": "[variables('subscriptionid')]",
-            "resourceGroup": "[variables('rgName')]",
-            "networkContributorRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
-            "managedIdentityOperatorRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'f1a07417-d97a-45cb-824c-7a7467783830')]",
-            "readerRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
-            "contributorRole": "[concat('/subscriptions/', variables('subscriptionid'), '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
-            "aksServicePrincipalObjectId": "[parameters('aksServicePrincipalObjectId')]",
-            "aksServicePrincipalClientId":"[parameters('aksServicePrincipalClientId')]",
-            "aksServicePrincipalClientSecret":"[parameters('aksServicePrincipalClientSecret')]",
-            "identityId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName1'))]",
+            "locationDr": "[variables('locationDr')]",
+            "aksServicePrincipalClientId": "[parameters('aksServicePrincipalClientId')]",
+            "aksServicePrincipalClientSecret": "[parameters('aksServicePrincipalClientSecret')]",
+            "aksServicePrincipalClientIdDr": "[parameters('aksServicePrincipalClientIdDr')]",
+            "aksServicePrincipalClientSecretDr": "[parameters('aksServicePrincipalClientSecretDr')]",
             "aksClusterName": "[variables('aksClusterName1')]",
-            "kubernetesVersion": "1.12.5",
+            "aksClusterNameDr": "[variables('aksClusterNameDr')]",
+            "kubernetesVersion": "1.12.7",
             "aksEnableRBAC": false,
             "aksDnsPrefix": "clusterdns",
+            "aksDnsPrefixDr": "clusterdnsDr",
             "aksAgentOsDiskSizeGB": 30,
             "aksAgentCount": 3,
             "aksAgentVMSize": "Standard_B2s",
             "osType": "Linux",
-            "networkPlugin":"azure",
-            "networkPlugin1":"kubenet",
-            "podCIDR":"10.244.0.0/16",
+            "networkPlugin": "kubenet",
+            "podCIDR": "10.244.0.0/16",
             "aksServiceCIDR": "10.0.0.0/16",
+            "aksServiceCIDRDr": "10.0.0.0/24",
             "aksDnsServiceIP": "10.0.0.10",
+            "aksDnsServiceIPDr": "10.0.0.20",
             "aksDockerBridgeCIDR": "172.17.0.1/16",
-            "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterName1'))]"
+            "aksDockerBridgeCIDRDr": "172.18.0.1/16",
+            "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterNameDr'))]"
         },
         "acrSettings": {
             "solutionType": "[parameters('solutionType')]",
             "acrName": "[variables('acrName1')]",
+            "acrNameDr": "[variables('acrName2')]",
             "acrAdminUserEnabled": true,
             "location": "[parameters('acrDeploymentLocation')]",
+            "locationDr": "[variables('acrDeploymentLocationDr')]",
             "acrSku": "Basic",
-            "acrLoginServer": "[concat(variables('acrName1'),'.azurecr.io')]",
-            "acrLoginame": "[variables('acrName1')]"
+            "acrSku1": "Standard"
         },
         "vm": {
             "solutionType": "[parameters('solutionType')]",
@@ -433,7 +466,7 @@
         "signalrSettings": {
             "solutionType": "[parameters('solutionType')]",
             "location": "[parameters('signalRlocation')]",
-            "locationDr":"[variables('signalRlocationDr')]", 
+            "locationDr": "[parameters('signalRlocationDr')]",
             "signalrName": "[concat('signalR',variables('suffix'))]",
             "signalrNameDr": "[concat('signalR',variables('suffix'),'Dr')]",
             "pricingTier1": "Free_F1",
@@ -443,22 +476,24 @@
         "redisSettings": {
             "solutionType": "[parameters('solutionType')]",
             "location": "[parameters('geo-paired-region')]",
+            "locationDr": "[variables('locationDr')]",
             "redisCacheName": "[concat('redisCache',variables('suffix'))]",
-            "redisCacheCapacity": 1,
-            "rediscacheCapacity1":0,
+            "redisCacheNameDr": "[concat('redisCache',variables('suffix'),'Dr')]",
+            "redisCacheCapacity": 0,
             "redisCacheFamily": "C",
-            "redisCacheFamily1": "P",
             "redisCacheSku": "Basic",
-            "redisCacheSku1":"Premium",
+            "redisCacheSku1": "Standard",
             "enableNonSslPort": false,
             "diagnosticsEnabled": true,
             "existingDiagnosticsStorageAccountId": "[variables('existingDiagnosticsStorageAccountId')]"
         },
         "botSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "insightsName": "[concat(variables('botId1'))]",
+            "insightsName": "[concat('botinsights', variables('suffix'))]",
+            "insightsNameDr": "[concat('botinsights', variables('suffix'),'Dr')]",
             "appInsightsLocation": "[parameters('appInsightsLocation')]",
             "botId": "[variables('botId1')]",
+            "botIdDr": "[variables('botId2')]",
             "botEndpoint": "[variables('botEndpointConfig').bot]",
             "sku": "F0",
             "sku1": "S1",
@@ -466,10 +501,15 @@
             "siteName": "[parameters('siteName')]",
             "botAppId": "[parameters('botAdClientId')]",
             "siteHost": "[variables('siteHost1')]",
-            "insightsNameDr": "[concat(variables('botId1'),'Dr')]",
             "appInsightsLocationDr": "[parameters('appInsightsLocationDr')]"
         },
-        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-ha/",
+        "trafficManagerSettings": {
+            "trafficManagerName": "[concat('admintm', variables('suffix'))]",
+            "trafficManagerName1": "[concat('apitm', variables('suffix'))]",
+            "trafficRoutingMethod": "Priority",
+            "solutionType": "[parameters('solutionType')]"
+        },
+        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/premiumtest/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
         "virtualNetworkName1": "[concat('edisonVnet', variables('suffix'))]",
         "subnetName1": "edisonSubnet",
@@ -478,23 +518,18 @@
         "serviceBusNamespaceName1": "[concat('snamespace',variables('suffix'))]",
         "serviceBusNamespaceNameDr1": "[concat('snamespace',variables('suffix'),'Dr')]",
         "acrName1": "[concat('acr',variables('suffix'))]",
-        "rgName": "[resourceGroup().name]",
-        "subscriptionid": "[subscription().subscriptionId]",
+        "acrName2": "[concat('acr',variables('suffix'), 'Dr')]",
         "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
+        "storageAccountNameDr": "[concat('edisonstrgeacc',variables('suffix'),'dr')]",
         "existingDiagnosticsStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
         "siteHost1": "edisonapi",
         "botId1": "[concat('edisonbot', variables('suffix'))]",
+        "botId2": "[concat('edisonbot', variables('suffix'),'Dr')]",
         "botEndpointConfig": {
             "bot": "[concat('https://', variables('siteHost1'), '/chat/messages')]"
         },
-        "applicationGatewaySubnetName1": "appgwsubnet",
-        "kubernetesVnetName1": "[concat('kubeVnet' , variables('suffix'))]",
-        "applicationGatewayPublicIpName1": "[concat('appgwpublicip' , variables('suffix'))]",
-        "applicationGatewayName1": "[concat('applicationgateway' , variables('suffix'))]",
-        "kubeVnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('kubernetesVnetName1'))]",
-        "kubernetesSubnetName1": "kubesubnet",
-        "identityName1": "[concat('appgwContrIdentity' , variables('suffix'))]",
         "aksClusterName1": "[concat('aks' , variables('suffix'))]",
+        "aksClusterNameDr": "[concat('aks' , variables('suffix'), 'Dr')]",
         "EastUS2": "CentralUS",
         "CentralUS": "EastUS2",
         "WestUS2": "West Central US",
@@ -515,10 +550,48 @@
         "UKWest": "UKSouth",
         "locationDr": "[variables(parameters('geo-paired-region'))]",
         "readRegionLocation": "[variables('locationDr')]",
-        "signalRlocationDr": "[variables(parameters('signalRlocation'))]",
-        "acrDeploymentLocationDr":"[variables(parameters('acrDeploymentLocation'))]"
-      },  
+        "acrDeploymentLocationDr": "[variables(parameters('acrDeploymentLocation'))]",
+        "rgName": "[resourceGroup().name]",
+        "subscriptionid": "[subscription().subscriptionId]"
+    },
     "resources": [
+        {
+            "name": "OmsWorkSpace",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/omsWorkspace.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "OmsWorkSpaceR2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/oms-r2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    }
+                }
+            }
+        },
         {
             "name": "NotificationHub",
             "type": "Microsoft.Resources/deployments",
@@ -608,7 +681,7 @@
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "OmsWorkSpace",
-                "KubernetesR1"
+                "Kubernetes"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -823,19 +896,63 @@
             }
         },
         {
-            "name": "OmsWorkSpace",
+            "name": "KubernetesR2",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2015-01-01",
-            "dependsOn": [],
+            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
+            "apiVersion": "2017-05-10",
+            "dependsOn": [
+                "OmsWorkSpaceR2"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/omsWorkspace.json')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/kubernetes-r2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "omsSettings": {
                         "value": "[variables('omsSettings')]"
+                    },
+                    "kubernetesSettings": {
+                        "value": "[variables('kubernetesSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "TrafficManager-admin",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/admin-trafficmanager.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "trafficManagerSettings": {
+                        "value": "[variables('trafficManagerSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "TrafficManager-api",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/api-trafficmanager.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "trafficManagerSettings": {
+                        "value": "[variables('trafficManagerSettings')]"
                     }
                 }
             }
@@ -869,6 +986,25 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "uri": "[concat(variables('baseUrl'),'nested/azureContainerRegistry.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "acrSettings": {
+                        "value": "[variables('acrSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "AzureContainerRegistryR2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/acr-r2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -1067,9 +1203,9 @@
             }
         },
         {
-            "name": "RediscacheStandard",
+            "name": "RediscacheR1",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deploymenttype'),'Standard')]",
+            "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "StorageBlobR1"
@@ -1088,22 +1224,25 @@
             }
         },
         {
-            "name": "RediscachePremium",
+            "name": "RediscacheR2",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
             "apiVersion": "2016-02-01",
+            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
             "dependsOn": [
                 "StorageBlobR1"
             ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-            "uri": "[concat(variables('baseUrl'), 'nested/redisCache.json')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/redisCache-r2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "redisSettings": {
                         "value": "[variables('redisSettings')]"
+                    },
+                    "storageBlobSettings": {
+                        "value": "[variables('storageBlobSettings')]"
                     }
                 }
             }
@@ -1147,15 +1286,15 @@
             }
         },
         {
-            "name": "BotR2",
+            "name": "AppInsights",
             "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
             "condition": "[equals(parameters('deploymenttype'),'Premium')]",
-            "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/bot-r2.json')]",
+                    "uri": "[concat(variables('baseUrl'),'nested/app-insights-r2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -1166,5 +1305,50 @@
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "apiTrafficManagerUrl": {
+            "type": "string",
+            "value": "[concat('https://', variables('trafficManagerSettings').trafficManagerName1,'.azurewebsites.net')]"
+        },
+        "adminTrafficManagerUrl": {
+            "type": "string",
+            "value": "[concat('http://', variables('trafficManagerSettings').trafficManagerName,'.trafficmanager.net')]"
+        },
+        "ServiceBusRabbitMQUSR": {
+            "type": "string",
+            "value": "[variables('serviceBusProperties').serviceBusRabbitMQUsername]"
+        },
+        "ServiceBusRabbitMQPWD": {
+            "type": "string",
+            "value": "[variables('serviceBusProperties').serviceBusRabbitMQPassword]"
+        },
+        "SubscriptionId": {
+            "type": "string",
+            "value": "[variables('subscriptionid')]"
+        },
+        "ResourceGroupName": {
+            "type": "string",
+            "value": "[variables('rgName')]"
+        },
+        "MSAppID": {
+            "type": "string",
+            "value": "[parameters('botAdClientId')]"
+        },
+        "AzureAdSRT": {
+            "type": "string",
+            "value": "[parameters('adClientSecret')]"
+        },
+        "adObjectId": {
+            "type": "string",
+            "value": "[parameters('adObjectId')]"
+        },
+        "TenantID": {
+            "type": "string",
+            "value": "[parameters('tenantID')]"
+        },
+        "COSMOSDBEP": {
+            "type": "string",
+            "value": "[concat('https://', variables('cosmosDbSettings').cosmosDbAccountName,'.documents.azure.com:443/')]"
+        }
+    }
 }

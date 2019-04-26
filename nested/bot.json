@@ -35,13 +35,11 @@
                 "displayName":"[parameters('botSettings').botId]",
                 "endpoint": "[parameters('botSettings').botEndpoint]",
                 "enabledChannels": [
-                    "webchat",
                     "directline",
                     "facebook"
                 ],
                 "configuredChannels": [
-                    "directline",
-                    "webchat"
+                    "directline"
                 ],
                 "msaAppId": "[parameters('botSettings').botAppId]",
                 "developerAppInsightsApplicationId":"[parameters('botSettings').insightsName]",

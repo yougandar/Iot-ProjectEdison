@@ -9,6 +9,7 @@
             "type": "object"
         }
     },
+    "variables": {},
     "resources": [
         {
             "type": "Microsoft.ContainerService/managedClusters",
@@ -42,7 +43,7 @@
                     "Secret":"[parameters('kubernetesSettings').aksServicePrincipalClientSecret]"
                 },
                 "networkProfile": {
-                    "networkPlugin": "[parameters('kubernetesSettings').networkPlugin1]",
+                    "networkPlugin": "[parameters('kubernetesSettings').networkPlugin]",
                     "podCidr": "[parameters('kubernetesSettings').podCIDR]",
                     "serviceCidr": "[parameters('kubernetesSettings').aksServiceCIDR]",
                     "dnsServiceIP": "[parameters('kubernetesSettings').aksDnsServiceIP]",

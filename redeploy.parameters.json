@@ -8,20 +8,26 @@
         "solutionType": {
             "value":"Project-Edison"
         },
-        "signalRlocation": {
-            " value": "eastus"
+        "acrDeploymentLocation": {
+            "value":"CentralUS"
         },
-        "appInsightsLocation":{
-            " value": "eastus"
+        "signalRlocation": {
+            "value": "centralus"
+        },
+        "appInsightsLocationDr":{
+            "value": "eastus"
+        },
+        "omsWorkspaceRegion": {
+            "value": "southeastasia"
+        },
+        "aksServicePrincipalClientIdDr": {
+            "value": ""
+        },
+        "aksServicePrincipalClientSecretDr":{
+            "value": ""
         },
         "signalrCapacity": {
-            " value": 1
-        },
-        "siteName": {
-            " value": "edisonwebapp"
-        },
-        "botAdClientId": {
-            " value": ""
+            "value": 1
         }
     }
 }

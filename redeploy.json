@@ -4,7 +4,7 @@
     "parameters": {
         "geo-paired-region": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "EastUS2",
             "allowedValues": [
                 "EastUS2",
                 "CentralUS",
@@ -31,12 +31,70 @@
         },
         "solutionType": {
             "type": "string",
-            "defaultValue": "DeviceManagement",
+            "defaultValue": "Project-Edison",
             "metadata": {
                 "description": "The type of the solution"
             }
         },
-        "omsWorkspaceRegion": {
+        "acrDeploymentLocation": {
+            "type": "string",
+            "defaultValue": "CentralUS",
+            "allowedValues": [
+                "JapanEast",
+                "JapanWest",
+                "AustraliaSouthEast",
+                "AustraliaEast",
+                "CanadaCentral",
+                "CanadaEast",
+                "CentralIndia",
+                "SouthIndia",
+                "CentralUS",
+                "EastUS2",
+                "SouthEastAsia",
+                "EastAsia",
+                "WestCentralUS",
+                "WestUS2"
+            ],
+            "metadata": {
+                "description": "Choose location for Azure container Registry to deploy."
+            }
+        },
+        "signalRlocationDr": {
+            "type": "string",
+            "defaultValue": "CentralUS",
+            "allowedValues": [
+                "AustraliaEast",
+                "CanadaEast",
+                "CentralUS",
+                "EastUS2",
+                "EastUS",
+                "JapanEast",
+                "NorthEurope",
+                "SouthCentralUS",
+                "SoutheastAsia",
+                "UKSouth",
+                "WestEurope",
+                "WestUS2",
+                "WestUS"
+            ],
+            "metadata": {
+                "description": "Choose location for signalR to deploy for disaster recovery."
+            }
+        },
+        "appInsightsLocationDr": {
+            "type": "string",
+            "defaultValue": "eastus",
+            "allowedValues": [
+                "southcentralus",
+                "westeurope",
+                "eastus",
+                "North Europe"
+            ],
+            "metadata": {
+                "description": "Enter location for application insights for disaster recovery"
+            }
+        },
+        "omsWorkspaceRegionDr": {
             "type": "string",
             "defaultValue": "southeastasia",
             "allowedValues": [
@@ -53,28 +111,16 @@
                 "description": "Choose location for OMS Log Analytics to deploy. For more information, see https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-overview"
             }
         },
-        "signalRlocation": {
+        "aksServicePrincipalClientIdDr": {
             "type": "string",
-            "defaultValue": "eastus2",
-            "allowedValues": [
-                "eastus2",
-                "centralus"
-            ],
             "metadata": {
-                "description": "Choose location for signalR to deploy."
+                "description": "Client ID of the service principal."
             }
         },
-        "appInsightsLocationDr": {
+        "aksServicePrincipalClientSecretDr": {
             "type": "string",
-            "defaultValue": "eastus",
-            "allowedValues": [
-                "southcentralus",
-                "westeurope",
-                "eastus",
-                "North Europe"
-            ],
             "metadata": {
-                "description": "Enter location for application insights for disaster recovery"
+                "description": "ClientSecret of the service principal."
             }
         },
         "signalrCapacity": {
@@ -92,27 +138,13 @@
             "metadata": {
                 "description": "The number of SignalR Unit."
             }
-        },
-        "siteName": {
-            "type": "string",
-            "defaultValue": "edisonwebapp",
-            "metadata": {
-                "description": "The name of channel site"
-            }
-        },
-        "botAdClientId": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Client Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets.Used for Bot deployment"
-            }
         }
     },
     "variables": {
         "omsSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "omsWorkspaceName": "[concat('omsworkspace', variables('suffix'))]",
-            "omsWorkspaceRegion": "[parameters('omsWorkspaceRegion')]",
+            "omsWorkspaceNameDr": "[concat('omsworkspace', variables('suffix'),'Dr')]",
+            "omsWorkspaceRegionDr": "[parameters('omsWorkspaceRegionDr')]",
             "omsLogAnalyticsSku": "standalone",
             "dataRetention": 7
         },
@@ -120,31 +152,65 @@
             "locationDr": "[variables('locationDr')]",
             "skuName": "free",
             "namespaceType": "NotificationHub",
-            "notificationHubNamespaceNameDr": "[concat('NotificationHubNSDr', variables('suffix'))]",
-            "notificationHubNameDr": "[concat('NotificationHubDr', variables('suffix'))]",
+            "notificationHubNamespaceNameDr": "[concat('NotificationHubNS', variables('suffix'),'Dr')]",
+            "notificationHubNameDr": "[concat('NotificationHub', variables('suffix'), 'Dr')]",
             "solutionType": "[parameters('solutionType')]"
         },
         "signalrSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "locationDr":"[variables('signalRlocationDr')]", 
+            "locationDr": "[parameters('signalRlocationDr')]",
             "signalrNameDr": "[concat('signalR',variables('suffix'),'Dr')]",
             "pricingTier2": "Standard_S1",
             "capacity": "[parameters('signalrCapacity')]"
         },
+        "kubernetesSettings": {
+            "solutionType": "[parameters('solutionType')]",
+            "locationDr": "[variables('locationDr')]",
+            "enableHttpApplicationRouting": true,
+            "aksServicePrincipalClientIdDr": "[parameters('aksServicePrincipalClientIdDr')]",
+            "aksServicePrincipalClientSecretDr": "[parameters('aksServicePrincipalClientSecretDr')]",
+            "aksClusterNameDr": "[variables('aksClusterNameDr')]",
+            "kubernetesVersion": "1.12.7",
+            "aksEnableRBAC": false,
+            "aksDnsPrefixDr": "clusterdnsDr",
+            "aksAgentOsDiskSizeGB": 30,
+            "aksAgentCount": 3,
+            "aksAgentVMSize": "Standard_B2s",
+            "osType": "Linux",
+            "networkPlugin": "kubenet",
+            "aksServiceCIDRDr": "10.0.0.0/24",
+            "aksDnsServiceIPDr": "10.0.0.20",
+            "aksDockerBridgeCIDRDr": "172.18.0.1/16",
+            "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterNameDr'))]"
+        },
+        "redisSettings": {
+            "solutionType": "[parameters('solutionType')]",
+            "location": "[parameters('geo-paired-region')]",
+            "locationDr": "[variables('locationDr')]",
+            "redisCacheNameDr": "[concat('redisCache',variables('suffix'),'Dr')]",
+            "redisCacheCapacity": 1,
+            "redisCacheFamily": "C",
+            "redisCacheSku": "Basic",
+            "enableNonSslPort": false,
+            "diagnosticsEnabled": true
+        },
+        "acrSettings": {
+            "solutionType": "[parameters('solutionType')]",
+            "location": "[parameters('acrDeploymentLocation')]",
+            "locationDr": "[variables('acrDeploymentLocationDr')]",
+            "acrNameDr": "[variables('acrName2')]",
+            "acrAdminUserEnabled": true,
+            "acrSku": "Basic",
+            "acrSku1": "Standard"
+        },
         "botSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "insightsNameDr": "[concat(variables('botId1'),'Dr')]",
-            "appInsightsLocationDr": "[parameters('appInsightsLocationDr')]",
-            "botId": "[variables('botId1')]",
-            "botEndpoint": "[variables('botEndpointConfig').bot]",
-            "sku1": "S1",
-            "kind": "bot",
-            "siteName": "[parameters('siteName')]",
-            "botAppId": "[parameters('botAdClientId')]",
-            "siteHost": "[variables('siteHost1')]"
+            "insightsNameDr": "[variables('botId2')]",
+            "botIdDr": "[variables('botId2')]",
+            "appInsightsLocationDr": "[parameters('appInsightsLocationDr')]"
         },
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 5)]",
-        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-ha/",
+        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/premiumtest/",
         "EastUS2": "CentralUS",
         "CentralUS": "EastUS2",
         "WestUS2": "West Central US",
@@ -164,14 +230,31 @@
         "UKSouth": "UKWest",
         "UKWest": "UKSouth",
         "locationDr": "[variables(parameters('geo-paired-region'))]",
-        "signalRlocationDr": "[variables(parameters('signalRlocation'))]",
-        "botId1": "[concat('edisonbot', variables('suffix'))]",
-        "botEndpointConfig": {
-            "bot": "[concat('https://', variables('siteHost1'), '/chat/messages')]"
-        },
-        "siteHost1": "edisonapi"
+        "aksClusterNameDr": "[concat('aks' , variables('suffix'), 'Dr')]",
+        "storageAccountNameDr": "[concat('edisonstrgeacc',variables('suffix'),'dr')]",
+        "acrName2": "[concat('acr',variables('suffix'), 'Dr')]",
+        "acrDeploymentLocationDr": "[variables(parameters('acrDeploymentLocation'))]",
+        "botId2": "[concat('edisonbot', variables('suffix'),'Dr')]"
     },
     "resources": [
+        {
+            "name": "OmsWorkSpaceR2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/oms-r2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    }
+                }
+            }
+        },
         {
             "name": "NotificationHubR2",
             "type": "Microsoft.Resources/deployments",
@@ -209,15 +292,76 @@
             }
         },
         {
-            "name": "Bot",
+            "name": "RediscacheR2",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deployment Type'),'Basic')]",
             "apiVersion": "2016-02-01",
             "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('baseUrl'), 'nested/bot-r2.json')]",
+                    "uri": "[concat(variables('baseUrl'), 'nested/redisCache-r2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "redisSettings": {
+                        "value": "[variables('redisSettings')]"
+                    },
+                    "storageBlobSettings": {
+                        "value": "[variables('storageBlobSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "AzureContainerRegistryR2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/acr-r2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "acrSettings": {
+                        "value": "[variables('acrSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "KubernetesR2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "dependsOn": [
+                "OmsWorkSpaceR2"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/kubernetes-r2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    },
+                    "kubernetesSettings": {
+                        "value": "[variables('kubernetesSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "AppInsights",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/app-insights-r2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -228,6 +372,5 @@
             }
         }
     ],
-    "outputs": {
-    }
+    "outputs": {}
 }

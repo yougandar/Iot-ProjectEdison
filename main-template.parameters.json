@@ -5,14 +5,17 @@
         "solutionType": {
             "value": "Project-Edison"
         },
-        "deployment type": {
+        "deploymenttype": {
             "value": ""
         },
         "geo-paired-region": {
             "value": "EastUS2"
         },
         "signalRlocation": {
-            "value": "eastus"
+            "value": "eastus2"
+        },
+        "signalRlocationDr": {
+            "value": "CentralUS"
         },
         "acrDeploymentLocation": {
             "value": "CanadaCentral"
@@ -22,6 +25,9 @@
         },
         "appInsightsLocation": {
             "value": "eastus"
+        },
+        "appInsightsLocationDr": {
+            "value": "southcentralus"
         },
         "tenantId": {
             "value": ""
@@ -53,13 +59,16 @@
         "vmPassword": {
             "value": "Password@1234"
         },
-        "aksServicePrincipalObjectId": {
-            "value": ""
-        },
         "aksServicePrincipalClientId": {
             "value": ""
         },
         "aksServicePrincipalClientSecret": {
+            "value": ""
+        },
+        "aksServicePrincipalClientIdDr": {
+            "value": ""
+        },
+        "aksServicePrincipalClientSecretDr": {
             "value": ""
         },
         "signalrCapacity":  {

@@ -34,9 +34,14 @@ LOG="/tmp/deployhelm.log.`date +%d%m%Y_%T`"
 
 #4-InstallIngressControllers
 
-    helm install --name nginx-ingress-admin stable/nginx-ingress --namespace kube-system --set rbac.create=false --set rbac.createRole=false --set rbac.createClusterRole=false --set controller.ingressClass=nginx-admin
+    az network public-ip create -g $MC_MO_basic_2304_akswih6_eastus2 -n $adminbotip --dns-name $dnsbotapi --allocation-method static
     sleep 10
-    helm install --name nginx-ingress-api stable/nginx-ingress --namespace kube-system --set rbac.create=false --set rbac.createRole=false --set rbac.createClusterRole=false --set controller.ingressClass=nginx-api
+    helm install --name nginx-ingress-admin stable/nginx-ingress --namespace kube-system --set rbac.create=false --set rbac.createRole=false --set rbac.createClusterRole=false --set controller.ingressClass=nginx-admin --set controller.service.loadBalancerIP=$ip
+    sleep 10
+    az network public-ip create -g $MC_MO_basic_2304_akswih6_eastus2 -n $apibotip --dns-name $dnsbotapi1 --allocation-method static
+    sleep 10
+    helm install --name nginx-ingress-api stable/nginx-ingress --namespace kube-system --set rbac.create=false --set rbac.createRole=false --set rbac.createClusterRole=false --set controller.ingressClass=nginx-api --set controller.service.loadBalancerIP=$ip
+    sleep 20
     sleep 20
     cd $GIT_INGRESS
     kubectl create -f ./nginx-config-adminportal.yaml
