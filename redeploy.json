@@ -203,15 +203,6 @@
             "acrSku": "Basic",
             "acrSku1": "Standard"
         },
-        "storageBlobSettings": {
-            "solutionType": "[parameters('solutionType')]",
-            "storageAccountName": "[variables('storageAccountName')]",
-            "location": "[parameters('geo-paired-region')]",
-            "containerName": "logs",
-            "storageAccountType": "Standard_LRS",
-            "storageAccountType1": "Standard_GRS",
-            "locationDr": "[variables('locationDr')]"
-        },
         "botSettings": {
             "solutionType": "[parameters('solutionType')]",
             "insightsNameDr": "[variables('botId2')]",
@@ -240,7 +231,7 @@
         "UKWest": "UKSouth",
         "locationDr": "[variables(parameters('geo-paired-region'))]",
         "aksClusterNameDr": "[concat('aks' , variables('suffix'), 'Dr')]",
-        "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]",
+        "storageAccountNameDr": "[concat('edisonstrgeacc',variables('suffix'),'dr')]",
         "acrName2": "[concat('acr',variables('suffix'), 'Dr')]",
         "acrDeploymentLocationDr": "[variables(parameters('acrDeploymentLocation'))]",
         "botId2": "[concat('edisonbot', variables('suffix'),'Dr')]"
