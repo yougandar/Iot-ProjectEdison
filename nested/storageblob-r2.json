@@ -9,9 +9,9 @@
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
-            "name": "[parameters('storageBlobSettings').storageAccountName]",
+            "name": "[parameters('storageBlobSettings').storageAccountNameDr]",
             "apiVersion": "2018-07-01",
-            "location": "[parameters('storageBlobSettings').location]",
+            "location": "[parameters('storageBlobSettings').locationDr]",
             "tags": {
                 "IotSuiteType": "[parameters('storageBlobSettings').solutionType]"
             },
@@ -23,11 +23,11 @@
             },
             "resources": [
                 {
-                    "name": "[concat('default/', parameters('storageBlobSettings').containerName)]",
+                    "name": "[concat('default/', parameters('storageBlobSettings').containerNameDr)]",
                     "type": "blobServices/containers",
                     "apiVersion": "2018-03-01-preview",
                     "dependsOn": [
-                        "[parameters('storageBlobSettings').storageAccountName]"
+                        "[parameters('storageBlobSettings').storageAccountNameDr]"
                     ]
                 }
             ]
@@ -36,11 +36,11 @@
     "outputs": {
         "storageAccountKey": {
             "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageBlobSettings').storageAccountName), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageBlobSettings').storageAccountNameDr), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
           },
           "storageAccountEndpoint": {
             "type": "string",
-            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageBlobSettings').storageAccountName, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageBlobSettings').storageAccountName), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
+            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageBlobSettings').storageAccountNameDr, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageBlobSettings').storageAccountNameDr), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
           }
     }
 }

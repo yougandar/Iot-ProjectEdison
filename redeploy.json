@@ -196,14 +196,10 @@
         },
         "storageBlobSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "storageAccountName": "[variables('storageAccountName')]",
-            "location": "[parameters('geo-paired-region')]",
-            "containerName": "logs",
-            "storageAccountType": "Standard_LRS",
-            "storageAccountType1": "Standard_GRS",
             "storageAccountNameDr": "[variables('storageAccountNameDr')]",
+            "containerNameDr": "logsdr",
             "locationDr": "[variables('locationDr')]",
-            "containerNameDr": "logsdr"
+            "storageAccountType": "Standard_LRS"
         },
         "acrSettings": {
             "solutionType": "[parameters('solutionType')]",
@@ -304,10 +300,30 @@
             }
         },
         {
-            "name": "RediscacheR2",
+            "name": "StorageBlobR2",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
             "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'), 'nested/storageblob-r2.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageBlobSettings": {
+                        "value": "[variables('storageBlobSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "RediscacheR2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "StorageBlobR2"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
