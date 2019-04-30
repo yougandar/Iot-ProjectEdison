@@ -194,6 +194,17 @@
             "enableNonSslPort": false,
             "diagnosticsEnabled": true
         },
+        "storageBlobSettings": {
+            "solutionType": "[parameters('solutionType')]",
+            "storageAccountName": "[variables('storageAccountName')]",
+            "location": "[parameters('geo-paired-region')]",
+            "containerName": "logs",
+            "storageAccountType": "Standard_LRS",
+            "storageAccountType1": "Standard_GRS",
+            "storageAccountNameDr": "[variables('storageAccountNameDr')]",
+            "locationDr": "[variables('locationDr')]",
+            "containerNameDr": "logsdr"
+        },
         "acrSettings": {
             "solutionType": "[parameters('solutionType')]",
             "location": "[parameters('acrDeploymentLocation')]",
@@ -234,7 +245,8 @@
         "storageAccountNameDr": "[concat('edisonstrgeacc',variables('suffix'),'dr')]",
         "acrName2": "[concat('acr',variables('suffix'), 'Dr')]",
         "acrDeploymentLocationDr": "[variables(parameters('acrDeploymentLocation'))]",
-        "botId2": "[concat('edisonbot', variables('suffix'),'Dr')]"
+        "botId2": "[concat('edisonbot', variables('suffix'),'Dr')]",
+        "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]"
     },
     "resources": [
         {
