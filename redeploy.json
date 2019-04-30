@@ -241,8 +241,8 @@
         "storageAccountNameDr": "[concat('edisonstrgeacc',variables('suffix'),'dr')]",
         "acrName2": "[concat('acr',variables('suffix'), 'Dr')]",
         "acrDeploymentLocationDr": "[variables(parameters('acrDeploymentLocation'))]",
-        "botId2": "[concat('edisonbot', variables('suffix'),'Dr')]",
-        "storageAccountName": "[concat('edisonstrgeacc',variables('suffix'))]"
+        "botId2": "[concat('edisonbot', variables('suffix'),'Dr')]"
+      
     },
     "resources": [
         {
@@ -382,7 +382,7 @@
             }
         },
         {
-            "name": "AppInsights",
+            "name": "AppInsightsR2",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "dependsOn": [],
