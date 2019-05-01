@@ -96,7 +96,7 @@
         },
         "omsWorkspaceRegionDr": {
             "type": "string",
-            "defaultValue": "southeastasia",
+            "defaultValue": "eastus",
             "allowedValues": [
                 "australiasoutheast",
                 "canadacentral",

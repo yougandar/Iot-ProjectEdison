@@ -132,6 +132,23 @@
                 "description": "Choose location for OMS Log Analytics to deploy. For more information, see https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-overview"
             }
         },
+        "omsWorkspaceRegionDr": {
+            "type": "string",
+            "defaultValue": "eastus",
+            "allowedValues": [
+                "australiasoutheast",
+                "canadacentral",
+                "centralindia",
+                "eastus",
+                "japaneast",
+                "southeastasia",
+                "uksouth",
+                "westeurope"
+            ],
+            "metadata": {
+                "description": "Choose location for OMS Log Analytics to deploy. For more information, see https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-overview"
+            }
+        },
         "appInsightsLocation": {
             "type": "string",
             "defaultValue": "eastus",
@@ -374,9 +391,10 @@
         },
         "omsSettings": {
             "solutionType": "[parameters('solutionType')]",
-            "omsWorkspaceName": "[concat('omsworkspace', variables('suffix'))]",
+            "omsWorkspaceName": "[concat('omsws', variables('suffix'))]",
             "omsWorkspaceNameDr": "[concat('omsworkspace', variables('suffix'),'Dr')]",
             "omsWorkspaceRegion": "[parameters('omsWorkspaceRegion')]",
+            "omsWorkspaceRegionDr": "[parameters('omsWorkspaceRegionDr')]",
             "omsLogAnalyticsSku": "standalone",
             "dataRetention": 7
         },
