@@ -1,3 +1,36 @@
+param
+(
+    
+[Parameter(Mandatory=$true)]	
+[string]$adminTenant,
+
+[Parameter(Mandatory=$true)]	
+[string]$userTenant,
+
+ [Parameter(Mandatory=$true)]	
+ [string]$userPolicy,
+
+ [Parameter(Mandatory=$true)]	
+ [string]$adAppName,
+
+ [Parameter(Mandatory=$true)]	
+ [string]$adAppId,
+
+ [Parameter(Mandatory=$true)]	
+ [string]$apiUri,
+
+ [Parameter(Mandatory=$true)]	
+ [string]$notificationhubConnectionString,
+
+ [Parameter(Mandatory=$true)]	
+ [string]$notificationhubName,
+
+ [Parameter(Mandatory=$true)]	
+ [string]$userAppId,
+
+ [Parameter(Mandatory=$true)]	
+ [string]$package,
+ 
 #store the variables to clone github repository
 $githubUrl = "https://github.com/litebulb/ProjectEdison.git"
 $location = "E:\ProjectEdison"
@@ -19,16 +52,7 @@ $path8 = "$location\IPE-$date\Edison.Mobile\Edison.Mobile.Admin.Client\iOS\Share
 $path9 = "$location\IPE-$date\Edison.Mobile\Edison.Mobile.User.Client\Droid\Properties\AndroidManifest.xml"
 $path10 = "$location\IPE-$date\Edison.Mobile\Edison.Mobile.User.Client\iOS\Info.plist"
 $path11 = "$location\IPE-$date\Edison.Mobile\Edison.Mobile.Admin.Client\Droid\Properties\AndroidManifest.xml"
-$adminTenant = "016c0a8a-388e-4fe5-a363-7a3914d2006d"
-$userTenant = "newiotp2"
-$userPolicy = "B2C_1_signup_signin"
-$adAppName = "adminedison"
-$adAppId = "a9b2dc1f-1051-4d8b-88df-9f96fad0cbdc"
-$apiUri = "botapi.qloudable-npr.com"
-$notificationhubConnectionString = "Endpoint=sb://notificationhubnsmchq.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=Qt2AgkORUDNnKbbte7OKImQ+/JevjpsPRt8z2lSLMEg="
-$notificationhubName = "NotificationHubmchq"
-$userAppId = "7c519e29-9718-4e9e-8fed-5253206dff9b"
-$package = "com.sysgain.smartbuildings"
+
 
 # Update Edison.mobile.common\AuthConfig.cs file values
 (Get-Content -path $path1 -Raw) -replace '1114b48d-24b1-4492-970a-d07d610a741c', $adminTenant | Set-Content -Path $path1
