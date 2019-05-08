@@ -72,7 +72,7 @@
                         "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusProperties').serviceBusNamespaceName)]"
                     ],
                     "properties": {
-                        "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsSettings').omsWorkspaceNameDr)]",
+                        "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsSettings').omsWorkspaceName)]",
                         "logs": [
                             {
                                 "category": "OperationalLogs",
@@ -119,7 +119,7 @@
                         "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusProperties').serviceBusNamespaceNameDr)]"
                     ],
                     "properties": {
-                        "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsSettings').omsWorkspaceName)]",
+                        "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsSettings').omsWorkspaceNameDr)]",
                         "logs": [
                             {
                                 "category": "OperationalLogs",
