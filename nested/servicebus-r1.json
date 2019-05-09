@@ -5,8 +5,8 @@
         "serviceBusProperties": {
             "type": "object"
         },
-        "omsSettings":{
-            "type":"object"
+        "omsSettings": {
+            "type": "object"
         }
     },
     "resources": [
@@ -140,13 +140,12 @@
                                     "days": 0
                                 }
                             }
-         ]
-                                   }
+                        ]
+                    }
                 }
             ]
         },
         {
-            
             "type": "Microsoft.ServiceBus/namespaces/disasterRecoveryConfigs",
             "name": "[parameters('serviceBusProperties').aliasName]",
             "apiVersion": "2017-04-01",
@@ -159,6 +158,5 @@
             ]
         }
     ],
-    "outputs": {
-    }
+    "outputs": {}
 }

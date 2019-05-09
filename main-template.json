@@ -937,6 +937,7 @@
             "condition": "[equals(parameters('deploymenttype'),'Premium')]",
             "apiVersion": "2017-05-10",
             "dependsOn": [
+                "OmsWorkSpaceR2"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -1142,34 +1143,10 @@
         {
             "name": "ServiceBusR1",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deploymenttype'),'Standard')]",
+            "condition": "[or(equals(parameters('deploymenttype'),'Standard'), equals(parameters('deploymenttype'),'Premium'))]",
             "apiVersion": "2015-01-01",
             "dependsOn": [
                 "OmsWorkSpace"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('baseUrl'),'nested/servicebus-r1.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "serviceBusProperties": {
-                        "value": "[variables('serviceBusProperties')]"
-                    },
-                    "omsSettings": {
-                        "value": "[variables('omsSettings')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "ServiceBusR2",
-            "type": "Microsoft.Resources/deployments",
-            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
-            "apiVersion": "2015-01-01",
-            "dependsOn": [
-                "OmsWorkSpaceR2"
             ],
             "properties": {
                 "mode": "Incremental",
