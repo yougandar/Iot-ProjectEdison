@@ -39,10 +39,7 @@
                         "displayName": "NotificationHub"
                     }
                 }
-            ],
-            "tags": {
-                "displayName": "NotificationHubNamespace"
-            }
+            ]
         }
     ],
     "outputs": {
