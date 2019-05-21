@@ -21,8 +21,8 @@ $values.SIGNUPSIGNINPOLICYID
 $values.AdAppName
 $values.ADCLIENTID 
 $values.BASEURL_VALUE
-$values.notificationhubConnectionString
-$values.notificationhubName
+$values.NotificationHubSRT
+$values.NOTIFICATIONHUBPATH
 $values.B2CCLIENTID
 $values.package
 
@@ -52,8 +52,8 @@ $path12 = "$location\Edison.Mobile\Edison.Mobile.Admin.Client\Droid\Properties\A
 (Get-Content -path $path3 -Raw) -replace 'edisonapidev.eastus.cloudapp.azure.com', $values.BASEURL_VALUE | Set-Content -Path $path3
 
 # Update Edison.Mobile.User.Client.Core\Constants.cs file values
-(Get-Content -path $path4 -Raw) -replace 'Endpoint=sb://edisondev.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=CNCM1xn79hHuUUj6GiAct1JJe5kdzGuPmzBOaVoSGsA=', $values.notificationhubConnectionString.Trim('"') | Set-Content -Path $path4
-(Get-Content -path $path4 -Raw) -replace 'edisondevnotificationhub', $values.notificationhubName.Trim('"') | Set-Content -Path $path4
+(Get-Content -path $path4 -Raw) -replace 'Endpoint=sb://edisondev.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=CNCM1xn79hHuUUj6GiAct1JJe5kdzGuPmzBOaVoSGsA=', $values.NotificationHubSRT.Trim('"') | Set-Content -Path $path4
+(Get-Content -path $path4 -Raw) -replace 'edisondevnotificationhub', $values.NOTIFICATIONHUBPATH.Trim('"') | Set-Content -Path $path4
 
 # Update Edison.Mobile.User.Client.Droid\Constants.cs file values
 (Get-Content -path $path5 -Raw) -replace '19cb746c-3066-4cd8-8cd2-e0ce1176ae33', $values.B2CCLIENTID.Trim('"') | Set-Content -Path $path5
