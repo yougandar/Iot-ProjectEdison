@@ -49,7 +49,7 @@ $path12 = "$location\Edison.Mobile\Edison.Mobile.Admin.Client\Droid\Properties\A
 (Get-Content -path $path2 -Raw) -replace '2373be1e-6d0b-4e38-9115-e0bd01dadd61', $values.ADCLIENTID.Trim('"') | Set-Content -Path $path2
 
 # Update Edison.Mobile.Common\constants.cs file values
-(Get-Content -path $path3 -Raw) -replace 'edisonapidev.eastus.cloudapp.azure.com', $values.BASEURL_VALUE | Set-Content -Path $path3
+(Get-Content -path $path3 -Raw) -replace 'edisonapidev.eastus.cloudapp.azure.com', $values.BASEURL_VALUE.Trim('"') | Set-Content -Path $path3
 
 # Update Edison.Mobile.User.Client.Core\Constants.cs file values
 (Get-Content -path $path4 -Raw) -replace 'Endpoint=sb://edisondev.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=CNCM1xn79hHuUUj6GiAct1JJe5kdzGuPmzBOaVoSGsA=', $values.NotificationHubSRT.Trim('"') | Set-Content -Path $path4
