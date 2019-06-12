@@ -470,7 +470,6 @@
             "serviceBusDefaultSASKeyName": "[variables('serviceBusDefaultSASKeyName1')]",
             "serviceBusAuthRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName1'), variables('serviceBusDefaultSASKeyName1'))]",
             "skuName": "Standard",
-            "skuName1": "Premium",
             "serviceBusQueueName1": "edison_input",
             "servicebusEndPoint": "[concat('Endpoint=sb://',variables('serviceBusNamespaceName1'),'.servicebus.windows.net/')]",
             "routesSharedAccessKeyName": "SharedAccessKeyName=edison_inputsend",
@@ -1147,6 +1146,30 @@
             "apiVersion": "2015-01-01",
             "dependsOn": [
                 "OmsWorkSpace"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/servicebus.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serviceBusProperties": {
+                        "value": "[variables('serviceBusProperties')]"
+                    },
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "ServiceBusR2",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[equals(parameters('deploymenttype'),'Premium')]",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [
+                "OmsWorkSpaceR2"
             ],
             "properties": {
                 "mode": "Incremental",

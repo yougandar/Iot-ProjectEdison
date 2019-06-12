@@ -216,6 +216,23 @@
             "botIdDr": "[variables('botId2')]",
             "appInsightsLocationDr": "[parameters('appInsightsLocationDr')]"
         },
+        "serviceBusProperties": {
+            "solutionType": "[parameters('solutionType')]", 
+            "serviceBusNamespaceNameDr": "[variables('serviceBusNamespaceNameDr1')]",
+            "location": "[parameters('geo-paired-region')]",
+            "locationDr": "[variables('locationDr')]",
+            "serviceBusDefaultSASKeyName": "[variables('serviceBusDefaultSASKeyName1')]",
+            "serviceBusAuthRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName1'), variables('serviceBusDefaultSASKeyName1'))]",
+            "skuName": "Standard",
+            "serviceBusQueueName1": "edison_input",
+            "servicebusEndPoint": "[concat('Endpoint=sb://',variables('serviceBusNamespaceName1'),'.servicebus.windows.net/')]",
+            "routesSharedAccessKeyName": "SharedAccessKeyName=edison_inputsend",
+            "entity": "EntityPath=edison_input",
+            "serviceBusRabbitMQUsername": "Admin",
+            "serviceBusRabbitMQPassword": "Edison1234",
+            "adClientSecret": "[parameters('adClientSecret')]",
+            "aliasName": "[concat('servicebusgeo-alias',variables('suffix'))]"
+        },
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 5)]",
         "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-ha/",
         "EastUS2": "CentralUS",
@@ -236,6 +253,8 @@
         "KoreaSouth": "KoreaCentral",
         "UKSouth": "UKWest",
         "UKWest": "UKSouth",
+        "serviceBusNamespaceNameDr1": "[concat('snamespace',variables('suffix'),'Dr')]",
+        "serviceBusDefaultSASKeyName1": "RootManageSharedAccessKey",
         "locationDr": "[variables(parameters('geo-paired-region'))]",
         "aksClusterNameDr": "[concat('aks' , variables('suffix'), 'Dr')]",
         "storageAccountNameDr": "[concat('edisonstrgeacc',variables('suffix'),'dr')]",
@@ -377,6 +396,29 @@
                     },
                     "kubernetesSettings": {
                         "value": "[variables('kubernetesSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "ServiceBusR2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [
+                "OmsWorkSpaceR2"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('baseUrl'),'nested/servicebus-r1.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serviceBusProperties": {
+                        "value": "[variables('serviceBusProperties')]"
+                    },
+                    "omsSettings": {
+                        "value": "[variables('omsSettings')]"
                     }
                 }
             }
