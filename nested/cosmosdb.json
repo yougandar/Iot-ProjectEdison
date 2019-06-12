@@ -71,10 +71,7 @@
                         ]
                     }
                 }
-            ],    
-            "tags": {
-                "IotSuiteType": "[parameters('cosmosDbSettings').solutionType]"
-            }
+            ]
         }
     ],
     "outputs": {

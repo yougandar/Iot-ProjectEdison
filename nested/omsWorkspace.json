@@ -7,10 +7,6 @@
           }
     },
     "variables": {
-      "apiVersion": {
-        "logAnalytics": "2017-03-15-preview",
-        "logAnalyticsSolutions": "2015-11-01-preview"
-      },
       "container": {
         "name": "[concat('Containers', '(', parameters('omsSettings').omsWorkspaceName, ')')]",
         "galleryName": "Containers"
@@ -18,7 +14,7 @@
     },
     "resources": [
       {
-        "apiVersion": "[variables('apiVersion').logAnalytics]",
+        "apiVersion": "2015-11-01-preview",
         "type": "Microsoft.OperationalInsights/workspaces",
         "name": "[parameters('omsSettings').omsWorkspaceName]",
         "location": "[parameters('omsSettings').omsWorkspaceRegion]",
@@ -33,7 +29,7 @@
         },
         "resources": [
           {
-            "apiVersion": "[variables('apiVersion').logAnalyticsSolutions]",
+            "apiVersion": "2015-11-01-preview",
             "location": "[parameters('omsSettings').omsWorkspaceRegion]",
             "name":"[variables('container').name]",
             "type": "Microsoft.OperationsManagement/solutions",

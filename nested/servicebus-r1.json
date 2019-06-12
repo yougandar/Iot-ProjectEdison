@@ -5,8 +5,8 @@
         "serviceBusProperties": {
             "type": "object"
         },
-        "omsSettings":{
-            "type":"object"
+        "omsSettings": {
+            "type": "object"
         }
     },
     "resources": [
@@ -146,20 +146,17 @@
             ]
         },
         {
-            
             "type": "Microsoft.ServiceBus/namespaces/disasterRecoveryConfigs",
-            "name": "[concat(parameters('serviceBusProperties').serviceBusNamespaceName,'/', parameters('serviceBusProperties').aliasName)]",
+            "name": "[parameters('serviceBusProperties').aliasName]",
             "apiVersion": "2017-04-01",
             "scale": null,
             "properties": {
                 "partnerNamespace": "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusProperties').serviceBusNamespaceNameDr)]"
             },
             "dependsOn": [
-                "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusProperties').serviceBusNamespaceName)]",
-                "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusProperties').serviceBusNamespaceName)]"             
+                "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusProperties').serviceBusNamespaceName)]"
             ]
         }
     ],
-    "outputs": {
-    }
+    "outputs": {}
 }
