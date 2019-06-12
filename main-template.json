@@ -172,7 +172,7 @@
                 "North Europe"
             ],
             "metadata": {
-                "description": "If deploymenttype is choosen as standard or premium, enter location for application insights for disaster recovery"
+                "description": "If deployment type is choosen as standard or premium, enter location for application insights for disaster recovery. In case of Standard deployment use it for redeploy template deployment."
             }
         },
         "tenantId": {
