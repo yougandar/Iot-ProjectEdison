@@ -697,7 +697,7 @@
             "apiVersion": "2016-02-01",
             "dependsOn": [
                 "OmsWorkSpace",
-                "Kubernetes"
+                "KubernetesR1"
             ],
             "properties": {
                 "mode": "Incremental",
