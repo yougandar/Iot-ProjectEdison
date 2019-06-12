@@ -525,7 +525,7 @@
             "trafficRoutingMethod": "Priority",
             "solutionType": "[parameters('solutionType')]"
         },
-        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-ha/",
+        "baseUrl": "https://raw.githubusercontent.com/sysgain/Iot-ProjectEdison/dev-kub-ha/",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 4)]",
         "virtualNetworkName1": "[concat('edisonVnet', variables('suffix'))]",
         "subnetName1": "edisonSubnet",
@@ -1105,7 +1105,7 @@
             "condition": "[and(equals(parameters('deploymenttype'),'Standard'),equals(parameters('dockerVM'),'Yes'))]",
             "apiVersion": "2016-02-01",
             "dependsOn": [
-                "AzureContainerRegistry",
+                "AzureContainerRegistryR1",
                 "StorageBlobR1"
             ],
             "properties": {
